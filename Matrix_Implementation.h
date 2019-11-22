@@ -6,12 +6,13 @@
 // Constructors
 //////////////////////////////////////////////////////////////////////
 template<typename T>
-Matrix<T>::Matrix() :Matrix(1, 1) {}
+Matrix<T>::Matrix()
+	:Matrix(1, 1) {}
 
 template<typename T>
 Matrix<T>::Matrix(size_t dim1_, size_t dim2_)
-		:dim1(dim1_), dim2(dim2_), size(dim1_ * dim2_),
-		coeffs(new T[dim1_ * dim2_]) {
+	:dim1(dim1_), dim2(dim2_), size(dim1_ * dim2_),
+	 coeffs(new T[dim1_ * dim2_]) {
 	assert(dim1 > 0);
 	assert(dim2 > 0);
 	Zero();
@@ -20,16 +21,16 @@ Matrix<T>::Matrix(size_t dim1_, size_t dim2_)
 // Copy constructor
 template<typename T>
 Matrix<T>::Matrix(const Matrix& old)
-		:Matrix(old.dim1, old.dim2) {
+	:Matrix(old.dim1, old.dim2) {
 	for (size_t i = 0; i < size; i++)
 		coeffs[i] = old.coeffs[i];
 }
 
 // Move constructor
 template<typename T>
-Matrix<T>::Matrix(Matrix&& old)noexcept
-		:dim1(old.dim1), dim2(old.dim2), size(old.dim1 * old.dim2),
-		coeffs(old.coeffs) {
+Matrix<T>::Matrix(Matrix&& old) noexcept
+	:dim1(old.dim1), dim2(old.dim2), size(old.dim1 * old.dim2),
+	 coeffs(old.coeffs) {
 	old.coeffs = nullptr;
 }
 
@@ -112,6 +113,18 @@ Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
 //////////////////////////////////////////////////////////////////////
 // More Math operators
 //////////////////////////////////////////////////////////////////////
+
+template<typename T>
+double Matrix<T>::FrobeniusNorm() const {
+	double norm = 0;
+	for (size_t i = 0; i < dim2; ++i) {
+		for (size_t j = 0; j < dim1; ++j) {
+			norm += pow(abs(operator()(j, i)), 2);
+		}
+	}
+	return sqrt(norm);
+}
+
 template<typename T>
 T Matrix<T>::Trace() const {
 	assert(dim1 == dim2);
@@ -256,17 +269,17 @@ Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 
 template<typename T>
 Matrix<T> multATB(const Matrix<double>& A, const Matrix<T>& B) {
-	assert(A.Dim2() == B.Dim1());
-	Matrix<double> C(A.Dim1(), B.Dim2());
+	assert(A.Dim1() == B.Dim1());
+	Matrix<T> C(A.Dim2(), B.Dim2());
 	for (size_t j = 0; j < B.Dim2(); j++) {
-		for (size_t i = 0; i < A.Dim1(); i++) {
-			for (size_t k = 0; k < A.Dim2(); k++) {
+		for (size_t i = 0; i < A.Dim2(); i++) {
+			for (size_t k = 0; k < A.Dim1(); k++) {
+				// C(i, j) += A(i, k)^T * B(k, j)
 				C(i, j) += A(k, i) * B(k, j);
 			}
 		}
 	}
 	return C;
-
 }
 
 template<typename T>
@@ -298,7 +311,7 @@ template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B) {
 	Matrix<T> C(B.Dim1(), B.Dim2());
 	for (size_t i = 0; i < B.Dim2(); i++)
-		for (size_t j = 0; j < B.Dim2(); j++)
+		for (size_t j = 0; j < B.Dim1(); j++)
 			C(j, i) = sca * B(j, i);
 	return C;
 }
@@ -316,7 +329,7 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
 
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
-		const Matrix<T>& B) {
+	const Matrix<T>& B) {
 	// C=B^T*A*B
 	assert(A.Dim1() == B.Dim1());
 	assert(A.Dim2() == B.Dim2());
@@ -351,7 +364,7 @@ Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
 
 template<typename T>
 Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
-		const Matrix<T>& AB) {
+	const Matrix<T>& AB) {
 	// Merge Block matrices into one matrix
 	// 	C =	(	A	AB	)
 	// 		(	AB	B	)
@@ -411,3 +424,26 @@ Matrix<T> Regularize(const Matrix<T>& A, double eps) {
 	return B;
 }
 
+template<typename T>
+Matrix<T> RealSymmetrize(const Matrix<T>& A) {
+	assert(A.Dim1() == A.Dim2());
+	Matrix<T> Asym(A.Dim1(), A.Dim2());
+	for (size_t i = 0; i < A.Dim1(); ++i) {
+		for (size_t j = 0; j < A.Dim2(); ++j) {
+			Asym(j, i) = (A(j, i) + A(i, j)) / 2.;
+		}
+	}
+	return Asym;
+}
+
+template<typename T>
+Matrix<T> EuclideanDistance(const Matrix<T>& A) {
+	auto G = multATB(A, A);
+	Matrix<T> D(G.Dim1(), G.Dim2());
+	for (size_t j = 0; j < G.Dim1(); ++j) {
+		for (size_t i = 0; i < G.Dim2(); ++i) {
+			D(i, j) = G(i, i) + G(j, j) - 2 * G(i, j);
+		}
+	}
+	return D;
+}

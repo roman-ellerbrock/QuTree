@@ -94,6 +94,9 @@ public:
 	// More Math operators
 	//////////////////////////////////////////////////////////////////////
 
+	// Calculate Frobenius Norm of Matrix
+	double FrobeniusNorm()const;
+
 	// Calculate the Trace
 	T Trace() const;
 
@@ -186,6 +189,12 @@ Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 		const Matrix<T>& B);
+
+template<typename T>
+Matrix<T> EuclideanDistance(const Matrix<T>& A);
+
+template<typename T>
+Matrix<T> RealSymmetrize(const Matrix<T>& A);
 
 template<typename T>
 Matrix<T> Regularize(const Matrix<T>& A, double eps);

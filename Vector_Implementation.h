@@ -110,6 +110,14 @@ Vector<T>& Vector<T>::operator*=(T coeff) {
 	return *this;
 }
 
+template<typename T>
+Vector<T>& Vector<T>::operator/=(T coeff) {
+	for (size_t i = 0; i < dim; i++){
+		coeffs[i] /= coeff;
+	}
+	return *this;
+}
+
 // Math Operators
 template <typename T>
 double Vector<T>::Norm()const
@@ -131,5 +139,14 @@ void Vector<T>::zero()
 {
 	for (size_t i = 0; i < dim; i++)
 		coeffs[i] = 0;
+}
+
+template <typename T>
+double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
+	double distance = 0;
+	for (size_t i = 0; i < a.Dim(); ++i) {
+		distance += pow(a(i) - b(i), 2);
+	}
+	return sqrt(distance);
 }
 

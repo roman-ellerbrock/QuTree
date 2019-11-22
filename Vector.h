@@ -62,6 +62,7 @@ public:
 	Vector operator-(const Vector b);
 	T operator*(const Vector b);
 	Vector& operator*=(T coeff);
+	Vector& operator/=(T coeff);
 
 	// Math Operators
 	double Norm()const;
@@ -76,6 +77,9 @@ protected:
 	size_t dim;
 
 };
+
+template <typename T>
+double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 
 typedef Vector<double> Vectord;
 typedef Vector<complex<double>> Vectorcd;
