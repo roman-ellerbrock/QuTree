@@ -74,6 +74,20 @@ namespace Tensor_Extension {
 		return tuple<Matrixcd, Matrixcd, Vectord>(U, V, sigma);
 	}
 
+	template<typename T>
+	Matrix<T> Map(const Tensor<T>& A) {
+		const TensorDim& tdim = A.Dim();
+		size_t ntensor = tdim.getntensor();
+		size_t dimpart = tdim.getdimpart();
+		Matrix<T> M(dimpart, ntensor);
+		for (size_t n = 0; n < ntensor; ++n) {
+			for (size_t i = 0; i < dimpart; ++i) {
+				M(i, n) = A(i, n);
+			}
+		}
+		return M;
+	}
+
 /* //////////////////////////////////////////////
  * Extension of the Tensor class
  *

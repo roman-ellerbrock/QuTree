@@ -511,7 +511,12 @@ void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 				Bidx = l + kpreidxB;
 				for (size_t j = 0; j < activeC; ++j) {
 					Cidx = j + kpreidxC;
+					Aidx = l * activeB + j;
 					Aidx = l * activeC + j;
+//					assert(Cidx < C.Dim().getdimtot());
+//					assert(Bidx < B.Dim().getdimtot());
+//					assert(Aidx < A.Dim1()*A.Dim2());
+					/// C(1, j, k) += A(j, l) * B(1, l, k)
 					C[Cidx] += A[Aidx] * B[Bidx];
 				}
 			}
@@ -530,6 +535,10 @@ void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 					for (size_t i = 0; i < before; ++i) {
 						Cidx = jpreidx + i;
 						Bidx = lpreidx + i;
+//						assert(Cidx < C.Dim().getdimtot());
+//						assert(Bidx < B.Dim().getdimtot());
+//						assert(Aidx < A.Dim1()*A.Dim2());
+						/// C(i, j, k) += A(j, l) * B(i, l, k)
 						C[Cidx] += A[Aidx] * B[Bidx];
 					}
 				}
@@ -540,30 +549,30 @@ void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 
 template<typename T, typename U>
 void Tmattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t behind, bool zero) {
+	size_t before, size_t activeC, size_t activeB, size_t behind, bool zero) {
 	// Null the result tensor if flag is set to "true"
 	if (zero) { C.Zero(); }
 
-	size_t actbef1 = active1 * before;
-	size_t actbef2 = active2 * before;
+	size_t actbefB = activeB * before;
+	size_t actbefC = activeC * before;
 	size_t Cidx = 0;
 	size_t Bidx = 0;
 	size_t Aidx = 0;
-	size_t kpreidx1 = 0;
-	size_t kpreidx2 = 0;
-	size_t lpreidx = 0;
-	size_t jpreidx = 0;
+	size_t kpreidxB = 0;
+	size_t kpreidxC = 0;
+	size_t Bpreidx = 0;
+	size_t Cpreidx = 0;
 
 	if (before == 1) {
 //#pragma omp parallel for
 		for (size_t k = 0; k < behind; ++k) {
-			kpreidx1 = k * actbef1;
-			kpreidx2 = k * actbef2;
-			for (size_t l = 0; l < active1; ++l) {
-				Bidx = l + kpreidx1;
-				for (size_t j = 0; j < active2; ++j) {
-					Cidx = j + kpreidx2;
-					Aidx = j * active1 + l;
+			kpreidxB = k * actbefB;
+			kpreidxC = k * actbefC;
+			for (size_t l = 0; l < activeB; ++l) {
+				Bidx = l + kpreidxB;
+				for (size_t j = 0; j < activeC; ++j) {
+					Cidx = j + kpreidxC;
+					Aidx = j * activeB + l;
 					C[Cidx] += conj(A[Aidx]) * B[Bidx];
 //					C[Cidx] += conj(A[l, j]) * B[Bidx];
 				}
@@ -572,16 +581,16 @@ void Tmattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	} else {
 //#pragma omp parallel for
 		for (size_t k = 0; k < behind; ++k) {
-			kpreidx1 = k * actbef1;
-			kpreidx2 = k * actbef2;
-			for (size_t l = 0; l < active1; ++l) {
-				lpreidx = l * before + kpreidx1;
-				for (size_t j = 0; j < active2; ++j) {
-					Aidx = j * active1 + l;
-					jpreidx = j * before + kpreidx2;
+			kpreidxB = k * actbefB;
+			kpreidxC = k * actbefC;
+			for (size_t l = 0; l < activeB; ++l) {
+				Bpreidx = l * before + kpreidxB;
+				for (size_t j = 0; j < activeC; ++j) {
+					Aidx = j * activeB + l;
+					Cpreidx = j * before + kpreidxC;
 					for (size_t i = 0; i < before; ++i) {
-						Cidx = jpreidx + i;
-						Bidx = lpreidx + i;
+						Cidx = Cpreidx + i;
+						Bidx = Bpreidx + i;
 						C[Cidx] += conj(A[Aidx]) * B[Bidx];
 //						C[Cidx] += conj(A[l, j]) * B[Bidx];
 					}
@@ -613,7 +622,7 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorDim& tdim(B.Dim());
 	assert(mode < tdim.F());
 	assert(mode >= 0);
-	assert(A.Dim1() == B.Dim().Active(mode));
+//	assert(A.Dim1() == B.Dim().Active(mode));
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
@@ -625,14 +634,15 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	} else {
 		TensorDim tdim(B.Dim());
 		size_t active1 = A.Dim1();
+		size_t active2 = A.Dim2();
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, active1);
 		Tensor<T> C(tdim);
 		size_t behind = tdim.Behind(mode) * tdim.getntensor();
-		size_t active2 = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
-		cout << "non-quadratic mattensor implemented but not tested, yet.\n";
+		assert(active1 == C.Dim().Active(mode));
+		assert(active2 == B.Dim().Active(mode));
+		cout << "non-quadratic mattensor implemented but tested only once so far.\n";
 		mattensor(C, A, B, before, active1, active2, behind, false);
-		getchar();
 		return C;
 	}
 }
@@ -652,14 +662,15 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		Tmattensor(C, A, B, before, active, active, behind, false);
 		return C;
 	} else {
+		size_t activeC = A.Dim2();
+		size_t activeB = A.Dim1();
 		TensorDim tdim(B.Dim());
-		size_t behind = tdim.Behind(mode) * tdim.getntensor();
-		size_t active = tdim.Active(mode);
-		size_t before = tdim.Before(mode);
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, A.Dim2());
+		size_t behind = tdim.Behind(mode) * tdim.getntensor();
+		size_t before = tdim.Before(mode);
 		Tensor<T> C(tdim);
 		cout << "non-quadratic mattensor implemented but not tested, yet.\n";
-		Tmattensor(C, A, B, before, active, A.Dim2(), behind, false);
+		Tmattensor(C, A, B, before, activeC, activeB, behind, false);
 		getchar();
 		return C;
 	}

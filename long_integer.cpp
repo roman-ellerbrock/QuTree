@@ -221,8 +221,14 @@ long_integer mult(long_integer a, long_integer b) {
 long_integer mult_mod(const long_integer& a, const long_integer& b, long_integer N) {
 	size_t original_nbit = a.size();
 	auto m = mult(a, b);
+	cout << "mult(a,a)=";
+	m.print();
+	m.print_4byte();
 	align(m, N);
 	m.mod(N);
+	cout << "mult(a,a)%N=";
+	m.print();
+	m.print_4byte();
 	m.cromp(original_nbit);
 	return m;
 }

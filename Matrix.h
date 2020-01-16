@@ -111,6 +111,8 @@ public:
 
 	void cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const;
 
+	pair<Matrix<complex<double>>, Vectord> cDiag()const;
+
 	// Solve System of linear equations for Matrix<double>
 	Vectord SolveSLE(const Vectord& b_);
 
@@ -201,4 +203,5 @@ Matrix<T> Regularize(const Matrix<T>& A, double eps);
 
 typedef Matrix<complex<double>> Matrixcd;
 typedef Matrix<double> Matrixd;
+typedef pair<Matrixcd, Vectord> SpectralDecomposition;
 

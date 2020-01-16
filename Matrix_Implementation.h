@@ -171,6 +171,14 @@ void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) {
 }
 
 template<typename T>
+SpectralDecomposition Matrix<T>::cDiag()const {
+	Matrixcd trafo(dim1, dim2);
+	Vectord ev(dim1);
+	cDiag(trafo, ev);
+	return pair<Matrixcd, Vectord> (trafo, ev);
+}
+
+template<typename T>
 void Matrix<T>::cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const {
 	assert(dim1 == dim2);
 	assert(ev.Dim() == dim1);

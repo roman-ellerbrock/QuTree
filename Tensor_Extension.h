@@ -7,6 +7,9 @@ namespace Tensor_Extension {
     tuple<Matrixcd, Matrixcd, Vectord> SVD(const Matrixcd& A);
 
 	template<typename T>
+    Matrix<T> Map(const Tensor<T>& A);
+
+	template<typename T>
 	Tensor<T> Merge(Tensor<T> A, const Tensor<T>& B);
 
 	template<typename T>

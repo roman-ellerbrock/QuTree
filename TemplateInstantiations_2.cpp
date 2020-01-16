@@ -36,6 +36,7 @@ template Matrix<cd> Tensor_Extension::WeightedOuterProduct(const Tensor<cd>& A, 
 template void Tensor_Extension::WeightedOuterProductAdd(Matrixcd& M, const Tensor<cd>& A, const Tensor<cd>& B,
 		const Matrix<cd>& rho);
 template Tensor<cd> Tensor_Extension::Merge(Tensor<cd> A, const Tensor<cd>& B);
+template Matrix<cd> Tensor_Extension::Map(const Tensor<cd>& A);
 
 // SingleParticleOperator instantiations
 template class SingleParticleOperator<complex<double>>;
