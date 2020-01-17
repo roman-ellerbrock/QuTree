@@ -1,30 +1,30 @@
 
 set(QDlib_INCLUDE_FILES
-        include/BS_integrator.h
-        include/DoubleParticleOperator.h
-        include/FFT.h
-        include/FFTCooleyTukey.h
-        include/JacobiRotationFramework.h
-        include/Lanzcos.h
-        include/Matrix.h
-        include/Matrix_Implementation.h
-        include/MultiIndex.h
-        include/QDlib.h
-        include/QMConstants.h
-        include/SimultaneousDiagonalization.h
-        include/SingleParticleOperator.h
-        include/Tensor.h
-        include/TensorDim.h
-        include/TensorDim_Extension.h
-        include/Tensor_Extension.h
-        include/Tensor_Extension_Implementation.h
-        include/Tensor_Implementation.h
-        include/Tree.h
-        include/TreeNode.h
-        include/Vector.h
-        include/Vector_Implementation.h
-        include/long_integer.h
-        include/stdafx.h
+        BS_integrator.h
+        DoubleParticleOperator.h
+        FFT.h
+        FFTCooleyTukey.h
+        JacobiRotationFramework.h
+        Lanzcos.h
+        Matrix.h
+        Matrix_Implementation.h
+        MultiIndex.h
+        QDlib.h
+        QMConstants.h
+        SimultaneousDiagonalization.h
+        SingleParticleOperator.h
+        Tensor.h
+        TensorDim.h
+        TensorDim_Extension.h
+        Tensor_Extension.h
+        Tensor_Extension_Implementation.h
+        Tensor_Implementation.h
+        Tree.h
+        TreeNode.h
+        Vector.h
+        Vector_Implementation.h
+        long_integer.h
+        stdafx.h
         )
 
-install(FILES QDlib_INCLUDE_FILES DESTINATION include)
+install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)

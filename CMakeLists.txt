@@ -19,9 +19,6 @@ set(QDlib_VERSION_MAJOR 0)
 set(QDlib_VERSION_MINOR 1)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
-add_subdirectory("src")
-add_subdirectory("include")
-
 #####################################################################
 # Find Required packages
 #####################################################################
@@ -31,7 +28,7 @@ if (NOT EIGEN3_FOUND)
   if (NOT EIGEN3_INCLUDE_DIR)
     message( FATAL_ERROR "No Eigen3 found, either point CMAKE_PREFIX_PATH or EIGEN3_INCLUDE_DIR to your Eigen installation." )
   else ()
-    message ( STATUS "Using EIGEN3_INCLUDE_DIR environment variable for Eigen 3 location instead" )
+    message ( STATUS "Using EIGEN3_INCLUDE_DIR environment variable for Eigen 3 location instead: ${EIGEN3_INCLUDE_DIR}" )
   endif ()
 endif ()
 include_directories("${EIGEN3_INCLUDE_DIR}")
@@ -72,10 +69,17 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 #####################################################################
+# Recurse into subdirectories
+#####################################################################
+add_subdirectory("src")
+add_subdirectory("include")
+
+
+#####################################################################
 # Install QDlib
 #####################################################################
 install (TARGETS QDlib
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib
 	RUNTIME DESTINATION bin
-	PUBLIC_HEADER DESTINATION include)
+	PUBLIC_HEADER DESTINATION include/QDlib)
