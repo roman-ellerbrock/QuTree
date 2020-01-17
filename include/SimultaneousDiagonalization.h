@@ -1,5 +1,5 @@
 #pragma once
-#include "SingleParticleOperator.h"
+#include "FactorMatrix.h"
 #include "Vector.h"
 #include "stdafx.h"
 #include <random>
@@ -14,23 +14,23 @@ public:
 	~SimultaneousDiagonalization();
 
 	// Initialize Simultaneous Diagonalization
-	void Initialization(vector<SPOcd>& A, double eps_);
+	void Initialization(vector<FactorMatrixcd>& A, double eps_);
 
 	// Perform the Simultaneous Diagonalization
-	void Calculate(vector<SPOcd>& A, SPOcd & trafo);
+	void Calculate(vector<FactorMatrixcd>& A, FactorMatrixcd & trafo);
 	
 protected:
 	// Perform a cycle of rotations over all matrices in A
-	void JacobiRotations(vector<SPOcd>& A, SPOcd & trafo);
+	void JacobiRotations(vector<FactorMatrixcd>& A, FactorMatrixcd & trafo);
 
 	// Measure off-Diagonality
-	double MeasureOffDiagonals(const vector<SPOcd>& A);
+	double MeasureOffDiagonals(const vector<FactorMatrixcd>& A);
 
 	// Measure Diagonality
-	double MeasureDiagonality(vector<SPOcd>& A);
+	double MeasureDiagonality(vector<FactorMatrixcd>& A);
 
 	// Preconditioning of SD
-	void InitialTransformation(vector<SPOcd>& A, SPOcd & trafo);
+	void InitialTransformation(vector<FactorMatrixcd>& A, FactorMatrixcd & trafo);
 
 	int dim;
 	int nmat;

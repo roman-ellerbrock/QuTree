@@ -9,14 +9,14 @@
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) const {
 	size_t dimtot = dim.getdimtot();
-	assert(i >= 0 && i < dimtot);
+	assert(i < dimtot);
 	return coeffs[i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) {
 	size_t dimtot = dim.getdimtot();
-	assert(i >= 0 && i < dimtot);
+	assert(i < dimtot);
 	return coeffs[i];
 }
 
@@ -24,6 +24,18 @@ template<typename T>
 Tensor<T>::Tensor(const TensorDim& dim_, const bool InitZero)
 	:dim(dim_), coeffs(new T[dim_.getdimtot()]) {
 	if (InitZero) { Zero(); }
+}
+
+
+template<typename T>
+Tensor<T>::Tensor(istream& is) {
+	Read(is);
+}
+
+template<typename T>
+Tensor<T>::Tensor(const string& filename) {
+	ifstream is(filename);
+	Read(is);
 }
 
 // Copy constructor
@@ -158,33 +170,7 @@ void Tensor<T>::print(ostream& os) const {
 }
 
 template<typename T>
-void Tensor<T>::WriteRaw(ostream& os) const {
-	const char record = (char) 255;
-	for (size_t i = 0; i < dim.getdimtot(); i++) {
-		os << operator()(i);
-		for (size_t j = 0; j < 8; j++)
-			os << record;
-	}
-}
-
-template<typename T>
-void Tensor<T>::ReadRaw(istream& is) {
-	char record;
-	for (size_t i = 0; i < dim.getdimtot(); i++) {
-		is >> operator()(i);
-		for (size_t j = 0; j < 8; j++)
-			is >> record;
-	}
-}
-
-template<typename T>
-void Tensor<T>::Write(ostream& os) const {
-	for (size_t i = 0; i < dim.getdimtot(); i++)
-		os << operator()(i);
-}
-
-template<typename T>
-void Tensor<T>::WriteBin(ofstream& os) const {
+void Tensor<T>::Write(ofstream& os) const {
 	// Verification
 	os.write("TENS", 4);
 
@@ -204,7 +190,7 @@ void Tensor<T>::WriteBin(ofstream& os) const {
 }
 
 template<typename T>
-void Tensor<T>::ReadBin(ifstream& is) {
+void Tensor<T>::Read(istream& is) {
 	// Check if binary string contains a Tensor
 	char check[5];
 	is.read(check, 4);
@@ -231,12 +217,6 @@ void Tensor<T>::ReadBin(ifstream& is) {
 		is.read((char *) &Coeff_now, size);
 		operator()(i) = Coeff_now;
 	}
-}
-
-template<typename T>
-void Tensor<T>::Read(istream& os) {
-	for (size_t i = 0; i < dim.getdimtot(); i++)
-		os >> operator()(i);
 }
 
 template<typename T>
@@ -359,6 +339,13 @@ Tensor<T> Tensor<T>::AdjustStateDim(size_t n)const {
 		}
 	}
 	return newTensor;
+}
+
+template<typename T>
+void Tensor<T>::Reshape(const TensorDim& new_dim) {
+	/// Check that total size is the same
+	assert(dim.getdimtot() == new_dim.getdimtot());
+	dim = new_dim;
 }
 
 //////////////////////////////////////////////////////////

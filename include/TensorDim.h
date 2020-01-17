@@ -44,6 +44,10 @@ public:
 
 	TensorDim(const vector<size_t>& dim, size_t ntensor_);
 
+	explicit TensorDim(istream& is);
+
+	explicit TensorDim(const string& file);
+
 	~TensorDim() = default;
 
 	void Initialize(const vector<size_t>& dim, size_t ntensor);
@@ -51,7 +55,7 @@ public:
 	void WriteBin(ofstream& os) const;
 	void info(ostream& os) const;
 
-	void ReadDim(ifstream& is);
+	void ReadDim(istream& is);
 
 	inline size_t getf() const { return f; }
 

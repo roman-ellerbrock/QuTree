@@ -9,7 +9,7 @@
 #include"MultiIndex.h"
 #include"QMConstants.h"
 #include"SimultaneousDiagonalization.h"
-#include"SingleParticleOperator.h"
+#include"FactorMatrix.h"
 #include"Tensor.h"
 #include"TensorDim.h"
 #include"TensorDim_Extension.h"

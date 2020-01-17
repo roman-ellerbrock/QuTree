@@ -91,7 +91,7 @@ add_library(QDlib
 install(TARGETS MathFunctions DESTINATION lib)
 install(FILES MathFunctions.h DESTINATION include)
 
-set_target_properties(QDlib PROPERTIES PUBLIC_HEADER "BS_integrator.h;DoubleParticleOperator.h;FFT.h;FFTCooleyTukey.h;JacobiRotationFramework.h;Lanzcos.h;Matrix.h;Matrix_Implementation.h;MultiIndex.h;QMConstants.h;SimultaneousDiagonalization.h;SingleParticleOperator.h;Tensor.h;TensorDim.h;TensorDim_Extension.h;Tensor_Extension.h;Tensor_Extension_Implementation.h;Tensor_Implementation.h;Tree.h;TreeNode.h;Vector.h;Vector_Implementation.h;long_integer.h;stdafx.h;QDlib.h"
+set_target_properties(QDlib PROPERTIES PUBLIC_HEADER "BS_integrator.h;DoubleParticleOperator.h;FFT.h;FFTCooleyTukey.h;JacobiRotationFramework.h;Lanzcos.h;Matrix.h;Matrix_Implementation.h;MultiIndex.h;QMConstants.h;SimultaneousDiagonalization.h;FactorMatrix.h;Tensor.h;TensorDim.h;TensorDim_Extension.h;Tensor_Extension.h;Tensor_Extension_Implementation.h;Tensor_Implementation.h;Tree.h;TreeNode.h;Vector.h;Vector_Implementation.h;long_integer.h;stdafx.h;QDlib.h"
 )
 
 install (TARGETS QDlib

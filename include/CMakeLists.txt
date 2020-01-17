@@ -12,7 +12,7 @@ set(QDlib_INCLUDE_FILES
         QDlib.h
         QMConstants.h
         SimultaneousDiagonalization.h
-        SingleParticleOperator.h
+        FactorMatrix.h
         Tensor.h
         TensorDim.h
         TensorDim_Extension.h

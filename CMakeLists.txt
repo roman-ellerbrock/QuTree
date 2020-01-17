@@ -7,7 +7,7 @@
 # The main intended use of the library are tensor tree applications.
 #
 # Main author: Roman Ellerbrock
-# Contributing authors: Thomas Weike, Tim Lenzen, Stefan Seritan
+# Contributing authors: Thomas Weike, Tim Lenzen, Stefan Seritan, K. Grace Johnson
 ###########################################################################
 
 cmake_minimum_required(VERSION 2.8)
@@ -71,9 +71,10 @@ endif ()
 #####################################################################
 # Recurse into subdirectories
 #####################################################################
+include_directories("include")
 add_subdirectory("src")
 add_subdirectory("include")
-
+add_subdirectory("tests")
 
 #####################################################################
 # Install QDlib

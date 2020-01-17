@@ -33,12 +33,16 @@ public:
 	Tensor() :coeffs(new T[1]) {}
 
 	// Constructor with TensorDim
-	Tensor(const TensorDim& dim_, bool InitZero = true);
+	explicit Tensor(const TensorDim& dim_, bool InitZero = true);
+
+	explicit Tensor(istream& is);
+
+	explicit Tensor(const string& filename);
 
 	// Copy constructor
 	Tensor(const Tensor& old);
 
-	// Copy-Multyply constructor
+	// Copy-Multiply constructor
 	Tensor(const Tensor& old, T factor);
 
 	// Move constructor
@@ -58,17 +62,9 @@ public:
 	//////////////////////////////////////////////////////////
 	void print(ostream& os = cout)const;
 
-	void WriteRaw(ostream& os)const;
+	void Write(ofstream& os)const;
 
-	void ReadRaw(istream& is);
-
-	void Write(ostream& os)const;
-
-	void WriteBin(ofstream& os)const;
-
-	void ReadBin(ifstream& is);
-
-	void Read(istream& os);
+	void Read(istream& is);
 
 	void ReadFortranBinary(int id);
 
@@ -151,6 +147,9 @@ public:
 
 	// Adjust the number of Tensors
 	Tensor<T> AdjustStateDim(size_t n)const;
+
+	// Reshape the tensor but keep the total size
+	void Reshape(const TensorDim& tdim);
 
 	//////////////////////////////////////////////////////////
 	// Operations on Tensors

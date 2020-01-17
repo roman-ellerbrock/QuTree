@@ -29,6 +29,10 @@ public:
 
 	Matrix(size_t dim1_, size_t dim2_);
 
+	explicit Matrix(istream& is);
+
+	explicit Matrix(const string& filename);
+
 	// Copy constructor
 	Matrix(const Matrix& old);
 
@@ -90,6 +94,9 @@ public:
 
 	Matrix& operator*=(T coeff) noexcept;
 
+	bool operator==(const Matrix<T>& A)const;
+	bool operator!=(const Matrix<T>& A)const;
+
 	//////////////////////////////////////////////////////////////////////
 	// More Math operators
 	//////////////////////////////////////////////////////////////////////
@@ -124,7 +131,11 @@ public:
 
 	void print(ostream& os = cout) const;
 
+	void Write(const string& filename) const;
+
 	void Write(ostream& os) const;
+
+	void Read(const string& filename);
 
 	void Read(istream& os);
 
@@ -136,8 +147,6 @@ public:
 	size_t Dim1() const { return dim1; }
 
 	size_t Dim2() const { return dim2; }
-
-	size_t Size() const { return size; }
 
 	T *Coeffs() const { return coeffs; }
 
@@ -153,7 +162,6 @@ protected:
 	T *coeffs;
 	size_t dim1;
 	size_t dim2;
-	size_t size;
 };
 
 //////////////////////////////////////////////////////////////////////

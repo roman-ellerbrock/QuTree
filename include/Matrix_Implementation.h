@@ -11,25 +11,38 @@ Matrix<T>::Matrix()
 
 template<typename T>
 Matrix<T>::Matrix(size_t dim1_, size_t dim2_)
-	:dim1(dim1_), dim2(dim2_), size(dim1_ * dim2_),
+	:dim1(dim1_), dim2(dim2_),
 	 coeffs(new T[dim1_ * dim2_]) {
 	assert(dim1 > 0);
 	assert(dim2 > 0);
 	Zero();
 }
 
+template<typename T>
+Matrix<T>::Matrix(istream& is)
+	:Matrix<T>() {
+	Read(is);
+}
+
+template<typename T>
+Matrix<T>::Matrix(const string& filename)
+	:Matrix<T>() {
+	ifstream is(filename);
+	Read(is);
+}
+
 // Copy constructor
 template<typename T>
 Matrix<T>::Matrix(const Matrix& old)
 	:Matrix(old.dim1, old.dim2) {
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < dim1 * dim2; i++)
 		coeffs[i] = old.coeffs[i];
 }
 
 // Move constructor
 template<typename T>
 Matrix<T>::Matrix(Matrix&& old) noexcept
-	:dim1(old.dim1), dim2(old.dim2), size(old.dim1 * old.dim2),
+	:dim1(old.dim1), dim2(old.dim2),
 	 coeffs(old.coeffs) {
 	old.coeffs = nullptr;
 }
@@ -47,7 +60,6 @@ Matrix<T>& Matrix<T>::operator=(const Matrix& other) {
 template<typename T>
 Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept {
 	//@TODO: copy dims??// seems to be done, but maybe check again
-	size = other.size;
 	dim1 = other.dim1;
 	dim2 = other.dim2;
 	delete[] coeffs;
@@ -103,12 +115,30 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& B) {
 
 template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
-	for (size_t i = 0; i < size; ++i) {
+	for (size_t i = 0; i < dim1 * dim2; ++i) {
 		coeffs[i] *= coeff;
 	}
 	return *this;
 }
 
+template<typename T>
+bool Matrix<T>::operator==(const Matrix<T>& A) const {
+	/// This class checks whether two Matrices are precisely equal.
+	/// Note: The routine should not be used to check for approximate
+	/// equivalence!
+	bool result = true;
+	dim1 != A.Dim1() ? result = false : true;
+	dim2 != A.Dim2() ? result = false : true;
+	for (size_t i = 0; i < dim1 * dim2; ++i) {
+		if (operator[](i) != A[i]) { return false; }
+	}
+	return result;
+}
+
+template<typename T>
+bool Matrix<T>::operator!=(const Matrix<T>& A)const {
+	return !(this->operator==(A));
+}
 
 //////////////////////////////////////////////////////////////////////
 // More Math operators
@@ -171,11 +201,11 @@ void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) {
 }
 
 template<typename T>
-SpectralDecomposition Matrix<T>::cDiag()const {
+SpectralDecomposition Matrix<T>::cDiag() const {
 	Matrixcd trafo(dim1, dim2);
 	Vectord ev(dim1);
 	cDiag(trafo, ev);
-	return pair<Matrixcd, Vectord> (trafo, ev);
+	return pair<Matrixcd, Vectord>(trafo, ev);
 }
 
 template<typename T>
@@ -240,21 +270,61 @@ void Matrix<T>::print(ostream& os) const {
 
 template<typename T>
 void Matrix<T>::Write(ostream& os) const {
-	for (size_t j = 0; j < dim2; j++)
-		for (size_t i = 0; i < dim1; i++)
-			os << operator()(i, j);
+	// Verification
+	os.write("MATR", 4);
+	os.write((char *) &dim1, sizeof(dim1));
+	os.write((char *) &dim2, sizeof(dim2));
+
+	int32_t size = sizeof(T);
+	os.write((char *) &size, sizeof(size));
+	for (size_t i = 0; i < dim1 * dim2; i++) {
+		T Coeff_now = operator[](i);
+		os.write((char *) &Coeff_now, size);
+	}
+	os.flush();
 }
 
 template<typename T>
-void Matrix<T>::Read(istream& os) {
-	for (size_t j = 0; j < dim2; j++)
-		for (size_t i = 0; i < dim1; i++)
-			os >> operator()(i, j);
+void Matrix<T>::Write(const string& filename) const {
+	ofstream os(filename);
+	Write(os);
+}
+
+template<typename T>
+void Matrix<T>::Read(istream& is) {
+	char check[5];
+	is.read(check, 4);
+	string s_check(check, 4);
+	string s_key("MATR");
+	assert(s_key == s_check);
+
+	// Read dimensions
+	is.read((char *) &dim1, sizeof(dim1));
+	is.read((char *) &dim2, sizeof(dim2));
+	(*this) = Matrix<T>(dim1, dim2);
+
+	// Read the size of type
+	int32_t size;
+	is.read((char *) &size, sizeof(size));
+	assert(size == sizeof(T));
+
+	// Read the coefficients
+	for (size_t i = 0; i < dim1 * dim2; i++) {
+		T Coeff_now;
+		is.read((char *) &Coeff_now, size);
+		operator[](i) = Coeff_now;
+	}
+}
+
+template<typename T>
+void Matrix<T>::Read(const string& filename) {
+	ifstream is(filename);
+	Read(is);
 }
 
 template<typename T>
 void Matrix<T>::Zero() {
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < dim1 * dim2; i++)
 		coeffs[i] = 0;
 }
 

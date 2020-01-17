@@ -8,20 +8,20 @@ SimultaneousDiagonalization::~SimultaneousDiagonalization()
 {
 }
 
-void SimultaneousDiagonalization::Initialization(vector<SPOcd>& A, double eps_)
+void SimultaneousDiagonalization::Initialization(vector<FactorMatrixcd>& A, double eps_)
 {
 	// Number of matrices
 	nmat = A.size();
 	assert(nmat > 0);
 
 	// Dimension of matrices
-	SPOcd& B = A[0];
+	FactorMatrixcd& B = A[0];
 	dim = B.Dim1();
 	
 	// Dimension check
 	for (size_t k = 0; k < nmat; k++)
 	{
-		SPOcd& B = A[k];
+		FactorMatrixcd& B = A[k];
 		assert(B.Dim1() == dim);
 		assert(B.Dim2() == dim);
 	}
@@ -30,7 +30,7 @@ void SimultaneousDiagonalization::Initialization(vector<SPOcd>& A, double eps_)
 	eps = eps_;
 }
 
-void SimultaneousDiagonalization::Calculate(vector<SPOcd>& A, SPOcd& trafo)
+void SimultaneousDiagonalization::Calculate(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo)
 {
 	bool converged = false;
 	int iter = 0;
@@ -73,7 +73,7 @@ void SimultaneousDiagonalization::Calculate(vector<SPOcd>& A, SPOcd& trafo)
 	}
 }
 
-void SimultaneousDiagonalization::JacobiRotations(vector<SPOcd>& A, SPOcd& trafo)
+void SimultaneousDiagonalization::JacobiRotations(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo)
 {
 	// Angles for Givens-Rotation
 	complex<double> c, s = 0;
@@ -97,14 +97,14 @@ void SimultaneousDiagonalization::JacobiRotations(vector<SPOcd>& A, SPOcd& trafo
 	}
 }
 
-double SimultaneousDiagonalization::MeasureOffDiagonals(const vector<SPOcd>& A)
+double SimultaneousDiagonalization::MeasureOffDiagonals(const vector<FactorMatrixcd>& A)
 {
 	// Measure the norm of off-diagonal elements
 	double eps = 0;
 
 	for (size_t k = 0; k < A.size(); k++)
 	{
-		SPOcd B(A[k]);
+		FactorMatrixcd B(A[k]);
 
 		for (int n = 0; n < B.Dim(); n++)
 			B(n, n) = 0;
@@ -116,14 +116,14 @@ double SimultaneousDiagonalization::MeasureOffDiagonals(const vector<SPOcd>& A)
 	return sqrt(eps);
 }
 
-double SimultaneousDiagonalization::MeasureDiagonality(vector<SPOcd>& A)
+double SimultaneousDiagonalization::MeasureDiagonality(vector<FactorMatrixcd>& A)
 {
 	// Measure the norm of off-diagonal elements
 	double eps = 0;
 
 	for (size_t k = 0; k < nmat; k++)
 	{
-		SPOcd&B = A[k];
+		FactorMatrixcd&B = A[k];
 
 		for (size_t n = 0; n < dim; n++)
 			for (size_t m = 0; m < dim; m++)
@@ -136,17 +136,17 @@ double SimultaneousDiagonalization::MeasureDiagonality(vector<SPOcd>& A)
 	return sqrt(eps);
 }
 
-void SimultaneousDiagonalization::InitialTransformation(vector<SPOcd>& A, SPOcd& trafo)
+void SimultaneousDiagonalization::InitialTransformation(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo)
 {
-	SPOcd& B = A[0];
+	FactorMatrixcd& B = A[0];
 	Vectord ev(B.Dim1());
 	B.cDiag(trafo, ev);
 
 	for (size_t k = 0; k < A.size(); k++)
 	{
-		SPOcd& C = A[k];
+		FactorMatrixcd& C = A[k];
 		int mode = C.Mode();
 		Matrixcd Cmat= UnitarySimilarityTrafo(C, trafo);
-		C = SPOcd(Cmat, mode);
+		C = FactorMatrixcd(Cmat, mode);
 	}
 }

@@ -1,7 +1,7 @@
 #include "Tensor_Implementation.h"
 #include "Matrix_Implementation.h"
 #include "Vector_Implementation.h"
-#include "SingleParticleOperator.h"
+#include "FactorMatrix.h"
 #include "Tensor_Extension_Implementation.h"
 
 typedef complex<double> cd;
@@ -38,7 +38,7 @@ template void Tensor_Extension::WeightedOuterProductAdd(Matrixcd& M, const Tenso
 template Tensor<cd> Tensor_Extension::Merge(Tensor<cd> A, const Tensor<cd>& B);
 template Matrix<cd> Tensor_Extension::Map(const Tensor<cd>& A);
 
-// SingleParticleOperator instantiations
-template class SingleParticleOperator<complex<double>>;
-template class SingleParticleOperator<double>;
+// FactorMatrix instantiations
+template class FactorMatrix<complex<double>>;
+template class FactorMatrix<double>;
 

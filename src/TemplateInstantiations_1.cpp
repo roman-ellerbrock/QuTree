@@ -1,6 +1,6 @@
 #include "Matrix_Implementation.h"
 #include "Vector_Implementation.h"
-#include "SingleParticleOperator.h"
+#include "FactorMatrix.h"
 
 typedef complex<double> cd;
 typedef double doub;

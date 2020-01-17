@@ -22,6 +22,15 @@ TensorDim::TensorDim(const vector<size_t>& dim, size_t ntensor_) {
 	Initialize(dim, ntensor_);
 }
 
+TensorDim::TensorDim(istream& is) {
+	ReadDim(is);
+}
+
+TensorDim::TensorDim(const string& file) {
+	ifstream is(file);
+	ReadDim(is);
+}
+
 void TensorDim::Initialize(const vector<size_t>& dim, size_t ntensor_) {
 	assert(dim.size() > 0);
 	assert(ntensor_ > 0);
@@ -61,7 +70,7 @@ void TensorDim::info(ostream& os) const {
 		cout << "active = " << Active(k) << "\n";
 }
 
-void TensorDim::ReadDim(ifstream& is) {
+void TensorDim::ReadDim(istream& is) {
 	// Check if binary string contains a TDim
 	char check[5];
 	is.read(check, 4);
