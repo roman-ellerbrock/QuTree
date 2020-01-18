@@ -1,4 +1,3 @@
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(QDlib_SOURCE_FILES
         TensorDim.cpp

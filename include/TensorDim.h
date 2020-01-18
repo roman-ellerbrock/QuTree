@@ -4,7 +4,8 @@
 class TensorABC {
 // class TensorABC holds contraction of a tensor of n-th order
 public:
-	TensorABC() {}
+	TensorABC()
+		: before(0), after(0), active(0), total(0) {}
 
 	TensorABC(size_t k, vector<size_t> dim);
 
@@ -12,13 +13,13 @@ public:
 
 	inline size_t getactive() const { return active; }
 
-	inline size_t getbehind() const { return behind; }
+	inline size_t getafter() const { return after; }
 
 	inline size_t gettotal() const { return total; }
 
 private:
 	size_t before;
-	size_t behind;
+	size_t after;
 	size_t active;
 	size_t total;
 };
@@ -42,7 +43,7 @@ public:
 	TensorDim()
 		: ntensor(0), dimpart(0), dimtot(0), f(0) {}
 
-	TensorDim(const vector<size_t>& dim, size_t ntensor_);
+	explicit TensorDim(const vector<size_t>& dim, size_t ntensor_);
 
 	explicit TensorDim(istream& is);
 
@@ -52,8 +53,9 @@ public:
 
 	void Initialize(const vector<size_t>& dim, size_t ntensor);
 
-	void WriteBin(ofstream& os) const;
-	void info(ostream& os) const;
+	void Write(ofstream& os) const;
+
+	void Write(const string& filename) const;
 
 	void ReadDim(istream& is);
 
@@ -77,20 +79,18 @@ public:
 		for (size_t k = 0; k < tdima.F(); k++) {
 			if (tdima.Active(k) != tdimb.Active(k)) { return false; }
 		}
-		if (tdima.getntensor() != tdimb.getntensor()) { return false; }
-
-		return true;
+		return (tdima.getntensor() == tdimb.getntensor());
 	}
 
 	friend bool operator!=(TensorDim& tdima, TensorDim& tdimb) {
 		return !(tdima == tdimb);
 	}
 
-	void print(ostream& os = cout)const;
+	void print(ostream& os = cout) const;
 
 	const TensorABC& getabc(size_t k);
 	size_t Active(size_t k) const;
-	size_t Behind(size_t k) const;
+	size_t After(size_t k) const;
 	size_t Before(size_t k) const;
 
 protected:

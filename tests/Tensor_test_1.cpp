@@ -1,116 +1,147 @@
 #include "Tensor.h"
 #include <iostream>
+#include <UnitTest++/UnitTest++.h>
 
 using namespace std;
 
-int test_TensorDim_1() {
-	/// Create a TensorDim, write to file, read in again
-	TensorDim tdim({3, 4, 5}, 2);
-	ofstream file("tdim.dat");
-	tdim.WriteBin(file);
-	file.close();
-	TensorDim odim("tdim.dat");
-	return (odim == tdim);
-}
+SUITE(Tensor) {
+	class TensorFactory {
+	public:
+		Tensorcd A;
+		Tensorcd B;
 
-bool test_TensorDim_2() {
-	/// Check Getters and Initialization
-	bool success = true;
-
-	TensorDim tdim({3, 4, 5}, 2);
-
-	if (tdim.getdimtot() != 3 * 4 * 5 * 2) { success = false; }
-	if (tdim.getdimpart() != 3 * 4 * 5) { success = false; }
-	if (tdim.getntensor() != 2) { success = false; }
-
-	return success;
-}
-
-bool test_Matrix_1() {
-	/// Test Matrix I/O
-	size_t dim1 = 2;
-	size_t dim2 = 3;
-	Matrixcd M(dim1, dim2);
-	for (size_t i = 0; i < dim1; ++i) {
-		for (size_t j = 0; j < dim2; ++j) {
-			M(i, j) = j * i;
+		void CreateTensorA() {
+			TensorDim tdim({2, 3, 4}, 2);
+			A = Tensorcd(tdim);
+			for (size_t i = 0; i < tdim.getdimtot(); ++i) {
+				A(i) = i;
+			}
 		}
+
+		void CreateTensorB() {
+			TensorDim tdim({2, 3, 4}, 2);
+			B = Tensorcd(tdim);
+			for (size_t i = 0; i < tdim.getdimtot(); ++i) {
+				B(i) = i % 3;
+			}
+		}
+
+		void CreateTensors() {
+			CreateTensorA();
+			CreateTensorB();
+		}
+	};
+
+	constexpr double eps = 1e-7;
+
+	TEST(TensorDim_FileIO) {
+		/// Create a TensorDim, write to file, read in again
+		TensorDim tdim({3, 4, 5}, 2);
+		tdim.Write("tdim.dat");
+		TensorDim odim("tdim.dat");
+		bool same = odim == tdim;
+			CHECK_EQUAL(same, true);
 	}
-	M.Write("matrix1.dat");
-	Matrixcd N("matrix1.dat");
-	return (M == N);
-}
 
-bool test_Tensor_1() {
-	/// Test Tensor I/O
-	bool success = true;
-
-	TensorDim tdim({3, 4, 5}, 2);
-	Tensorcd A(tdim);
-	for (size_t i = 0; i < tdim.getdimtot(); ++i) {
-		A(i) = i;
+	TEST(TensorDim_Getters) {
+		/// Check Getters and Initialization
+		bool success = true;
+		TensorDim tdim({3, 4, 5}, 2);
+		if (tdim.getdimtot() != 3 * 4 * 5 * 2) { success = false; }
+		if (tdim.getdimpart() != 3 * 4 * 5) { success = false; }
+		if (tdim.getntensor() != 2) { success = false; }
+			CHECK_EQUAL(success, true);
 	}
-	ofstream file("tensor1.dat");
-	A.Write(file);
-	file.close();
-	Tensorcd B("tensor1.dat");
-	auto C = A - B;
-	auto s = C.DotProduct(C);
-	auto norm = abs(s.Trace());
-	if (norm > 1e-9) {
-		success = false;
-		cout << "Failed non-binary I/O test.\n";
+
+	TEST(Tensor_Constructor) {
+		TensorDim tdim({3, 4, 5}, 3);
+		Tensorcd A(tdim);
+		Tensorcd B(tdim);
+		auto same = A - B;
+		auto s = same.DotProduct(same);
+		auto delta = s.FrobeniusNorm();
+			CHECK_CLOSE(delta, 0., eps);
 	}
-	return success;
+
+	TEST_FIXTURE (TensorFactory, Tensor_FileIO) {
+		/// Test Tensor I/O
+		CreateTensorA();
+		A.Write("tensor1.dat");
+		Tensorcd B("tensor1.dat");
+		auto C = A - B;
+		auto s = C.DotProduct(C);
+		auto residual = abs(s.Trace());
+			CHECK_CLOSE(residual, 0., eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, Tensor_Product) {
+		CreateTensors();
+		auto x = HoleProduct(A, B, 0);
+		Matrixcd s("Tensor_Product.dat");
+		auto d = x - s;
+		double residual = d.FrobeniusNorm();
+			CHECK_CLOSE(residual, 0., eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, Tensor_Matrix_Product) {
+		CreateTensors();
+		auto x = HoleProduct(A, B, 1);
+		x.Write("Tensor_Product_0.dat");
+		Matrixcd s("Tensor_Product_0.dat");
+		auto d = x - s;
+		double residual = d.FrobeniusNorm();
+			CHECK_CLOSE(residual, 0., eps);
+	}
 }
 
-Tensorcd test_Tensor_0() {
-	TensorDim tdim({3, 4, 5}, 2);
-	Tensorcd A(tdim);
-	return A;
+SUITE (Matrix) {
+	class MatrixFactory {
+	public:
+		Matrixcd A;
+		Matrixcd B;
+
+		void CreateMatrixA() {
+			A = Matrixcd(3, 3);
+			for (size_t i = 0; i < A.Dim1(); ++i) {
+				for (size_t j = 0; j < A.Dim2(); ++j) {
+					A(j, i) = i + j;
+				}
+			}
+		}
+
+		void CreateMatrixB() {
+			B = Matrixcd(3, 3);
+			for (size_t i = 0; i < B.Dim1(); ++i) {
+				for (size_t j = 0; j < B.Dim2(); ++j) {
+					B(j, i) = i * j;
+				}
+			}
+		}
+
+		void CreateMatrices() {
+			CreateMatrixA();
+			CreateMatrixB();
+		}
+	};
+
+	constexpr double eps = 1e-7;
+
+	TEST_FIXTURE(MatrixFactory, Matrix_FileIO) {
+		/// Test Matrix I/O
+		CreateMatrices();
+		A.Write("matrix1.dat");
+		Matrixcd N("matrix1.dat");
+		bool success = A == N;
+		CHECK_EQUAL(success, true);
+	}
+
+	TEST_FIXTURE(MatrixFactory, Matrix_) {
+		CreateMatrices();
+		auto C = A * B;
+		Matrixcd D("matrix2.dat");
+		auto d = C - D;
+		double residual = d.FrobeniusNorm();
+		CHECK_CLOSE(residual, 0., eps);
+	}
 }
-
-void example_Tensor_0() {
-	TensorDim tdim({3, 4, 5});
-	Tensorcd A(tdim);
-	Tensorcd B(tdim);
-	auto B0 = HoleProduct(A, B, 0);
-
-	auto spectral_Decomp_0 = B0.cDiag();
-	auto eigenvectors0 = spectral_Decomp_0.second;
-	auto U0 = spectral_Decomp_0.first;
-
-	TensorDim tdim2({3, 20});
-	B.Reshape(tdim2);
-
-	TensorDim dim({3, 4, 5, 6});
-	Tensorcd X(dim);
-	Matrixcd s(4, 4);
-	auto Y = multAB(s, X, 1);
-}
-
-void testi() {
-	auto C = test_Tensor_0(); // Call copy asignment operator=()
-	auto D(C); // Call copy constructor
-	D[0] = 1.;
-	auto x = D[1];
-}
-
-int test_Tensor() {
-	cout << "Testing Matrix:\n";
-	cout << "I/O:\n";
-	cout << test_Matrix_1() << endl;
-
-	cout << "Testing TensorDim:\n";
-	cout << "I/O:\n";
-	cout << test_TensorDim_1() << endl;
-	cout << "Getters:\n";
-	cout << test_TensorDim_2() << endl;
-
-	cout << "Testing Tensor I/O\n";
-	cout << test_Tensor_1() << endl;
-
-	return 1;
-}
-
 

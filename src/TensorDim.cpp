@@ -1,21 +1,22 @@
 #include"TensorDim.h"
 
-TensorABC::TensorABC(size_t k, vector<size_t> dim) {
+TensorABC::TensorABC(size_t k, vector<size_t> dim)
+	: before(1), active(1), after(1), total(1) {
 	assert(k < dim.size());
 	assert(k >= 0);
 
 	before = 1;
 	active = dim[k];
-	behind = 1;
+	after = 1;
 
 	for (size_t i = 0; i < k; i++) {
 		before *= dim[i];
 	}
 	for (size_t i = k + 1; i < dim.size(); i++) {
-		behind *= dim[i];
+		after *= dim[i];
 	}
 
-	total = before * active * behind;
+	total = before * active * after;
 }
 
 TensorDim::TensorDim(const vector<size_t>& dim, size_t ntensor_) {
@@ -37,14 +38,14 @@ void TensorDim::Initialize(const vector<size_t>& dim, size_t ntensor_) {
 	f = dim.size();
 	abc.clear();
 	for (size_t i = 0; i < dim.size(); i++) {
-		abc.push_back(TensorABC(i, dim));
+		abc.emplace_back(TensorABC(i, dim));
 	}
 	dimpart = abc[0].gettotal();
 	ntensor = ntensor_;
 	dimtot = dimpart * ntensor_;
 }
 
-void TensorDim::WriteBin(ofstream& os) const {
+void TensorDim::Write(ofstream& os) const {
 	// Write marker
 	os.write("TDIM", 4);
 
@@ -63,11 +64,9 @@ void TensorDim::WriteBin(ofstream& os) const {
 	}
 }
 
-void TensorDim::info(ostream& os) const {
-	cout << "ntensor = " << getntensor() << "\n";
-	cout << "F = " << F() << "\n";
-	for (size_t k = 0; k < F(); k++)
-		cout << "active = " << Active(k) << "\n";
+void TensorDim::Write(const string& filename) const {
+	ofstream os(filename);
+	Write(os);
 }
 
 void TensorDim::ReadDim(istream& is) {
@@ -118,9 +117,9 @@ size_t TensorDim::Active(size_t k) const {
 	return abc[k].getactive();
 }
 
-size_t TensorDim::Behind(size_t k) const {
+size_t TensorDim::After(size_t k) const {
 	assert(k < f);
-	return abc[k].getbehind();
+	return abc[k].getafter();
 }
 
 size_t TensorDim::Before(size_t k) const {
@@ -146,7 +145,7 @@ void TensorDim::setactive(size_t act, size_t k) {
 	Initialize(dim, ntensor);
 }
 
-void TensorDim::print(ostream& os)const {
+void TensorDim::print(ostream& os) const {
 	os << "d = " << f;
 	for (size_t k = 0; k < f; ++k) {
 		os << "\t" << k << "\t" << Active(k) << endl;

@@ -64,7 +64,11 @@ public:
 
 	void Write(ofstream& os)const;
 
+	void Write(const string& filename)const;
+
 	void Read(istream& is);
+
+	void Read(const string& filename);
 
 	void ReadFortranBinary(int id);
 
