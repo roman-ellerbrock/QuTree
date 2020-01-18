@@ -27,12 +27,14 @@ Tensor<T>::Tensor(const TensorDim& dim_, const bool InitZero)
 }
 
 template<typename T>
-Tensor<T>::Tensor(istream& is) {
+Tensor<T>::Tensor(istream& is)
+	:Tensor() {
 	Read(is);
 }
 
 template<typename T>
-Tensor<T>::Tensor(const string& filename) {
+Tensor<T>::Tensor(const string& filename)
+	: Tensor() {
 	ifstream is(filename);
 	Read(is);
 }
@@ -247,6 +249,14 @@ void Tensor<T>::operator+=(const Tensor& A) {
 	assert(A.Dim().getdimtot() == Dim().getdimtot());
 	for (size_t i = 0; i < A.Dim().getdimtot(); i++) {
 		(*this)(i) += A(i);
+	}
+}
+
+template<typename T>
+void Tensor<T>::operator-=(const Tensor& A) {
+	assert(A.Dim().getdimtot() == Dim().getdimtot());
+	for (size_t i = 0; i < A.Dim().getdimtot(); i++) {
+		(*this)(i) -= A(i);
 	}
 }
 
@@ -837,3 +847,13 @@ Tensor<T> conj(Tensor<T> A) {
 	}
 	return A;
 }
+
+template<typename T>
+double Residual(Tensor<T> D, const Tensor<T>& B) {
+	D -= B;
+	auto S = D.DotProduct(D);
+	return S.FrobeniusNorm();
+}
+
+
+

@@ -12,74 +12,91 @@
  *
  * */
 
-template <typename T>
-class Vector
-{
+template<typename T>
+class Vector {
 public:
 	//////////////////////////////////////////////////////////////////////
 	// Initialization
 	//////////////////////////////////////////////////////////////////////
 	// Standard Constructor
-	Vector():Vector(1) {}
+	Vector()
+		: Vector(1) {}
 
 	// Constructor
-	Vector(size_t dim_);
+	explicit Vector(size_t dim_);
+
+	explicit Vector(const string& filename);
+
+	explicit Vector(istream& is);
 
 	// Copy constructor
 	Vector(const Vector& old);
 
 	// Move constructor
-	Vector(Vector&& old);
+	Vector(Vector&& old) noexcept;
 
 	// Copy Assignment Operator
 	Vector& operator=(const Vector& other);
 
 	// Move Assignment Operator
-	Vector& operator=(Vector&& other);
+	Vector& operator=(Vector&& other) noexcept;
 
 	// Destructor
 	~Vector();
 
 	// I/O
-	void Write(ostream& os);
+	void Write(const string& filename) const;
+	void Write(ostream& os) const;
 
-	void print(ostream& os = cout)const;
+	void Read(const string& filename);
+	void Read(istream& is);
+
+	void print(ostream& os = cout) const;
 
 	// Operators
-	inline T operator()(size_t i)const
-	{
-		assert(i < dim && i >= 0);
+	inline T operator()(size_t i) const {
+		assert(i < dim);
 		return coeffs[i];
 	}
 
-	inline T& operator()(size_t i)
-	{
-		assert(i < dim && i >= 0);
+	inline T& operator()(size_t i) {
+		assert(i < dim);
 		return coeffs[i];
 	}
 
-	Vector operator+(const Vector b);
-	Vector operator-(const Vector b);
-	T operator*(const Vector b);
+	inline T operator[](size_t i) const {
+		return coeffs[i];
+	}
+
+	inline T& operator[](size_t i) {
+		return coeffs[i];
+	}
+
+	Vector operator+(Vector b);
+	Vector operator-(Vector b);
+	T operator*(Vector b);
 	Vector& operator*=(T coeff);
 	Vector& operator/=(T coeff);
 
 	// Math Operators
-	double Norm()const;
+	double Norm() const;
 
 	void zero();
 
 	// Setter & Getter
-	inline size_t Dim()const { return dim; }
+	inline size_t Dim() const { return dim; }
 
 protected:
-	T* coeffs;
+	T *coeffs;
 	size_t dim;
-
 };
 
-template <typename T>
+template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 
+template<typename T>
+double Residual(const Vector<T>& A, const Vector<T>& B);
+
 typedef Vector<double> Vectord;
+
 typedef Vector<complex<double>> Vectorcd;

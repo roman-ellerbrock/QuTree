@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SUITE(Tensor) {
+SUITE (Tensor) {
 	class TensorFactory {
 	public:
 		Tensorcd A;
@@ -34,7 +34,7 @@ SUITE(Tensor) {
 
 	constexpr double eps = 1e-7;
 
-	TEST(TensorDim_FileIO) {
+	TEST (TensorDim_FileIO) {
 		/// Create a TensorDim, write to file, read in again
 		TensorDim tdim({3, 4, 5}, 2);
 		tdim.Write("tdim.dat");
@@ -43,7 +43,7 @@ SUITE(Tensor) {
 			CHECK_EQUAL(same, true);
 	}
 
-	TEST(TensorDim_Getters) {
+	TEST (TensorDim_Getters) {
 		/// Check Getters and Initialization
 		bool success = true;
 		TensorDim tdim({3, 4, 5}, 2);
@@ -53,7 +53,7 @@ SUITE(Tensor) {
 			CHECK_EQUAL(success, true);
 	}
 
-	TEST(Tensor_Constructor) {
+	TEST (Tensor_Constructor) {
 		TensorDim tdim({3, 4, 5}, 3);
 		Tensorcd A(tdim);
 		Tensorcd B(tdim);
@@ -65,12 +65,12 @@ SUITE(Tensor) {
 
 	TEST_FIXTURE (TensorFactory, Tensor_FileIO) {
 		/// Test Tensor I/O
-		CreateTensorA();
+		CreateTensors();
 		A.Write("tensor1.dat");
 		Tensorcd B("tensor1.dat");
-		auto C = A - B;
-		auto s = C.DotProduct(C);
-		auto residual = abs(s.Trace());
+		Tensorcd C = A - B;
+		Matrixcd s = C.DotProduct(C);
+		double residual = abs(s.Trace());
 			CHECK_CLOSE(residual, 0., eps);
 	}
 
@@ -92,56 +92,34 @@ SUITE(Tensor) {
 		double residual = d.FrobeniusNorm();
 			CHECK_CLOSE(residual, 0., eps);
 	}
-}
 
-SUITE (Matrix) {
-	class MatrixFactory {
-	public:
-		Matrixcd A;
-		Matrixcd B;
-
-		void CreateMatrixA() {
-			A = Matrixcd(3, 3);
-			for (size_t i = 0; i < A.Dim1(); ++i) {
-				for (size_t j = 0; j < A.Dim2(); ++j) {
-					A(j, i) = i + j;
-				}
-			}
+	TEST_FIXTURE (TensorFactory, Tensor_RoF) {
+		CreateTensors();
+		{
+			// Copy asignment operator
+			auto Aca = A;
+			double r = Residual(A, Aca);
+				CHECK_CLOSE(r, 0., eps);
 		}
 
-		void CreateMatrixB() {
-			B = Matrixcd(3, 3);
-			for (size_t i = 0; i < B.Dim1(); ++i) {
-				for (size_t j = 0; j < B.Dim2(); ++j) {
-					B(j, i) = i * j;
-				}
-			}
+		{
+			// Copy constructor
+			auto Acc(A);
+				CHECK_CLOSE(Residual(A, Acc), 0., eps);
 		}
 
-		void CreateMatrices() {
-			CreateMatrixA();
-			CreateMatrixB();
+		/*
+		{
+			// Move asignment operator
+			auto Ama = move(MoveTensor());
+				CHECK_CLOSE(Residual(A, Ama), 0., eps);
 		}
-	};
 
-	constexpr double eps = 1e-7;
-
-	TEST_FIXTURE(MatrixFactory, Matrix_FileIO) {
-		/// Test Matrix I/O
-		CreateMatrices();
-		A.Write("matrix1.dat");
-		Matrixcd N("matrix1.dat");
-		bool success = A == N;
-		CHECK_EQUAL(success, true);
-	}
-
-	TEST_FIXTURE(MatrixFactory, Matrix_) {
-		CreateMatrices();
-		auto C = A * B;
-		Matrixcd D("matrix2.dat");
-		auto d = C - D;
-		double residual = d.FrobeniusNorm();
-		CHECK_CLOSE(residual, 0., eps);
+		{
+			// Move constructor
+			auto Amc(MoveTensor());
+				CHECK_CLOSE(Residual(A, Amc), 0., eps);
+		}
+		*/
 	}
 }
-

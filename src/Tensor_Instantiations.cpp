@@ -1,8 +1,7 @@
+//
+// Created by Roman Ellerbrock on 2020-01-17.
+//
 #include "Tensor_Implementation.h"
-#include "Matrix_Implementation.h"
-#include "Vector_Implementation.h"
-#include "FactorMatrix.h"
-#include "Tensor_Extension_Implementation.h"
 
 typedef complex<double> cd;
 typedef double doub;
@@ -27,18 +26,5 @@ template Tensor<cd> ProjectOrthogonal<cd>(const Tensor<cd>& A, const Tensor<cd>&
 template void multAdd<cd, cd>(Tensor<cd>& A, const Tensor<cd>& B, cd coeff);
 template void multAdd<cd, double>(Tensor<cd>& A, const Tensor<cd>& B, double coeff);
 template Tensor<cd> conj<cd>(Tensor<cd> A);
-
-// Tensor-Extension instantiations
-template Matrix<cd> Tensor_Extension::OuterProduct(const Tensor<cd>& A, const Tensor<cd>& B);
-template void Tensor_Extension::OuterProductAdd(Matrixcd& M, const Tensor<cd>& A, const Tensor<cd>& B);
-template Matrix<cd> Tensor_Extension::WeightedOuterProduct(const Tensor<cd>& A, const Tensor<cd>& B,
-		const Matrix<cd>& m);
-template void Tensor_Extension::WeightedOuterProductAdd(Matrixcd& M, const Tensor<cd>& A, const Tensor<cd>& B,
-		const Matrix<cd>& rho);
-template Tensor<cd> Tensor_Extension::Merge(Tensor<cd> A, const Tensor<cd>& B);
-template Matrix<cd> Tensor_Extension::Map(const Tensor<cd>& A);
-
-// FactorMatrix instantiations
-template class FactorMatrix<complex<double>>;
-template class FactorMatrix<double>;
-
+template double Residual(Tensorcd A, const Tensorcd& B);
+template double Residual(Tensord A, const Tensord& B);

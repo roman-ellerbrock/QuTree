@@ -27,8 +27,7 @@ Matrix<T>::Matrix(istream& is)
 template<typename T>
 Matrix<T>::Matrix(const string& filename)
 	:Matrix<T>() {
-	ifstream is(filename);
-	Read(is);
+	Read(filename);
 }
 
 // Copy constructor
@@ -127,10 +126,10 @@ bool Matrix<T>::operator==(const Matrix<T>& A) const {
 	/// Note: The routine should not be used to check for approximate
 	/// equivalence!
 	bool result = true;
-	dim1 != A.Dim1() ? result = false : true;
-	dim2 != A.Dim2() ? result = false : true;
+	if (dim1 != A.Dim1()) { result = false; }
+	if (dim2 != A.Dim2()) { result = false; }
 	for (size_t i = 0; i < dim1 * dim2; ++i) {
-		if (operator[](i) != A[i]) { return false; }
+		if (operator[](i) != A[i]) { result = false; }
 	}
 	return result;
 }
@@ -525,3 +524,10 @@ Matrix<T> EuclideanDistance(const Matrix<T>& A) {
 	}
 	return D;
 }
+
+template<typename T>
+double Residual(const Matrix<T>& A, const Matrix<T>& B) {
+	Matrix<T> D = A - B;
+	return D.FrobeniusNorm();
+}
+

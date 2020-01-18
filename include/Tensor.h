@@ -129,6 +129,8 @@ public:
 
 	void operator+=(const Tensor& A);
 
+	void operator-=(const Tensor& A);
+
 	void operator*=(T a);
 
     friend Tensor operator*(T a, const Tensor<T>& A) {
@@ -253,3 +255,5 @@ Tensor< complex<double> > ProjectOrthogonal(const Tensor< complex<double> >& A,
 template<typename T>
 Tensor<T> conj(Tensor<T> A);
 
+template<typename T>
+double Residual(Tensor<T> A, const Tensor<T>& B);

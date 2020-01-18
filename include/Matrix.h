@@ -204,6 +204,9 @@ template<typename T>
 Matrix<T> EuclideanDistance(const Matrix<T>& A);
 
 template<typename T>
+double Residual(const Matrix<T>& A, const Matrix<T>& B);
+
+template<typename T>
 Matrix<T> RealSymmetrize(const Matrix<T>& A);
 
 template<typename T>
