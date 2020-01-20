@@ -27,10 +27,10 @@ void print(const Path& p) {
 class NodeContent {
 public:
 	NodeContent()
-		: f(0), n(0) {}
+		: f(0), n(0), nextnodenr_(0), address_(0) {}
 
 	explicit NodeContent(size_t n_)
-		: f(0), n(n_) {}
+		: f(0), n(n_), nextnodenr_(0), address_(0) {}
 
 	~NodeContent() = default;
 
@@ -42,6 +42,14 @@ public:
 	}
 
 	size_t f, n;
+
+	int nextnodenr_;
+
+	size_t address_;
+
+	TensorDim tdim_;
+
+	Path path_;
 };
 
 class TreeNode {
@@ -53,21 +61,19 @@ public:
 
 	/// Rule of five-section (constructors & destructors)
 	TreeNode()
-		: up(nullptr), nextnodenr_(0), address_(0) {}
+		: up(nullptr) {}
 
 	explicit TreeNode(size_t n)
-		: up(nullptr), nextnodenr_(0), content_(n), address_(0) {}
+		: up(nullptr), content_(n) {}
 
 	explicit TreeNode(NodeContent con)
-		: up(nullptr), nextnodenr_(0), content_(con), address_(0) {}
+		: up(nullptr), content_(con) {}
 
 	~TreeNode() = default;
 
 	/// Copy constructor
 	TreeNode(const TreeNode& node)
-		: up(node.up), content_(node.content_),
-		  nextnodenr_(node.nextnodenr_), address_(node.address_),
-		  tdim_(node.tdim_) {
+		: up(node.up), content_(node.content_) {
 
 		for (const TreeNode *child : node.down_) {
 			down_.push_back(new TreeNode(*child));
@@ -79,9 +85,7 @@ public:
 
 	/// Move constructor
 	TreeNode(TreeNode&& node) noexcept
-		: up(node.up), down_(move(node.down_)), content_(node.content_),
-		  nextnodenr_(node.nextnodenr_), address_(node.address_),
-		  tdim_(node.tdim_) {
+		: up(node.up), down_(move(node.down_)), content_(node.content_) {
 
 		for (TreeNode *child : down_) {
 			child->up = this;
@@ -104,9 +108,6 @@ public:
 		up = old.up;
 		down_ = move(old.down_);
 		content_ = old.content_;
-		nextnodenr_ = old.nextnodenr_;
-		address_ = old.address_;
-		tdim_ = old.tdim_;
 
 		for (TreeNode *child : down_) {
 			child->up = this;
@@ -117,13 +118,13 @@ public:
 	/// Member functions
 	TreeNode *NextNode() {
 		TreeNode *result;
-		if (nextnodenr_ < down_.size()) {
-			result = down_[nextnodenr_]->NextNode();
-			if (result == down_[nextnodenr_]) {
-				++nextnodenr_;
+		if (content_.nextnodenr_ < down_.size()) {
+			result = down_[content_.nextnodenr_]->NextNode();
+			if (result == down_[content_.nextnodenr_]) {
+				++content_.nextnodenr_;
 			}
 		} else {
-			nextnodenr_ = 0;
+			content_.nextnodenr_ = 0;
 			result = this;
 		}
 		return result;
@@ -136,13 +137,13 @@ public:
 
 	size_t size() const { return down_.size(); }
 
-	size_t Address() const { return address_; }
+	size_t Address() const { return content_.address_; }
 
-	void SetAddress(size_t addr) { address_ = addr; }
+	void SetAddress(size_t addr) { content_.address_ = addr; }
 
-	const TensorDim& TDim() const { return tdim_; }
+	const TensorDim& TDim() const { return content_.tdim_; }
 
-	void SetTDim(const TensorDim& tdim) { tdim_ = tdim; }
+	void SetTDim(const TensorDim& tdim) { content_.tdim_ = tdim; }
 
 	const TreeNode& Down(size_t k) const {
 		assert(k < down_.size());
@@ -161,31 +162,20 @@ public:
 		}
 	}
 
-	void GenInput(ostream& os = cout) const {
-		// Indentation
-		for (size_t i = 0; i < Layer() - 1; ++i) { os << "\t"; }
-		if (IsLeaf()) {
-			os << content_.n << "\t" << "6" << "\t" << content_.f << "\n";
-		} else {
-			os << content_.n << "\t-" << size() << "\n";
-		}
-		for (TreeNode *child : down_) {
-			child->GenInput(os);
-		}
-	}
-
 	bool IsLeaf() const { return (down_.empty()); }
 
 	bool IsBottom() const { return (down_.size() == 1); }
 
 	bool IsRoot() const { return (up == nullptr); }
 
-	Path GetPath() const { return path_; }
+	size_t Layer() const { return content_.path_.size(); }
+
+	Path GetPath() const { return content_.path_; }
 
 	void SetPath(const Path& newpath) {
-		path_ = newpath;
+		content_.path_ = newpath;
 		for (size_t k = 0; k < down_.size(); ++k) {
-			Path cpath = path_;
+			Path cpath = content_.path_;
 			cpath.emplace_back(k);
 			TreeNode& child = Down(k);
 			child.SetPath(cpath);
@@ -204,30 +194,13 @@ public:
 		}
 	}
 
-	void SetPhysicalNodesScatter(size_t& nextl, size_t& nextr, bool& left) {
-		if (IsLeaf()) {
-			if (left) {
-				content_.f = nextl;
-				nextl++;
-			} else {
-				content_.f = nextr;
-				nextr++;
-			}
-			left = !left;
-		} else {
-			for (TreeNode *child : down_) {
-				child->SetPhysicalNodesScatter(nextl, nextr, left);
-			}
-		}
-	}
-
 	void UpdateTensorDim() {
 		if( !IsLeaf()) {
 			vector<size_t> ns;
 			for (auto& child : down_) {
 				ns.push_back(child->content_.n);
 			}
-			tdim_ = TensorDim(ns, content_.n);
+			content_.tdim_ = TensorDim(ns, content_.n);
 			for (auto& child : down_) {
 				child->UpdateTensorDim();
 			}
@@ -240,19 +213,24 @@ public:
 		UpdateTensorDim();
 	}
 
-	size_t Layer() const { return path_.size(); }
+	void GenInput(ostream& os = cout) const {
+		// Indentation
+		for (size_t i = 0; i < Layer() - 1; ++i) { os << "\t"; }
+		if (IsLeaf()) {
+			os << content_.n << "\t" << "6" << "\t" << content_.f << "\n";
+		} else {
+			os << content_.n << "\t-" << size() << "\n";
+		}
+		for (TreeNode *child : down_) {
+			child->GenInput(os);
+		}
+	}
 
 	NodeContent content_;
-	TensorDim tdim_;
 private:
 	TreeNode *up;
 	std::vector<TreeNode *> down_;
 
-	int nextnodenr_;
-
-	Path path_;
-
-	size_t address_;
 };
 
 
