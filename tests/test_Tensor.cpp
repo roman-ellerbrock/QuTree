@@ -32,6 +32,15 @@ SUITE (Tensor) {
 		}
 	};
 
+	Tensorcd NewTensor() {
+		TensorDim tdim({2, 3, 4}, 2);
+		Tensorcd tmp(tdim);
+		for (size_t i = 0; i < tdim.getdimtot(); ++i) {
+			tmp(i) = i;
+		}
+		return tmp;
+	}
+
 	constexpr double eps = 1e-7;
 
 	TEST (TensorDim_FileIO) {
@@ -98,8 +107,7 @@ SUITE (Tensor) {
 		{
 			// Copy asignment operator
 			auto Aca = A;
-			double r = Residual(A, Aca);
-				CHECK_CLOSE(r, 0., eps);
+				CHECK_CLOSE(Residual(A, Aca), 0., eps);
 		}
 
 		{
@@ -108,18 +116,16 @@ SUITE (Tensor) {
 				CHECK_CLOSE(Residual(A, Acc), 0., eps);
 		}
 
-		/*
 		{
 			// Move asignment operator
-			auto Ama = move(MoveTensor());
+			auto Ama = move(NewTensor());
 				CHECK_CLOSE(Residual(A, Ama), 0., eps);
 		}
 
 		{
 			// Move constructor
-			auto Amc(MoveTensor());
+			auto Amc(NewTensor());
 				CHECK_CLOSE(Residual(A, Amc), 0., eps);
 		}
-		*/
 	}
 }

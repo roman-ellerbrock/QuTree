@@ -9,7 +9,6 @@ SUITE (Matrix) {
 	public:
 		Matrixcd A;
 		Matrixcd B;
-		Matrixcd H;
 
 		void CreateMatrixA() {
 			A = Matrixcd(3, 3);
@@ -126,4 +125,7 @@ SUITE (Matrix) {
 				CHECK_CLOSE(Residual(A, Amc), 0., eps);
 		}
 	}
+
+
+
 }
