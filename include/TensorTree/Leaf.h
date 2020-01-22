@@ -14,6 +14,8 @@
 #include "LogicalBasis.h"
 #include "SpinGroup.h"
 
+// @TODO: Rename PhysPar
+// @TODO: Use dictionary to store general leaf-memory?
 class PhysPar {
 public:
 	PhysPar()
@@ -107,8 +109,6 @@ public:
 
 	const PrimitiveBasis& PrimitiveGrid() const { return *primitiveBasis_; }
 
-	void UpdatePosition(const NodePosition& p);
-
 	// This is not a GetNode& to avoid circular dependencies
 	AbstractNode& Up() const { return *up_; };
 
@@ -124,8 +124,12 @@ public:
 
 	double WFOmega() const { return par_.WFOmega(); }
 
+	void Update(const NodePosition& p) override;
+
+	void UpdatePosition(const NodePosition& p);
+
 	// Danger zone
-	void SetUp(AbstractNode *node) { up_ = node; }
+	void SetUp(AbstractNode *node) override { up_ = node; }
 
 protected:
 	int dim_, type_, mode_;

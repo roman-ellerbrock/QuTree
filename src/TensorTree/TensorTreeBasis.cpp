@@ -4,7 +4,7 @@
 #include "TensorTreeBasis.h"
 
 TensorTreeBasis::TensorTreeBasis(const TensorTreeBasis& T)
-	: tree(T.tree){
+	: tree(T.tree) {
 	Update();
 }
 
@@ -32,6 +32,61 @@ TensorTreeBasis::TensorTreeBasis(const string& filename) {
 
 TensorTreeBasis::TensorTreeBasis(istream& is) {
 	Read(is);
+}
+
+vector<Node> Partition(const vector<Node>& nodes,
+	size_t n_partition, size_t dim_node) {
+	vector<Node> groups;
+	size_t n_loop = nodes.size() / n_partition;
+	for (size_t k = 0; k < n_loop; ++k) {
+		Node p;
+		vector<size_t> dims;
+		for (size_t l = 0; l < n_partition; ++l) {
+			p.push_back(nodes[k * n_partition + l]);
+			dims.push_back(dim_node);
+		}
+		TensorDim tensordim(dims, dim_node);
+		p.TDim() = tensordim;
+		groups.emplace_back(p);
+	}
+	size_t n_rest = nodes.size() % n_partition;
+	auto& last = groups.back();
+	for (size_t r = 0; r < n_rest; ++r) {
+		last.push_back(nodes[n_loop * n_partition + r]);
+	}
+	return groups;
+}
+
+/// Create Balanced Tree
+TensorTreeBasis::TensorTreeBasis(size_t order,
+	size_t dim_leaves, size_t dim_nodes) {
+	size_t leaf_type = 6;
+	size_t mode = 0;
+	size_t leaf_subtype = 0;
+	PhysPar par;
+	Leaf leaf(dim_leaves, mode, leaf_type, leaf_subtype, par);
+
+	Node bottom(leaf, dim_nodes);
+	vector<Node> nodes;
+	for (size_t k = 0; k < order; ++k) {
+		nodes.push_back(bottom);
+	}
+	cout << "number of nodes: " << nodes.size() << endl;
+	size_t count = 0;
+	while (nodes.size() > 1) {
+		nodes = Partition(nodes, 2, dim_nodes);
+		count++;
+		if (count > 100) {
+			cerr << "Error while partitioning TensorTreeBasis in constructor.\n";
+			exit(1);
+		}
+	}
+	tree = move(nodes.front());
+	tree.SetUp(nullptr);
+	auto& tdim = tree.TDim();
+	tdim.setntensor(1);
+	tree.UpdatePosition(NodePosition());
+	Update();
 }
 
 void TensorTreeBasis::Read(istream& file) {
@@ -79,20 +134,14 @@ void TensorTreeBasis::info(ostream& os) const {
 	os << endl;
 
 	// ... and now for every logical node
-	cout << "List of logical nodes:" << endl;
-	cout << "nTotalNodes = " << nNodes() << endl;
-	for (size_t i = 0; i < nNodes(); i++) {
+	os << "List of logical nodes:" << endl;
+	os << "nTotalNodes = " << nNodes() << endl;
+	for (int i = nNodes() - 1; i >= 0; i--){
 		const Node& node = GetNode(i);
 		node.info();
-		node.TDim().print(cout);
-		if (!node.IsToplayer()) {
-			const Node& parent = node.Up();
-			const TensorDim& parentdim = parent.TDim();
-			parentdim.print(cout);
-		}
-		cout << endl;
+		node.TDim().print(os);
+		os << endl;
 	}
-	cout << endl;
 }
 
 Leaf& TensorTreeBasis::GetLeaf(size_t i) {
@@ -124,6 +173,7 @@ void TensorTreeBasis::ExpandNode(Node& node) {
 void TensorTreeBasis::Update() {
 	// Tree is assumed to be updated, but the rest not:
 	// Update everything
+	tree.Update(NodePosition());
 	LinearizeLeaves();
 	LinearizeNodes();
 }

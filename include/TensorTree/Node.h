@@ -84,6 +84,8 @@ public:
 	// Get position_ index
 	NodePosition Position() const { return position_; }
 
+	void push_back(const Node& node);
+
 	vector<unique_ptr<AbstractNode>>::const_iterator begin() const {
 		return down_.begin();
 	}
@@ -107,18 +109,22 @@ public:
 	AbstractNode *nextNodeManthe() override;
 	// Move getter for unique_ptr to children
 	unique_ptr<AbstractNode> DownUnique(size_t i);
-	// Update the TensorDim
-	void UpdateTDim();
-
 	// Set the upwards pointer
-	void SetUp(Node *up) { up_ = up; }
+	void SetUp(AbstractNode* up) override { up_ = up; }
 
 	// Replace a Child
 	void Replace(Node& new_child, size_t idx);
+	// Update counters, position indices
+	void Update(const NodePosition& p) override;
 	// Update position_ index
 	void UpdatePosition(const NodePosition& p);
 	// Update nTotalNodes_, nNodes_ and nLeaves_
 	void Updatennodes();
+	// Update the TensorDim
+	void UpdateTDim();
+	// Reset all counters for the swipe
+	void ResetCounters();
+
 	// Get a reference to the top-node
 	Node& TopNode();
 
@@ -132,7 +138,8 @@ protected:
 	TensorDim tensorDim_;
 
 	// pointer to the upwards node
-	Node *up_;
+//	Node *up_;
+	AbstractNode *up_;
 	// vector of references to the children nodes
 	vector<unique_ptr<AbstractNode>> down_;
 

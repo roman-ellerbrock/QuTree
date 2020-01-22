@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "NodePosition.h"
 
 class AbstractNode {
 public:
@@ -17,6 +18,8 @@ public:
 	virtual void Write(ostream& os) const = 0;
 
 	virtual int NodeType() const = 0;
+	virtual void SetUp(AbstractNode* Up) = 0;
+	virtual void Update(const NodePosition& p) = 0;
 
 protected:
 };

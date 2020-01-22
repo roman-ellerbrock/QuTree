@@ -17,13 +17,13 @@ Node::Node(const Node& node)
 	  address_(node.address_), nodeType_(node.nodeType_),
 	  bottomLayer_(node.bottomLayer_) {
 	if (IsBottomlayer()) {
-		down_.emplace_back(unique_ptr<Leaf>
-			(new Leaf(node.PhysCoord())));
+//		down_.emplace_back(unique_ptr<Leaf>(new Leaf(node.PhysCoord())));
+		down_.emplace_back(make_unique<Leaf>(node.PhysCoord()));
 		PhysCoord().SetUp(this);
 	} else {
 		for (size_t i = 0; i < node.nChildren(); i++) {
-			down_.emplace_back(unique_ptr<AbstractNode>
-				(new Node(node.Down(i))));
+//			down_.emplace_back(unique_ptr<AbstractNode>(new Node(node.Down(i))));
+			down_.emplace_back(make_unique<Node>(node.Down(i)));
 			Down(i).SetUp(this);
 		}
 	}
@@ -85,8 +85,8 @@ Node::Node(const Leaf& phys, size_t ntensor)
 	: Node() {
 	// This constructor initializes a bottomLayer_ GetNode from a
 	// Leaf
-	down_.emplace_back(unique_ptr<Leaf>
-		(new Leaf(phys)));
+//	down_.emplace_back(unique_ptr<Leaf>(new Leaf(phys)));
+	down_.emplace_back(make_unique<Leaf>(phys));
 	nTotalNodes_++;
 	nLeaves_++;
 	bottomLayer_ = true;
@@ -165,18 +165,13 @@ Node::Node(istream& file, Node *up,
 	  nodeType_(1), bottomLayer_(false), nextNodeNum_(0),
 	  nextNodeNumFortran_(0), address_(-100) {
 	// Call Initialize
-	Initialize(file, up_, position_);
+	Initialize(file, up, position_);
 }
 
 void Node::info(ostream& os) const {
 	os << "GetNode" << endl;
 	position_.info(os);
-
-/*	cout << "Tensor Dim:" << endl;
-	cout << "n tensor = " << tdim.getntensor() << "\n";
-	for (size_t k = 0; k < tdim.F(); k++)
-		cout << tdim.Active(k) << "\n";
-		*/
+//	tensorDim_.print(os);
 }
 
 void Node::Write(ostream& os) const {
@@ -186,6 +181,12 @@ void Node::Write(ostream& os) const {
 	for (size_t i = 0; i < nChildren(); i++) {
 		down_[i]->Write(os);
 	}
+}
+
+void Node::push_back(const Node& node) {
+	down_.emplace_back(std::make_unique<Node>(node));
+	down_.back()->SetUp(this);
+	Updatennodes();
 }
 
 bool Node::IsToplayer() const {
@@ -217,13 +218,13 @@ Node& Node::Down(size_t i) {
 }
 
 Node& Node::Up() {
-	assert(up_ != NULL);
-	return *up_;
+	assert(up_ != nullptr);
+	return (Node&) *up_;
 }
 
 const Node& Node::Up() const {
-	assert(up_ != NULL);
-	return *up_;
+	assert(up_ != nullptr);
+	return (Node&) *up_;
 }
 
 AbstractNode *Node::nextNode() {
@@ -318,8 +319,16 @@ void Node::ExpandChild(size_t i) {
 	nextNodeNum_ = down_.size() - 1;
 }
 
+void Node::Update(const NodePosition& p) {
+	// @TODO: Should reset state and Update(connectivity) be in separate routines?
+	ResetCounters();
+	UpdatePosition(p);
+	Updatennodes();
+	UpdateTDim();
+}
+
 void Node::UpdateTDim() {
-	size_t ntensor = 0;
+/*	size_t ntensor = 0;
 	if (IsToplayer()) {
 		// If the node is a Toplayer, ntensor stays the same
 		ntensor = tensorDim_.getntensor();
@@ -329,7 +338,7 @@ void Node::UpdateTDim() {
 		Node& parent = Up();
 		// @TODO: This looks wrong - check again. Doesnt it have to be active(k)?
 		ntensor = parent.TDim().getntensor();
-	}
+	}*/
 
 	// Get the dimensions of the children by requesting their ntensors
 	vector<size_t> dim_new;
@@ -345,7 +354,7 @@ void Node::UpdateTDim() {
 	}
 
 	// Create a new TensorDim from the dim-vector and ntensor
-	tensorDim_ = TensorDim(dim_new, ntensor);
+	tensorDim_ = TensorDim(dim_new, tensorDim_.getntensor());
 }
 
 void Node::UpdatePosition(const NodePosition& p) {
@@ -361,6 +370,17 @@ void Node::UpdatePosition(const NodePosition& p) {
 		} else {
 			Node& child = Down(i);
 			child.UpdatePosition(subp);
+		}
+	}
+}
+
+void Node::ResetCounters() {
+
+	nextNodeNum_ = down_.size() - 1;
+	nextNodeNumFortran_ = 0;
+	if (!IsBottomlayer()) {
+		for (size_t k = 0; k < nChildren(); ++k) {
+			Down(k).ResetCounters();
 		}
 	}
 }

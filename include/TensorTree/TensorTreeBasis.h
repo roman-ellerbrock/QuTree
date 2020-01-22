@@ -22,6 +22,9 @@ public:
 
 	explicit TensorTreeBasis(const string& filename);
 
+	/// Create Balanced Tree
+	TensorTreeBasis(size_t order, size_t dim_leaves, size_t dim_nodes);
+
 	/// Copy constructor
 	TensorTreeBasis(const TensorTreeBasis& T);
 
