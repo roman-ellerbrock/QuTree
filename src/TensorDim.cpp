@@ -138,7 +138,7 @@ void TensorDim::setactive(size_t act, size_t k) {
 
 	vector<size_t> dim;
 	for (int k = 0; k < F(); k++) {
-		dim.push_back(Active(k));
+		dim.emplace_back(Active(k));
 	}
 
 	dim[k] = act;
@@ -146,8 +146,14 @@ void TensorDim::setactive(size_t act, size_t k) {
 }
 
 void TensorDim::print(ostream& os) const {
-	os << "d = " << f;
-	for (size_t k = 0; k < f; ++k) {
-		os << "\t" << k << "\t" << Active(k) << endl;
+	if (f > 0) {
+		os << "(";
+		for (size_t k = 0; k < f - 1; ++k) {
+			os << Active(k) << ", ";
+		}
+		os << Active(f - 1) << "); ";
+		os << ntensor << endl;
+	} else {
+		os << "( ); " << ntensor << endl;
 	}
 }

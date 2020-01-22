@@ -11,17 +11,17 @@
 
 typedef vector<size_t> Path;
 
-void print(const Path& p) {
-	cout << "{ ";
+void print(const Path& p, ostream& os = cout) {
+		os << "{ ";
 	if (p.empty()) {
-		cout << "{ }" << endl;
+		os << "{ }" << endl;
 		return;
 	}
-	cout << p[0];
+	os << p[0];
 	for (size_t i = 1; i < p.size(); ++i) {
-		cout << ", " << p[i];
+		os << ", " << p[i];
 	}
-	cout << " }" << endl;
+	os << " }" << endl;
 }
 
 class NodeContent {
@@ -29,14 +29,14 @@ public:
 	NodeContent()
 		: f(0), n(0), nextnodenr_(0), address_(0) {}
 
-	explicit NodeContent(size_t n_)
-		: f(0), n(n_), nextnodenr_(0), address_(0) {}
+	explicit NodeContent(size_t n_, size_t f_ = 1)
+		: f(f_), n(n_), nextnodenr_(0), address_(0) {}
 
 	~NodeContent() = default;
 
 	void print(size_t indent = 0, std::ostream& os = std::cout) const {
 		for (size_t i = 0; i < indent; ++i) {
-			cout << "\t";
+			os << "\t";
 		}
 		os << f << " " << n << std::endl;
 	}
@@ -210,7 +210,6 @@ public:
 	void MakeRoot() {
 		up = nullptr;
 		SetPath({0});
-		UpdateTensorDim();
 	}
 
 	void GenInput(ostream& os = cout) const {

@@ -32,10 +32,16 @@ SUITE (Tree) {
 	}
  */
 
-	TEST(TreeClass) {
+	TEST (TreeClass) {
 		TensorDimTree tree(3, 2, 4, 2);
-		tree.print();
-//		tree.print();
+		for (const TreeNode node : tree) {
+			node.TDim().print();
+		}
+
+		for (size_t mode = 0; mode < tree.nLeaves(); ++mode) {
+			const auto& node = tree.Leaf(mode);
+			cout << "mode: " << node.content_.f << endl;
+		}
 	}
 }
 

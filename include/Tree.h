@@ -5,10 +5,11 @@
 #ifndef MCTDH_TREE_H
 #define MCTDH_TREE_H
 #include "TreeNode.h"
+#include <map>
 
-TreeNode Group(const TreeNode& node, size_t n, size_t d) {
-	TreeNode parent(n);
-	for (size_t k = 0; k < d; ++k) {
+TreeNode Group(const TreeNode& node, const NodeContent& c) {
+	TreeNode parent(c);
+	for (size_t k = 0; k < c.f; ++k) {
 		parent.push_back(node);
 	}
 	return parent;
@@ -24,11 +25,15 @@ public:
 		TreeNode leaf(N);
 		TreeNode bottom(n);
 		TreeNode node(n);
+		NodeContent c(n, 2);
 		for (size_t l = 0; l < n_layers; ++l) {
-			node = Group(node, n, d);
+			node = Group(node, c);
 		}
 		root_ = node;
+		root_.content_.n = 1;
 		root_.MakeRoot();
+		size_t mode = 0;
+		root_.SetPhysicalNodes(mode);
 
 		Update();
 	}
@@ -52,19 +57,25 @@ public:
 		root_.UpdateTensorDim();
 	}
 
-	void print()const {
+	void print(ostream& os = cout)const {
 		for (const TreeNode& node : *this) {
-			::print(node.GetPath());
-			node.TDim().print();
+			::print(node.GetPath(), os);
+			node.TDim().print(os);
+			cout << endl;
 		}
 	}
 
 	vector<reference_wrapper<TreeNode>>::const_iterator begin() const{ return nodes_.begin(); }
 	vector<reference_wrapper<TreeNode>>::const_iterator end() const{ return nodes_.end(); }
+
+	size_t nLeaves()const { return phys_nodes_.size(); }
+	const TreeNode& Leaf(size_t k)const { return phys_nodes_[k]; }
+	TreeNode& Leaf(size_t k) { return phys_nodes_[k]; }
 private:
 	TreeNode root_;
 	vector<reference_wrapper<TreeNode>> nodes_;
 	vector<reference_wrapper<TreeNode>> phys_nodes_;
+//	map<size_t, reference_wrapper<TreeNode>> phys_nodes_;
 };
 
 #endif //MCTDH_TREE_H

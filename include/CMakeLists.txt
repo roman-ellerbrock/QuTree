@@ -27,4 +27,28 @@ set(QDlib_INCLUDE_FILES
         stdafx.h
         )
 
+set(TENSOR_TREE_FILES
+        TensorTree/AbstractNode.h
+        TensorTree/Leaf.h
+        TensorTree/LinearizedLeaves.h
+        TensorTree/Node.h
+        TensorTree/NodePosition.h
+        TensorTree/TensorTreeBasis.h
+        )
+
+set(LEAF_TYPE_FILES
+        TensorTree/LeafTypes/PrimitiveBasis.h
+        TensorTree/LeafTypes/BosonNumberBasis.h
+        TensorTree/LeafTypes/DVRBasis.h
+        TensorTree/LeafTypes/FermionNumberBasis.h
+        TensorTree/LeafTypes/FFTGrid.h
+        TensorTree/LeafTypes/HO_Basis.h
+        TensorTree/LeafTypes/LegendrePolynomials.h
+        TensorTree/LeafTypes/LogicalBasis.h
+        TensorTree/LeafTypes/NumberBasis.h
+        TensorTree/LeafTypes/SpinGroup.h
+        )
+
 install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)
+install(FILES ${TENSOR_TREE_FILES} DESTINATION include/QDlib/TensorTree)
+
