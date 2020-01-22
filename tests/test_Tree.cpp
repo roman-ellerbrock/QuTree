@@ -2,9 +2,16 @@
 // Created by Roman Ellerbrock on 2020-01-19.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "Tree.h"
+#include "TensorTreeBasis.h"
 
 SUITE (Tree) {
+
+	TEST(TensorTreeBasis) {
+		TensorTreeBasis basis(7, 4, 2);
+		cout << "Final basis:\n";
+		basis.info();
+	}
+
 /*	TEST(TreeNodeTests) {
 		TreeNode leaf(2);
 		TreeNode bottom(2);
@@ -30,7 +37,6 @@ SUITE (Tree) {
 		}
 		print(upper.GetPath());
 	}
- */
 
 	TEST (TreeClass) {
 		TensorDimTree tree(3, 2, 4, 2);
@@ -43,5 +49,6 @@ SUITE (Tree) {
 			cout << "mode: " << node.content_.f << endl;
 		}
 	}
+ */
 }
 
