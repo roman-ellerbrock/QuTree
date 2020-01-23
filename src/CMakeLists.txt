@@ -17,6 +17,7 @@ set(QDlib_SOURCE_FILES
         TensorTree/Node.cpp
         TensorTree/NodePosition.cpp
         TensorTree/TensorTreeBasis.cpp
+        TensorTree/TensorTree_Instantiation.cpp
         )
 
 set(LEAF_TYPE_CPP_FILES

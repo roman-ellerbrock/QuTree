@@ -62,7 +62,7 @@ public:
 	//////////////////////////////////////////////////////////
 	void print(ostream& os = cout)const;
 
-	void Write(ofstream& os)const;
+	void Write(ostream& os)const;
 
 	void Write(const string& filename)const;
 
@@ -257,3 +257,9 @@ Tensor<T> conj(Tensor<T> A);
 
 template<typename T>
 double Residual(Tensor<T> A, const Tensor<T>& B);
+
+template<typename T>
+ostream& operator<<(ostream& os, const Tensor<T>& A);
+
+template<typename T>
+istream& operator>>(istream& is, Tensor<T>& A);

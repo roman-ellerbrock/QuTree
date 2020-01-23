@@ -34,6 +34,9 @@ set(TENSOR_TREE_FILES
         TensorTree/Node.h
         TensorTree/NodePosition.h
         TensorTree/TensorTreeBasis.h
+        TensorTree/TreeStructuredObject.h
+        TensorTree/TensorTree.h
+        TensorTree/TensorTree_Implementation.h
         )
 
 set(LEAF_TYPE_FILES

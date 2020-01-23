@@ -171,7 +171,7 @@ void Tensor<T>::print(ostream& os) const {
 }
 
 template<typename T>
-void Tensor<T>::Write(ofstream& os) const {
+void Tensor<T>::Write(ostream& os) const {
 	// Verification
 	os.write("TENS", 4);
 
@@ -856,4 +856,14 @@ double Residual(Tensor<T> D, const Tensor<T>& B) {
 }
 
 
+template<typename T>
+ostream& operator<<(ostream& os, const Tensor<T>& A) {
+	A.Write(os);
+	return os;
+}
 
+template<typename T>
+istream& operator>>(istream& is, Tensor<T>& A) {
+	A.Read(is);
+	return is;
+}

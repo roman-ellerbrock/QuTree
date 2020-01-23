@@ -28,3 +28,6 @@ template void multAdd<cd, double>(Tensor<cd>& A, const Tensor<cd>& B, double coe
 template Tensor<cd> conj<cd>(Tensor<cd> A);
 template double Residual(Tensorcd A, const Tensorcd& B);
 template double Residual(Tensord A, const Tensord& B);
+
+template ostream& operator<< <cd> (ostream&, const Tensor<cd>& );
+template istream& operator>> <cd> (istream&, Tensor<cd>& );

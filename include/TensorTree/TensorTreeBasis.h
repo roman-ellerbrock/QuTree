@@ -118,7 +118,7 @@ protected:
 
 typedef TensorTreeBasis TTBasis;
 
-ostream& operator<<(ostream& os, TTBasis& basis);
-istream& operator<<(istream& is, TTBasis& basis);
+ostream& operator<<(ostream& os, const TTBasis& basis);
+istream& operator>>(istream& is, TTBasis& basis);
 
 #endif //TENSORTREEBASIS_H
