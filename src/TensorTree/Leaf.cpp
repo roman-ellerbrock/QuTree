@@ -11,7 +11,7 @@ Leaf::Leaf(istream& file, AbstractNode *up_, NodePosition position_)
 	file >> mode_;
 	assert(dim_ > 0);
 	assert(type_ >= 0);
-//	cout << "linearizedLeaves_=" << dim << " " << type << " " << mode << endl;
+//	cout << "Leaf: " << dim << " " << type << " " << mode << endl;
 	CreatePrimitiveBasis(type_, subType_, dim_);
 }
 
@@ -26,19 +26,19 @@ Leaf::Leaf(const Leaf& old)
 void Leaf::CreatePrimitiveBasis(size_t type, size_t subtype, size_t dim) {
 	// Construct Fundamental Operator class
 	if (type == 0) {
-		primitiveBasis_ = unique_ptr<HO_Basis>(new HO_Basis(dim));
+		primitiveBasis_ = make_unique<HO_Basis>(dim);
 	} else if (type == 1) {
-		primitiveBasis_ = unique_ptr<FFTGrid>(new FFTGrid(dim));
+		primitiveBasis_ = make_unique<FFTGrid>(dim);
 	} else if (type == 2) {
-		primitiveBasis_ = unique_ptr<LegendrePolynomials>(new LegendrePolynomials(dim));
+		primitiveBasis_ = make_unique<LegendrePolynomials>(dim);
 	} else if (type == 3) {
-		primitiveBasis_ = unique_ptr<BosonNumberBasis>(new BosonNumberBasis(dim));
+		primitiveBasis_ = make_unique<BosonNumberBasis>(dim);
 	} else if (type == 4) {
-		primitiveBasis_ = unique_ptr<FermionNumberBasis>(new FermionNumberBasis(dim));
+		primitiveBasis_ = make_unique<FermionNumberBasis>(dim);
 	} else if (type == 5) {
-		primitiveBasis_ = unique_ptr<LogicalBasis>(new LogicalBasis());
+		primitiveBasis_ = make_unique<LogicalBasis>();
 	} else if (type == 6) {
-		primitiveBasis_ = unique_ptr<SpinGroup>(new SpinGroup(dim));
+		primitiveBasis_ = make_unique<SpinGroup>(dim);
 	} else {
 		cout << "Error: This Basis Type is not in the known list of "
 			 << "Typs. The iplemented ones are: \n"

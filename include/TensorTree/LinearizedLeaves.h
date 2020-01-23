@@ -7,11 +7,8 @@ public:
 	LinearizedLeaves() = default;
 	~LinearizedLeaves() = default;
 
-	void Write(ostream& os = cout)const;
-
 	size_t size()const { return coordinates_.size(); }
 
-	// inherited vector properties
 	void push_back(Leaf& phys);
 	void resizeaddress(int n);
 	void clear();

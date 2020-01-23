@@ -1,8 +1,5 @@
 #include "LinearizedLeaves.h"
 
-void LinearizedLeaves::Write(ostream& os) const {
-}
-
 void LinearizedLeaves::push_back(Leaf& phys) {
 	// Check wether this node is a physical node
 	assert(phys.NodeType() == 0);

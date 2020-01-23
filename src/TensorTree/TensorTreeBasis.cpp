@@ -52,9 +52,7 @@ vector<Node> Partition(const vector<Node>& nodes,
 		groups.emplace_back(p);
 	}
 	size_t n_rest = nodes.size() % n_partition;
-//	auto& last = groups.back();
 	for (size_t r = 0; r < n_rest; ++r) {
-//		last.push_back(nodes[n_loop * n_partition + r]);
 		groups.push_back(nodes[n_loop * n_partition + r]);
 	}
 	return groups;
@@ -72,9 +70,18 @@ void ResetLeafModes(TensorTreeBasis& basis) {
 	}
 }
 
+void TensorTreeBasis::ReindexLeafModes(map<size_t, size_t> Map) {
+	for (Node& node : *this) {
+		if (node.IsBottomlayer()) {
+			Leaf& leaf = node.PhysCoord();
+			leaf.Mode() = Map[leaf.Mode()];
+		}
+	}
+}
+
 TensorTreeBasis::TensorTreeBasis(size_t order,
-	/// Create close-to-balanced Tree
 	size_t dim_leaves, size_t dim_nodes) {
+	/// Create close-to-balanced Tree
 	size_t leaf_type = 6;
 	size_t mode = 0;
 	size_t leaf_subtype = 0;
@@ -128,7 +135,16 @@ void TensorTreeBasis::Read(const string& filename) {
 
 void TensorTreeBasis::Write(ostream& os) const {
 	tree.Write(os);
-	linearizedLeaves_.Write(os);
+}
+
+ostream& operator<<(ostream& os, TTBasis& basis) {
+	basis.Write(os);
+	return os;
+}
+
+istream& operator<<(istream& is, TTBasis& basis) {
+	basis.Read(is);
+	return is;
 }
 
 void TensorTreeBasis::info(ostream& os) const {

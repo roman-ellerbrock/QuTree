@@ -138,7 +138,6 @@ protected:
 	TensorDim tensorDim_;
 
 	// pointer to the upwards node
-//	Node *up_;
 	AbstractNode *up_;
 	// vector of references to the children nodes
 	vector<unique_ptr<AbstractNode>> down_;

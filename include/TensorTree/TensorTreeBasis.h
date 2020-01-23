@@ -6,6 +6,7 @@
 #define TENSORTREEBASIS_H
 #include "Node.h"
 #include "LinearizedLeaves.h"
+#include <map>
 
 typedef vector<reference_wrapper<Node>> LinearizedNodes;
 
@@ -76,11 +77,12 @@ public:
 	const Node& GetNode(size_t i) const;
 
 	/// get reference to the mctdh topnode
-	// @TODO: Use vector-member back()
-	Node& TopNode() { return GetNode(nNodes() - 1); }
+	Node& TopNode() { return linearizedNodes_.back(); }
 
 	// @TODO: Use vector-member back()
-	const Node& TopNode() const { return GetNode(nNodes() - 1); }
+	const Node& TopNode() const { return linearizedNodes_.back(); }
+
+	void ReindexLeafModes(map<size_t, size_t> Map);
 
 	/// Expand a node in the Basis
 	void ExpandNode(Node& node);
@@ -115,5 +117,8 @@ protected:
 };
 
 typedef TensorTreeBasis TTBasis;
+
+ostream& operator<<(ostream& os, TTBasis& basis);
+istream& operator<<(istream& is, TTBasis& basis);
 
 #endif //TENSORTREEBASIS_H
