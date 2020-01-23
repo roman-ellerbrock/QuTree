@@ -5,23 +5,23 @@ class TensorABC {
 // class TensorABC holds contraction of a tensor of n-th order
 public:
 	TensorABC()
-		: before(0), after(0), active(0), total(0) {}
+		: before_(0), after_(0), active_(0), total_(0) {}
 
 	TensorABC(size_t k, vector<size_t> dim);
 
-	inline size_t getbefore() const { return before; }
+	inline size_t getbefore() const { return before_; }
 
-	inline size_t getactive() const { return active; }
+	inline size_t getactive() const { return active_; }
 
-	inline size_t getafter() const { return after; }
+	inline size_t getafter() const { return after_; }
 
-	inline size_t gettotal() const { return total; }
+	inline size_t gettotal() const { return total_; }
 
 private:
-	size_t before;
-	size_t after;
-	size_t active;
-	size_t total;
+	size_t before_;
+	size_t after_;
+	size_t active_;
+	size_t total_;
 };
 
 /* *
@@ -41,7 +41,7 @@ class TensorDim
 {
 public:
 	TensorDim()
-		: ntensor(0), dimpart(0), dimtot(0), f(0) {}
+		: ntensor_(0), dimpart_(0), dimtot_(0), f_(0) {}
 
 	explicit TensorDim(const vector<size_t>& dim, size_t ntensor_);
 
@@ -53,38 +53,26 @@ public:
 
 	void Initialize(const vector<size_t>& dim, size_t ntensor);
 
-	void Write(ofstream& os) const;
+	void Write(ostream& os) const;
 
 	void Write(const string& filename) const;
 
 	void ReadDim(istream& is);
 
-	inline size_t getf() const { return f; }
+	inline size_t getf() const { return f_; }
 
-	inline size_t F() const { return f; }
+	inline size_t F() const { return f_; }
 
-	inline size_t getdimtot() const { return dimtot; }
+	inline size_t getdimtot() const { return dimtot_; }
 
-	inline size_t getdimpart() const { return dimpart; }
+	inline size_t getdimpart() const { return dimpart_; }
 
-	inline size_t getntensor() const { return ntensor; }
+	inline size_t getntensor() const { return ntensor_; }
 
 	void setntensor(size_t newntensor);
 	void setactive(size_t act, size_t k);
 
 	vector<size_t> getdimlist() const;
-
-	friend bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
-		if (tdima.F() != tdimb.F()) { return false; }
-		for (size_t k = 0; k < tdima.F(); k++) {
-			if (tdima.Active(k) != tdimb.Active(k)) { return false; }
-		}
-		return (tdima.getntensor() == tdimb.getntensor());
-	}
-
-	friend bool operator!=(TensorDim& tdima, TensorDim& tdimb) {
-		return !(tdima == tdimb);
-	}
 
 	void print(ostream& os = cout) const;
 
@@ -94,10 +82,16 @@ public:
 	size_t Before(size_t k) const;
 
 protected:
-	size_t f;
-	size_t dimtot;
-	size_t dimpart;
-	size_t ntensor;
-	vector<TensorABC> abc;
+	size_t f_;
+	size_t dimtot_;
+	size_t dimpart_;
+	size_t ntensor_;
+	vector<TensorABC> abc_;
 };
+
+ostream& operator<<(ostream& os, const TensorDim& tdim);
+istream& operator>>(istream& is, TensorDim& tdim);
+bool operator==(const TensorDim& tdima, const TensorDim& tdimb);
+bool operator!=(TensorDim& tdima, TensorDim& tdimb);
+
 

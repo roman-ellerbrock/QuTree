@@ -6,49 +6,27 @@
 
 SUITE (Tree) {
 
-	TEST(TensorTreeBasis) {
-		TensorTreeBasis basis(7, 4, 2);
-		cout << "Final basis:\n";
-		basis.info();
-	}
+	TEST(TensorTreeBasisGenerator) {
+		size_t n_leaf = 4;
+		size_t n_node = 2;
+		size_t n_modes = 7;
+		TensorDim tdim_top({n_node, n_node, n_node}, 1);
+		TensorDim tdim_upper({n_node, n_node}, n_node);
+		TensorDim tdim_bottom({n_leaf}, n_node);
 
-/*	TEST(TreeNodeTests) {
-		TreeNode leaf(2);
-		TreeNode bottom(2);
-		bottom.push_back(leaf);
+		TensorTreeBasis basis(n_modes, n_leaf, n_node);
 
-		TreeNode upper = Double(bottom);
-		for (size_t l = 0; l < 3; ++l) {
-			upper = Double(upper);
-		}
-		upper.MakeRoot();
-		upper.GenInput(cout);
-
-		// write out stuff.
-		auto next = upper.NextNode();
-		size_t i = 0;
-		while (next != &upper) {
-			print(next->GetPath());
-			next = upper.NextNode();
-			i++;
-			if (i == 100) {
-				getchar();
+		for (const Node& node : basis) {
+			const TensorDim& tdim = node.TDim();
+			if (node.IsToplayer()) {
+				CHECK_EQUAL(tdim, tdim_top);
+			} else if (node.IsBottomlayer()) {
+				CHECK_EQUAL(tdim, tdim_bottom);
+			} else {
+				CHECK_EQUAL(tdim, tdim_upper);
 			}
 		}
-		print(upper.GetPath());
 	}
 
-	TEST (TreeClass) {
-		TensorDimTree tree(3, 2, 4, 2);
-		for (const TreeNode node : tree) {
-			node.TDim().print();
-		}
-
-		for (size_t mode = 0; mode < tree.nLeaves(); ++mode) {
-			const auto& node = tree.Leaf(mode);
-			cout << "mode: " << node.content_.f << endl;
-		}
-	}
- */
 }
 

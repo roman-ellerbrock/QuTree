@@ -36,6 +36,8 @@ TensorTreeBasis::TensorTreeBasis(istream& is) {
 
 vector<Node> Partition(const vector<Node>& nodes,
 	size_t n_partition, size_t dim_node) {
+	/// This is a helper function to create close-to balanced trees.
+	/// It adds a layer to a vector of nodes
 	vector<Node> groups;
 	size_t n_loop = nodes.size() / n_partition;
 	for (size_t k = 0; k < n_loop; ++k) {
