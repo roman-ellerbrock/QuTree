@@ -52,15 +52,28 @@ vector<Node> Partition(const vector<Node>& nodes,
 		groups.emplace_back(p);
 	}
 	size_t n_rest = nodes.size() % n_partition;
-	auto& last = groups.back();
+//	auto& last = groups.back();
 	for (size_t r = 0; r < n_rest; ++r) {
-		last.push_back(nodes[n_loop * n_partition + r]);
+//		last.push_back(nodes[n_loop * n_partition + r]);
+		groups.push_back(nodes[n_loop * n_partition + r]);
 	}
 	return groups;
 }
 
-/// Create Balanced Tree
+void ResetLeafModes(TensorTreeBasis& basis) {
+	size_t n_modes = basis.nLeaves();
+	assert(n_modes > 0);
+	size_t mode = n_modes - 1;
+	for (Node& node : basis) {
+		if (node.IsBottomlayer()) {
+			Leaf& leaf = node.PhysCoord();
+			leaf.Mode() = mode--;
+		}
+	}
+}
+
 TensorTreeBasis::TensorTreeBasis(size_t order,
+	/// Create close-to-balanced Tree
 	size_t dim_leaves, size_t dim_nodes) {
 	size_t leaf_type = 6;
 	size_t mode = 0;
@@ -73,7 +86,6 @@ TensorTreeBasis::TensorTreeBasis(size_t order,
 	for (size_t k = 0; k < order; ++k) {
 		nodes.push_back(bottom);
 	}
-	cout << "number of nodes: " << nodes.size() << endl;
 	size_t count = 0;
 	while (nodes.size() > 1) {
 		nodes = Partition(nodes, 2, dim_nodes);
@@ -89,13 +101,10 @@ TensorTreeBasis::TensorTreeBasis(size_t order,
 	tdim.setntensor(1);
 	tree.UpdatePosition(NodePosition());
 	Update();
+	ResetLeafModes(*this);
 }
 
 void TensorTreeBasis::Read(istream& file) {
-	cout << "==================================================" << endl;
-	cout << "=====          Basis Initialization           ====" << endl;
-	cout << "==================================================" << endl << endl;
-
 	// feed linearizedLeaves_ and logical block with references
 	tree.Initialize(file, nullptr, NodePosition());
 	Update();
@@ -110,10 +119,6 @@ void TensorTreeBasis::Read(istream& file) {
 		PrimitiveBasis& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
 		primitivebasis.Initialize(par.Omega(), par.R0(), par.WFR0(), par.WFOmega());
 	}
-
-	cout << "==================================================" << endl;
-	cout << "=====   - Basis initialized.                  ====" << endl;
-	cout << "==================================================" << endl << endl;
 }
 
 void TensorTreeBasis::Read(const string& filename) {
@@ -127,7 +132,7 @@ void TensorTreeBasis::Write(ostream& os) const {
 }
 
 void TensorTreeBasis::info(ostream& os) const {
-	os << "List of Physical Coordinates:" << endl;
+	os << "List of Leaves:" << endl;
 	for (size_t i = 0; i < this->nLeaves(); i++) {
 		const Leaf& node = GetLeaf(i);
 		node.info(os);
@@ -136,14 +141,14 @@ void TensorTreeBasis::info(ostream& os) const {
 	os << endl;
 
 	// ... and now for every logical node
-	os << "List of logical nodes:" << endl;
-	os << "nTotalNodes = " << nNodes() << endl;
+	os << "List of upper nodes:" << endl;
 	for (int i = nNodes() - 1; i >= 0; i--){
 		const Node& node = GetNode(i);
 		node.info();
 		node.TDim().print(os);
 		os << endl;
 	}
+	os << "Number of Nodes = " << nNodes() << endl;
 }
 
 Leaf& TensorTreeBasis::GetLeaf(size_t i) {
@@ -211,7 +216,6 @@ void TensorTreeBasis::LinearizeNodes() {
 			linearizedNodes_.push_back(node);
 		}
 	}
-	cout << "Linearized " << counter + 1 << " nodes.\n";
 }
 
 void TensorTreeBasis::LinearizeLeaves() {

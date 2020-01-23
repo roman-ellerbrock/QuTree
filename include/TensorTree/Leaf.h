@@ -98,6 +98,7 @@ public:
 
 	// Getter & Setter
 	size_t Mode() const { return mode_; }
+	int& Mode() { return mode_; }
 
 	size_t Type() const { return type_; }
 

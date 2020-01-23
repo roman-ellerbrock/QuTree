@@ -176,7 +176,7 @@ void Node::info(ostream& os) const {
 
 void Node::Write(ostream& os) const {
 	const TensorDim& tdim = TDim();
-	for (size_t l = 0; l < position_.Layer(); l++) { cout << "\t"; }
+	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
 	os << tdim.getntensor() << "\t-" << nChildren() << "\n";
 	for (size_t i = 0; i < nChildren(); i++) {
 		down_[i]->Write(os);

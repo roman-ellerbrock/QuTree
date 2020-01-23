@@ -73,8 +73,8 @@ void Leaf::info(ostream& os) const {
 }
 
 void Leaf::Write(ostream& os) const {
-	for (size_t l = 0; l < position_.Layer(); l++) { cout << "\t"; }
-	cout << dim_ << "\t" << type_ << "\t" << mode_ << "\n";
+	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
+	os << dim_ << "\t" << type_ << "\t" << mode_ << "\n";
 }
 
 void Leaf::Update(const NodePosition& p) {
