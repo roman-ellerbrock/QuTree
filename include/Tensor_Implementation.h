@@ -1,6 +1,7 @@
 #pragma once
 #include "Tensor.h"
 #include "TensorDim_Extension.h"
+#include "stdafx.h"
 
 //////////////////////////////////////////////////////////
 // Operators
@@ -383,7 +384,7 @@ T Tensor<T>::singleDotProduct(const Tensor& A, size_t n, size_t m) const {
 }
 
 template<typename T>
-Matrixcd Tensor<T>::DotProduct(const Tensor<T>& A) const {
+Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 	TensorDim tdima(A.Dim());
 	// Every tensor can have different amount of states but same dimpart
 
@@ -392,13 +393,14 @@ Matrixcd Tensor<T>::DotProduct(const Tensor<T>& A) const {
 	size_t npart = dim.getdimpart();
 	assert(tdima.getdimpart() == npart);
 
-	Matrixcd S(mmax, nmax);
+	Matrix<T> S(mmax, nmax);
 #pragma omp parallel for
 	for (size_t n = 0; n < nmax; n++) {
 		for (size_t m = 0; m < mmax; m++) {
 			for (size_t i = 0; i < npart; i++) {
 //				S(m, n) += conj(operator()(i, m))*A(i, n);
-				S(m, n) += conj(operator[](m * npart + i)) * A[n * npart + i];
+//				S(m, n) += conj(operator[](m * npart + i)) * A[n * npart + i];
+				S(m, n) += conj(coeffs[m * npart + i]) * A[n * npart + i];
 			}
 		}
 	}

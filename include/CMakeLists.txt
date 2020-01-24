@@ -37,6 +37,7 @@ set(TENSOR_TREE_FILES
         TensorTree/TreeStructuredObject.h
         TensorTree/TensorTree.h
         TensorTree/TensorTree_Implementation.h
+        TensorTree/DenseOverlap.h
         )
 
 set(LEAF_TYPE_FILES

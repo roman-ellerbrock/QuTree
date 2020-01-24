@@ -169,7 +169,7 @@ public:
 		the number of tensors.
 	 */
 	  
-	Matrixcd DotProduct(const Tensor<T>& A)const;
+	Matrix<T> DotProduct(const Tensor<T>& A)const;
 
 	/// This function will fill the Tensor with zero-entries
 	void Zero();

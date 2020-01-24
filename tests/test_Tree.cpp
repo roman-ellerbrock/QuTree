@@ -5,6 +5,7 @@
 #include "TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
+#include "DenseOverlap.h"
 
 SUITE (Tree) {
 
@@ -95,7 +96,14 @@ SUITE (Tree) {
 		}
 	}
 
-
+	TEST(TensorTree_Overlap) {
+		TensorTreeBasis basis(12, 2, 2);
+		string filename("TT.RNG.tmp.dat");
+		TensorTreecd T(filename);
+		DenseOverlapcd S(T, T, basis);
+		const FactorMatrixcd& s = S.Get();
+		CHECK_CLOSE(1., abs(s[0]), 1e-14);
+	}
 
 }
 

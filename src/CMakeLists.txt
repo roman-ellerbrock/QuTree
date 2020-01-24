@@ -18,7 +18,8 @@ set(QDlib_SOURCE_FILES
         TensorTree/NodePosition.cpp
         TensorTree/TensorTreeBasis.cpp
         TensorTree/TensorTree_Instantiation.cpp
-        )
+        TensorTree/DenseOverlap.cpp
+        stdafx.cpp)
 
 set(LEAF_TYPE_CPP_FILES
         TensorTree/LeafTypes/BosonNumberBasis.cpp

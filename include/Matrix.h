@@ -55,7 +55,7 @@ public:
 
 	T& operator()(const size_t i, const size_t j);
 
-	inline T operator[](const size_t idx) const {
+	inline T& operator[](const size_t idx) const {
 		return coeffs[idx];
 	}
 
