@@ -19,6 +19,7 @@ set(QDlib_SOURCE_FILES
         TensorTree/TensorTreeBasis.cpp
         TensorTree/TensorTree_Instantiation.cpp
         TensorTree/DenseOverlap.cpp
+        TensorTree/HoleOverlap.cpp
         stdafx.cpp)
 
 set(LEAF_TYPE_CPP_FILES

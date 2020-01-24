@@ -38,6 +38,7 @@ set(TENSOR_TREE_FILES
         TensorTree/TensorTree.h
         TensorTree/TensorTree_Implementation.h
         TensorTree/DenseOverlap.h
+        TensorTree/HoleOverlap.cpp
         )
 
 set(LEAF_TYPE_FILES

@@ -6,6 +6,7 @@
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
 #include "DenseOverlap.h"
+#include "HoleOverlap.h"
 
 SUITE (Tree) {
 
@@ -105,5 +106,13 @@ SUITE (Tree) {
 		CHECK_CLOSE(1., abs(s[0]), 1e-14);
 	}
 
+	TEST(TensorTree_HoleOverlap) {
+		TensorTreeBasis basis(12, 2, 2);
+		string filename("TT.RNG.tmp.dat");
+		TensorTreecd T(filename);
+		DenseOverlapcd S(T, T, basis);
+		HoleOverlapcd Rho(T, T, S, basis);
+		Rho.print(basis);
+	}
 }
 
