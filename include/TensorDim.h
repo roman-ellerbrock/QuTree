@@ -92,6 +92,6 @@ protected:
 ostream& operator<<(ostream& os, const TensorDim& tdim);
 istream& operator>>(istream& is, TensorDim& tdim);
 bool operator==(const TensorDim& tdima, const TensorDim& tdimb);
-bool operator!=(TensorDim& tdima, TensorDim& tdimb);
+bool operator!=(const TensorDim& tdima, const TensorDim& tdimb);
 
 

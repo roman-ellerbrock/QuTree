@@ -867,3 +867,12 @@ istream& operator>>(istream& is, Tensor<T>& A) {
 	A.Read(is);
 	return is;
 }
+
+template<typename T>
+bool operator==(const Tensor<T>& A, const Tensor<T>& B) {
+	if (A.Dim() != B.Dim()) { return false; }
+	for (size_t k = 0; k < A.Dim().getdimtot(); ++k) {
+		if (A[k] != B[k]) { return false; }
+	}
+	return true;
+}

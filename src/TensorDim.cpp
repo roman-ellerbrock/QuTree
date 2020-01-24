@@ -179,7 +179,7 @@ bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
 	return (tdima.getntensor() == tdimb.getntensor());
 }
 
-bool operator!=(TensorDim& tdima, TensorDim& tdimb) {
+bool operator!=(const TensorDim& tdima, const TensorDim& tdimb) {
 	return !(tdima == tdimb);
 }
 

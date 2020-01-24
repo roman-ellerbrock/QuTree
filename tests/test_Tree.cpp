@@ -68,11 +68,34 @@ SUITE (Tree) {
 		}
 	}
 
-	TEST(TensorTree_Init) {
+	TEST(TensorTree_FILE_IO) {
 		TensorTreeBasis basis(12, 2, 4);
 		TensorTreecd T(basis);
-		cout << T << endl;
+		T.Write("TT.tmp.dat");
+		TensorTreecd Q(basis);
+		ifstream is ("TT.tmp.dat");
+		is >> Q;
+		CHECK_EQUAL(T.size(), Q.size());
+		for(const Node& node : basis) {
+			CHECK_EQUAL(T[node], Q[node]);
+		}
 	}
+
+	TEST(TensorTree_RandomGenerate) {
+		TensorTreeBasis basis(12, 2, 2);
+		TensorTreecd T(basis);
+		mt19937 gen(2468);
+		T.Generate(gen, basis);
+		string filename("TT.RNG.tmp.dat");
+		T.Write(filename);
+		TensorTreecd Q(filename);
+		CHECK_EQUAL(T.size(), Q.size());
+		for(const Node& node : basis) {
+			CHECK_EQUAL(T[node], Q[node]);
+		}
+	}
+
+
 
 }
 

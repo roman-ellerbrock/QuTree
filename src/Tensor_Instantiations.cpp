@@ -31,3 +31,4 @@ template double Residual(Tensord A, const Tensord& B);
 
 template ostream& operator<< <cd> (ostream&, const Tensor<cd>& );
 template istream& operator>> <cd> (istream&, Tensor<cd>& );
+template bool operator== <cd>(const Tensor<cd>& A, const Tensor<cd>& B);

@@ -263,3 +263,6 @@ ostream& operator<<(ostream& os, const Tensor<T>& A);
 
 template<typename T>
 istream& operator>>(istream& is, Tensor<T>& A);
+
+template<typename T>
+bool operator==(const Tensor<T>& A, const Tensor<T>& B);
