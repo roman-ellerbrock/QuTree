@@ -20,6 +20,8 @@ set(QDlib_SOURCE_FILES
         TensorTree/TensorTree_Instantiation.cpp
         TensorTree/DenseOverlap.cpp
         TensorTree/HoleOverlap.cpp
+        Operators/SingleParticleOperatorFunction.cpp
+        Operators/MultiParticleOperator.cpp
         stdafx.cpp)
 
 set(LEAF_TYPE_CPP_FILES

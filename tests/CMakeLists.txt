@@ -8,7 +8,8 @@ set(QDlib_tests
         test_Matrix.cpp
         test_Tensor.cpp
         tests.cpp
-        test_Tree.cpp)
+        test_Tree.cpp
+        test_Operators.cpp)
 
 add_executable(tests ${QDlib_tests})
 target_link_libraries(tests QDlib)

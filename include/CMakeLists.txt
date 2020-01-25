@@ -41,6 +41,11 @@ set(TENSOR_TREE_FILES
         TensorTree/HoleOverlap.cpp
         )
 
+set(OPERATOR_FILES
+        Operators/SingleParticleOperator.h
+        Operators/SingleParticleOperatorFunction.h
+        )
+
 set(LEAF_TYPE_FILES
         TensorTree/LeafTypes/PrimitiveBasis.h
         TensorTree/LeafTypes/BosonNumberBasis.h
@@ -56,4 +61,5 @@ set(LEAF_TYPE_FILES
 
 install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)
 install(FILES ${TENSOR_TREE_FILES} DESTINATION include/QDlib/TensorTree)
+install(FILES ${OPERATOR_FILES} DESTINATION include/QDlib/Operators)
 
