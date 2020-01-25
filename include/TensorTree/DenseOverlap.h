@@ -18,6 +18,10 @@ public:
 	using TreeStructuredObject<FactorMatrix<T>>::attributes;
 	DenseOverlap() = default;
 
+	DenseOverlap(istream& is);
+
+	DenseOverlap(const string& filename);
+
 	explicit DenseOverlap(const TTBasis& basis);
 
 	DenseOverlap(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
@@ -44,7 +48,20 @@ public:
 		assert(attributes.size() > 0);
 		return attributes.back();
 	}
+
+	/// I/O
+	void print(const TTBasis& basis, ostream& os = cout) const;
+	void print(ostream& os = cout) const;
+
+	void Write(ostream& os) const;
+	void Read(istream& is);
 };
+
+template <typename T>
+ostream& operator<<(ostream& os, const DenseOverlap<T>& S);
+
+template <typename T>
+istream& operator>>(istream& is, DenseOverlap<T>& S);
 
 typedef DenseOverlap<complex<double>> DenseOverlapcd;
 typedef DenseOverlap<complex<double>> DenseOverapd;

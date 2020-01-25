@@ -531,3 +531,15 @@ double Residual(const Matrix<T>& A, const Matrix<T>& B) {
 	return D.FrobeniusNorm();
 }
 
+template<typename T>
+ostream& operator<<(ostream& os, const Matrix<T>& A) {
+	A.Write(os);
+	return os;
+}
+
+template<typename T>
+istream& operator>>(istream& is, Matrix<T>& A) {
+	A.Read(is);
+	return is;
+}
+

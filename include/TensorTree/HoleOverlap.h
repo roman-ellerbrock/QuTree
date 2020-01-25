@@ -12,6 +12,11 @@ public:
 	using TreeStructuredObject<Matrix<T>>::attributes;
 
 	HoleOverlap() = default;
+
+	HoleOverlap(istream& is);
+
+	HoleOverlap(const string& filename);
+
 	~HoleOverlap() = default;
 
 	HoleOverlap(const TTBasis& basis);
@@ -31,7 +36,17 @@ public:
 		const DenseOverlap<T>& S, const TTBasis& basis);
 
 	void print(const TTBasis& basis, ostream& os = cout) const;
+	void print(ostream& os = cout) const;
+
+	void Write(ostream& os)const;
+	void Read(istream& is);
 };
+
+template <typename T>
+ostream& operator<<(ostream& os, const HoleOverlap<T>& S);
+
+template <typename T>
+istream& operator>>(istream& is, HoleOverlap<T>& S);
 
 typedef HoleOverlap<complex<double>> HoleOverlapcd;
 typedef HoleOverlap<double> HoleOverlapd;

@@ -133,11 +133,11 @@ public:
 
 	void Write(const string& filename) const;
 
-	void Write(ostream& os) const;
+	virtual void Write(ostream& os) const;
 
 	void Read(const string& filename);
 
-	void Read(istream& os);
+	virtual void Read(istream& os);
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -211,6 +211,11 @@ Matrix<T> RealSymmetrize(const Matrix<T>& A);
 
 template<typename T>
 Matrix<T> Regularize(const Matrix<T>& A, double eps);
+
+template<typename T>
+ostream& operator<<(ostream& os, const Matrix<T>& A);
+template<typename T>
+istream& operator>>(istream& is, Matrix<T>& A);
 
 typedef Matrix<complex<double>> Matrixcd;
 typedef Matrix<double> Matrixd;

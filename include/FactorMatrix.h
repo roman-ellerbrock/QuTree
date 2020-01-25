@@ -6,17 +6,22 @@
 template<typename T>
 class FactorMatrix: public Matrix<T> {
 public:
-	FactorMatrix() : mode(0) {}
+	FactorMatrix() : mode_(0) {}
 
 	FactorMatrix(const Matrix<T>& A, size_t k)
-		: Matrix<T>(A), mode(k) {
+		: Matrix<T>(A), mode_(k) {
 	}
 
-	FactorMatrix(size_t dim_, size_t mode_)
-		: Matrix<T>(dim_, dim_), mode(mode_) {}
+	FactorMatrix(size_t dim_, size_t mode)
+		: Matrix<T>(dim_, dim_), mode_(mode) {}
 
-	FactorMatrix(const TensorDim& tdim, size_t mode_)
-		: Matrix<T>(tdim.Active(mode_), tdim.Active(mode_)), mode(mode_) {}
+	FactorMatrix(const TensorDim& tdim, size_t mode)
+		: Matrix<T>(tdim.Active(mode), tdim.Active(mode)), mode_(mode) {
+	}
+
+	FactorMatrix(istream& is) {
+		Read(is);
+	}
 
 	/////////////////////////////////////////////////////
 	// Rule of five
@@ -24,25 +29,25 @@ public:
 
 	// Copy constructor
 	FactorMatrix(const FactorMatrix& A)
-		: Matrix<T>(A), mode(A.Mode()) {
+		: Matrix<T>(A), mode_(A.Mode()) {
 	}
 
 	// Move constructor
 	FactorMatrix(FactorMatrix&& A) noexcept
-		: Matrix<T>(A), mode(A.Mode()) {
+		: Matrix<T>(A), mode_(A.Mode()) {
 	}
 
 	// copy assignment
 	FactorMatrix& operator=(const FactorMatrix& other) {
 		Matrix<T>::operator=(other);
-		mode = other.mode;
+		mode_ = other.mode_;
 		return *this;
 	}
 
 	// move assignment
 	FactorMatrix& operator=(FactorMatrix&& other) noexcept {
 		Matrix<T>::operator=(other);
-		mode = other.mode;
+		mode_ = other.mode_;
 		return *this;
 	}
 
@@ -60,7 +65,7 @@ public:
 
 	size_t Dim() const { return Matrix<T>::Dim1(); }
 
-	size_t Mode() const { return mode; }
+	size_t Mode() const { return mode_; }
 
 	// TensorC = A * TensorB
 	template<typename U>
@@ -91,8 +96,24 @@ public:
 		return FactorMatrix<T>(B, A.Mode());
 	}
 
+	void Write(ostream& os) const override {
+		os.write("FAMA", 4);
+		os.write((char *) &mode_, sizeof(mode_));
+		Matrix<T>::Write(os);
+	}
+
+	void Read(istream& is) override {
+		char check[5];
+		is.read(check, 4);
+		string s_check(check, 4);
+		string s_key("FAMA");
+		assert(s_key == s_check);
+		is.read((char *) &mode_, sizeof(mode_));
+		Matrix<T>::Read(is);
+	}
+
 protected:
-	size_t mode;
+	size_t mode_;
 };
 
 template<typename T, typename U>
@@ -119,6 +140,18 @@ SPOUnitarySimilarityTrafo(const FactorMatrix<T>& A, const FactorMatrix<T>& B) {
 	assert(A.Mode() == B.Mode());
 	Matrix<T> resultmat = UnitarySimilarityTrafo(A, B);
 	return FactorMatrix<T>(resultmat, A.Mode());
+}
+
+template<typename T>
+ostream& operator<<(ostream& os, const FactorMatrix<T>& A) {
+	A.Write(os);
+	return os;
+}
+
+template<typename T>
+istream& operator>>(istream& is, FactorMatrix<T>& A) {
+	A.Read(is);
+	return is;
 }
 
 typedef FactorMatrix<double> FactorMatrixd;

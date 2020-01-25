@@ -44,6 +44,8 @@ public:
 		return attributes.end();
 	}
 
+	size_t size() const { return attributes.size(); }
+
 	/**
 	 * \brief Erase the data assigned to x.
 	 * \param x Object which's attributes get deleted

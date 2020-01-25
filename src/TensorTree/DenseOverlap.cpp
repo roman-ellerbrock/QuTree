@@ -1,6 +1,17 @@
 #include "DenseOverlap.h"
 
 template<typename T>
+DenseOverlap<T>::DenseOverlap(istream& is) {
+	Read(is);
+}
+
+template<typename T>
+DenseOverlap<T>::DenseOverlap(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
+
+template<typename T>
 DenseOverlap<T>::DenseOverlap(const TTBasis& basis) {
 	Initialize(basis);
 }
@@ -71,7 +82,79 @@ Tensor<T> DenseOverlap<T>::TransformTensor(const Tensor<T>& Phi,
 	}
 }
 
-template class DenseOverlap<complex<double>>;
-template class DenseOverlap<double>;
+template<typename T>
+void DenseOverlap<T>::print(const TTBasis& basis, ostream& os) const {
+	for (const Node& node : basis) {
+		node.info(os);
+		(*this).operator[](node).print(os);
+	}
+}
+
+template<typename T>
+void DenseOverlap<T>::print(ostream& os) const {
+	for (const auto& x : *this) {
+		x.print(os);
+	}
+}
+
+template <typename T>
+void DenseOverlap<T>::Write(ostream& os) const {
+	os.write("TTDo", 4);
+
+	// write number of nodes
+	auto nnodes = (int32_t) attributes.size();
+	os.write((char *) &nnodes, sizeof(int32_t));
+
+	// Write Tensors
+	for (const auto& Phi : attributes) {
+		os << Phi;
+	}
+	os << flush;
+}
+
+template <typename T>
+void DenseOverlap<T>::Read(istream& is) {
+	char check[5];
+	is.read(check, 4);
+	string s_check(check, 4);
+	string s_key("TTDo");
+	assert(s_key == s_check);
+
+	int32_t nnodes;
+	is.read((char *) &nnodes, sizeof(nnodes));
+
+	// Read all Tensors
+	attributes.clear();
+	for (int i = 0; i < nnodes; i++) {
+		FactorMatrix<T> M(is);
+		attributes.emplace_back(M);
+	}
+}
+
+template <typename T>
+ostream& operator<<(ostream& os, const DenseOverlap<T>& S) {
+	if (&os == &std::cout ) {
+		S.print(os);
+	} else{
+		S.Write(os);
+	}
+	return os;
+}
+
+template <typename T>
+istream& operator>>(istream& is, DenseOverlap<T>& S) {
+	S.Read(is);
+	return is;
+}
+
+typedef complex<double> cd;
+template class DenseOverlap<cd>;
+template ostream& operator<< <cd> (ostream&, const DenseOverlap<cd>& );
+template istream& operator>> <cd> (istream&, DenseOverlap<cd>& );
+
+typedef double d;
+template class DenseOverlap<d>;
+template ostream& operator<< <d> (ostream&, const DenseOverlap<d>& );
+template istream& operator>> <d> (istream&, DenseOverlap<d>& );
 
 

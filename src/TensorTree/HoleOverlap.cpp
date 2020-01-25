@@ -1,8 +1,19 @@
 //
 // Created by Roman on 3/29/2019.
 //
-
 #include "HoleOverlap.h"
+
+
+template<typename T>
+HoleOverlap<T>::HoleOverlap(istream& is) {
+	Read(is);
+}
+
+template<typename T>
+HoleOverlap<T>::HoleOverlap(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
 
 template<typename T>
 HoleOverlap<T>::HoleOverlap(const TTBasis& basis){
@@ -72,11 +83,70 @@ void HoleOverlap<T>::Calculate(const TensorTree<T>& Psi1,
 template <typename T>
 void HoleOverlap<T>::print(const TTBasis& basis, ostream& os) const {
 	for (const Node& node : basis) {
-		node.info();
+		node.info(os);
 		(*this)[node].print(os);
 	}
 }
 
-template class HoleOverlap<complex<double>>;
-template class HoleOverlap<double>;
+template <typename T>
+void HoleOverlap<T>::print(ostream& os) const {
+	for (const auto& x : *this) {
+		x.print(os);
+	}
+}
 
+template <typename T>
+void HoleOverlap<T>::Write(ostream& os) const {
+	os.write("TTHP", 4);
+
+	// write number of nodes
+	auto nnodes = (int32_t) attributes.size();
+	os.write((char *) &nnodes, sizeof(int32_t));
+
+	// Write Tensors
+	for (const auto& x : attributes) {
+		os << x;
+	}
+	os << flush;
+}
+
+template <typename T>
+void HoleOverlap<T>::Read(istream& is) {
+	char check[5];
+	is.read(check, 4);
+	string s_check(check, 4);
+	string s_key("TTHP");
+	assert(s_key == s_check);
+
+	int32_t nnodes;
+	is.read((char *) &nnodes, sizeof(nnodes));
+
+	// Read all Tensors
+	attributes.clear();
+	for (int i = 0; i < nnodes; i++) {
+		Matrix<T> M(is);
+		attributes.emplace_back(M);
+	}
+}
+
+template <typename T>
+ostream& operator<<(ostream& os, const HoleOverlap<T>& H) {
+	H.print(os);
+	return os;
+}
+
+template <typename T>
+istream& operator>>(istream& is, HoleOverlap<T>& H) {
+	H.Read(is);
+	return is;
+}
+
+typedef complex<double> cd;
+template class HoleOverlap<complex<double>>;
+template ostream& operator<< <cd> (ostream&, const HoleOverlap<cd>& );
+template istream& operator>> <cd> (istream&, HoleOverlap<cd>& );
+
+typedef double d;
+template class HoleOverlap<d>;
+template ostream& operator<< <d> (ostream&, const HoleOverlap<d>& );
+template istream& operator>> <d> (istream&, HoleOverlap<d>& );
