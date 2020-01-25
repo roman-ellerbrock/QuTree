@@ -10,5 +10,9 @@ template class TensorTree<cd>;
 
 template ostream& operator<< <cd>(ostream& , const TensorTree<cd>& );
 template istream& operator>> <cd>(istream& , TensorTree<cd>& );
-//template <typename T>
-//istream& operator>>(istream& is, TensorTree<T>& t);
+
+typedef double d;
+template class TensorTree<d>;
+
+template ostream& operator<< <d>(ostream& , const TensorTree<d>& );
+template istream& operator>> <d>(istream& , TensorTree<d>& );

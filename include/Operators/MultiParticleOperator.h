@@ -7,6 +7,7 @@
 #include "SingleParticleOperatorFunction.h"
 #include "PotentialOperator.h"
 
+template <typename T>
 class MultiParticleOperator
 	/*!
 	 * \brief A MultiParticleOperator (MPO) is a product of general single-particle operators
@@ -30,33 +31,33 @@ public:
 	~MultiParticleOperator() = default;
 
 	/// Construct a MPO from a single SPO
-	MultiParticleOperator(const SPO& h, int mode_x)
+	MultiParticleOperator(const SPO<T>& h, int mode_x)
 		: MultiParticleOperator() {
 		push_back(h, mode_x);
 	}
 
 	/// Construct a MPO from a single RefSPO
-	MultiParticleOperator(const SPOf& h, int mode_x)
+	MultiParticleOperator(const SPOf<T>& h, int mode_x)
 		: MultiParticleOperator() {
 		push_back(h, mode_x);
 	}
 
 	/// This routine manages how to apply a MPO
-	Tensorcd ApplyBottomLayer(Tensorcd Acoeffs,
+	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
 		const Leaf& phys) const;
 
 	/// This routine manages how to apply a MPO
-	Tensorcd ApplyBottomLayer(Tensorcd Acoeffs,
+	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
 		const vector<int>& list, const PrimitiveBasis& grid) const;
 
 	/// Push back a SPO to the MPO
-	void push_back(shared_ptr<SPO> h, int mode_x) {
+	void push_back(shared_ptr<SPO<T>> h, int mode_x) {
 		SingParOp.push_back(h);
 		mode_.push_back(mode_x);
 	}
 
 	/// Push back a RefSPO to the MPO
-	void push_back(const SPO& h, int mode_x) {
+	void push_back(const SPO<T>& h, int mode_x) {
 /*		auto *spo = new StandardSPO;
 		spo->Initialize(h);
 		SingParOp.push_back(shared_ptr<SPO>(spo));
@@ -66,14 +67,14 @@ public:
 	}
 
 	/// Push back a RefSPO to the MPO
-	void push_back(const SPOf& h, int mode_x) {
-		auto *spo = new SPOf(h);
-		SingParOp.push_back(shared_ptr<SPO>(spo));
+	void push_back(const SPOf<T>& h, int mode_x) {
+		auto *spo = new SPOf<T>(h);
+		SingParOp.push_back(shared_ptr<SPO<T>>(spo));
 		mode_.push_back(mode_x);
 	}
 
 	/// Access the i-th SPO in the MPO
-	shared_ptr<SPO> operator()(size_t i) {
+	shared_ptr<SPO<T>> operator()(size_t i) {
 		assert(i >= 0);
 		assert(i < SingParOp.size());
 		return SingParOp[i];
@@ -83,7 +84,7 @@ public:
 	size_t size() const { return mode_.size(); }
 
 	/// Access the i-th SPO in the MPO
-	shared_ptr<SPO> operator[](size_t i) const {
+	shared_ptr<SPO<T>> operator[](size_t i) const {
 		assert(i < mode_.size());
 		assert(i >= 0);
 		return SingParOp[i];
@@ -104,7 +105,6 @@ public:
 	}
 
 	/// Apply a MPO to a wavefunction. This routine is not optimized for performance.
-	template<typename T>
 	TensorTree<T> Apply(TensorTree<T> Psi, const TTBasis& basis) const;
 
 	/// On which mode does the "part"-th SPO act?
@@ -143,7 +143,7 @@ public:
 
 protected:
 	/// These are the SPOs
-	vector<shared_ptr<SPO>> SingParOp;
+	vector<shared_ptr<SPO<T>>> SingParOp;
 	/// These are the modes the SPOs act on
 	vector<int> mode_;
 	/// The potential operator
@@ -152,5 +152,8 @@ protected:
 	bool hasV;
 };
 
-typedef MultiParticleOperator MPO;
+template <typename T>
+using MPO = MultiParticleOperator<T>;
+
+typedef MPO<complex<double>> MPOcd;
 

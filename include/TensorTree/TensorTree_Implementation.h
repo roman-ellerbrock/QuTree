@@ -27,9 +27,8 @@ void TensorTree<T>::Initialize(const TTBasis& basis) {
 	}
 }
 
-template <typename T>
-void TensorTree<T>::Generate(mt19937& gen, const TTBasis& basis,
-	bool delta_lowest) {
+template<typename T>
+void TensorTree<T>::Generate(const TTBasis& basis, mt19937& gen, bool delta_lowest) {
 	for (const Node& node : basis) {
 		if (node.IsBottomlayer()) {
 			FillBottom(this->operator[](node), node);
@@ -50,9 +49,8 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 		// Ground-State
 		if (n == 0 && delta_lowest) {
 			Phi(0, n) = 1;
-		}
-		// Excitations randomly
-		else {
+		} else {
+			// Excitations randomly
 			for (size_t i = 0; i < tdim.getdimpart(); i++) {
 				Phi(i, n) = dist(gen);
 			}

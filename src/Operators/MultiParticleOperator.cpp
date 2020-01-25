@@ -1,14 +1,16 @@
 #include "MultiParticleOperator.h"
 
 
-MultiParticleOperator::MultiParticleOperator()
+template <typename T>
+MultiParticleOperator<T>::MultiParticleOperator()
 	: hasV(false) {
 	mode_.clear();
 }
 
-Tensorcd MultiParticleOperator::ApplyBottomLayer(Tensorcd Phi,
+template <typename T>
+Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	const Leaf& Phy) const {
-	Tensorcd hPhi(Phi.Dim());
+	Tensor<T> hPhi(Phi.Dim());
 	size_t mode_x = Phy.Mode();
 	const PrimitiveBasis& grid = Phy.PrimitiveGrid();
 	bool switchbool = true;
@@ -17,7 +19,7 @@ Tensorcd MultiParticleOperator::ApplyBottomLayer(Tensorcd Phi,
 	for (size_t l = 0; l < SingParOp.size(); ++l) {
 		if (mode_x != mode_[l]) { continue; }
 
-		shared_ptr<SPO> spo = operator[](l);
+		shared_ptr<SPO<T>> spo = operator[](l);
 		// apply it
 		if (switchbool) {
 			spo->Apply(grid, hPhi, Phi);
@@ -34,15 +36,16 @@ Tensorcd MultiParticleOperator::ApplyBottomLayer(Tensorcd Phi,
 	}
 }
 
-Tensorcd MultiParticleOperator::ApplyBottomLayer(Tensorcd Acoeffs,
+template <typename T>
+Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	const vector<int>& list, const PrimitiveBasis& grid) const {
-	Tensorcd hAcoeff(Acoeffs.Dim());
+	Tensor<T> hAcoeff(Acoeffs.Dim());
 	bool switchbool = true;
 	// Applying the MPO uses switching of the result Tensor to increase performance.
 	for (size_t l = 0; l < list.size(); l++) {
 		// get the active part in the MPO
 		int part = list[l];
-		shared_ptr<SPO> spo = operator[](part);
+		shared_ptr<SPO<T>> spo = operator[](part);
 
 		// apply it
 		if (switchbool) {
@@ -61,7 +64,8 @@ Tensorcd MultiParticleOperator::ApplyBottomLayer(Tensorcd Acoeffs,
 }
 
 template<typename T>
-TensorTree<T> MultiParticleOperator::Apply(TensorTree<T> Psi, const TTBasis& basis) const {
+TensorTree<T> MultiParticleOperator<T>::Apply(TensorTree<T> Psi,
+	const TTBasis& basis) const {
 	for (size_t i = 0; i < basis.nNodes(); i++) {
 		const Node& node = basis.GetNode(i);
 		if (node.IsBottomlayer()) {
@@ -77,14 +81,18 @@ TensorTree<T> MultiParticleOperator::Apply(TensorTree<T> Psi, const TTBasis& bas
 				}
 			}
 
-			Tensorcd& Acoeff = Psi[node];
+			Tensor<T>& Acoeff = Psi[node];
 			Acoeff = ApplyBottomLayer(Acoeff, activelayerparts, grid);
 		}
 	}
 	return Psi;
 }
 
-void MultiParticleOperator::SetV(const PotentialOperator& V_) {
+template <typename T>
+void MultiParticleOperator<T>::SetV(const PotentialOperator& V_) {
 	v = V_;
 	hasV = true;
 }
+
+template class MultiParticleOperator<complex<double>>;
+template class MultiParticleOperator<double>;

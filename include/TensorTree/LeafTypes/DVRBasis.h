@@ -9,25 +9,24 @@ class DVRBasis
 : public PrimitiveBasis
 {
 public:
-   DVRBasis(int dim);
-	~DVRBasis() = default;
+   explicit DVRBasis(int dim);
+	~DVRBasis() override = default;
 
-	virtual void Initialize(double par0, double par1, double par2, double par3) = 0;
+	void Initialize(double par0, double par1, double par2, double par3) override = 0;
 
-	virtual void InitSPF(Tensorcd& Acoeffs)const = 0;
-	Tensorcd applyX(const Tensorcd& Acoeffs)const;
-	Tensorcd ApplyX2(const Tensorcd& Acoeffs)const;
-	Tensorcd ApplyP(const Tensorcd& Acoeffs)const;
-	Tensorcd ApplyKin(const Tensorcd& Acoeffs)const;
+	void InitSPF(Tensorcd& A)const override = 0;
+	Tensorcd applyX(const Tensorcd& A)const override;
+	Tensorcd ApplyX2(const Tensorcd& A)const override;
+	Tensorcd ApplyP(const Tensorcd& A)const override;
+	Tensorcd ApplyKin(const Tensorcd& A)const override;
 
-	Tensorcd ToGrid(const Tensorcd& Acoeffs)const;
-	Tensorcd FromGrid(const Tensorcd& Acoeffs)const;
-	int oSQR()const {return -1;}
+	Tensorcd ToGrid(const Tensorcd& A)const override;
+	Tensorcd FromGrid(const Tensorcd& A)const override;
+	int oSQR()const override {return -1;}
 	
-	Vectord& GetX() {return x;}
-	const Vectord& GetX() const {return x;}
-	bool HasDVR()const {return true;}
-
+	Vectord& GetX() override {return x;}
+	const Vectord& GetX() const override {return x;}
+	bool HasDVR()const override {return true;}
 
 protected:
 
@@ -36,7 +35,6 @@ protected:
 	FactorMatrixd trafo;
 
 	// derivative operators
-//	Matrixcd p; // @TODO: implement p
 	FactorMatrixd kin;
 	FactorMatrixcd p;
 

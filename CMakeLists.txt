@@ -18,6 +18,7 @@ enable_language(CXX)
 set(QDlib_VERSION_MAJOR 0)
 set(QDlib_VERSION_MINOR 1)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+cmake_policy(SET "CMP0042" NEW)
 
 #####################################################################
 # Find Required packages

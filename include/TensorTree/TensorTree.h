@@ -29,8 +29,8 @@ public:
 	virtual void Initialize(const TTBasis& basis);
 
 	/// Generate TTs
-	void Generate(mt19937& gen, const TTBasis& basis,
-		bool delta_lowest = true);
+	void Generate(const TTBasis& basis,
+		mt19937& gen, bool delta_lowest = true);
 
 	/// (File) I/O
 	void Read(istream& is);
@@ -40,9 +40,6 @@ public:
 	void Write(const string& filename) const;
 
 	void print(const TTBasis& basis, ostream& os = cout) const;
-
-	/// Setters & Getters
-	size_t size() const { return attributes.size(); }
 
 protected:
 	void FillBottom(Tensor<T>& Phi, const Node& node);

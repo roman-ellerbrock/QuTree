@@ -3,24 +3,29 @@
 
 // This is the abstract form of a single particle operator
 // implemented in functional paradigma
-typedef function<void(const PrimitiveBasis&, Tensorcd&, const Tensorcd&)> SPOF;
+template<typename T>
+using SPOF = function<void(const PrimitiveBasis&, Tensor<T>&, const Tensor<T>&)>;
 
+template<typename T>
 class SingleParticleOperatorFunction
-	: public SPO {
+	: public SPO<T> {
 public:
 	SingleParticleOperatorFunction() = default;
 
-	SingleParticleOperatorFunction(const SPOF h)
+	SingleParticleOperatorFunction(const SPOF<T> h)
 		: h_(move(h)) {}
 
 	~SingleParticleOperatorFunction() = default;
 
-	void Apply(const PrimitiveBasis& grid, Tensorcd& hAcoeff,
-		const Tensorcd& Acoeff) const override;
+	void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
+		const Tensor<T>& Acoeff) const override;
 
 protected:
-	SPOF h_;
+	SPOF<T> h_;
 };
 
-typedef SingleParticleOperatorFunction SPOf;
+template<typename T>
+using SPOf = SingleParticleOperatorFunction<T>;
+
+typedef SingleParticleOperatorFunction<complex<double>> SPOfcd;
 

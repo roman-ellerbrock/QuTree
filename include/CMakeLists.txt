@@ -43,7 +43,10 @@ set(TENSOR_TREE_FILES
 
 set(OPERATOR_FILES
         Operators/SingleParticleOperator.h
+        Operators/SingleParticleOperatorMatrix.h
         Operators/SingleParticleOperatorFunction.h
+        Operators/MultiParticleOperator.h
+        Operators/SumOfProductsOperator.h
         )
 
 set(LEAF_TYPE_FILES
