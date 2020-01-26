@@ -5,6 +5,7 @@
 #include "TensorTree.h"
 #include "SingleParticleOperator.h"
 #include "SingleParticleOperatorFunction.h"
+#include "SingleParticleOperatorMatrix.h"
 #include "PotentialOperator.h"
 
 template <typename T>
@@ -31,7 +32,7 @@ public:
 	~MultiParticleOperator() = default;
 
 	/// Construct a MPO from a single SPO
-	MultiParticleOperator(const SPO<T>& h, int mode_x)
+	MultiParticleOperator(const SPOM<T>& h, int mode_x)
 		: MultiParticleOperator() {
 		push_back(h, mode_x);
 	}
@@ -56,14 +57,11 @@ public:
 		mode_.push_back(mode_x);
 	}
 
-	/// Push back a RefSPO to the MPO
-	void push_back(const SPO<T>& h, int mode_x) {
-/*		auto *spo = new StandardSPO;
-		spo->Initialize(h);
-		SingParOp.push_back(shared_ptr<SPO>(spo));
-		mode.push_back(mode_x);
-		*/
-		assert(0);
+	void push_back(const SPOM<T>& h, size_t mode) {
+		auto* h_ptr = new SPOM<T>(h);
+		h_ptr->Mode() = 0;
+		SingParOp.push_back(shared_ptr<SPO<T>>(h_ptr));
+		mode_.emplace_back(mode);
 	}
 
 	/// Push back a RefSPO to the MPO
@@ -100,8 +98,7 @@ public:
 
 	/// Check whether the "part"-th SPO acts on mode "mode_x"
 	bool ModeIsActive(size_t part, size_t mode_x) const {
-		if (mode_[part] == mode_x) { return true; }
-		return false;
+		return (mode_[part] == mode_x);
 	}
 
 	/// Apply a MPO to a wavefunction. This routine is not optimized for performance.

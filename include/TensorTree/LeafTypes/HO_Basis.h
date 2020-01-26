@@ -5,6 +5,8 @@
 class HO_Basis
 	: public DVRBasis {
 public:
+	HO_Basis() = default;
+	~HO_Basis() override = default;
 
 	explicit HO_Basis(int dim)
 		: DVRBasis(dim) {};

@@ -29,6 +29,7 @@ void TensorTree<T>::Initialize(const TTBasis& basis) {
 
 template<typename T>
 void TensorTree<T>::Generate(const TTBasis& basis, mt19937& gen, bool delta_lowest) {
+	assert(basis.nNodes() == attributes.size());
 	for (const Node& node : basis) {
 		if (node.IsBottomlayer()) {
 			FillBottom(this->operator[](node), node);

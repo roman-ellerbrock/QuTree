@@ -20,10 +20,12 @@ set(QDlib_SOURCE_FILES
         TensorTree/TensorTree_Instantiation.cpp
         TensorTree/DenseOverlap.cpp
         TensorTree/HoleOverlap.cpp
-        Operators/SingleParticleOperatorFunction.cpp
         Operators/MultiParticleOperator.cpp
+        Operators/SingleParticleOperatorFunction.cpp
+        Operators/SingleParticleOperatorMatrix.cpp
         Operators/SumOfProductsOperator.cpp
-        stdafx.cpp Operators/SingleParticleOperatorMatrix.cpp ../include/Operators/SingleParticleOperatorMatrix.h)
+        stdafx.cpp
+        )
 
 set(LEAF_TYPE_CPP_FILES
         TensorTree/LeafTypes/BosonNumberBasis.cpp

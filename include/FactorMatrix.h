@@ -66,6 +66,7 @@ public:
 	size_t Dim() const { return Matrix<T>::Dim1(); }
 
 	size_t Mode() const { return mode_; }
+	size_t& Mode() { return mode_; }
 
 	// TensorC = A * TensorB
 	template<typename U>

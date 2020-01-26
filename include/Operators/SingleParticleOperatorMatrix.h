@@ -8,7 +8,7 @@
 #include "FactorMatrix.h"
 
 template<typename T>
-class SingleParticleOperatorMatrix: SPO<T> {
+class SingleParticleOperatorMatrix: public SPO<T> {
 public:
 	SingleParticleOperatorMatrix() = default;
 
@@ -17,7 +17,10 @@ public:
 	~SingleParticleOperatorMatrix() = default;
 
 	virtual void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
-		const Tensor<T>& Acoeff) const;
+		const Tensor<T>& Acoeff) const override;
+
+	size_t& Mode() { return h_.Mode(); }
+
 private:
 	FactorMatrix<T> h_;
 };

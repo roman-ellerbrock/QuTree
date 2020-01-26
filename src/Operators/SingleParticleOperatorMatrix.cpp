@@ -7,7 +7,6 @@
 template<typename T>
 SPOM<T>::SingleParticleOperatorMatrix(FactorMatrix<T> h)
 	: h_(h) {
-
 }
 
 template<typename T>
@@ -17,3 +16,5 @@ void SPOM<T>::Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
 }
 
 template class SingleParticleOperatorMatrix<complex<double>>;
+template class SingleParticleOperatorMatrix<double>;
+

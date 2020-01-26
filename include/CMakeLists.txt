@@ -42,10 +42,10 @@ set(TENSOR_TREE_FILES
         )
 
 set(OPERATOR_FILES
+        Operators/MultiParticleOperator.h
         Operators/SingleParticleOperator.h
         Operators/SingleParticleOperatorMatrix.h
         Operators/SingleParticleOperatorFunction.h
-        Operators/MultiParticleOperator.h
         Operators/SumOfProductsOperator.h
         )
 
