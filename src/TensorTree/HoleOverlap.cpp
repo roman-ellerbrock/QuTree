@@ -111,6 +111,12 @@ void HoleOverlap<T>::Write(ostream& os) const {
 }
 
 template <typename T>
+void HoleOverlap<T>::Write(const string& filename) const {
+	ofstream os(filename);
+	Write(os);
+}
+
+template <typename T>
 void HoleOverlap<T>::Read(istream& is) {
 	char check[5];
 	is.read(check, 4);
@@ -130,8 +136,18 @@ void HoleOverlap<T>::Read(istream& is) {
 }
 
 template <typename T>
+void HoleOverlap<T>::Read(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
+
+template <typename T>
 ostream& operator<<(ostream& os, const HoleOverlap<T>& H) {
-	H.print(os);
+	if (&os == &cout) {
+		H.print(os);
+	} else {
+		H.Write(os);
+	}
 	return os;
 }
 

@@ -33,7 +33,9 @@ public:
 		const HMatrices<T>& hmat, const TTBasis& basis);
 
 	void Calculate(const TensorTree<T>& Psi,
-		const HMatrices<T>& hmat, const TTBasis& basis) {Calculate(Psi, Psi, hmat, basis); }
+		const HMatrices<T>& hmat, const TTBasis& basis) {
+		Calculate(Psi, Psi, hmat, basis);
+	}
 
 	Tensorcd Apply(const Tensorcd& Phi, const Node& node) const;
 

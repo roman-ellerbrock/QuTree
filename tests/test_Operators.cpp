@@ -10,7 +10,7 @@
 #include "HO_Basis.h"
 #include "TensorTree/TensorTreeBasis.h"
 
-SUITE(Operators) {
+SUITE (Operators) {
 	class HelperFactory {
 	public:
 		HelperFactory() = default;
@@ -29,7 +29,7 @@ SUITE(Operators) {
 		}
 	};
 
-	TEST_FIXTURE(HelperFactory, SPO_HO) {
+	TEST_FIXTURE (HelperFactory, SPO_HO) {
 		HO_Basis ho(10);
 		ho.Initialize(1., 0., 0., 1.);
 		TensorDim tdim({10}, 1);
@@ -39,10 +39,10 @@ SUITE(Operators) {
 		string file("HO_Applyx.dat");
 		xA.Write(file);
 		Tensorcd B(file);
-		CHECK_EQUAL(xA, B);
+			CHECK_EQUAL(xA, B);
 	}
 
-	TEST_FIXTURE(HelperFactory, SPO_SPOM) {
+	TEST_FIXTURE (HelperFactory, SPO_SPOM) {
 		// Check that applying a Matrix to a tensor
 		// or the corresponding SPOM does the same
 		Initialize();
@@ -53,10 +53,10 @@ SUITE(Operators) {
 		Tensorcd XA = X * A;
 		Tensorcd xA(tdim);
 		x.Apply(ho, xA, A);
-		CHECK_EQUAL(XA, xA);
+			CHECK_EQUAL(XA, xA);
 	}
 
-	TEST_FIXTURE(HelperFactory, MPO_1) {
+	TEST_FIXTURE (HelperFactory, MPO_1) {
 		Initialize();
 		MPOcd M(x, 1);
 		mt19937 gen(time(nullptr));
@@ -64,11 +64,17 @@ SUITE(Operators) {
 		TensorTreecd Chi(basis);
 		Chi.Generate(basis, gen, false);
 		auto Psi = M.Apply(Chi, basis);
-		// @TODO: Check SPFs of results
+
+		/// Checking
+		string filename("MPO.Apply.dat");
+		Psi.Write(filename);
+		TensorTreecd Xi(filename);
+			CHECK_EQUAL(Xi.size(), Psi.size());
+		for (const Node& node : basis) {
+				CHECK_EQUAL(Xi[node], Psi[node]);
+		}
 	}
 
-	TEST(SOP_1) {
-
+	TEST (SOP_1) {
 	}
-
 }

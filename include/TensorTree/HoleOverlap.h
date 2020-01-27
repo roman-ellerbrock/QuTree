@@ -35,11 +35,13 @@ public:
 		const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const DenseOverlap<T>& S, const TTBasis& basis);
 
+	/// I/O
 	void print(const TTBasis& basis, ostream& os = cout) const;
 	void print(ostream& os = cout) const;
-
 	void Write(ostream& os)const;
+	void Write(const string& filename)const;
 	void Read(istream& is);
+	void Read(const string& filename);
 };
 
 template <typename T>
