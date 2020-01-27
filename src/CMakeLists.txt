@@ -20,6 +20,8 @@ set(QDlib_SOURCE_FILES
         TensorTree/TensorTree_Instantiation.cpp
         TensorTree/DenseOverlap.cpp
         TensorTree/HoleOverlap.cpp
+        TensorTree/HMatrices.cpp
+        TensorTree/HHoleMatrices.cpp
         Operators/MultiParticleOperator.cpp
         Operators/SingleParticleOperatorFunction.cpp
         Operators/SingleParticleOperatorMatrix.cpp

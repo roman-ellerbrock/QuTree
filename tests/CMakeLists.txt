@@ -4,7 +4,6 @@ find_package(UnitTest++)
 include_directories(${UTPP_INCLUDE_DIRS})
 
 set(QDlib_tests
-        test_Vector.cpp
         test_Matrix.cpp
         test_Tensor.cpp
         tests.cpp

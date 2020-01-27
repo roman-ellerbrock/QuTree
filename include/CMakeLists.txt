@@ -38,7 +38,10 @@ set(TENSOR_TREE_FILES
         TensorTree/TensorTree.h
         TensorTree/TensorTree_Implementation.h
         TensorTree/DenseOverlap.h
-        TensorTree/HoleOverlap.cpp
+        TensorTree/TreeStructuredObject.h
+        TensorTree/TreeMarker.h
+        TensorTree/HMatrices.h
+        TensorTree/HHoleMatrices.h
         )
 
 set(OPERATOR_FILES

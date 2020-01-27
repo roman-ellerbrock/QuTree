@@ -88,7 +88,7 @@ SUITE (Tree) {
 		TensorTreecd T(basis);
 		mt19937 gen(2468);
 		T.Generate(basis, gen,false);
-		string filename("TT.RNG.tmp.dat");
+		string filename("TT.RNG.dat");
 		T.Write(filename);
 		TensorTreecd Q(filename);
 			CHECK_EQUAL(T.size(), Q.size());
@@ -99,7 +99,7 @@ SUITE (Tree) {
 
 	TEST (TensorTree_Overlap) {
 		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
+		string filename("TT.RNG.dat");
 		TensorTreecd T(filename);
 		DenseOverlapcd S(T, T, basis);
 		const FactorMatrixcd& s = S.Get();
@@ -108,7 +108,7 @@ SUITE (Tree) {
 
 	TEST (DenseOverlap_IO) {
 		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
+		string filename("TT.RNG.dat");
 		TensorTreecd T(filename);
 		DenseOverlapcd S(T, T, basis);
 		string file2("DO.tmp.dat");
@@ -126,15 +126,16 @@ SUITE (Tree) {
 
 	TEST (TensorTree_HoleOverlap) {
 		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
+		string filename("TT.RNG.dat");
 		TensorTreecd T(filename);
 		DenseOverlapcd S(T, T, basis);
 		HoleOverlapcd Rho(T, T, S, basis);
+		/// Add some check!
 	}
 
 	TEST (HoleOverlap_IO) {
 		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
+		string filename("TT.RNG.dat");
 		TensorTreecd T(filename);
 		DenseOverlapcd S(T, T, basis);
 		HoleOverlapcd Rho(T, T, S, basis);

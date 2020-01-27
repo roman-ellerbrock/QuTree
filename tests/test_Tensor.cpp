@@ -86,6 +86,7 @@ SUITE (Tensor) {
 	TEST_FIXTURE (TensorFactory, Tensor_Product) {
 		CreateTensors();
 		auto x = HoleProduct(A, B, 0);
+		x.Write("Tensor_Product.dat");
 		Matrixcd s("Tensor_Product.dat");
 		auto d = x - s;
 		double residual = d.FrobeniusNorm();

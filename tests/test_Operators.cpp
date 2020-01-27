@@ -37,7 +37,7 @@ SUITE(Operators) {
 		ho.InitSPF(A);
 		auto xA = ho.applyX(A);
 		string file("HO_Applyx.dat");
-//		xA.Write(file);
+		xA.Write(file);
 		Tensorcd B(file);
 		CHECK_EQUAL(xA, B);
 	}
