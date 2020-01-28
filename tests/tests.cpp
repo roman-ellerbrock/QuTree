@@ -3,13 +3,11 @@
 //
 #include <UnitTest++/UnitTest++.h>
 
-TEST(Sanity)
-{
+TEST (Sanity) {
 		CHECK_EQUAL(1, 1);
 }
 
-int main(int, const char *[])
-{
+int main(int, const char *[]) {
 	return UnitTest::RunAllTests();
 }
 

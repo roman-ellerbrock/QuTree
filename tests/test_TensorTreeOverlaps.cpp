@@ -7,7 +7,7 @@
 
 double eps = 1e-12;
 
-SUITE(TensorTreeOverlaps) {
+SUITE (TensorTreeOverlaps) {
 
 	TEST (DenseOverlap_IO) {
 		TensorTreeBasis basis(12, 2, 2);
@@ -43,10 +43,10 @@ SUITE(TensorTreeOverlaps) {
 		string correct_filename("TT.Holeoverlap.dat");
 		Rho.Write(correct_filename);
 		HoleOverlapcd Sigma(correct_filename);
-		CHECK_EQUAL(Rho.size(), Sigma.size());
+			CHECK_EQUAL(Rho.size(), Sigma.size());
 		for (const Node& node : basis) {
 			auto r = Residual(Rho[node], Sigma[node]);
-			CHECK_CLOSE(0., r, eps);
+				CHECK_CLOSE(0., r, eps);
 		}
 	}
 

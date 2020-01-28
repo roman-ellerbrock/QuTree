@@ -19,6 +19,13 @@ TensorTree<T>::TensorTree(const string& filename) {
 	Read(is);
 }
 
+/// Create tensor tree and occupy the coefficients
+template<typename T>
+TensorTree<T>::TensorTree(const TTBasis& basis,
+	mt19937& gen, bool delta_lowest) : TensorTree(basis) {
+	Generate(basis, gen, delta_lowest);
+}
+
 template<typename T>
 void TensorTree<T>::Initialize(const TTBasis& basis) {
 	attributes.clear();

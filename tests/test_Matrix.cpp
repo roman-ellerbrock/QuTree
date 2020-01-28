@@ -32,7 +32,6 @@ SUITE (Matrix) {
 			CreateMatrixA();
 			CreateMatrixB();
 		}
-
 	};
 
 	Matrixcd Create() {
@@ -127,7 +126,4 @@ SUITE (Matrix) {
 				CHECK_CLOSE(Residual(A, Amc), 0., eps);
 		}
 	}
-
-
-
 }

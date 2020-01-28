@@ -1,5 +1,22 @@
 #include "HHoleMatrices.h"
 
+template<typename T>
+HHoleMatrices<T>::HHoleMatrices(const TensorTree<T>& Psi,
+	const HMatrices<T>& hmat, const MPO<T>& M, const TTBasis& basis)
+	: HHoleMatrices(M, basis) {
+	Calculate(Psi, Psi, hmat, basis);
+}
+
+template<typename T>
+void HHoleMatrices<T>::Initialize(const TTBasis& basis) {
+	attributes.clear();
+	for (const Node*const node_ptr : Active()) {
+		const Node& node = *node_ptr;
+		size_t dim = node.TDim().getntensor();
+		attributes.emplace_back(Matrix<T>(dim, dim));
+	}
+}
+
 // Calculate Hole-Matrices
 template<typename T>
 void HHoleMatrices<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
@@ -12,21 +29,21 @@ void HHoleMatrices<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& 
 		assert(Active(node));
 
 		const Node& parent = node.Up();
-		Tensorcd hKet = hmat.ApplyHole(Ket[parent], node);
+		Tensor<T> hKet = hmat.ApplyHole(Ket[parent], node);
 		if (!parent.IsToplayer()) {
-			hKet = multStateAB(operator[](parent), hKet);
+			hKet = multStateAB(this->operator[](parent), hKet);
 		}
 		operator[](node) = HoleProduct(Bra[parent], hKet, node.ChildIdx());
 	}
 }
 
 template<typename T>
-Tensorcd HHoleMatrices<T>::Apply(const Tensorcd& Phi, const Node& node) const {
+Tensor<T> HHoleMatrices<T>::Apply(const Tensor<T>& Phi, const Node& node) const {
 	if (node.IsToplayer()) {
 		return Phi;
 	} else {
 		assert(Active(node));
-		return multStateAB(operator[](node), Phi);
+		return multStateAB(this->operator[](node), Phi);
 	}
 }
 
@@ -35,9 +52,11 @@ void HHoleMatrices<T>::print(TTBasis& basis, ostream& os) {
 	for (const Node& node : basis) {
 		if (!node.IsToplayer()) {
 			node.info(os);
-			operator[](node).print(os);
+			this->operator[](node).print(os);
 		}
 	}
 }
 
+template class HHoleMatrices<complex<double>>;
+template class HHoleMatrices<double>;
 

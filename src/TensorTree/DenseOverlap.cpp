@@ -82,6 +82,8 @@ Tensor<T> DenseOverlap<T>::TransformTensor(const Tensor<T>& Phi,
 	}
 }
 
+/// I/O
+
 template<typename T>
 void DenseOverlap<T>::print(const TTBasis& basis, ostream& os) const {
 	for (const Node& node : basis) {

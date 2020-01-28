@@ -87,7 +87,7 @@ SUITE (Tree) {
 		TensorTreeBasis basis(12, 2, 2);
 		TensorTreecd T(basis);
 		mt19937 gen(2468);
-		T.Generate(basis, gen,false);
+		T.Generate(basis, gen, false);
 		string filename("TT.RNG.dat");
 		T.Write(filename);
 		TensorTreecd Q(filename);

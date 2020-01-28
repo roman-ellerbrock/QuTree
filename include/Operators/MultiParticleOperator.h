@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Tensor.h"
 #include "TensorTreeBasis.h"
 #include "TensorTree.h"
@@ -137,6 +136,9 @@ public:
 
 	/// Set the PotentialOperator
 	void SetV(const PotentialOperator& V);
+
+	/// Return vector of all active modes in this operator
+	const vector<int>& Modes()const { return mode_; }
 
 protected:
 	/// These are the SPOs

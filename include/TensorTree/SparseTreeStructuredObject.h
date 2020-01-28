@@ -19,13 +19,18 @@
 template<class A>
 class SparseTreeStructuredObject {
 public:
+	SparseTreeStructuredObject(const vector<size_t>& modes,
+	const TTBasis& basis) : active(make_shared<TreeMarker>(modes, basis)) {
+		Initialize(basis);
+	}
+
 	SparseTreeStructuredObject(shared_ptr<TreeMarker>& active_,
 		const TTBasis& basis)
 		: active(active_) {
 		Initialize(basis);
 	}
 
-	void Initialize(const TTBasis& basis) {
+	virtual void Initialize(const TTBasis& basis) {
 		attributes.resize(Active().size());
 	}
 
@@ -51,6 +56,8 @@ public:
 	typename vector<A>::const_iterator end() const {
 		return attributes.end();
 	}
+
+	size_t Size() const { return attributes.size(); }
 
 	const TreeMarker& Active() const { return *active.get(); }
 

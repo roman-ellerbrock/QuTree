@@ -4,7 +4,7 @@ Leaf::Leaf()
 	: dim_(-1), type_(0), mode_(-1), subType_(0), up_(nullptr), nodeType_(0) {}
 
 Leaf::Leaf(istream& file, AbstractNode *up_, NodePosition position_)
-	: up_(up_), position_(position_), type_(0), subType_(0), nodeType_(0), dim_(0), mode_(0) {
+	: up_(up_), position_(move(position_)), type_(0), subType_(0), nodeType_(0), dim_(0), mode_(0) {
 	// read basis size information
 	file >> dim_;
 	file >> type_;
@@ -61,12 +61,13 @@ Leaf& Leaf::operator=(const Leaf& old) {
 
 Leaf::Leaf(size_t dim, size_t mode, size_t type, size_t subtype,
 	PhysPar par)
-	: type_(type), subType_(subtype), dim_(dim), par_(par), mode_(0), nodeType_(0), up_(nullptr) {
+	: type_(type), subType_(subtype), dim_(dim), par_(par),
+	  mode_(mode), nodeType_(0), up_(nullptr) {
 	CreatePrimitiveBasis(type, subtype, dim);
 }
 
 void Leaf::info(ostream& os) const {
-	os << "Physical AbstractNode" << endl;
+	os << "Leaf" << endl;
 	position_.info(os);
 	os << "mode=" << Mode() << endl;
 	par_.info(os);

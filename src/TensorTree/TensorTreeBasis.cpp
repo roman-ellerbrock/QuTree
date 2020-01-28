@@ -61,7 +61,7 @@ vector<Node> Partition(const vector<Node>& nodes,
 void ResetLeafModes(TensorTreeBasis& basis) {
 	size_t n_modes = basis.nLeaves();
 	assert(n_modes > 0);
-	size_t mode = n_modes - 1;
+	int mode = n_modes - 1;
 	for (Node& node : basis) {
 		if (node.IsBottomlayer()) {
 			Leaf& leaf = node.PhysCoord();
@@ -109,62 +109,7 @@ TensorTreeBasis::TensorTreeBasis(size_t order,
 	tree.UpdatePosition(NodePosition());
 	Update();
 	ResetLeafModes(*this);
-}
-
-void TensorTreeBasis::Read(istream& file) {
-	// feed linearizedLeaves_ and logical block with references
-	tree.Initialize(file, nullptr, NodePosition());
 	Update();
-
-	// Add new PhysPar for every physical coordinate
-	for (int i = 0; i < linearizedLeaves_.size(); i++) {
-		// Set parameters
-		PhysPar par(file);
-		linearizedLeaves_[i].SetPar(par);
-
-		// Initialize primitive grid (HO, FFT, Legendre, ...)
-		PrimitiveBasis& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
-		primitivebasis.Initialize(par.Omega(), par.R0(), par.WFR0(), par.WFOmega());
-	}
-}
-
-void TensorTreeBasis::Read(const string& filename) {
-	ifstream is(filename);
-	Read(is);
-}
-
-void TensorTreeBasis::Write(ostream& os) const {
-	tree.Write(os);
-}
-
-ostream& operator<<(ostream& os, TTBasis& basis) {
-	basis.Write(os);
-	return os;
-}
-
-istream& operator<<(istream& is, TTBasis& basis) {
-	basis.Read(is);
-	return is;
-}
-
-void TensorTreeBasis::info(ostream& os) const {
-	os << "List of Leaves:" << endl;
-	for (size_t i = 0; i < this->nLeaves(); i++) {
-		const Leaf& node = GetLeaf(i);
-		node.info(os);
-		os << endl;
-	}
-	os << endl;
-
-	// ... and now for every logical node
-	os << "List of upper nodes:" << endl;
-	for (int i = nNodes() - 1; i >= 0; i--){
-		const Node& node = GetNode(i);
-		node.info();
-		node.TDim().print(os);
-		os << endl;
-	}
-	os << "Number of Nodes = " << nNodes() << endl;
 }
 
 Leaf& TensorTreeBasis::GetLeaf(size_t i) {
@@ -250,5 +195,77 @@ void TensorTreeBasis::LinearizeLeaves() {
 //			linearizedLeaves_(physnode.Mode()) = newphysmode;
 		}
 	}
+}
+
+/// I/O
+
+void TensorTreeBasis::Read(istream& file) {
+	// feed linearizedLeaves_ and logical block with references
+	tree.Initialize(file, nullptr, NodePosition());
+	Update();
+
+	// Add new PhysPar for every physical coordinate
+	for (int i = 0; i < linearizedLeaves_.size(); i++) {
+		// Set parameters
+		PhysPar par(file);
+		linearizedLeaves_[i].SetPar(par);
+
+		// Initialize primitive grid (HO, FFT, Legendre, ...)
+		PrimitiveBasis& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
+		primitivebasis.Initialize(par.Omega(), par.R0(), par.WFR0(), par.WFOmega());
+	}
+}
+
+void TensorTreeBasis::Read(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
+
+void TensorTreeBasis::Write(ostream& os) const {
+	tree.Write(os);
+}
+
+ostream& operator<<(ostream& os, TTBasis& basis) {
+	basis.Write(os);
+	return os;
+}
+
+istream& operator<<(istream& is, TTBasis& basis) {
+	basis.Read(is);
+	return is;
+}
+
+void TensorTreeBasis::info(ostream& os) const {
+	os << "List of Leaves:" << endl;
+	for (size_t i = 0; i < this->nLeaves(); i++) {
+		const Leaf& node = GetLeaf(i);
+		node.info(os);
+		os << endl;
+	}
+	os << endl;
+
+	// ... and now for every logical node
+	os << "List of upper nodes:" << endl;
+	for (int i = nNodes() - 1; i >= 0; i--){
+		const Node& node = GetNode(i);
+		node.info();
+		node.TDim().print(os);
+		os << endl;
+	}
+	os << "Number of Nodes = " << nNodes() << endl;
+}
+
+ostream& operator<<(ostream& os, const TensorTreeBasis& basis) {
+	if(&os == &cout) {
+		basis.info(os);
+	} else {
+		basis.Write(os);
+	}
+	return os;
+}
+
+istream& operator>>(istream& is, TensorTreeBasis& basis) {
+	basis.Read(is);
+	return is;
 }
 

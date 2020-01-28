@@ -22,6 +22,10 @@ public:
 
 	explicit TensorTree(const string& filename);
 
+	/// Create tensor tree and occupy the coefficients
+	TensorTree(const TTBasis& basis,
+		mt19937& gen, bool delta_lowest = true);
+
 	/// Default destructor
 	~TensorTree() = default;
 

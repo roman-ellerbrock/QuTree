@@ -50,7 +50,7 @@ public:
 
 		size_t n = 0;
 		nodes.clear();
-		for (auto& entry :  co_address) {
+		for (auto& entry : co_address) {
 			entry.second = n++;
 			const Node *node = &basis.GetNode(entry.first);
 			nodes.push_back(node);
@@ -59,6 +59,7 @@ public:
 
 	size_t Active(const Node& node) const {
 		size_t count = co_address.count(node.Address());
+//		return !(count == 0); ?
 		if (0 == count) {
 			return false;
 		} else {
@@ -91,10 +92,15 @@ public:
 	}
 
 	void print(const TTBasis& basis, ostream& os = cout) {
+		for (const Node* node : *this) {
+			node->info();
+		}
+		/*
 		for (const Node& node : basis) {
 			node.info(os);
 //            cout << operator[](node) << "\n";
 		}
+		 */
 	}
 
 protected:

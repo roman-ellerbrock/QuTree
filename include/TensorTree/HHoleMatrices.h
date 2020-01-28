@@ -18,15 +18,27 @@
 #include "SparseTreeStructuredObject.h"
 
 template<typename T>
-class HHoleMatrices: public SparseTreeStructuredObject<Matrixcd> {
+class HHoleMatrices: public SparseTreeStructuredObject<Matrix<T>> {
 public:
+	using SparseTreeStructuredObject<Matrix<T>>::Active;
+	using SparseTreeStructuredObject<Matrix<T>>::operator[];
+	using SparseTreeStructuredObject<Matrix<T>>::Initialize;
+	using SparseTreeStructuredObject<Matrix<T>>::attributes;
+
 	HHoleMatrices(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
-		: SparseTreeStructuredObject<Matrixcd>(active_, basis) {}
+		: SparseTreeStructuredObject<Matrix<T>>(active_, basis) {}
 
 	HHoleMatrices(const MPO<T>& M, const TTBasis& basis)
-		: SparseTreeStructuredObject<Matrixcd>(M, basis) {}
+		: SparseTreeStructuredObject<Matrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
+		Initialize(basis);
+	}
+
+	HHoleMatrices(const TensorTree<T>& Psi, const HMatrices<T>& hmat,
+		const MPO<T>& M, const TTBasis& basis);
 
 	~HHoleMatrices() = default;
+
+	void Initialize(const TTBasis& basis) override;
 
 	// Calculate Hole-Matrices
 	void Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
@@ -37,9 +49,13 @@ public:
 		Calculate(Psi, Psi, hmat, basis);
 	}
 
-	Tensorcd Apply(const Tensorcd& Phi, const Node& node) const;
+	Tensor<T> Apply(const Tensor<T>& Phi, const Node& node) const;
 
 	void print(TTBasis& basis, ostream& os = cout);
 };
+
+typedef HHoleMatrices<complex<double>> HHoleMatricescd;
+typedef HHoleMatrices<double> HHoleMatricesd;
+
 
 

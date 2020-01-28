@@ -1,5 +1,22 @@
 #include "HMatrices.h"
 
+vector<size_t> cast_to_vector_size_t(const vector<int>& a) {
+	vector<size_t> b(a.size());
+	for (size_t i = 0;i < a.size(); ++i) {
+		b.emplace_back(a[i]);
+	}
+	return b;
+}
+
+template<typename T>
+void HMatrices<T>::Initialize(const TTBasis& basis) {
+	attributes.clear();
+	for (const Node*const node_ptr : Active()) {
+		const Node& node = *node_ptr;
+		size_t dim = node.TDim().getntensor();
+		attributes.emplace_back(FactorMatrix<T>(dim, node.ChildIdx()));
+	}
+}
 
 template<typename T>
 void HMatrices<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
@@ -11,7 +28,7 @@ void HMatrices<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 }
 
 template<typename T>
-SPO<T> HMatrices<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
+FactorMatrix<T> HMatrices<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const Node& node) {
 	// @TODO: Optimize with switchbool trick
 	// Swipe through children and apply active children's SPOs.
@@ -19,25 +36,25 @@ SPO<T> HMatrices<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	for (size_t l = 0; l < node.nChildren(); l++) {
 		const Node& child = node.Down(l);
 		if (!Active(child)) { continue; }
-		const SPO<T>& h = operator[](child);
+		const FactorMatrix<T>& h = operator[](child);
 		hKet = h * hKet;
 	}
 
 	// calculate overlap
 	size_t ChildIdx = node.ChildIdx();
-	Matrixcd resultmat = Bra.DotProduct(hKet);
-	return SPO<T>(resultmat, ChildIdx);
+	Matrix<T> resultmat = Bra.DotProduct(hKet);
+	return FactorMatrix<T>(resultmat, ChildIdx);
 }
 
 template<typename T>
-SPO<T> HMatrices<T>::CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
+FactorMatrix<T> HMatrices<T>::CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const MPO<T>& M, const Node& node,
 	const Leaf& phys) {
 
 	Tensor<T> MKet = M.ApplyBottomLayer(Ket, phys);
 	int ChildIdx = node.ChildIdx();
-	Matrixcd resultmat = Bra.DotProduct(MKet);
-	return SPO<T>(resultmat, ChildIdx);
+	Matrix<T> resultmat = Bra.DotProduct(MKet);
+	return FactorMatrix<T>(resultmat, ChildIdx);
 }
 
 template<typename T>
@@ -71,7 +88,7 @@ Tensor<T> HMatrices<T>::ApplyUpper(Tensor<T> Phi, const Node& node) const {
 	for (size_t k = 0; k < node.nChildren(); ++k) {
 		const Node& child = node.Down(k);
 		if (!Active(child)) { continue; }
-		const SPO<T>& h = operator[](child);
+		const FactorMatrix<T>& h = operator[](child);
 		if (switchbool) {
 			multAB(hPhi, h, Phi, true);
 		} else {
@@ -96,18 +113,79 @@ Tensor<T> HMatrices<T>::ApplyHole(Tensor<T> Phi, const Node& hole_node) const {
 	for (size_t k = 0; k < parent.nChildren(); ++k) {
 		const Node& child = parent.Down(k);
 		if ((child.ChildIdx() == drop) || (!Active(child))) { continue; }
-		const SPO<T>& h = operator[](child);
+		const FactorMatrix<T>& h = operator[](child);
 		const TensorDim& tdim = Phi.Dim();
 		Phi = h * Phi;
 	}
 	return Phi;
 }
 
+/// I/O functionality
+
 template<typename T>
 void HMatrices<T>::print(const TTBasis& basis, ostream& os) const {
-	for (const Node& node : basis) {
-		if (!Active(node)) { continue; }
-		node.info(os);
+	for (const Node*const node_ptr : Active()) {
+		const Node& node = *node_ptr;
+		node.info();
+		this->operator[](node).print();
 	}
 }
 
+template<typename T>
+void HMatrices<T>::Write(ostream& os) const {
+	os.write("HMAT", 4);
+
+	// write number of nodes
+	auto nnodes = (int32_t) attributes.size();
+	os.write((char *) &nnodes, sizeof(int32_t));
+
+	// Write Tensors
+	for (const auto& m : attributes) {
+		os << m;
+	}
+	os << flush;
+}
+
+template<typename T>
+void HMatrices<T>::Write(const string& filename) const {
+	ofstream os(filename);
+	Write(os);
+}
+
+template<typename T>
+void HMatrices<T>::Read(istream& is) {
+	char check[5];
+	is.read(check, 4);
+	string s_check(check, 4);
+	string s_key("HMAT");
+	assert(s_key == s_check);
+
+	int32_t nnodes;
+	is.read((char *) &nnodes, sizeof(nnodes));
+
+	// Read all Tensors
+	attributes.clear();
+	for (int i = 0; i < nnodes; i++) {
+		FactorMatrix<T> M(is);
+		attributes.emplace_back(M);
+	}
+}
+
+template<typename T>
+void HMatrices<T>::Read(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
+
+template <typename T>
+ostream& operator>>(ostream& os, const HMatrices<T>& hmat) {
+	hmat.Write(os);
+}
+
+template <typename T>
+istream& operator<<(istream& is, HMatrices<T>& hmat) {
+	hmat.Read(is);
+}
+
+template class HMatrices<complex<double>>;
+template class HMatrices<double>;

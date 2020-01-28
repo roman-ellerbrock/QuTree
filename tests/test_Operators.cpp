@@ -74,7 +74,4 @@ SUITE (Operators) {
 				CHECK_EQUAL(Xi[node], Psi[node]);
 		}
 	}
-
-	TEST (SOP_1) {
-	}
 }
