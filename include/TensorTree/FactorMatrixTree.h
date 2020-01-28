@@ -11,44 +11,44 @@
  * of a given TensorTree<T>.
  * */
 #pragma once
-#include "Matrix.h"
+#include "Core/Matrix.h"
 #include "MultiParticleOperator.h"
 #include "TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "SparseTreeStructuredObject.h"
-#include "FactorMatrix.h"
+#include "Core/FactorMatrix.h"
 
 vector<size_t> cast_to_vector_size_t(const vector<int>& a);
 
 template<typename T>
-class HMatrices: public SparseTreeStructuredObject<FactorMatrix<T>> {
+class FactorMatrixTree: public SparseTreeStructuredObject<FactorMatrix<T>> {
 public:
 	using SparseTreeStructuredObject<FactorMatrix<T>>::Active;
 	using SparseTreeStructuredObject<FactorMatrix<T>>::operator[];
 	using SparseTreeStructuredObject<FactorMatrix<T>>::Initialize;
 	using SparseTreeStructuredObject<FactorMatrix<T>>::attributes;
 
-	HMatrices(const MPO<T>& M, const TTBasis& basis)
+	FactorMatrixTree(const MPO<T>& M, const TTBasis& basis)
 		: SparseTreeStructuredObject<FactorMatrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
 		Initialize(basis);
 	}
 
-	HMatrices(const TensorTree<T>& Psi, const MPO<T>& M, const TTBasis& basis)
-		: HMatrices(M, basis) {
+	FactorMatrixTree(const TensorTree<T>& Psi, const MPO<T>& M, const TTBasis& basis)
+		: FactorMatrixTree(M, basis) {
 		Calculate(Psi, M, basis);
 	}
 
-	HMatrices(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
+	FactorMatrixTree(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
 		: SparseTreeStructuredObject<FactorMatrix<T>>(active_, basis) {
 		Initialize(basis);
 	}
 
-	HMatrices(const MPO<T>& M, const TTBasis& basis, const string& filename)
-		: HMatrices(M, basis) {
+	FactorMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename)
+		: FactorMatrixTree(M, basis) {
 		Read(filename);
 	}
 
-	~HMatrices() = default;
+	~FactorMatrixTree() = default;
 
 	void Initialize(const TTBasis& basis) override;
 
@@ -84,12 +84,12 @@ protected:
 		const MPO<T>& M, const Node& node, const Leaf& phys);
 };
 
-template <typename T>
-ostream& operator>>(ostream& os, const HMatrices<T>& hmat);
+template<typename T>
+ostream& operator>>(ostream& os, const FactorMatrixTree<T>& hmat);
 
-template <typename T>
-istream& operator<<(istream& is, HMatrices<T>& hmat);
+template<typename T>
+istream& operator<<(istream& is, FactorMatrixTree<T>& hmat);
 
-typedef HMatrices<complex<double>> HMatricescd;
+typedef FactorMatrixTree<complex<double>> HMatricescd;
 
-typedef HMatrices<double> HMatricesd;
+typedef FactorMatrixTree<double> HMatricesd;

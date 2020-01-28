@@ -1,4 +1,4 @@
-#include "Tensor.h"
+#include "Core/Tensor.h"
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
 

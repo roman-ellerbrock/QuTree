@@ -5,7 +5,7 @@
 #ifndef SINGLEPARTICLEOPERATORMATRIX_H
 #define SINGLEPARTICLEOPERATORMATRIX_H
 #include "SingleParticleOperator.h"
-#include "FactorMatrix.h"
+#include "Core/FactorMatrix.h"
 
 template<typename T>
 class SingleParticleOperatorMatrix: public SPO<T> {

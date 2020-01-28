@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+#include "Core/stdafx.h"
 #include "NodePosition.h"
 
 class AbstractNode {

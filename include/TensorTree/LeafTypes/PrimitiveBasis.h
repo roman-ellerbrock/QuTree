@@ -1,5 +1,5 @@
 #pragma once
-#include"Tensor.h"
+#include"Core/Tensor.h"
 
 class PrimitiveBasis
 {

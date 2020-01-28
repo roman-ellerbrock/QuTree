@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-27.
 //
-#include "HMatrices.h"
-#include "HHoleMatrices.h"
+#include "FactorMatrixTree.h"
+#include "HoleMatrixTree.h"
 #include "UnitTest++/UnitTest++.h"
 
 
@@ -58,6 +58,7 @@ SUITE (HMatrices) {
 
 		string filename("Hmat.dat");
 		hmat.Write(filename);
+		hmat.print(basis);
 		HMatricescd gmat(M, basis, filename);
 		CHECK_EQUAL(hmat.Size(), gmat.Size());
 		const auto& active = hmat.Active();
@@ -82,13 +83,13 @@ SUITE (HMatrices) {
 		HHoleMatricescd hhole(Psi, hmat, M, basis);
 
 		string filename("HHole.dat");
-		hmat.Write(filename);
-		HMatricescd gmat(M, basis, filename);
-			CHECK_EQUAL(hmat.Size(), gmat.Size());
+		hhole.Write(filename);
+		HMatricescd ghole(M, basis, filename);
+			CHECK_EQUAL(hhole.Size(), ghole.Size());
 		const auto& active = hmat.Active();
 		for (const Node* node_ptr : active) {
 			const Node& node = *node_ptr;
-				CHECK_EQUAL(hmat[node], gmat[node]);
+				CHECK_EQUAL(hhole[node], ghole[node]);
 		}
 	}
 

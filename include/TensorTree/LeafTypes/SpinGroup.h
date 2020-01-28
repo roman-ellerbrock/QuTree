@@ -1,8 +1,8 @@
 #pragma once
 #include "PrimitiveBasis.h"
-#include "Matrix.h"
-#include "Vector.h"
-#include "Tensor.h"
+#include "Core/Matrix.h"
+#include "Core/Vector.h"
+#include "Core/Tensor.h"
 #include <random>
 
 class SpinGroup :

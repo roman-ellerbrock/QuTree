@@ -1,4 +1,4 @@
-#include"TensorDim.h"
+#include"Core/TensorDim.h"
 
 TensorABC::TensorABC(size_t k, vector<size_t> dim)
 	: before_(1), active_(1), after_(1), total_(1) {

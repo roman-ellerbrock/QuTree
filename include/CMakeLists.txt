@@ -1,30 +1,30 @@
 
 set(QDlib_INCLUDE_FILES
-        BS_integrator.h
-        DoubleParticleOperator.h
-        FFT.h
-        FFTCooleyTukey.h
-        JacobiRotationFramework.h
-        Lanzcos.h
-        Matrix.h
-        Matrix_Implementation.h
-        MultiIndex.h
+        Core/BS_integrator.h
+        Core/DoubleParticleOperator.h
+        Core/FFT.h
+        Core/FFTCooleyTukey.h
+        Core/JacobiRotationFramework.h
+        Core/Lanzcos.h
+        Core/Matrix.h
+        Core/Matrix_Implementation.h
+        Core/MultiIndex.h
         QDlib.h
-        QMConstants.h
-        SimultaneousDiagonalization.h
-        FactorMatrix.h
-        Tensor.h
-        TensorDim.h
-        TensorDim_Extension.h
-        Tensor_Extension.h
-        Tensor_Extension_Implementation.h
-        Tensor_Implementation.h
-        Tree.h
-        TreeNode.h
-        Vector.h
-        Vector_Implementation.h
-        long_integer.h
-        stdafx.h
+        Core/QMConstants.h
+        Core/SimultaneousDiagonalization.h
+        Core/FactorMatrix.h
+        Core/Tensor.h
+        Core/TensorDim.h
+        Core/TensorDim_Extension.h
+        Core/Tensor_Extension.h
+        Core/Tensor_Extension_Implementation.h
+        Core/Tensor_Implementation.h
+        Core/Tree.h
+        Core/TreeNode.h
+        Core/Vector.h
+        Core/Vector_Implementation.h
+        Core/long_integer.h
+        Core/stdafx.h
         )
 
 set(TENSOR_TREE_FILES
@@ -40,8 +40,8 @@ set(TENSOR_TREE_FILES
         TensorTree/DenseOverlap.h
         TensorTree/TreeStructuredObject.h
         TensorTree/TreeMarker.h
-        TensorTree/HMatrices.h
-        TensorTree/HHoleMatrices.h
+        TensorTree/FactorMatrixTree.h
+        TensorTree/HoleMatrixTree.h
         )
 
 set(OPERATOR_FILES

@@ -1,4 +1,4 @@
-#include "TensorDim_Extension.h"
+#include "Core/TensorDim_Extension.h"
 
 namespace TensorDim_Extension {
 // Adjust dimensions of TensorDim

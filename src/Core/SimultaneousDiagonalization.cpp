@@ -1,4 +1,4 @@
-#include "SimultaneousDiagonalization.h"
+#include "Core/SimultaneousDiagonalization.h"
 
 SimultaneousDiagonalization::SimultaneousDiagonalization()
 {

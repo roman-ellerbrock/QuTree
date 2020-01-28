@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-17.
 //
-#include "Matrix_Implementation.h"
-#include "FactorMatrix.h"
+#include "Core/Matrix_Implementation.h"
+#include "Core/FactorMatrix.h"
 
 typedef complex<double> cd;
 

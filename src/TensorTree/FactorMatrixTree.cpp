@@ -1,17 +1,17 @@
-#include "HMatrices.h"
+#include "FactorMatrixTree.h"
 
 vector<size_t> cast_to_vector_size_t(const vector<int>& a) {
 	vector<size_t> b(a.size());
-	for (size_t i = 0;i < a.size(); ++i) {
-		b.emplace_back(a[i]);
+	for (size_t i = 0; i < a.size(); ++i) {
+		b[i] = a[i];
 	}
 	return b;
 }
 
 template<typename T>
-void HMatrices<T>::Initialize(const TTBasis& basis) {
+void FactorMatrixTree<T>::Initialize(const TTBasis& basis) {
 	attributes.clear();
-	for (const Node*const node_ptr : Active()) {
+	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
 		size_t dim = node.TDim().getntensor();
 		attributes.emplace_back(FactorMatrix<T>(dim, node.ChildIdx()));
@@ -19,7 +19,7 @@ void HMatrices<T>::Initialize(const TTBasis& basis) {
 }
 
 template<typename T>
-void HMatrices<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+void FactorMatrixTree<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 	const MPO<T>& M, const TTBasis& basis) {
 	for (size_t n = 0; n < Active().size(); ++n) {
 		const Node& node = Active().MCTDHNode(n);
@@ -28,7 +28,7 @@ void HMatrices<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 }
 
 template<typename T>
-FactorMatrix<T> HMatrices<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
+FactorMatrix<T> FactorMatrixTree<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const Node& node) {
 	// @TODO: Optimize with switchbool trick
 	// Swipe through children and apply active children's SPOs.
@@ -47,7 +47,7 @@ FactorMatrix<T> HMatrices<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<
 }
 
 template<typename T>
-FactorMatrix<T> HMatrices<T>::CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
+FactorMatrix<T> FactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const MPO<T>& M, const Node& node,
 	const Leaf& phys) {
 
@@ -58,7 +58,7 @@ FactorMatrix<T> HMatrices<T>::CalculateBottom(const Tensor<T>& Bra, const Tensor
 }
 
 template<typename T>
-void HMatrices<T>::CalculateLayer(const Tensor<T>& Bra, const Tensor<T>& Ket,
+void FactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const MPO<T>& M, const Node& node) {
 	if (!Active(node)) { return; }
 
@@ -70,7 +70,7 @@ void HMatrices<T>::CalculateLayer(const Tensor<T>& Bra, const Tensor<T>& Ket,
 }
 
 template<typename T>
-Tensor<T> HMatrices<T>::Apply(const Tensor<T>& Phi, const MPO<T>& M,
+Tensor<T> FactorMatrixTree<T>::Apply(const Tensor<T>& Phi, const MPO<T>& M,
 	const Node& node) const {
 	if (!Active(node)) { return Phi; }
 	if (node.IsBottomlayer()) {
@@ -82,7 +82,7 @@ Tensor<T> HMatrices<T>::Apply(const Tensor<T>& Phi, const MPO<T>& M,
 }
 
 template<typename T>
-Tensor<T> HMatrices<T>::ApplyUpper(Tensor<T> Phi, const Node& node) const {
+Tensor<T> FactorMatrixTree<T>::ApplyUpper(Tensor<T> Phi, const Node& node) const {
 	Tensor<T> hPhi(Phi.Dim());
 	bool switchbool = true;
 	for (size_t k = 0; k < node.nChildren(); ++k) {
@@ -104,7 +104,7 @@ Tensor<T> HMatrices<T>::ApplyUpper(Tensor<T> Phi, const Node& node) const {
 }
 
 template<typename T>
-Tensor<T> HMatrices<T>::ApplyHole(Tensor<T> Phi, const Node& hole_node) const {
+Tensor<T> FactorMatrixTree<T>::ApplyHole(Tensor<T> Phi, const Node& hole_node) const {
 	// @TODO: Optimize with switchbool trick
 	assert(!hole_node.IsToplayer());
 	const Node& parent = hole_node.Up();
@@ -123,8 +123,8 @@ Tensor<T> HMatrices<T>::ApplyHole(Tensor<T> Phi, const Node& hole_node) const {
 /// I/O functionality
 
 template<typename T>
-void HMatrices<T>::print(const TTBasis& basis, ostream& os) const {
-	for (const Node*const node_ptr : Active()) {
+void FactorMatrixTree<T>::print(const TTBasis& basis, ostream& os) const {
+	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
 		node.info();
 		this->operator[](node).print();
@@ -132,7 +132,7 @@ void HMatrices<T>::print(const TTBasis& basis, ostream& os) const {
 }
 
 template<typename T>
-void HMatrices<T>::Write(ostream& os) const {
+void FactorMatrixTree<T>::Write(ostream& os) const {
 	os.write("HMAT", 4);
 
 	// write number of nodes
@@ -147,13 +147,13 @@ void HMatrices<T>::Write(ostream& os) const {
 }
 
 template<typename T>
-void HMatrices<T>::Write(const string& filename) const {
+void FactorMatrixTree<T>::Write(const string& filename) const {
 	ofstream os(filename);
 	Write(os);
 }
 
 template<typename T>
-void HMatrices<T>::Read(istream& is) {
+void FactorMatrixTree<T>::Read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
@@ -172,20 +172,23 @@ void HMatrices<T>::Read(istream& is) {
 }
 
 template<typename T>
-void HMatrices<T>::Read(const string& filename) {
+void FactorMatrixTree<T>::Read(const string& filename) {
 	ifstream is(filename);
 	Read(is);
 }
 
-template <typename T>
-ostream& operator>>(ostream& os, const HMatrices<T>& hmat) {
+template<typename T>
+ostream& operator>>(ostream& os, const FactorMatrixTree<T>& hmat) {
 	hmat.Write(os);
 }
 
-template <typename T>
-istream& operator<<(istream& is, HMatrices<T>& hmat) {
+template<typename T>
+istream& operator<<(istream& is, FactorMatrixTree<T>& hmat) {
 	hmat.Read(is);
 }
 
-template class HMatrices<complex<double>>;
-template class HMatrices<double>;
+template
+class FactorMatrixTree<complex<double>>;
+
+template
+class FactorMatrixTree<double>;

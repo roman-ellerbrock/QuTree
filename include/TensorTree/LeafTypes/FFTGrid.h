@@ -1,9 +1,9 @@
 #pragma once
 #include "PrimitiveBasis.h"
-#include "Matrix.h"
-#include "Vector.h"
-#include "FactorMatrix.h"
-#include "Tensor.h"
+#include "Core/Matrix.h"
+#include "Core/Vector.h"
+#include "Core/FactorMatrix.h"
+#include "Core/Tensor.h"
 
 class FFTGrid :
 	public PrimitiveBasis

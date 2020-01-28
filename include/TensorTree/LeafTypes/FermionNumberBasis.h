@@ -1,6 +1,6 @@
 #pragma once
-#include "Matrix.h"
-#include "Vector.h"
+#include "Core/Matrix.h"
+#include "Core/Vector.h"
 #include "NumberBasis.h"
 
 class FermionNumberBasis :

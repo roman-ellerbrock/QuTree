@@ -6,7 +6,7 @@
 #define TENSORTREE_H
 #include "TreeStructuredObject.h"
 #include "TensorTreeBasis.h"
-#include "Tensor_Implementation.h"
+#include "Core/Tensor_Implementation.h"
 
 template<typename T>
 class TensorTree: public TreeStructuredObject<Tensor<T>> {

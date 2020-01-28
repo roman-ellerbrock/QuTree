@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-17.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "Matrix.h"
+#include "Core/Matrix.h"
 
 SUITE (Matrix) {
 	class MatrixFactory {

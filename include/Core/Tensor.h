@@ -1,6 +1,6 @@
 #pragma once
 #include "TensorDim.h"
-#include "Matrix.h"
+#include "Core/Matrix.h"
 
 /**
  * \class Tensor

@@ -1,6 +1,6 @@
 #pragma once
 #include "TensorTree.h"
-#include "FactorMatrix.h"
+#include "Core/FactorMatrix.h"
 #include "TreeStructuredObject.h"
 
 //! Calculate Overlap between two TensorTree objects with the same basis

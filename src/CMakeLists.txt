@@ -1,17 +1,17 @@
 
 set(QDlib_SOURCE_FILES
-        TensorDim.cpp
-        TensorDim_Extension.cpp
-        FFT.cpp
-        JacobiRotationFramework.cpp
-        SimultaneousDiagonalization.cpp
-        CWrapper.f
-        long_integer.cpp
-        Vector_Instantiations.cpp
-        Matrix_Instantiations.cpp
-        Tensor_Instantiations.cpp
-        Tensor_Extension_Instantiations.cpp
-        FactorMatrix_Instantiations.cpp
+        Core/TensorDim.cpp
+        Core/TensorDim_Extension.cpp
+        Core/FFT.cpp
+        Core/JacobiRotationFramework.cpp
+        Core/SimultaneousDiagonalization.cpp
+        Core/CWrapper.f
+        Core/long_integer.cpp
+        Core/Vector_Instantiations.cpp
+        Core/Matrix_Instantiations.cpp
+        Core/Tensor_Instantiations.cpp
+        Core/Tensor_Extension_Instantiations.cpp
+        Core/FactorMatrix_Instantiations.cpp
         TensorTree/Leaf.cpp
         TensorTree/LinearizedLeaves.cpp
         TensorTree/Node.cpp
@@ -20,13 +20,13 @@ set(QDlib_SOURCE_FILES
         TensorTree/TensorTree_Instantiation.cpp
         TensorTree/DenseOverlap.cpp
         TensorTree/HoleOverlap.cpp
-        TensorTree/HMatrices.cpp
-        TensorTree/HHoleMatrices.cpp
+        TensorTree/FactorMatrixTree.cpp
+        TensorTree/HoleMatrixTree.cpp
         Operators/MultiParticleOperator.cpp
         Operators/SingleParticleOperatorFunction.cpp
         Operators/SingleParticleOperatorMatrix.cpp
         Operators/SumOfProductsOperator.cpp
-        stdafx.cpp
+        Core/stdafx.cpp
         )
 
 set(LEAF_TYPE_CPP_FILES

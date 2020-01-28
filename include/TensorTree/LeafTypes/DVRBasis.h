@@ -1,9 +1,9 @@
 #pragma once
-#include "Tensor.h"
+#include "Core/Tensor.h"
 #include "PrimitiveBasis.h"
-#include "Matrix.h"
-#include "Vector.h"
-#include "FactorMatrix.h"
+#include "Core/Matrix.h"
+#include "Core/Vector.h"
+#include "Core/FactorMatrix.h"
 
 class DVRBasis
 	: public PrimitiveBasis {
