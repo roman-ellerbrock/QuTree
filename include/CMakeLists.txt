@@ -28,20 +28,20 @@ set(QDlib_INCLUDE_FILES
         )
 
 set(TENSOR_TREE_FILES
-        TensorTree/AbstractNode.h
-        TensorTree/Leaf.h
-        TensorTree/LinearizedLeaves.h
-        TensorTree/Node.h
-        TensorTree/NodePosition.h
-        TensorTree/TensorTreeBasis.h
-        TensorTree/TreeStructuredObject.h
-        TensorTree/TensorTree.h
-        TensorTree/TensorTree_Implementation.h
-        TensorTree/DenseOverlap.h
-        TensorTree/TreeStructuredObject.h
-        TensorTree/TreeMarker.h
-        TensorTree/FactorMatrixTree.h
-        TensorTree/HoleMatrixTree.h
+        TensorTreeBasis/AbstractNode.h
+        TensorTreeBasis/Leaf.h
+        TensorTreeBasis/LinearizedLeaves.h
+        TensorTreeBasis/Node.h
+        TensorTreeBasis/NodePosition.h
+        TensorTreeBasis/TensorTreeBasis.h
+        Tree/TreeStructuredObject.h
+        Tree/TensorTree.h
+        Tree/TensorTree_Implementation.h
+        Tree/DenseOverlap.h
+        Tree/TreeStructuredObject.h
+        Tree/TreeMarker.h
+        Tree/FactorMatrixTree.h
+        Tree/HoleMatrixTree.h
         )
 
 set(OPERATOR_FILES
@@ -53,16 +53,16 @@ set(OPERATOR_FILES
         )
 
 set(LEAF_TYPE_FILES
-        TensorTree/LeafTypes/PrimitiveBasis.h
-        TensorTree/LeafTypes/BosonNumberBasis.h
-        TensorTree/LeafTypes/DVRBasis.h
-        TensorTree/LeafTypes/FermionNumberBasis.h
-        TensorTree/LeafTypes/FFTGrid.h
-        TensorTree/LeafTypes/HO_Basis.h
-        TensorTree/LeafTypes/LegendrePolynomials.h
-        TensorTree/LeafTypes/LogicalBasis.h
-        TensorTree/LeafTypes/NumberBasis.h
-        TensorTree/LeafTypes/SpinGroup.h
+        TensorTreeBasis/LeafTypes/PrimitiveBasis.h
+        TensorTreeBasis/LeafTypes/BosonNumberBasis.h
+        TensorTreeBasis/LeafTypes/DVRBasis.h
+        TensorTreeBasis/LeafTypes/FermionNumberBasis.h
+        TensorTreeBasis/LeafTypes/FFTGrid.h
+        TensorTreeBasis/LeafTypes/HO_Basis.h
+        TensorTreeBasis/LeafTypes/LegendrePolynomials.h
+        TensorTreeBasis/LeafTypes/LogicalBasis.h
+        TensorTreeBasis/LeafTypes/NumberBasis.h
+        TensorTreeBasis/LeafTypes/SpinGroup.h
         )
 
 install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)

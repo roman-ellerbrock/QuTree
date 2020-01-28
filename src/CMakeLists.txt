@@ -12,16 +12,16 @@ set(QDlib_SOURCE_FILES
         Core/Tensor_Instantiations.cpp
         Core/Tensor_Extension_Instantiations.cpp
         Core/FactorMatrix_Instantiations.cpp
-        TensorTree/Leaf.cpp
-        TensorTree/LinearizedLeaves.cpp
-        TensorTree/Node.cpp
-        TensorTree/NodePosition.cpp
-        TensorTree/TensorTreeBasis.cpp
-        TensorTree/TensorTree_Instantiation.cpp
-        TensorTree/DenseOverlap.cpp
-        TensorTree/HoleOverlap.cpp
-        TensorTree/FactorMatrixTree.cpp
-        TensorTree/HoleMatrixTree.cpp
+        TensorTreeBasis/Leaf.cpp
+        TensorTreeBasis/LinearizedLeaves.cpp
+        TensorTreeBasis/Node.cpp
+        TensorTreeBasis/NodePosition.cpp
+        TensorTreeBasis/TensorTreeBasis.cpp
+        Tree/TensorTree_Instantiation.cpp
+        Tree/DenseOverlap.cpp
+        Tree/HoleOverlap.cpp
+        Tree/FactorMatrixTree.cpp
+        Tree/HoleMatrixTree.cpp
         Operators/MultiParticleOperator.cpp
         Operators/SingleParticleOperatorFunction.cpp
         Operators/SingleParticleOperatorMatrix.cpp
@@ -30,15 +30,15 @@ set(QDlib_SOURCE_FILES
         )
 
 set(LEAF_TYPE_CPP_FILES
-        TensorTree/LeafTypes/BosonNumberBasis.cpp
-        TensorTree/LeafTypes/DVRBasis.cpp
-        TensorTree/LeafTypes/FermionNumberBasis.cpp
-        TensorTree/LeafTypes/FFTGrid.cpp
-        TensorTree/LeafTypes/HO_Basis.cpp
-        TensorTree/LeafTypes/LegendrePolynomials.cpp
-        TensorTree/LeafTypes/LogicalBasis.cpp
-        TensorTree/LeafTypes/NumberBasis.cpp
-        TensorTree/LeafTypes/SpinGroup.cpp
+        TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
+        TensorTreeBasis/LeafTypes/DVRBasis.cpp
+        TensorTreeBasis/LeafTypes/FermionNumberBasis.cpp
+        TensorTreeBasis/LeafTypes/FFTGrid.cpp
+        TensorTreeBasis/LeafTypes/HO_Basis.cpp
+        TensorTreeBasis/LeafTypes/LegendrePolynomials.cpp
+        TensorTreeBasis/LeafTypes/LogicalBasis.cpp
+        TensorTreeBasis/LeafTypes/NumberBasis.cpp
+        TensorTreeBasis/LeafTypes/SpinGroup.cpp
         )
 
 # Compile objects only once for both static and shared libraries

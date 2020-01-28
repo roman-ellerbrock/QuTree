@@ -1,5 +1,5 @@
 #pragma once
-#include "Node.h"
+#include "TensorTreeBasis/Node.h"
 
 /**
  * \class TreeStructuredObject

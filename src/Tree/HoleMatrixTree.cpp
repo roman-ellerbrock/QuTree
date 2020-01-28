@@ -1,6 +1,12 @@
 #include "HoleMatrixTree.h"
 
 template<typename T>
+HoleMatrixTree<T>::HoleMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename)
+	: HoleMatrixTree(M, basis) {
+	Read(filename);
+}
+
+template<typename T>
 HoleMatrixTree<T>::HoleMatrixTree(const TensorTree<T>& Psi,
 	const FactorMatrixTree<T>& hmat, const MPO<T>& M, const TTBasis& basis)
 	: HoleMatrixTree(M, basis) {
@@ -61,7 +67,7 @@ void HoleMatrixTree<T>::print(TTBasis& basis, ostream& os) {
 
 template<typename T>
 void HoleMatrixTree<T>::Write(ostream& os) const {
-	os.write("HMAT", 4);
+	os.write("HMTr", 4);
 
 	// write number of nodes
 	auto nnodes = (int32_t) attributes.size();
@@ -85,7 +91,7 @@ void HoleMatrixTree<T>::Read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
-	string s_key("HMAT");
+	string s_key("HMTr");
 	assert(s_key == s_check);
 
 	int32_t nnodes;
@@ -94,7 +100,7 @@ void HoleMatrixTree<T>::Read(istream& is) {
 	// Read all Tensors
 	attributes.clear();
 	for (int i = 0; i < nnodes; i++) {
-		FactorMatrix<T> M(is);
+		Matrix<T> M(is);
 		attributes.emplace_back(M);
 	}
 }

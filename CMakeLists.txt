@@ -75,8 +75,8 @@ endif ()
 # Recurse into subdirectories
 #####################################################################
 include_directories("include")
-include_directories("include/TensorTree")
-include_directories("include/TensorTree/LeafTypes")
+include_directories("include/Tree")
+include_directories("include/TensorTreeBasis/LeafTypes")
 include_directories("include/Operators")
 add_subdirectory("src")
 add_subdirectory("include")

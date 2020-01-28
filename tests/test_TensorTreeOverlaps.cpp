@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-27.
 //
-#include "TensorTree/DenseOverlap.h"
-#include "TensorTree/HoleOverlap.h"
+#include "Tree/DenseOverlap.h"
+#include "Tree/HoleOverlap.h"
 #include "UnitTest++/UnitTest++.h"
 
 double eps = 1e-12;

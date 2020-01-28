@@ -4,7 +4,7 @@
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
 
-//template class TensorTree<double>;
+//template class Tree<double>;
 typedef complex<double> cd;
 template class TensorTree<cd>;
 

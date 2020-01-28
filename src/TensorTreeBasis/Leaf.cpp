@@ -1,4 +1,4 @@
-#include "Leaf.h"
+#include "TensorTreeBasis/Leaf.h"
 
 Leaf::Leaf()
 	: dim_(-1), type_(0), mode_(-1), subType_(0), up_(nullptr), nodeType_(0) {}

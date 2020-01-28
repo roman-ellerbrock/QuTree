@@ -1,4 +1,4 @@
-#include "Node.h"
+#include "TensorTreeBasis/Node.h"
 
 Node::Node()
 	: nTotalNodes_(1), nLeaves_(0),

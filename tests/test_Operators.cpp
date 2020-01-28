@@ -8,7 +8,7 @@
 #include "MultiParticleOperator.h"
 #include "SumOfProductsOperator.h"
 #include "HO_Basis.h"
-#include "TensorTree/TensorTreeBasis.h"
+#include "TensorTreeBasis/TensorTreeBasis.h"
 
 SUITE (Operators) {
 	class HelperFactory {

@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-19.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TensorTreeBasis.h"
+#include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
 #include "DenseOverlap.h"

@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2020-01-21.
 //
-#include "TensorTreeBasis.h"
+#include "TensorTreeBasis/TensorTreeBasis.h"
 
 TensorTreeBasis::TensorTreeBasis(const TensorTreeBasis& T)
 	: tree(T.tree) {
@@ -68,6 +68,7 @@ void ResetLeafModes(TensorTreeBasis& basis) {
 			leaf.Mode() = mode--;
 		}
 	}
+	basis.Update();
 }
 
 void TensorTreeBasis::ReindexLeafModes(map<size_t, size_t> Map) {
@@ -109,7 +110,6 @@ TensorTreeBasis::TensorTreeBasis(size_t order,
 	tree.UpdatePosition(NodePosition());
 	Update();
 	ResetLeafModes(*this);
-	Update();
 }
 
 Leaf& TensorTreeBasis::GetLeaf(size_t i) {

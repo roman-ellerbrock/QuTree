@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Tensor.h"
-#include "TensorTreeBasis.h"
+#include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "SingleParticleOperator.h"
 #include "SingleParticleOperatorFunction.h"
@@ -13,14 +13,15 @@ class MultiParticleOperator
 	 * \brief A MultiParticleOperator (MPO) is a product of general single-particle operators
 	 *
 	 * A MultiParticleOperator is one summand in a SumofProducts
-	 * operator. It can be applied to a mctdhWavefunction resulting in
-	 * a wavefunction with a different SPF-basis. The MPO is central for building hamiltonians.
+	 * operator. It can be applied to a TensorTree resulting in
+	 * a wavefunction with a different bottomlayer-Tensors. The MPO is
+	 * central for building hamiltonians.
 	 *
 	 * Please note:
-	 * - The recommended operator to build MPO is RefSPO (due to performance)
+	 * - The recommended operator to build MPO is SPOf or SPOM (due to performance)
 	 * - SPO initialization might be removed in the future
-	 * - mctdhWavfunctions with different SPF-basis
-	 * functions cannot be added without loss of information.
+	 * - TensorTrees with different lower-node Tensors
+	 *   cannot (straightforwardly) be added without loss of information.
 	 */
 {
 public:

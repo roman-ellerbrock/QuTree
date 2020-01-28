@@ -20,9 +20,7 @@ public:
 	PotentialOperator(size_t f_, size_t state_)
 	:f(f_), state(state_){}
 
-	~PotentialOperator(){}
-
-	void Initialize(size_t f, size_t state);
+	~PotentialOperator() = default;
 
 	size_t F()const {
 		return f;

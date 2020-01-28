@@ -47,9 +47,8 @@ FactorMatrix<T> FactorMatrixTree<T>::CalculateUpper(const Tensor<T>& Bra, const 
 }
 
 template<typename T>
-FactorMatrix<T> FactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
-	const MPO<T>& M, const Node& node,
-	const Leaf& phys) {
+FactorMatrix<T> FactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra,
+	const Tensor<T>& Ket, const MPO<T>& M, const Node& node, const Leaf& phys) {
 
 	Tensor<T> MKet = M.ApplyBottomLayer(Ket, phys);
 	int ChildIdx = node.ChildIdx();
@@ -58,8 +57,8 @@ FactorMatrix<T> FactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra, const
 }
 
 template<typename T>
-void FactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Bra, const Tensor<T>& Ket,
-	const MPO<T>& M, const Node& node) {
+void FactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Bra,
+	const Tensor<T>& Ket, const MPO<T>& M, const Node& node) {
 	if (!Active(node)) { return; }
 
 	if (node.IsBottomlayer()) {
@@ -133,7 +132,7 @@ void FactorMatrixTree<T>::print(const TTBasis& basis, ostream& os) const {
 
 template<typename T>
 void FactorMatrixTree<T>::Write(ostream& os) const {
-	os.write("HMAT", 4);
+	os.write("FMTr", 4);
 
 	// write number of nodes
 	auto nnodes = (int32_t) attributes.size();
@@ -157,7 +156,7 @@ void FactorMatrixTree<T>::Read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
-	string s_key("HMAT");
+	string s_key("FMTr");
 	assert(s_key == s_check);
 
 	int32_t nnodes;

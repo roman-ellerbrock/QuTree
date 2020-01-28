@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-27.
 //
 #include "FactorMatrixTree.h"
-#include "HoleMatrixTree.h"
+#include "Tree/HoleMatrixTree.h"
 #include "UnitTest++/UnitTest++.h"
 
 
@@ -39,7 +39,7 @@ SUITE (HMatrices) {
 		TensorTreecd Psi(basis, rng);
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
-		HMatricescd hmat(Psi, M, basis);
+		FMatrixTreecd hmat(Psi, M, basis);
 		CHECK_CLOSE(0.25, real(hmat[basis.TopNode()](0,0)), 0E-12);
 	}
 
@@ -48,18 +48,17 @@ SUITE (HMatrices) {
 
 		// Create Basis
 		TTBasis basis(7, 2, 2);
-		// Create and occupy TensorTree
+		// Create and occupy Tree
 		TensorTreecd Psi(basis, rng, false);
 		// Create a multiparticleoperator
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
 		// Build  matrix representation for operator
-		HMatricescd hmat(Psi, M, basis);
+		FMatrixTreecd hmat(Psi, M, basis);
 
 		string filename("Hmat.dat");
 		hmat.Write(filename);
-		hmat.print(basis);
-		HMatricescd gmat(M, basis, filename);
+		FMatrixTreecd gmat(M, basis, filename);
 		CHECK_EQUAL(hmat.Size(), gmat.Size());
 		const auto& active = hmat.Active();
 		for (const Node* node_ptr : active) {
@@ -73,18 +72,18 @@ SUITE (HMatrices) {
 
 		// Create Basis
 		TTBasis basis(7, 2, 2);
-		// Create and occupy TensorTree
+		// Create and occupy Tree
 		TensorTreecd Psi(basis, rng, false);
-		// Create a multiparticleoperator
+		// Create a multiparticleoperator acting on modes 0 and 3
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
 		// Build  matrix representation for operator
-		HMatricescd hmat(Psi, M, basis);
-		HHoleMatricescd hhole(Psi, hmat, M, basis);
+		FMatrixTreecd hmat(Psi, M, basis);
+		HoleMatrixTreecd hhole(Psi, hmat, M, basis);
 
 		string filename("HHole.dat");
 		hhole.Write(filename);
-		HMatricescd ghole(M, basis, filename);
+		HoleMatrixTreecd ghole(M, basis, filename);
 			CHECK_EQUAL(hhole.Size(), ghole.Size());
 		const auto& active = hmat.Active();
 		for (const Node* node_ptr : active) {
