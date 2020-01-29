@@ -18,6 +18,7 @@ enable_language(CXX)
 set(QDlib_VERSION_MAJOR 0)
 set(QDlib_VERSION_MINOR 1)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+cmake_policy(SET "CMP0042" NEW)
 
 #####################################################################
 # Find Required packages
@@ -43,7 +44,9 @@ if (CMAKE_VERSION VERSION_LESS "3.1")
     endif ()
 else ()
     set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD_REQUIRED True)
 endif ()
+
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ")
 set(FLAGS_VECTORIZEE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect' ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${FLAGS_VECTORIZE}")
@@ -73,8 +76,9 @@ endif ()
 # Recurse into subdirectories
 #####################################################################
 include_directories("include")
-include_directories("include/TensorTree")
-include_directories("include/TensorTree/LeafTypes")
+include_directories("include/Tree")
+include_directories("include/TensorTreeBasis/LeafTypes")
+include_directories("include/Operators")
 add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("tests")

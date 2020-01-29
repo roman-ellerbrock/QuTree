@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-19.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TensorTreeBasis.h"
+#include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
 #include "DenseOverlap.h"
@@ -87,67 +87,13 @@ SUITE (Tree) {
 		TensorTreeBasis basis(12, 2, 2);
 		TensorTreecd T(basis);
 		mt19937 gen(2468);
-		T.Generate(gen, basis);
-		string filename("TT.RNG.tmp.dat");
+		T.Generate(basis, gen, false);
+		string filename("TT.RNG.dat");
 		T.Write(filename);
 		TensorTreecd Q(filename);
 			CHECK_EQUAL(T.size(), Q.size());
 		for (const Node& node : basis) {
 				CHECK_EQUAL(T[node], Q[node]);
-		}
-	}
-
-	TEST (TensorTree_Overlap) {
-		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
-		TensorTreecd T(filename);
-		DenseOverlapcd S(T, T, basis);
-		const FactorMatrixcd& s = S.Get();
-			CHECK_CLOSE(1., abs(s[0]), 1e-14);
-	}
-
-	TEST (DenseOverlap_IO) {
-		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
-		TensorTreecd T(filename);
-		DenseOverlapcd S(T, T, basis);
-		string file2("DO.tmp.dat");
-		{
-			ofstream os(file2);
-			S.Write(os);
-			os.close();
-		}
-		DenseOverlapcd Q(file2);
-			CHECK_EQUAL(S.size(), Q.size());
-		for (const Node& node : basis) {
-				CHECK_EQUAL(S[node], Q[node]);
-		}
-	}
-
-	TEST (TensorTree_HoleOverlap) {
-		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
-		TensorTreecd T(filename);
-		DenseOverlapcd S(T, T, basis);
-		HoleOverlapcd Rho(T, T, S, basis);
-	}
-
-	TEST (HoleOverlap_IO) {
-		TensorTreeBasis basis(12, 2, 2);
-		string filename("TT.RNG.tmp.dat");
-		TensorTreecd T(filename);
-		DenseOverlapcd S(T, T, basis);
-		HoleOverlapcd Rho(T, T, S, basis);
-		string file2("HO.tmp.dat");
-		{
-			ofstream os(file2);
-			Rho.Write(os);
-			os.close();
-		}
-		HoleOverlapcd Qh(file2);
-			CHECK_EQUAL(Rho.size(), Qh.size());
-		for (const Node& node : basis) {
-				CHECK_EQUAL(Rho[node], Qh[node]);
 		}
 	}
 }

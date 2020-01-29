@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-17.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "Matrix.h"
+#include "Core/Matrix.h"
 
 SUITE (Matrix) {
 	class MatrixFactory {
@@ -32,7 +32,6 @@ SUITE (Matrix) {
 			CreateMatrixA();
 			CreateMatrixB();
 		}
-
 	};
 
 	Matrixcd Create() {
@@ -50,8 +49,8 @@ SUITE (Matrix) {
 	TEST_FIXTURE (MatrixFactory, Matrix_FileIO) {
 		/// Test Matrix I/O
 		CreateMatrices();
-		A.Write("matrix1.dat");
-		Matrixcd N("matrix1.dat");
+		A.Write("matrix1.tmp.dat");
+		Matrixcd N("matrix1.tmp.dat");
 		bool success = A == N;
 			CHECK_EQUAL(success, true);
 	}
@@ -87,9 +86,11 @@ SUITE (Matrix) {
 		auto x = A.cDiag();
 		const Matrixcd& Ua = x.first;
 		const Vectord& la = x.second;
+		Ua.Write("matrix_cdiag_trafo.dat");
+		la.Write("matrix_cdiag_ev.dat");
 
-		Matrixcd U("matrix3a.dat");
-		Vectord lambda("matrix3b.dat");
+		Matrixcd U("matrix_cdiag_trafo.dat");
+		Vectord lambda("matrix_cdiag_ev.dat");
 		auto residual_U = Residual(U, x.first);
 		auto residual_L = Residual(lambda, x.second);
 			CHECK_CLOSE(residual_U, 0., eps);
@@ -125,7 +126,4 @@ SUITE (Matrix) {
 				CHECK_CLOSE(Residual(A, Amc), 0., eps);
 		}
 	}
-
-
-
 }

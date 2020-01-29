@@ -1,37 +1,44 @@
 
 set(QDlib_SOURCE_FILES
-        TensorDim.cpp
-        TensorDim_Extension.cpp
-        FFT.cpp
-        JacobiRotationFramework.cpp
-        SimultaneousDiagonalization.cpp
-        CWrapper.f
-        long_integer.cpp
-        Vector_Instantiations.cpp
-        Matrix_Instantiations.cpp
-        Tensor_Instantiations.cpp
-        Tensor_Extension_Instantiations.cpp
-        FactorMatrix_Instantiations.cpp
-        TensorTree/Leaf.cpp
-        TensorTree/LinearizedLeaves.cpp
-        TensorTree/Node.cpp
-        TensorTree/NodePosition.cpp
-        TensorTree/TensorTreeBasis.cpp
-        TensorTree/TensorTree_Instantiation.cpp
-        TensorTree/DenseOverlap.cpp
-        TensorTree/HoleOverlap.cpp
-        stdafx.cpp)
+        Core/TensorDim.cpp
+        Core/TensorDim_Extension.cpp
+        Core/FFT.cpp
+        Core/JacobiRotationFramework.cpp
+        Core/SimultaneousDiagonalization.cpp
+        Core/CWrapper.f
+        Core/long_integer.cpp
+        Core/Vector_Instantiations.cpp
+        Core/Matrix_Instantiations.cpp
+        Core/Tensor_Instantiations.cpp
+        Core/Tensor_Extension_Instantiations.cpp
+        Core/FactorMatrix_Instantiations.cpp
+        TensorTreeBasis/Leaf.cpp
+        TensorTreeBasis/LinearizedLeaves.cpp
+        TensorTreeBasis/Node.cpp
+        TensorTreeBasis/NodePosition.cpp
+        TensorTreeBasis/TensorTreeBasis.cpp
+        Tree/TensorTree_Instantiation.cpp
+        Tree/DenseOverlap.cpp
+        Tree/HoleOverlap.cpp
+        Tree/FactorMatrixTree.cpp
+        Tree/HoleMatrixTree.cpp
+        Operators/MultiParticleOperator.cpp
+        Operators/SingleParticleOperatorFunction.cpp
+        Operators/SingleParticleOperatorMatrix.cpp
+        Operators/SumOfProductsOperator.cpp
+        Core/stdafx.cpp
+        )
 
 set(LEAF_TYPE_CPP_FILES
-        TensorTree/LeafTypes/BosonNumberBasis.cpp
-        TensorTree/LeafTypes/DVRBasis.cpp
-        TensorTree/LeafTypes/FermionNumberBasis.cpp
-        TensorTree/LeafTypes/FFTGrid.cpp
-        TensorTree/LeafTypes/HO_Basis.cpp
-        TensorTree/LeafTypes/LegendrePolynomials.cpp
-        TensorTree/LeafTypes/LogicalBasis.cpp
-        TensorTree/LeafTypes/NumberBasis.cpp
-        TensorTree/LeafTypes/SpinGroup.cpp
+        TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
+        TensorTreeBasis/LeafTypes/DVRBasis.cpp
+        TensorTreeBasis/LeafTypes/FermionNumberBasis.cpp
+        TensorTreeBasis/LeafTypes/FFTGrid.cpp
+        TensorTreeBasis/LeafTypes/HO_Basis.cpp
+        TensorTreeBasis/LeafTypes/LegendrePolynomials.cpp
+        TensorTreeBasis/LeafTypes/LogicalBasis.cpp
+        TensorTreeBasis/LeafTypes/NumberBasis.cpp
+        TensorTreeBasis/LeafTypes/SpinGroup.cpp
         )
 
 # Compile objects only once for both static and shared libraries
