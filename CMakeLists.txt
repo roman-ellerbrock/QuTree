@@ -11,8 +11,7 @@
 ###########################################################################
 
 cmake_minimum_required(VERSION 2.8)
-project(QDlib C CXX Fortran)
-enable_language(Fortran)
+project(QDlib C CXX)
 enable_language(C)
 enable_language(CXX)
 set(QDlib_VERSION_MAJOR 0)
@@ -88,4 +87,5 @@ add_subdirectory("tests")
 #####################################################################
 install (TARGETS QDlib
 	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)
+	LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
