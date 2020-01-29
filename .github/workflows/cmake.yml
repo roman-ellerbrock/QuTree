@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: macos
+    runs-on: ubuntu-latest
     
     steps:
     - name: Install Eigen
