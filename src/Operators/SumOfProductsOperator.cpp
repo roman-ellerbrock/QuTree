@@ -1,12 +1,12 @@
 #include "SumOfProductsOperator.h"
 
 template<typename T>
-SOP<T>::SumOfProductsOperator(const MPO<T>& M, T c) {
+SumOfProductsOperator<T>::SumOfProductsOperator(const MPO<T>& M, T c) {
 	push_back(M, c);
 }
 
 template<typename T>
-SOP<T> multAB(const SOP<T>& A, const SOP<T>& B) {
+SumOfProductsOperator<T> multAB(const SOP<T>& A, const SOP<T>& B) {
 	SOP<T> C;
 
 	for (size_t i = 0; i < A.size(); i++) {
@@ -24,7 +24,7 @@ SOP<T> multAB(const SOP<T>& A, const SOP<T>& B) {
 }
 
 template<typename T>
-SOP<T> operator*(T c, const SOP<T>& A) {
+SumOfProductsOperator<T> operator*(T c, const SOP<T>& A) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
 		C.push_back(A(i), c * A.Coeff(i));
@@ -33,12 +33,12 @@ SOP<T> operator*(T c, const SOP<T>& A) {
 }
 
 template<typename T>
-SOP<T> operator*(const SOP<T>& A, T c) {
+SumOfProductsOperator<T> operator*(const SOP<T>& A, T c) {
 	return c * A;
 }
 
 template<typename T>
-SOP<T> operator*(const MPO<T>& M, const SOP<T>& A) {
+SumOfProductsOperator<T> operator*(const MPO<T>& M, const SOP<T>& A) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
 		MPO<T> MA = M * A(i);
@@ -48,7 +48,7 @@ SOP<T> operator*(const MPO<T>& M, const SOP<T>& A) {
 }
 
 template<typename T>
-SOP<T> operator*(const SOP<T>& A,
+SumOfProductsOperator<T> operator*(const SOP<T>& A,
 	const MPO<T>& M) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
@@ -59,7 +59,7 @@ SOP<T> operator*(const SOP<T>& A,
 }
 
 template<typename T>
-SOP<T> operator*(const SOP<T>& A,
+SumOfProductsOperator<T> operator*(const SOP<T>& A,
 	const SOP<T>& B) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
@@ -77,7 +77,7 @@ SOP<T> operator*(const SOP<T>& A,
 
 // add SoP-Operator
 template<typename T>
-SOP<T> operator+(const SOP<T>& A,
+SumOfProductsOperator<T> operator+(const SOP<T>& A,
 	const SOP<T>& B) {
 	SOP<T> C = B;
 

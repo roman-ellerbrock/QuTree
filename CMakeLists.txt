@@ -82,10 +82,3 @@ add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("tests")
 
-#####################################################################
-# Install QDlib
-#####################################################################
-install (TARGETS QDlib
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin)
