@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Install dependencies
+      run: sudo apt install libeigen3-dev libunittest++-dev
+    - name: Checkout push
     - uses: actions/checkout@v2
     - name: run-cmake
       uses: lukka/run-cmake@v0.7
