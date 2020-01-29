@@ -49,3 +49,5 @@ jobs:
         buildWithCMake: true # optional, default is true
         # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
         buildWithCMakeArgs: "" # optional, default is 
+    - name: Run unit tests
+      run: ./tests/tests    
