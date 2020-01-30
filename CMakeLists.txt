@@ -27,7 +27,18 @@ if (NOT EIGEN3_FOUND)
   message ( STATUS "Eigen not found, switching to internal submodule" )
   execute_process(COMMAND git submodule update --init -- external/eigen
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  add_subdirectory("external/eigen")
+
+  # Set env and install headers
+  set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/eigen
+      CACHE PATH "Eigen include directory")
+  install(DIRECTORY ${EIGEN3_INCLUDE_DIR}/Eigen DESTINATION include)
+
+  # Convenience target for exports (TODO: Figure out what this actually does)
+  add_library(Eigen INTERFACE)
+  target_include_directories(Eigen INTERFACE
+      $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
+      $<INSTALL_INTERFACE:include>)
+  install(TARGETS Eigen EXPORT eigen_export DESTINATION include)
 endif ()
 include_directories("${EIGEN3_INCLUDE_DIR}")
 

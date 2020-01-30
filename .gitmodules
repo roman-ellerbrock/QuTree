@@ -2,5 +2,5 @@
 	path = external/eigen
 	url = https://gitlab.com/libeigen/eigen.git
 [submodule "external/unittest-cpp"]
-	path = external/unittest-cpp
+	path = tests/external/unittest-cpp
 	url = https://github.com/unittest-cpp/unittest-cpp.git
