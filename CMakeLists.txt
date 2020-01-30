@@ -82,6 +82,7 @@ include_directories("include/Operators")
 add_subdirectory("src")
 add_subdirectory("include")
 add_subdirectory("tests")
+add_subdirectory("examples")
 
 #####################################################################
 # Install QDlib
