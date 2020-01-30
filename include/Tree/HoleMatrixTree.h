@@ -63,7 +63,7 @@ public:
 	Tensor<T> Apply(const Tensor<T>& Phi, const Node& node) const;
 
 	/// I/O
-	void print(TTBasis& basis, ostream& os = cout);
+	void print(ostream& os = cout);
 	void Write(ostream& os) const;
 	void Write(const string& filename) const;
 	void Read(istream& is);

@@ -56,12 +56,11 @@ Tensor<T> HoleMatrixTree<T>::Apply(const Tensor<T>& Phi, const Node& node) const
 /// I/O
 
 template<typename T>
-void HoleMatrixTree<T>::print(TTBasis& basis, ostream& os) {
-	for (const Node& node : basis) {
-		if (!node.IsToplayer()) {
-			node.info(os);
-			this->operator[](node).print(os);
-		}
+void HoleMatrixTree<T>::print(ostream& os) {
+	for (const Node *node_ptr : Active()) {
+		const Node& node = *node_ptr;
+		node.info(os);
+		this->operator[](node).print();
 	}
 }
 

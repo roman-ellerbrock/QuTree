@@ -40,7 +40,7 @@ SUITE (HMatrices) {
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
 		FMatrixTreecd hmat(Psi, M, basis);
-		CHECK_CLOSE(0.25, real(hmat[basis.TopNode()](0,0)), 0E-12);
+			CHECK_CLOSE(0.25, real(hmat[basis.TopNode()](0, 0)), 0E-12);
 	}
 
 	TEST_FIXTURE (HelperFactory, HMatrices_IO) {
@@ -59,15 +59,15 @@ SUITE (HMatrices) {
 		string filename("Hmat.dat");
 		hmat.Write(filename);
 		FMatrixTreecd gmat(M, basis, filename);
-		CHECK_EQUAL(hmat.Size(), gmat.Size());
+			CHECK_EQUAL(hmat.Size(), gmat.Size());
 		const auto& active = hmat.Active();
-		for (const Node* node_ptr : active) {
+		for (const Node *node_ptr : active) {
 			const Node& node = *node_ptr;
-			CHECK_EQUAL(hmat[node], gmat[node]);
+				CHECK_EQUAL(hmat[node], gmat[node]);
 		}
 	}
 
-	TEST_FIXTURE(HelperFactory, HHoleMatrices) {
+	TEST_FIXTURE (HelperFactory, HHoleMatrices) {
 		Initialize();
 
 		// Create Basis
@@ -80,18 +80,20 @@ SUITE (HMatrices) {
 		// Build  matrix representation for operator
 		FMatrixTreecd hmat(Psi, M, basis);
 		HoleMatrixTreecd hhole(Psi, hmat, M, basis);
+		Psi.print(basis);
+		Psi.Write("Psi.dat");
+		TensorTreecd Chi("Psi.dat");
 
 		string filename("HHole.dat");
 		hhole.Write(filename);
 		HoleMatrixTreecd ghole(M, basis, filename);
 			CHECK_EQUAL(hhole.Size(), ghole.Size());
 		const auto& active = hmat.Active();
-		for (const Node* node_ptr : active) {
+		for (const Node *node_ptr : active) {
 			const Node& node = *node_ptr;
 				CHECK_EQUAL(hhole[node], ghole[node]);
 		}
 	}
-
 }
 
 

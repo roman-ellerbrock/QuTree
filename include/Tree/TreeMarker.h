@@ -91,16 +91,10 @@ public:
 //        attributes.resize(basis.nTotalNodes());
 	}
 
-	void print(const TTBasis& basis, ostream& os = cout) {
+	void print(const TTBasis& basis, ostream& os = cout) const{
 		for (const Node* node : *this) {
 			node->info();
 		}
-		/*
-		for (const Node& node : basis) {
-			node.info(os);
-//            cout << operator[](node) << "\n";
-		}
-		 */
 	}
 
 protected:
