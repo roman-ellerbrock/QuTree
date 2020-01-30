@@ -49,3 +49,5 @@ template bool operator== <doub>(const Tensor<doub>& A, const Tensor<doub>& B);
 template void multAdd<cd, double>(Tensor<cd>& A, const Tensor<cd>& B, double coeff);
 template Tensor<cd> multAB<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
 template Tensor<cd> multATB<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
+
+
