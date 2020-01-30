@@ -5,7 +5,6 @@ set(QDlib_SOURCE_FILES
         Core/FFT.cpp
         Core/JacobiRotationFramework.cpp
         Core/SimultaneousDiagonalization.cpp
-        Core/CWrapper.f
         Core/long_integer.cpp
         Core/Vector_Instantiations.cpp
         Core/Matrix_Instantiations.cpp

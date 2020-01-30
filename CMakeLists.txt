@@ -11,8 +11,7 @@
 ###########################################################################
 
 cmake_minimum_required(VERSION 2.8)
-project(QDlib C CXX Fortran)
-enable_language(Fortran)
+project(QDlib C CXX)
 enable_language(C)
 enable_language(CXX)
 set(QDlib_VERSION_MAJOR 0)
@@ -25,12 +24,21 @@ cmake_policy(SET "CMP0042" NEW)
 #####################################################################
 find_package(Eigen3)
 if (NOT EIGEN3_FOUND)
-  set( EIGEN3_INCLUDE_DIR $ENV{EIGEN3_INCLUDE_DIR})
-  if (NOT EIGEN3_INCLUDE_DIR)
-    message( FATAL_ERROR "No Eigen3 found, either point CMAKE_PREFIX_PATH or EIGEN3_INCLUDE_DIR to your Eigen installation." )
-  else ()
-    message ( STATUS "Using EIGEN3_INCLUDE_DIR environment variable for Eigen 3 location instead: ${EIGEN3_INCLUDE_DIR}" )
-  endif ()
+  message ( STATUS "Eigen not found, switching to internal submodule" )
+  execute_process(COMMAND git submodule update --init -- external/eigen
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+  # Set env and install headers
+  set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/eigen
+      CACHE PATH "Eigen include directory")
+  install(DIRECTORY ${EIGEN3_INCLUDE_DIR}/Eigen DESTINATION include)
+
+  # Convenience target for exports (TODO: Figure out what this actually does)
+  add_library(Eigen INTERFACE)
+  target_include_directories(Eigen INTERFACE
+      $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
+      $<INSTALL_INTERFACE:include>)
+  install(TARGETS Eigen EXPORT eigen_export DESTINATION include)
 endif ()
 include_directories("${EIGEN3_INCLUDE_DIR}")
 
@@ -84,9 +92,3 @@ add_subdirectory("include")
 add_subdirectory("tests")
 add_subdirectory("examples")
 
-#####################################################################
-# Install QDlib
-#####################################################################
-install (TARGETS QDlib
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)

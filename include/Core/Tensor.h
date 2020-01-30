@@ -15,12 +15,6 @@
  *
  * */
 
-extern "C"
-{
-	void openfortran_(int* id, char* name);
-	void freadcomplexfortran_(int* id, complex<double>* array, int* dim);
-}
-
 template <typename T>
 class Tensor
 {
@@ -69,8 +63,6 @@ public:
 	void Read(istream& is);
 
 	void Read(const string& filename);
-
-	void ReadFortranBinary(int id);
 
 	//////////////////////////////////////////////////////////
 	// Bracket Operators
