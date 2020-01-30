@@ -24,12 +24,10 @@ cmake_policy(SET "CMP0042" NEW)
 #####################################################################
 find_package(Eigen3)
 if (NOT EIGEN3_FOUND)
-  set( EIGEN3_INCLUDE_DIR $ENV{EIGEN3_INCLUDE_DIR})
-  if (NOT EIGEN3_INCLUDE_DIR)
-    message( FATAL_ERROR "No Eigen3 found, either point CMAKE_PREFIX_PATH or EIGEN3_INCLUDE_DIR to your Eigen installation." )
-  else ()
-    message ( STATUS "Using EIGEN3_INCLUDE_DIR environment variable for Eigen 3 location instead: ${EIGEN3_INCLUDE_DIR}" )
-  endif ()
+  message ( STATUS "Eigen not found, switching to internal submodule" )
+  execute_process(COMMAND git submodule update --init -- external/eigen
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  add_subdirectory("external/eigen")
 endif ()
 include_directories("${EIGEN3_INCLUDE_DIR}")
 
