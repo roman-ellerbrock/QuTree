@@ -2,7 +2,7 @@
 
 
 template<typename T>
-void SPOf<T>::Apply(const PrimitiveBasis& grid,
+void SingleParticleOperatorFunction<T>::Apply(const PrimitiveBasis& grid,
 	Tensor<T>& hAcoeff, const Tensor<T>& Acoeff) const {
 	h_(grid, hAcoeff, Acoeff);
 }
