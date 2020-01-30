@@ -233,14 +233,6 @@ void Tensor<T>::Read(const string& filename) {
 	Read(is);
 }
 
-template<typename T>
-void Tensor<T>::ReadFortranBinary(int id) {
-	// Read a block of tensor components in Fortran style,
-	// i.e. after each component there is an 8 byte record
-	int dimension = dim.getdimtot();
-	freadcomplexfortran_(&id, (complex<double> *) coeffs, &dimension);
-}
-
 //////////////////////////////////////////////////////////
 // Math Operators
 //////////////////////////////////////////////////////////
