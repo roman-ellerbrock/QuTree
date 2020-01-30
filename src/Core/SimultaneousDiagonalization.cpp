@@ -1,13 +1,5 @@
 #include "Core/SimultaneousDiagonalization.h"
 
-SimultaneousDiagonalization::SimultaneousDiagonalization()
-{
-}
-
-SimultaneousDiagonalization::~SimultaneousDiagonalization()
-{
-}
-
 void SimultaneousDiagonalization::Initialization(vector<FactorMatrixcd>& A, double eps_)
 {
 	// Number of matrices

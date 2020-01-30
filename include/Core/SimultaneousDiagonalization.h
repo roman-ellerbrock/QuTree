@@ -10,8 +10,8 @@ using namespace JacobiRotationFramework;
 class SimultaneousDiagonalization
 {
 public:
-	SimultaneousDiagonalization();
-	~SimultaneousDiagonalization();
+	SimultaneousDiagonalization() = default;
+	~SimultaneousDiagonalization() = default;
 
 	// Initialize Simultaneous Diagonalization
 	void Initialization(vector<FactorMatrixcd>& A, double eps_);
