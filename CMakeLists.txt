@@ -55,6 +55,7 @@ set(FFLAGS "-heap-arrays -mcmodel=large")
 if (APPLE)
     message("On OSX")
     set(CMAKE_CXX_FLAGS_RELEASE "-mmacosx-version-min=10.14 ${CMAKE_CXX_FLAGS_RELEASE}")
+    set(CMAKE_MACOSX_RPATH 1)
 elseif (UNIX)
     message("On UNIX")
     set(CMAKE_CXX_FLAGS_RELEASE "-ftree-parallelize-loops=8  ${CMAKE_CXX_FLAGS_RELEASE}")
@@ -87,6 +88,4 @@ add_subdirectory("tests")
 #####################################################################
 install (TARGETS QDlib
 	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin
-	PUBLIC_HEADER DESTINATION include/QDlib)
+	LIBRARY DESTINATION lib)
