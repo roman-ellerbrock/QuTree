@@ -1,0 +1,14 @@
+/** \page doc_spo SingleParticleOperator (SPO)
+The class SingleParticleOperator (SPO) is directly associated with the class Tensor.
+It is used to perform matrix-Tensor products which is relevant when applying
+single particle operators to a wavefunction. The slides below explain the
+concept and basic usage of this class.
+
+\image html QDlib_SPO1.png
+
+\image html QDlib_SPO2.png
+
+The elements of a SPO can be set via a bracket operator. The code S(i, j) addresses
+the element i, j of the SPO S.
+
+*/

@@ -1,0 +1,21 @@
+/** \page doc_tensordim TensorDim
+
+The class TensorDim manages dimensions of a Tensor and are used to construct new
+instances of Tensors.
+TensorDim is one of the most fundamental classes of the QDlib and is used frequently in mctdh++.
+The slide below shows how to initialize a TensorDim and how to access relevant dimensions
+via getters.
+
+\image html QDlib_TensorDim1.png
+
+(Partial) contractions of the Tensor are often used throughout the code. Thus, relevant
+contractions of dimensions are pre-calculated in TensorDim objects.
+The figure below shows how to access these contractions.
+
+\image html QDlib_TensorDim2.png
+
+In mctdh++ TensorDim objects are managed by mctdhNode and are automatically
+initialized when a new mctdhBasis is created. This typically avoids the explicit
+initialization of a TensorDim when a mctdhBasis is present.
+
+*/

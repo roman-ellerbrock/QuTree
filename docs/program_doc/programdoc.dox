@@ -1,0 +1,25 @@
+/**
+\page doc_program Additional Information
+---
+
+The following subpages contain additional documentation, detailed information and
+helpful figures of most of the important classes in mctdh++ & QDlib.
+The following documentation pages are included to offer a quick, direct access
+rather than an educational introduction. If you are searching for an introduction
+into the code, please refer to the tutorial section.
+
+## QDlib
+
+QDlib is the math-library included in mctdh++. The following subpages show basic
+ideas of central classes in QDlib.
+
+- \subpage doc_qdlib "QDlib - general information"
+- \subpage doc_tensordim "Class documentation and usage of TensorDim"
+- \subpage doc_tensor "Class documentation and usage of Tensor"
+- \subpage doc_spo "Class documentation and usage of SingleParticleOperator"
+
+## MCTDH
+- \subpage doc_tool "Creating Tools within the mctdh++ framework"
+
+*/
+

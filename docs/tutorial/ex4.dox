@@ -1,0 +1,61 @@
+/**
+\page dev_ex_4 Developer's tutorial - Exercise 4
+- - -
+
+# Aim of this exercise
+The aim of this exercise is to learn fundamental usage of the wavefunction class in mctdh++.
+
+# Information
+This programming tasks in this exercise use the classes mctdhWavefunction and Tensor.
+The class declarations can be found in (relative to project directory):
+
+- ./QDlib/Tensor.h
+- ./MCTDH/Core/mctdhWavefunction.h
+
+The classes mentioned above and the ones introduced in previous exercises will be needed
+to complete this exercise.
+
+The mctdhWavefunction is a class that uses the tree structure provided by mctdhBasis.
+This class holds one Tensor<complex<double>> (aka Tensorcd) per mctdhNode. The Tensors
+represent the expansion coefficients of the wavefunction. Many classes
+in mctdh++ are organized using the tree structure provided by mctdhBasis and hold one
+object per (almost) every mctdhNode. Thus, this scheme was generalized by introducing
+the class TreeStructuredObject. Most classes that are organized in trees just
+inherit from TreeStructuredObject and get specified afterwards by replacing
+or adding new functionality. mctdhWavefunction is one of the most simple and fundamental
+examples of these classes and will be studied in this exercise.
+
+Note that by inheriting from TreeStructuredObject the decendents automatically
+have a bracket operator[mctdhNode] that returns the object corresponding to the mctdhNode.
+Furthermore, there is an iterator that allows to perform a bottom-up swipe over the
+object. These are the most important features provided by TreeStructuredObject.
+For more information take a look at the class.
+
+- - -
+# Exercise 4
+## Analytic Exercises
+1.) Write down the Ansatz for a multilayer MCTDH wavefunction in the state-averaged approach[1].
+
+2.) Think about the correspondance of the expansion coefficients and a multidimensional Tensor.
+
+## Programming Exercises
+
+We want to create a wavefunction corresponding to systems used in Exercise 3,
+occupy the wavefunctions and then perform some actions. You can find the .basis-files in the
+directory corresponding to Exercise 3.
+
+1.) Write a tool that creates a mctdhWavefunction and occupies it. Choose systems as you
+    prefer by taking the basis sets introduced in Exercise 3.
+
+2.) Write a function that performs a bottom-up swipe, and prints out the expansion coefficients of
+    your wavefunction. Use it in your tool to print the coefficients before and after occupying
+    the wavefunction.
+
+3.) Print out the absolute squared expansion coefficients of the the first SPF in each
+    bottomlayer node. Plot them in a diagram and analyse it. Perform the same task for
+    each second SPF.
+
+# References
+- [1] U. Manthe, J. Chem. Phys., 128, 064108 (2008)
+
+*/

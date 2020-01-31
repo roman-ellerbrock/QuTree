@@ -1,0 +1,66 @@
+/**
+\page dev_ex_6 Developer's tutorial - Exercise 6
+- - -
+
+# Aim of this exercise
+A class will be created that calculates and saves the overlaps of two arbitrary
+mctdhWavefunctions.
+
+# Relevance to mctdh++
+The overlap class that calculates overlaps between arbitrary mctdhWavefunctions
+is used throughout mctdh++ and is one of the core classes (see DenseOverlap).
+After implementing your own Overlap class you are on the best way to understand
+a significant part of mctdh++.
+
+The overlap class resulting from this exercise could be used to calculate correlation
+functions and matrix representations of operators. Note that the class HMatrices is
+used to calculate the matrix representation of operators. It uses specifically suited
+optimizations.
+
+# Information
+The class SingleParticleOperator (SPO) is introduced in this exercise. SPOs can be
+multiplied to a Tensor. The SPO knows on which index of the Tensor it is multiplied.
+Furthermore, the classes mctdhWavefunction and TreeStructuredObject will be central.
+The definitions of the classes mentioned above can be found in
+
+- ./QDlib/SingleParticleOperator.h
+- ./MCTDH/Core/mctdhWavefunction.h
+- ./MCTDH/Core/TreeStructuredObject.h
+
+In this exercise, overlaps of SPF sets at each node will be evaluated. They result in overlap
+matrices which have to be saved and which will be multiplied like a SPO. Thus, one SPO<complex<double>>
+(short: SPOcd) per mctdhNode will be stored. Therefore, the class TreeStructuredObject will be
+used in this exercise.
+
+SPOs are often constructed from Matrices (see the constructor
+SingleParticleOperator#SingleParticleOperator(const Matrix&, size_t)). In order to
+construct SPOs, the function mctdhNode::ChildIdx() is often employed to provide the mode the SPO has
+to be applied on. This function will also be relevant for the present exercise.
+
+- - -
+# Exercise 6
+## Analytic Exercises
+1.) Write down the equations to calculate a matrix-tensor product.
+
+2.) Derive equations for calculating the overlap between two arbitrary multilayer MCTDH wavefunctions.
+
+3.) Compare the equations of 1.) to those of Exercise 5 - 1.). Identify the matrix-tensor products
+    in the new equations.
+
+## Programming Exercises
+
+Please use the .basis-files of the previous exercises to test your program.
+
+1.) Create a new class which inherits from TreeStructuredObject<SPOcd>. This class will be
+    used to calculate and store overlaps of mctdhWavefunctions. Name the class accordingly.
+
+2.) Add a member-function "void Initialize(const mctdhBasis& basis)" to your class.
+    After calling this function, the class should hold one SPOcd per mctdhNode in basis.
+    This allows to swipe over your class and use the bracket operators without running into
+    assertions.
+    Note that calling the Initialize function multiple times should reinitialize the object.
+
+3.) Add a member-function "Matrixcd Calculate(const mctdhWavefunction& Psi, const mctdhWavefunction& Chi, const mctdhBasis& basis)"
+    that calculates the overlap between Psi and Chi and returns the resulting toplayer overlap matrix.
+
+*/

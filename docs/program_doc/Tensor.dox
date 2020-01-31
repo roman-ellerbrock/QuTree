@@ -1,0 +1,26 @@
+/** \page doc_tensor Tensor
+
+The MCTDH wavefunction is represented via its expansion coefficients in mctdh++.
+Each set of expansion coefficients are represented by a Tensor. The dimensions
+of a Tensor are managed by the class TensorDim.
+
+A Tensor is typically initialized from a TensorDim. The base-type in mctdh++ is
+typically a complex<double>, i.e. the class is Tensorcd.
+
+\image html QDlib_Tensor1.png
+
+The elements of a Tensor can be accessed in multiple ways via bracket-operators.
+Depending on the target task, there are different useful operators which encode
+specific super-index mappings. These are useful for implementing new functions,
+although there is some overhead in these operators (due to range-checks).
+
+\image html QDlib_Tensor2.png
+
+Typically there are two pure Tensor operations used thoughout the mctdh++ code,
+dot-products and hole-products. These can directly be performed via member
+functions of the class Tensor as described below. 
+
+\image html QDlib_Tensor3.png
+
+*/
+
