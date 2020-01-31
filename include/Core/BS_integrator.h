@@ -12,7 +12,7 @@ class BS_integrator
  * \ingroup Core
  * \brief This is a Bulirsch-Stoer Integrator.
  *
- * The design of this class is losely related to the implementation
+ * The design of this class is loosely related to the implementation
  * of a numerical recipes book.
  * */
 {

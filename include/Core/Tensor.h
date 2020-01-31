@@ -104,9 +104,9 @@ public:
 	//////////////////////////////////////////////////////////
 	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B)
 	{
-		assert(A.Dim().getdimtot() == B.Dim().getdimtot());
+		assert(A.Dim().GetDimTot() == B.Dim().GetDimTot());
 		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().getdimtot(); i++)
+		for (int i = 0; i < A.Dim().GetDimTot(); i++)
 		{
 			C(i) = A(i) + B(i);
 		}
@@ -116,7 +116,7 @@ public:
 	friend Tensor operator-(const Tensor& A, const Tensor& B)
 	{
 		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().getdimtot(); i++)
+		for (int i = 0; i < A.Dim().GetDimTot(); i++)
 		{
 			C(i) = A(i) - B(i);
 		}
@@ -167,7 +167,7 @@ public:
 
 	Matrix<T> DotProduct(const Tensor<T>& A)const;
 
-	/// This function will fill the Tensor with zero-entries
+	/// This function will fill the Tensor with Zero-entries
 	void Zero();
 
 	// Getter for Dim

@@ -37,7 +37,7 @@ void NumberBasis::Initialize(double occ,
 void NumberBasis::InitSPF(Tensorcd& phi)const
 {
 	TensorDim tdim(phi.Dim());
-	int nstates = tdim.getntensor();
+	int nstates = tdim.GetNumTensor();
 
 	if(fermion && nstates > 2)
 	{
@@ -53,8 +53,8 @@ void NumberBasis::InitSPF(Tensorcd& phi)const
 	}
 
 	// soft check for bottom layer_
-	assert(tdim.F() == 1);
-	assert(tdim.getdimpart() == dim);
+	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetDimPart() == dim);
 	assert(startocc - minOcc < dim);
 	
 	// set ground state wf
@@ -84,7 +84,7 @@ Tensorcd NumberBasis::ToGrid(const Tensorcd& phi)const
 {
 	// soft check that its really a bottom-layer_ tensor
 	TensorDim tdim = phi.Dim();
-	assert(tdim.F() == 1);
+	assert(tdim.GetOrder() == 1);
 
 	return phi;
 }
@@ -93,7 +93,7 @@ Tensorcd NumberBasis::FromGrid(const Tensorcd& phi)const
 {
 	// soft check that its really a bottom-layer_ tensor
 	TensorDim tdim = phi.Dim();
-	assert(tdim.F() == 1);
+	assert(tdim.GetOrder() == 1);
 
 	return phi;
 }
@@ -102,12 +102,12 @@ Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi)const
 {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.F() == 1);
+	assert(tdim.GetOrder() == 1);
 
 	Tensorcd psi(phi.Dim());
 
-	int nstates = tdim.getntensor();
-	int active = tdim.getdimpart();
+	int nstates = tdim.GetNumTensor();
+	int active = tdim.GetDimPart();
 	
 	assert(active == dim);
 
@@ -126,8 +126,8 @@ Tensorcd NumberBasis::ApplyP(const Tensorcd& phi)const
 	const TensorDim& tdim = phi.Dim();
 	Tensorcd psi(tdim, false);
 
-	size_t prim = tdim.getdimpart();
-	size_t states =  tdim.getntensor();
+	size_t prim = tdim.GetDimPart();
+	size_t states = tdim.GetNumTensor();
 
 	for (size_t n = 0; n < states; n++)
 	{
@@ -147,8 +147,8 @@ Tensorcd NumberBasis::applyX(const Tensorcd& phi)const
 	const TensorDim& tdim = phi.Dim();
 	Tensorcd psi(tdim, false);
 
-	size_t prim = tdim.getdimpart();
-	size_t states =  tdim.getntensor();
+	size_t prim = tdim.GetDimPart();
+	size_t states = tdim.GetNumTensor();
 	
 	for (int n = 0; n < states; n++)
 	{

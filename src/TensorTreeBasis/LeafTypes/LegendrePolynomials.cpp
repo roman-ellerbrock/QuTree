@@ -48,7 +48,7 @@ void LegendrePolynomials::InitSPF(Tensorcd & phi)const
 	}
 
 	// excited state wavefunction
-	for (int n=1; n<phi.Dim().getntensor(); n++)
+	for (int n=1; n< phi.Dim().GetNumTensor(); n++)
 		for (int i = 0; i < dim; i++)
 		{
 			phi(i, n) = phi(i, n - 1)*x(i);

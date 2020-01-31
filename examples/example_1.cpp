@@ -13,7 +13,7 @@ Tensorcd create_tensor() {
     vector<size_t> dims = {2, 3, 4}; // third order tensor
     size_t ntensor = 2; // group of two tensors
     TensorDim tdim(dims, ntensor);
-    Tensorcd A(tdim); // create tensor, all entries set to zero
+    Tensorcd A(tdim); // create tensor, all entries set to Zero
     cout << "A=" << endl;
     A.print();
     A.Dim().print();
@@ -34,8 +34,8 @@ Tensorcd create_tensor() {
 Tensorcd fill_tensor(Tensorcd A){
     cout << "\nfill_tensor:\n" << endl;
     // Loop through complete super-index list
-    cout << A.Dim().getdimtot() << endl;
-    for (size_t i = 0; i < A.Dim().getdimtot(); i++) {
+    cout << A.Dim().GetDimTot() << endl;
+    for (size_t i = 0; i < A.Dim().GetDimTot(); i++) {
         A(i) = i * 0.01;
     }
     cout << "A=" << endl;
@@ -43,8 +43,8 @@ Tensorcd fill_tensor(Tensorcd A){
 
     // Loop through ntensor, then lower-index list
     Tensorcd B(A.Dim());
-    for (size_t n = 0; n < A.Dim().getntensor(); n++) {
-        for (size_t j = 0; j < A.Dim().getdimpart(); j++) {
+    for (size_t n = 0; n < A.Dim().GetNumTensor(); n++) {
+        for (size_t j = 0; j < A.Dim().GetDimPart(); j++) {
             B(j, n) = (n * j + j * 2) * 0.002;
         }
     }
@@ -71,7 +71,7 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
 Matrixcd hole_product(Tensorcd A, Tensorcd B) {
     cout << "\nhole_product:\n" << endl;
     Matrixcd h;
-    for (size_t k = 0; k < A.Dim().F(); k++) { // TODO: what is F?
+    for (size_t k = 0; k < A.Dim().GetOrder(); k++) { // TODO: what is GetOrder?
         h = HoleProduct(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
@@ -88,8 +88,8 @@ void reshape (Tensorcd A) {
     vector<size_t> dims = {2, 3, 2, 2}; // fourth order order tensor
     size_t ntensor = 2; // group of two tensors
     TensorDim tdim(dims, ntensor);
-    assert(tdim.getdimpart() == A.Dim().getdimpart());
-    cout << "d = " << tdim.getdimpart() << endl;
+    assert(tdim.GetDimPart() == A.Dim().GetDimPart());
+    cout << "d = " << tdim.GetDimPart() << endl;
     A.Reshape(tdim);
     cout << "A.Dim() = " << endl;
     A.Dim().print();

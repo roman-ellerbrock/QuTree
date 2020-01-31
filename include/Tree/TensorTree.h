@@ -17,7 +17,7 @@ class TensorTree: public TreeStructuredObject<Tensor<T>>
 	 *
 	 * Usage:
 	 * TRBasis basis(12, 2, 2)
-	 * // Create Tensor with zero-entry tensors at every node
+	 * // Create Tensor with Zero-entry tensors at every node
 	 * TensorTreecd Psi(basis);
 	 * Psi.Write("filename.dat");
 	 * TensorTreecd Chi("filename.dat");

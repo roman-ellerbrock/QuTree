@@ -12,13 +12,13 @@ public:
 
 	TensorABC(size_t k, vector<size_t> dim);
 
-	inline size_t getbefore() const { return before_; }
+	inline size_t GetBefore() const { return before_; }
 
-	inline size_t getactive() const { return active_; }
+	inline size_t GetActive() const { return active_; }
 
-	inline size_t getafter() const { return after_; }
+	inline size_t GetAfter() const { return after_; }
 
-	inline size_t gettotal() const { return total_; }
+	inline size_t GetTotal() const { return total_; }
 
 private:
 	size_t before_;
@@ -44,7 +44,7 @@ class TensorDim
 {
 public:
 	TensorDim()
-		: ntensor_(0), dimpart_(0), dimtot_(0), f_(0) {}
+		: nTensor_(0), dimPart_(0), dimTot_(0), order_(0) {}
 
 	explicit TensorDim(const vector<size_t>& dim, size_t ntensor_);
 
@@ -62,20 +62,18 @@ public:
 
 	void ReadDim(istream& is);
 
-	inline size_t getf() const { return f_; }
+    inline size_t GetOrder() const { return order_; }
 
-	inline size_t F() const { return f_; }
+	inline size_t GetDimTot() const { return dimTot_; }
 
-	inline size_t getdimtot() const { return dimtot_; }
+	inline size_t GetDimPart() const { return dimPart_; }
 
-	inline size_t getdimpart() const { return dimpart_; }
+	inline size_t GetNumTensor() const { return nTensor_; }
 
-	inline size_t getntensor() const { return ntensor_; }
+	void SetNumTensor(size_t newntensor);
+	void SetActive(size_t act, size_t k);
 
-	void setntensor(size_t newntensor);
-	void setactive(size_t act, size_t k);
-
-	vector<size_t> getdimlist() const;
+	vector<size_t> GetDimList() const;
 
 	void print(ostream& os = cout) const;
 
@@ -85,10 +83,10 @@ public:
 	size_t Before(size_t k) const;
 
 protected:
-	size_t f_;
-	size_t dimtot_;
-	size_t dimpart_;
-	size_t ntensor_;
+	size_t order_;
+	size_t dimTot_;
+	size_t dimPart_;
+	size_t nTensor_;
 	vector<TensorABC> abc_;
 };
 

@@ -61,34 +61,34 @@ public:
 
 	/// Rule of five-section (constructors & destructors)
 	TreeNode()
-		: up(nullptr) {}
+		: up_(nullptr) {}
 
 	explicit TreeNode(size_t n)
-		: up(nullptr), content_(n) {}
+		: up_(nullptr), content_(n) {}
 
 	explicit TreeNode(NodeContent con)
-		: up(nullptr), content_(con) {}
+		: up_(nullptr), content_(con) {}
 
 	~TreeNode() = default;
 
 	/// Copy constructor
 	TreeNode(const TreeNode& node)
-		: up(node.up), content_(node.content_) {
+		: up_(node.up_), content_(node.content_) {
 
 		for (const TreeNode *child : node.down_) {
 			down_.push_back(new TreeNode(*child));
 		}
 		for (TreeNode *child : down_) {
-			child->up = this;
+			child->up_ = this;
 		}
 	}
 
 	/// Move constructor
 	TreeNode(TreeNode&& node) noexcept
-		: up(node.up), down_(move(node.down_)), content_(node.content_) {
+		: up_(node.up_), down_(move(node.down_)), content_(node.content_) {
 
 		for (TreeNode *child : down_) {
-			child->up = this;
+			child->up_ = this;
 		}
 	}
 
@@ -105,12 +105,12 @@ public:
 			return *this;
 		}
 
-		up = old.up;
+		up_ = old.up_;
 		down_ = move(old.down_);
 		content_ = old.content_;
 
 		for (TreeNode *child : down_) {
-			child->up = this;
+			child->up_ = this;
 		}
 		return *this;
 	}
@@ -132,7 +132,7 @@ public:
 
 	void push_back(const TreeNode& node) {
 		down_.emplace_back(new TreeNode(node));
-		down_.back()->up = this;
+		down_.back()->up_ = this;
 	}
 
 	size_t size() const { return down_.size(); }
@@ -166,7 +166,7 @@ public:
 
 	bool IsBottom() const { return (down_.size() == 1); }
 
-	bool IsRoot() const { return (up == nullptr); }
+	bool IsRoot() const { return (up_ == nullptr); }
 
 	size_t Layer() const { return content_.path_.size(); }
 
@@ -208,7 +208,7 @@ public:
 	}
 
 	void MakeRoot() {
-		up = nullptr;
+		up_ = nullptr;
 		SetPath({0});
 	}
 
@@ -227,7 +227,7 @@ public:
 
 	NodeContent content_;
 private:
-	TreeNode *up;
+	TreeNode *up_;
 	std::vector<TreeNode *> down_;
 
 };

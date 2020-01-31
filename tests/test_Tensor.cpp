@@ -13,7 +13,7 @@ SUITE (Tensor) {
 		void CreateTensorA() {
 			TensorDim tdim({2, 3, 4}, 2);
 			A = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.getdimtot(); ++i) {
+			for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
 				A(i) = i;
 			}
 		}
@@ -21,7 +21,7 @@ SUITE (Tensor) {
 		void CreateTensorB() {
 			TensorDim tdim({2, 3, 4}, 2);
 			B = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.getdimtot(); ++i) {
+			for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
 				B(i) = i % 3;
 			}
 		}
@@ -35,7 +35,7 @@ SUITE (Tensor) {
 	Tensorcd NewTensor() {
 		TensorDim tdim({2, 3, 4}, 2);
 		Tensorcd tmp(tdim);
-		for (size_t i = 0; i < tdim.getdimtot(); ++i) {
+		for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
 			tmp(i) = i;
 		}
 		return tmp;
@@ -56,9 +56,9 @@ SUITE (Tensor) {
 		/// Check Getters and Initialization
 		bool success = true;
 		TensorDim tdim({3, 4, 5}, 2);
-		if (tdim.getdimtot() != 3 * 4 * 5 * 2) { success = false; }
-		if (tdim.getdimpart() != 3 * 4 * 5) { success = false; }
-		if (tdim.getntensor() != 2) { success = false; }
+		if (tdim.GetDimTot() != 3 * 4 * 5 * 2) { success = false; }
+		if (tdim.GetDimPart() != 3 * 4 * 5) { success = false; }
+		if (tdim.GetNumTensor() != 2) { success = false; }
 			CHECK_EQUAL(success, true);
 	}
 

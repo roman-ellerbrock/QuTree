@@ -89,7 +89,7 @@ public:
 	size_t nLeaves() const { return tree.nLeaves(); }
 
 	/// Number of states
-	size_t nStates() const { return TopNode().TDim().getntensor(); }
+	size_t nStates() const { return TopNode().TDim().GetNumTensor(); }
 
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.
