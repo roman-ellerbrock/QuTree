@@ -5,6 +5,9 @@
 #include "FactorMatrixTree.h"
 #include "SparseTreeStructuredObject.h"
 
+
+template<typename T>
+class HoleMatrixTree: public SparseTreeStructuredObject<Matrix<T>>
 /**
  * \class HoleMatrixTree
  *
@@ -16,9 +19,7 @@
  * In a physical context, the hole-matrices are representation of
  * mean-field operators when working with tensor tree wavefunctions.
  * */
-
-template<typename T>
-class HoleMatrixTree: public SparseTreeStructuredObject<Matrix<T>> {
+{
 public:
 	using SparseTreeStructuredObject<Matrix<T>>::Active;
 	using SparseTreeStructuredObject<Matrix<T>>::operator[];

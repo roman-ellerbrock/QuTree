@@ -1,27 +1,19 @@
-/**
- * \class HMatrices
- *
- * \ingroup MCTDH-Matrices
- *
- * \brief This class represents the H-Matrices.
- *
- * The H-Matrices are objects that occur in the
- * equations of motion (EOM) of the MCTDH approach. A H-Matrix
- * is the representation of a MultiParticleOperator in the SPF-basis
- * of a given TensorTree<T>.
- * */
 #pragma once
 #include "Core/Matrix.h"
-#include "MultiParticleOperator.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "SparseTreeStructuredObject.h"
+#include "MultiParticleOperator.h"
 #include "Core/FactorMatrix.h"
 
+
+vector<size_t> cast_to_vector_size_t(const vector<int>& a);
+
+template<typename T>
+class FactorMatrixTree: public SparseTreeStructuredObject<FactorMatrix<T>>
 /**
  * \class FactorMatrixTree
  *
- * \ingroup Tree-Classes
+ * \ingroup Tree
  *
  * \brief This class represents the FactorMatrices for Trees.
  *
@@ -29,11 +21,7 @@
  * In a physical context, the hole-matrices are representation of
  * mean-field operators when working with tensor tree wavefunctions.
  * */
-
-vector<size_t> cast_to_vector_size_t(const vector<int>& a);
-
-template<typename T>
-class FactorMatrixTree: public SparseTreeStructuredObject<FactorMatrix<T>> {
+	{
 public:
 	using SparseTreeStructuredObject<FactorMatrix<T>>::Active;
 	using SparseTreeStructuredObject<FactorMatrix<T>>::operator[];
@@ -64,6 +52,7 @@ public:
 		Read(filename);
 	}
 
+	/// Default destructor
 	~FactorMatrixTree() = default;
 
 	/// Fill FactorMatrices at internally marked nodes. TreeMarker must be initialized

@@ -3,66 +3,76 @@
 #include "Core/FactorMatrix.h"
 #include "TreeStructuredObject.h"
 
-//! Calculate Overlap between two TensorTree objects with the same basis
-/*!
-This class can be used to calculate the overlap between two TensorTrees
-<Psi_1|Psi_2>. The overlap matrix at each node are calculated, whether they
-are perpendicular or not. Thus, the class is called "DenseOverlap".
-If you look for Sparse-Overlaps, take a look at the H-Matrices class.
-*/
-
 template<typename T>
 class DenseOverlap
-	: public TreeStructuredObject<FactorMatrix<T>> {
+	: public TreeStructuredObject<FactorMatrix<T>>
+	/**
+	 * \class DenseOverlap
+	 * \ingroup Tree
+	 * \brief Calculate the Overlap between non-orthogonal TensorTrees
+	 *
+	 *
+	 */
+{
 public:
 	using TreeStructuredObject<FactorMatrix<T>>::attributes;
+	/// Default constructor
 	DenseOverlap() = default;
 
-	DenseOverlap(istream& is);
+	/// Construct from stream
+	explicit DenseOverlap(istream& is);
 
-	DenseOverlap(const string& filename);
+	/// Construct from file
+	explicit DenseOverlap(const string& filename);
 
+	/// Construct and allocate memory for every node
 	explicit DenseOverlap(const TTBasis& basis);
 
+	/// Construct, allocate and calculate
 	DenseOverlap(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const TTBasis& basis);
 
+	/// Default destructor
 	~DenseOverlap() = default;
 
-	// Initialization routine
+	/// Allocate a FactorMatrix at every node
 	void Initialize(const TTBasis& basis);
 
-	// Calculate the overlap of two wavefunctions with the same basis
+	/// Calculate the tensor tree dot-product (Psi, Chi)_p
 	FactorMatrix<T> Calculate(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const TTBasis& basis);
 
-	// Calculate the overlap at a node
+	/// Calculate the local tensor tree dot-product
 	void CalculateLayer(const Tensor<T>& Phi,
 		Tensor<T> Chi, const Node& node);
 
-	// Transform a Tensor using the sublying overlap matrices
+	/// Perform the (local) FactorMatrix tree - tensor tree product
 	Tensor<T> TransformTensor(const Tensor<T>& Phi, const Node& node) const;
 
-	// Get total overlap of the wavefunction (Calculate it first!)
+	/// Get FactorMatrix at Toplayer
 	FactorMatrix<T>& Get() {
 		assert(attributes.size() > 0);
 		return attributes.back();
 	}
 
 	/// I/O
+	/// Print human readable
 	void print(const TTBasis& basis, ostream& os = cout) const;
 	void print(ostream& os = cout) const;
 
+	/// Write in binary format
 	void Write(ostream& os) const;
+	/// Read in binary format
 	void Read(istream& is);
 };
 
-template <typename T>
+template<typename T>
 ostream& operator<<(ostream& os, const DenseOverlap<T>& S);
 
-template <typename T>
+template<typename T>
 istream& operator>>(istream& is, DenseOverlap<T>& S);
 
 typedef DenseOverlap<complex<double>> DenseOverlapcd;
+
 typedef DenseOverlap<complex<double>> DenseOverapd;
 

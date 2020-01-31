@@ -13,9 +13,14 @@ class TensorTree: public TreeStructuredObject<Tensor<T>>
 	/**
 	 * \class TensorTree
 	 * \ingroup Tree
-	 * \brief This is the tensor tree class.
+	 * \brief This class represents tensor trees.
 	 *
-	 *
+	 * Usage:
+	 * TRBasis basis(12, 2, 2)
+	 * // Create Tensor with zero-entry tensors at every node
+	 * TensorTreecd Psi(basis);
+	 * Psi.Write("filename.dat");
+	 * TensorTreecd Chi("filename.dat");
 	 */
 {
 public:
@@ -26,8 +31,10 @@ public:
 	/// Constructor with allocation of memory
 	explicit TensorTree(const TTBasis& basis);
 
+	/// Construct TensorTree from stream
 	explicit TensorTree(istream& is);
 
+	/// Construct TensorTree from file
 	explicit TensorTree(const string& filename);
 
 	/// Create tensor tree and occupy the coefficients
@@ -45,12 +52,16 @@ public:
 		mt19937& gen, bool delta_lowest = true);
 
 	/// (File) I/O
+	/// Read TensorTree from stream (binary format)
 	void Read(istream& is);
 
+	/// Write TensorTree to stream (binary format)
 	void Write(ostream& os) const;
 
+	/// Write TensorTree to file (binary format)
 	void Write(const string& filename) const;
 
+	/// Print info in human readable format
 	void print(const TTBasis& basis, ostream& os = cout) const;
 
 protected:
