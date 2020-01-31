@@ -8,7 +8,13 @@ using SPOF = function<void(const PrimitiveBasis&, Tensor<T>&, const Tensor<T>&)>
 
 template<typename T>
 class SingleParticleOperatorFunction
-	: public SPO<T> {
+	: public SPO<T>
+	/**
+	 * \class singleparticleoperatorfunction
+	 * \ingroup operators
+	 * \brief this class allows to use functions as spos.
+	 */
+{
 public:
 	SingleParticleOperatorFunction() = default;
 

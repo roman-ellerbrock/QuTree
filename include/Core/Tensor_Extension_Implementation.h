@@ -88,6 +88,32 @@ namespace Tensor_Extension {
 		return M;
 	}
 
+	// @TODO:: Add mapping to and from Eigen
+
+	// Randomly occupy Tensors and Matrices
+	template<typename T>
+	void Generate_normal(T* A, size_t n, mt19937& gen) {
+		uniform_real_distribution<double> dist(-1., 1.);
+		for (size_t i = 0; i < n; ++i) {
+			A[i] = dist(gen);
+		}
+	}
+
+	template<typename T>
+	void Generate(Tensor<T>& A, mt19937& gen) {
+		Generate_normal(&A[0], A.Dim().getdimtot(), gen);
+	}
+
+	template<typename T>
+	void Generate(Matrix<T>& A, mt19937& gen) {
+		Generate_normal(&A[0], A.Dim1()*A.Dim2(), gen);
+	}
+
+	template<typename T>
+	void Generate(Vector<T>& A, mt19937& gen) {
+		Generate_normal(&A[0], A.Dim(), gen);
+	}
+
 /* //////////////////////////////////////////////
  * Extension of the Tensor class
  *

@@ -1,9 +1,12 @@
 #pragma once
 #include "stdafx.h"
 
+
+template<typename T>
+class Vector {
 /**
  * \class Vector
- * \ingroup QD-lib
+ * \ingroup Core
  * \brief This class is a Vector represented in a basis.
  *
  * The class is a simple version of a represented Vector.
@@ -11,9 +14,6 @@
  * not a generell purpose library class.
  *
  * */
-
-template<typename T>
-class Vector {
 public:
 	//////////////////////////////////////////////////////////////////////
 	// Initialization

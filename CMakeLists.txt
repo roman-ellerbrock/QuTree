@@ -7,7 +7,8 @@
 # The main intended use of the library are tensor tree applications.
 #
 # Main author: Roman Ellerbrock
-# Contributing authors: Thomas Weike, Tim Lenzen, Stefan Seritan, K. Grace Johnson
+# Contributing authors: Thomas Weike, Tim Lenzen, Stefan Seritan,
+#                       K. Grace Johnson
 ###########################################################################
 
 cmake_minimum_required(VERSION 2.8)

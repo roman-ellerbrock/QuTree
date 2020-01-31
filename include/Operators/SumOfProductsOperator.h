@@ -1,18 +1,18 @@
 #pragma once
 #include "MultiParticleOperator.h"
 
-/**
- * \defgroup Operators
- * \brief This group is a bundle of classes that handle
- * operators in mctdh++. System specific operators are NOT included here.
- *
- * This group contains general operator classes that are required to
- * evaluate equations of motion of MCTDH.
- *
- */
-
 template<typename T>
-class SumOfProductsOperator {
+class SumOfProductsOperator
+	/**
+	 * \class SumOfProductsOperator
+	 * \ingroup Operators
+	 * \brief This class represents a sum-of-products operator.
+	 *
+	 * SOPs are sums of MultiParticleOperators. The class provides
+	 * basic arithmetics that allows to perform high-level operations
+	 * on operators.
+	 */
+{
 public:
 	// Constructor
 	SumOfProductsOperator() = default;

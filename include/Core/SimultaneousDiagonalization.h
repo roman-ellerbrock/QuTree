@@ -7,8 +7,15 @@
 
 using namespace JacobiRotationFramework;
 
-class SimultaneousDiagonalization
-{
+/**
+ * \class SimultaneousDiagonalization
+ * \ingroup Core
+ * \brief This class performs a simulatneous diagonalization.
+ *
+ * Attempts to diagonalize a set of, potentially not commuting, matrices.
+ */
+
+class SimultaneousDiagonalization {
 public:
 	SimultaneousDiagonalization() = default;
 	~SimultaneousDiagonalization() = default;
@@ -17,11 +24,11 @@ public:
 	void Initialization(vector<FactorMatrixcd>& A, double eps_);
 
 	// Perform the Simultaneous Diagonalization
-	void Calculate(vector<FactorMatrixcd>& A, FactorMatrixcd & trafo);
-	
+	void Calculate(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
+
 protected:
 	// Perform a cycle of rotations over all matrices in A
-	void JacobiRotations(vector<FactorMatrixcd>& A, FactorMatrixcd & trafo);
+	void JacobiRotations(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
 
 	// Measure off-Diagonality
 	double MeasureOffDiagonals(const vector<FactorMatrixcd>& A);
@@ -30,7 +37,7 @@ protected:
 	double MeasureDiagonality(vector<FactorMatrixcd>& A);
 
 	// Preconditioning of SD
-	void InitialTransformation(vector<FactorMatrixcd>& A, FactorMatrixcd & trafo);
+	void InitialTransformation(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
 
 	int dim;
 	int nmat;

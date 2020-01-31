@@ -1,25 +1,26 @@
 #pragma once
-
 #include "stdafx.h"
 #include <Eigen/Dense>
 #include "Vector.h"
 
+
+template<typename T>
+class Matrix {
 /**
  * \class Matrix
- * \ingroup QD-lib
+ * \ingroup Core
  * \brief This class represents a Matrix.
  *
  * This is a simple Matrix-class. The functions that
  * are implemented are specially suited for QuantumDynamics
  * simulations.
  *
+ * Usage:
+ * Matrixcd M(dim1, dim2);
+ * Matrixcd A(M);
+ * A = M * (A + M);
+ *
  * */
-
-
-// @TODO: Check constructors and =-operators
-
-template<typename T>
-class Matrix {
 public:
 	//////////////////////////////////////////////////////////////////////
 	// Constructors

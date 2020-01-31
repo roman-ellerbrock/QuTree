@@ -4,18 +4,17 @@
 #include "Tensor.h"
 
 
+
+template<class Q, class T, typename U>
+class BS_integrator
 /**
  * \class BS_integrator
- * \ingroup QD-lib
+ * \ingroup Core
  * \brief This is a Bulirsch-Stoer Integrator.
  *
  * The design of this class is losely related to the implementation
  * of a numerical recipes book.
- *
  * */
-
-template<class Q, class T, typename U>
-class BS_integrator
 {
 public:
 	BS_integrator(){}

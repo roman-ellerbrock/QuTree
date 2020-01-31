@@ -2,21 +2,25 @@
 #include "TensorDim.h"
 #include "Core/Matrix.h"
 
+
+template <typename T>
+class Tensor
 /**
  * \class Tensor
- * \ingroup QD-lib
+ * \ingroup Core
  * \brief This class represents a set of mathematical Tensors of n-th order.
  *
  * The class allows to handle arithmentic operations on Tensors like
  * matrix-products, etc. The set of tensors can be interpreted simultaneously
  * as a set of vectors and thus operations are available like orthogonalizations,
- * Dot-products, etc. Superindex mappings are used frequently throughout the 
+ * Dot-products, etc. Superindex mappings are used frequently throughout the
  * class functions.
  *
+ * Usage:
+ * TensorDim dim({2, 3, 4}, 1);
+ * Tensorcd A(dim);
+ *
  * */
-
-template <typename T>
-class Tensor
 {
 public:
 	//////////////////////////////////////////////////////////
@@ -44,7 +48,7 @@ public:
 
 	// Copy Assignment Operator
 	Tensor& operator=(const Tensor& old);
-	
+
 	// Move Assignment Operator
 	Tensor& operator=(Tensor&& old)noexcept;
 
@@ -117,7 +121,7 @@ public:
 			C(i) = A(i) - B(i);
 		}
 		return C;
-	}	
+	}
 
 	void operator+=(const Tensor& A);
 
@@ -160,7 +164,7 @@ public:
 		(*this) and A. The result is an overlap matrix sized with
 		the number of tensors.
 	 */
-	  
+
 	Matrix<T> DotProduct(const Tensor<T>& A)const;
 
 	/// This function will fill the Tensor with zero-entries
@@ -171,15 +175,14 @@ public:
 	TensorDim& Dim() { return dim; }
 
 protected:
-	double conjugate(const double d) const
-	{
+	double conjugate(const double d) const {
 		return d;
 	}
-	complex<double> conjugate(const complex<double> c) const
-	{
+
+	complex<double> conjugate(const complex<double> c) const {
 		return conj(c);
 	}
-	
+
 	TensorDim dim;
 	T* coeffs;
 };
@@ -241,7 +244,7 @@ template<typename T>
 Tensor<T> ProjectOut(const Tensor<T>& A, const Tensor<T>& B);
 
 template<typename T>
-Tensor< complex<double> > ProjectOrthogonal(const Tensor< complex<double> >& A, 
+Tensor< complex<double> > ProjectOrthogonal(const Tensor< complex<double> >& A,
 	const Tensor< T >& B);
 
 template<typename T>
@@ -258,3 +261,4 @@ istream& operator>>(istream& is, Tensor<T>& A);
 
 template<typename T>
 bool operator==(const Tensor<T>& A, const Tensor<T>& B);
+

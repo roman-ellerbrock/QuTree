@@ -24,20 +24,21 @@ private:
 	size_t total_;
 };
 
-/* *
- * \class TensorDim
- * \ingroup QD-lib
- * \brief This class manages the dimensions of a Tensor.
- * 
- * The class manages dimensions and super-index mappings in a n-th
- * order tensor.
- * \image html mctdh++_TensorDim_1.png
- * \image latex mctdh++_TensorDim_1.eps
- *
- * */
 
 class TensorDim
-	// TensorDim (short: TDim) is the dimension-class for a n-th order Tensor
+/**
+ * \class TensorDim
+ * \ingroup Core
+ * \brief This class manages the dimensions of a Tensor.
+ *
+ * The class manages dimensions and super-index mappings in a n-th
+ * order tensor.
+ * \image html TensorDim_1.png
+ * \image latex TensorDim_1.eps
+ *
+ * Usage:
+ * TensorDim tdim({2, 3, 4}, 5);
+ * */
 {
 public:
 	TensorDim()

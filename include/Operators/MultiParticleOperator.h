@@ -10,6 +10,8 @@
 template <typename T>
 class MultiParticleOperator
 	/*!
+	 * \class MultiParticleOperator
+	 * \ingroup Operators
 	 * \brief A MultiParticleOperator (MPO) is a product of general single-particle operators
 	 *
 	 * A MultiParticleOperator is one summand in a SumofProducts

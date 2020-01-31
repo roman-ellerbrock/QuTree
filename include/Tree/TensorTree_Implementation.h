@@ -2,10 +2,11 @@
 // Created by Roman Ellerbrock on 2020-01-23.
 //
 #include "TensorTree.h"
+#include "Core/Tensor_Extension.h"
 
 template<typename T>
 TensorTree<T>::TensorTree(const TTBasis& basis) {
-	Initialize(basis);
+	TensorTree::Initialize(basis);
 }
 
 template<typename T>
@@ -22,7 +23,8 @@ TensorTree<T>::TensorTree(const string& filename) {
 /// Create tensor tree and occupy the coefficients
 template<typename T>
 TensorTree<T>::TensorTree(const TTBasis& basis,
-	mt19937& gen, bool delta_lowest) : TensorTree(basis) {
+	mt19937& gen, bool delta_lowest)
+	: TensorTree(basis) {
 	Generate(basis, gen, delta_lowest);
 }
 
@@ -49,20 +51,15 @@ void TensorTree<T>::Generate(const TTBasis& basis, mt19937& gen, bool delta_lowe
 template<typename T>
 void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	mt19937& gen, const Node& node, bool delta_lowest) {
-	uniform_real_distribution<double> dist(-1., 1.);
 
-	// Set ground-state
-	const TensorDim& tdim = Phi.Dim();
-	for (size_t n = 0; n < tdim.getntensor(); n++) {
-		// Ground-State
-		if (n == 0 && delta_lowest) {
-			Phi(0, n) = 1;
-		} else {
-			// Excitations randomly
-			for (size_t i = 0; i < tdim.getdimpart(); i++) {
-				Phi(i, n) = dist(gen);
-			}
+	assert(Phi.Dim().getdimtot() > 0);
+	Tensor_Extension::Generate(Phi, gen);
+	// Set ground-state to "Hartree-Product" if flag is set
+	if (delta_lowest) {
+		for (size_t i = 0; i < Phi.Dim().getdimpart(); ++i) {
+			Phi(i, 0) = 0.;
 		}
+		Phi(0, 0) = 1.;
 	}
 
 	// orthonormalize

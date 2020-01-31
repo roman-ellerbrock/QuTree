@@ -1,11 +1,13 @@
 #pragma once
 #include "SumOfProductsOperator.h"
 
-/**
- * \brief Dressed up vector of SOPs
- */
 
 class SOPVector : public std::vector<SOP>
+/**
+ * \class This class represents a vector of SOPs.
+ * \ingroup Operators
+ * \brief Dressed up vector of SOPs
+ */
 {
 public:
   void append(const SOP& A) {

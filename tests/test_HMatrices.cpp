@@ -80,7 +80,6 @@ SUITE (HMatrices) {
 		// Build  matrix representation for operator
 		FMatrixTreecd hmat(Psi, M, basis);
 		HoleMatrixTreecd hhole(Psi, hmat, M, basis);
-		Psi.print(basis);
 		Psi.Write("Psi.dat");
 		TensorTreecd Chi("Psi.dat");
 

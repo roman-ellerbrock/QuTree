@@ -5,6 +5,14 @@
 
 template<typename T>
 class FactorMatrix: public Matrix<T> {
+/**
+ * \class FactorMatrix
+ * \brief This class represents a factor matrix.
+ * \ingroup Core
+ *
+ * Factor Matrices can be multiplied with tensors and result from
+ * performing tensor-hole products.
+ */
 public:
 	FactorMatrix() : mode_(0) {}
 
