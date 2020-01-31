@@ -5,8 +5,8 @@
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
-#include "DenseOverlap.h"
-#include "HoleOverlap.h"
+#include "FactorMatrixTree.h"
+#include "HoleMatrixTree.h"
 
 SUITE (Tree) {
 
