@@ -4,22 +4,23 @@
 #include "Leaf.h"
 #include "NodePosition.h"
 
-/**
- * \class mctdhNode
- * \ingroup Basis
- * \brief This class manages a node in the tree-structured MCTDH-basis representation.
- *
- * The class holds the tensor-dimensions (TensorDim) at the current node and holds the
- * connectivity to neighboring parent & child nodes (Up and Down(s)). The node also 
- * knows wether it is a toplayer or bottomlayer-node.
- * If the mctdhNode is a bottomlayer node (often called a ``leave''), if holds a
- * PhysicalCoordinate. Accessing PhysCoord (leaves) or sublying mctdhNodes (non-leaves)
- * for incorrect nodes will stop the program.
- *
- * */
 
 class Node
-	: public AbstractNode {
+	: public AbstractNode
+/**
+ * \class Node
+ * \ingroup TTBasis
+ * \brief This class manages a node in the tree-structured TTBasis representation.
+ *
+ * The class holds the tensor-dimensions (TensorDim) at the current node and holds the
+ * connectivity to the parent & all child nodes (Up and Down(s)). The node also
+ * knows wether it is a toplayer or bottomlayer-node.
+ * If the Node is a bottomlayer node, it holds a Leaf. Accessing Leaf or sublying
+ * Nodes (non-leaves) for incorrect nodes will stop the program.
+ * Please use the TTBasis iterator to swipe over all nodes in a TTBasis. The Up and Down
+ * getters should only be used to access local connectivity.
+ * */
+{
 public:
 	Node();
 	Node(istream& file, Node *up, const NodePosition& position);
@@ -109,8 +110,9 @@ public:
 	AbstractNode *nextNodeManthe() override;
 	// Move getter for unique_ptr to children
 	unique_ptr<AbstractNode> DownUnique(size_t i);
+
 	// Set the upwards pointer
-	void SetUp(AbstractNode* up) override { up_ = up; }
+	void SetUp(AbstractNode *up) override { up_ = up; }
 
 	// Replace a Child
 	void Replace(Node& new_child, size_t idx);

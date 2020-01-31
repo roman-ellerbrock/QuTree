@@ -2,9 +2,16 @@
 #include "Core/stdafx.h"
 
 class NodePosition
+	/**
+	 * \class NodePosition
+	 * \ingroup TTBasis
+	 * \brief This class manages the position information in a tree, mainly for I/O purposes.
+	 */
 {
- public:
-	NodePosition():layer_(0) {}
+public:
+	NodePosition()
+		: layer_(0) {}
+
 	~NodePosition() = default;
 
 	friend NodePosition operator*(NodePosition p, int k);
@@ -13,13 +20,13 @@ class NodePosition
 
 	void push_back(int parent) { path_.push_back(parent); }
 
-	void info(ostream& os=cout)const;
+	void info(ostream& os = cout) const;
 
-	int ChildIdx()const;
+	int ChildIdx() const;
 
-	size_t Layer()const { return layer_; }
+	size_t Layer() const { return layer_; }
 
- protected:
+protected:
 	vector<int> path_;
 	int layer_;
 };

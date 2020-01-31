@@ -2,7 +2,18 @@
 #include "Core/stdafx.h"
 #include "NodePosition.h"
 
+/**
+ * \defgroup TTBasis
+ * \brief This group contains classes to construct and handle a tensor tree basis.
+ *
+ */
+
 class AbstractNode {
+	/**
+	 * \class AbstractNode
+	 * \ingroup TTBasis
+	 * \brief This is an abstract node in the tree of a TTBasis.
+	 */
 public:
 	AbstractNode() = default;
 	virtual ~AbstractNode() = default;

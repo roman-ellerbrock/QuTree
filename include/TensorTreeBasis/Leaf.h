@@ -16,12 +16,17 @@
 
 // @TODO: Rename PhysPar
 // @TODO: Use dictionary to store general leaf-memory?
-class PhysPar {
+class PhysPar
+	/**
+	 * \class Parameter container of a leaf.
+	 */
+{
 public:
 	PhysPar()
 		: par0(0), par1(0), par2(0), par3(0) {}
 
-	explicit PhysPar(istream& file) : par0(0), par1(0), par2(0), par3(0) {
+	explicit PhysPar(istream& file)
+		: par0(0), par1(0), par2(0), par3(0) {
 		file >> par0;
 		//assert(par0 != 0);
 		file >> par1;
@@ -69,7 +74,18 @@ protected:
 };
 
 class Leaf
-	: public AbstractNode {
+	: public AbstractNode
+	/**
+	 * \class Leaf
+	 * \ingroup TTBasis
+	 * \brief This class represents the leaf in the tree of a TTBasis.
+	 *
+	 * The Leafs represent the lowest layer (even below the bottomlayer)
+	 * in a tree of a TTBasis. Leaves contain abstract class pointers
+	 * to PrimitiveBasis which provides the interface to the problem
+	 * under consideration.
+	 */
+{
 public:
 	Leaf(istream& file, AbstractNode *up, NodePosition position);
 	Leaf(size_t dim, size_t mode, size_t type, size_t subtype,
@@ -98,6 +114,7 @@ public:
 
 	// Getter & Setter
 	size_t Mode() const { return mode_; }
+
 	int& Mode() { return mode_; }
 
 	size_t Type() const { return type_; }
@@ -137,7 +154,7 @@ protected:
 	int subType_;
 	int nodeType_;
 	// This is not a GetNode& to avoid circular dependencies
-	AbstractNode* up_;
+	AbstractNode *up_;
 	PhysPar par_;
 	NodePosition position_;
 	unique_ptr<PrimitiveBasis> primitiveBasis_;

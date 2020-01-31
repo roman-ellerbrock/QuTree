@@ -11,6 +11,33 @@
 typedef vector<reference_wrapper<Node>> LinearizedNodes;
 
 class TensorTreeBasis {
+	/**
+	 * \class TensorTreeBasis
+	 * \ingroup TensorTreeBasis
+	 * \brief This class manages the tensor tree basis.
+	 *
+	 * TensorTreeBasis (TTBasis) holds and manages the tree structure
+	 * and holds tensor dimensions at every node. It provides iterators
+	 * for swiping over every node in a tree. For a bottom-up swipe though
+	 * the tree use the iterator; for a top-down swipe use a regular for loop
+	 * and get Nodes via GetNode(i).
+	 *
+	 * Usage:
+	 * TTBasis basis(n_leaves dim_leaves, dim_nodes); // Create close to balanced tree
+	 * for (const Node& node : basis) {
+	 * 		// Do something - bottom-up swipe
+	 * }
+	 *
+	 * for (int i = basis.nNodes() - 1; i > 0; --i) {
+	 * 		const Node& node = basis.GetNode(i);
+	 * 		// Do something - Top-Down swipe
+	 * }
+	 *
+	 * for (size_t l = 0; l < nLeaves; ++l) {
+	 * 		const Leaf& leaf = GetLeaf(l);
+	 * 		// Do something - for every leaf
+	 * }
+	 */
 public:
 	/// Default constructor
 	TensorTreeBasis() = default;
@@ -21,6 +48,7 @@ public:
 	/// File constructor
 	explicit TensorTreeBasis(istream& is);
 
+	/// Stream constructor
 	explicit TensorTreeBasis(const string& filename);
 
 	/// Create Balanced Tree

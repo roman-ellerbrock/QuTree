@@ -2,6 +2,11 @@
 #include "Leaf.h"
 
 class LinearizedLeaves
+	/**
+	 * \class LinearizedLeaves
+	 * \ingroup TTBasis
+	 * \brief The class holds a vector of references to the leaves in the TTBasis.
+	 */
 {
 public:
 	LinearizedLeaves() = default;
