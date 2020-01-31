@@ -22,3 +22,12 @@
 #include"Core/Vector_Implementation.h"
 #include"Core/long_integer.h"
 #include"Core/stdafx.h"
+
+/**
+ * \defgroup QDlib
+ * \brief QDlib is a C++ Tensor and Tensor Tree library.
+ *
+ * This library has classes that are similar to libraries like Lapack,
+ * Eigen, Armadillo, etc., but its focus is concentrated on handling
+ * high-order Tensors and Tensor Trees.
+ * */

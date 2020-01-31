@@ -20,10 +20,10 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	// Standard Constructor
 	Vector()
-		: Vector(1) {}
+		: Vector(1), dim_(1) {}
 
 	// Constructor
-	explicit Vector(size_t dim_);
+	explicit Vector(size_t dim);
 
 	explicit Vector(const string& filename);
 
@@ -55,21 +55,21 @@ public:
 
 	// Operators
 	inline T operator()(size_t i) const {
-		assert(i < dim);
-		return coeffs[i];
+		assert(i < dim_);
+		return coeffs_[i];
 	}
 
 	inline T& operator()(size_t i) {
-		assert(i < dim);
-		return coeffs[i];
+		assert(i < dim_);
+		return coeffs_[i];
 	}
 
 	inline T operator[](size_t i) const {
-		return coeffs[i];
+		return coeffs_[i];
 	}
 
 	inline T& operator[](size_t i) {
-		return coeffs[i];
+		return coeffs_[i];
 	}
 
 	Vector operator+(Vector b);
@@ -84,11 +84,11 @@ public:
 	void zero();
 
 	// Setter & Getter
-	inline size_t Dim() const { return dim; }
+	inline size_t Dim() const { return dim_; }
 
 protected:
-	T *coeffs;
-	size_t dim;
+	T *coeffs_;
+	size_t dim_;
 };
 
 template<typename T>

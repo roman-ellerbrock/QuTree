@@ -7,8 +7,8 @@
 //////////////////////////////////////////////////////////////////////
 // Constructor
 template<typename T>
-Vector<T>::Vector(size_t dim_)
-	:dim(dim_), coeffs(new T[dim_]) {
+Vector<T>::Vector(size_t dim)
+	:dim_(dim), coeffs_(new T[dim]) {
 	assert(dim > 0);
 	zero();
 }
@@ -28,16 +28,16 @@ Vector<T>::Vector(istream& is)
 // Copy constructor
 template<typename T>
 Vector<T>::Vector(const Vector& old)
-	:Vector(old.dim) {
-	for (size_t i = 0; i < dim; i++)
-		coeffs[i] = old.coeffs[i];
+	:Vector(old.dim_) {
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] = old.coeffs_[i];
 }
 
 // Move constructor
 template<typename T>
 Vector<T>::Vector(Vector&& old) noexcept
-	:dim(old.dim), coeffs(old.coeffs) {
-	old.coeffs = nullptr;
+	:dim_(old.dim_), coeffs_(old.coeffs_) {
+	old.coeffs_ = nullptr;
 }
 
 // Copy Assignment Operator
@@ -51,17 +51,17 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
 // Move Assignment Operator
 template<typename T>
 Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
-	delete[] coeffs;
-	coeffs = other.coeffs;
-	other.coeffs = nullptr;
-	dim = other.dim;
+	delete[] coeffs_;
+	coeffs_ = other.coeffs_;
+	other.coeffs_ = nullptr;
+	dim_ = other.dim_;
 	return *this;
 }
 
 // Destructos
 template<typename T>
 Vector<T>::~Vector() {
-	delete[] coeffs;
+	delete[] coeffs_;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -71,11 +71,11 @@ template<typename T>
 void Vector<T>::Write(ostream& os) const {
 	// Verification
 	os.write("VECT", 4);
-	os.write((char *) &dim, sizeof(dim));
+	os.write((char *) &dim_, sizeof(dim_));
 
 	int32_t size = sizeof(T);
 	os.write((char *) &size, sizeof(size));
-	for (size_t i = 0; i < dim; i++) {
+	for (size_t i = 0; i < dim_; i++) {
 		T Coeff_now = operator()(i);
 		os.write((char *) &Coeff_now, size);
 	}
@@ -91,8 +91,8 @@ void Vector<T>::Read(istream& is) {
 	assert(s_key == s_check);
 
 	// Read dimensions
-	is.read((char *) &dim, sizeof(dim));
-	(*this) = Vector<T>(dim);
+	is.read((char *) &dim_, sizeof(dim_));
+	(*this) = Vector<T>(dim_);
 
 	// Read the size of type
 	int32_t size;
@@ -100,7 +100,7 @@ void Vector<T>::Read(istream& is) {
 	assert(size == sizeof(T));
 
 	// Read the coefficients
-	for (size_t i = 0; i < dim; i++) {
+	for (size_t i = 0; i < dim_; i++) {
 		T Coeff_now;
 		is.read((char *) &Coeff_now, size);
 		operator[](i) = Coeff_now;
@@ -121,8 +121,8 @@ void Vector<T>::Read(const string& filename) {
 
 template<typename T>
 void Vector<T>::print(ostream& os) const {
-	for (size_t i = 0; i < dim; i++)
-		os << coeffs[i] << " ";
+	for (size_t i = 0; i < dim_; i++)
+		os << coeffs_[i] << " ";
 	os << endl;
 }
 
@@ -131,43 +131,43 @@ void Vector<T>::print(ostream& os) const {
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 Vector<T> Vector<T>::operator+(const Vector<T> b) {
-	assert(b.Dim() == dim);
-	Vector res(dim);
-	for (size_t i = 0; i < dim; i++)
+	assert(b.Dim() == dim_);
+	Vector res(dim_);
+	for (size_t i = 0; i < dim_; i++)
 		res(i) = operator()(i) + b(i);
 	return res;
 }
 
 template<typename T>
 Vector<T> Vector<T>::operator-(const Vector<T> b) {
-	assert(b.Dim() == dim);
-	Vector res(dim);
-	for (size_t i = 0; i < dim; i++)
+	assert(b.Dim() == dim_);
+	Vector res(dim_);
+	for (size_t i = 0; i < dim_; i++)
 		res(i) = operator()(i) - b(i);
 	return res;
 }
 
 template<typename T>
 T Vector<T>::operator*(const Vector<T> b) {
-	assert(b.Dim() == dim);
+	assert(b.Dim() == dim_);
 	T res = 0;
-	for (size_t i = 0; i < dim; i++)
+	for (size_t i = 0; i < dim_; i++)
 		res += operator()(i) * b(i);
 	return res;
 }
 
 template<typename T>
 Vector<T>& Vector<T>::operator*=(T coeff) {
-	for (size_t i = 0; i < dim; i++) {
-		coeffs[i] *= coeff;
+	for (size_t i = 0; i < dim_; i++) {
+		coeffs_[i] *= coeff;
 	}
 	return *this;
 }
 
 template<typename T>
 Vector<T>& Vector<T>::operator/=(T coeff) {
-	for (size_t i = 0; i < dim; i++) {
-		coeffs[i] /= coeff;
+	for (size_t i = 0; i < dim_; i++) {
+		coeffs_[i] /= coeff;
 	}
 	return *this;
 }
@@ -176,7 +176,7 @@ Vector<T>& Vector<T>::operator/=(T coeff) {
 template<typename T>
 double Vector<T>::Norm() const {
 	double norm = 0;
-	for (size_t i = 0; i < dim; i++) {
+	for (size_t i = 0; i < dim_; i++) {
 		norm += pow(abs(operator()(i)), 2);
 	}
 	norm = sqrt(norm);
@@ -185,8 +185,8 @@ double Vector<T>::Norm() const {
 
 template<typename T>
 void Vector<T>::zero() {
-	for (size_t i = 0; i < dim; i++)
-		coeffs[i] = 0;
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] = 0;
 }
 
 template<typename T>

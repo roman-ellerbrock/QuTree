@@ -2,7 +2,11 @@
 #include "stdafx.h"
 
 class TensorABC {
-// class TensorABC holds contraction of a tensor of n-th order
+/**
+ * \class TensorABC
+ * \brief This class holds contracted (multi-shape) dimensions of a tensor.
+ */
+
 public:
 	TensorABC()
 		: before_(0), after_(0), active_(0), total_(0) {}

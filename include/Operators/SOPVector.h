@@ -4,7 +4,7 @@
 
 class SOPVector: public std::vector<SOP>
 /**
- * \class This class represents a vector of SOPs.
+ * \class SOPVector
  * \ingroup Operators
  * \brief Dressed up vector of SOPs
  */

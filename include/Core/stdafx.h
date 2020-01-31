@@ -4,16 +4,6 @@
 //
 //
 
-/**
- * \defgroup QD-lib
- * \brief This is the QuantumDynamics library. It contains mathematical
- * classes and functions that are generally useful in Quantum Dynamics
- * simulations.
- *
- * This library has classes that are similar to libraries like Lapack,
- * Eigen, Armadillo, etc., but its focus is concentrated on handling
- * Tensors of arbitrary dimension.
- * */
 
 //#pragma once
 
