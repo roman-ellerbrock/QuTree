@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-27.
 //
-#include "FactorMatrixTree.h"
-#include "Tree/HoleMatrixTree.h"
+#include "SparseFactorMatrixTree.h"
+#include "Tree/SparseHoleMatrixTree.h"
 #include "UnitTest++/UnitTest++.h"
 
 

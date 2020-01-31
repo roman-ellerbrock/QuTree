@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-27.
 //
-#include "Tree/DenseOverlap.h"
-#include "Tree/HoleOverlap.h"
+#include "Tree/FactorMatrixTree.h"
+#include "Tree/HoleMatrixTree.h"
 #include "UnitTest++/UnitTest++.h"
 
 double eps = 1e-12;
