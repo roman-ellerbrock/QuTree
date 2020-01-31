@@ -2,18 +2,30 @@
 #include "TensorTreeBasis/Node.h"
 
 /**
- * \class TreeStructuredObject
- * \brief This is a key structure-giving class.
- * Each element of a set of elements A is connected to one
- * element of a set of elements B.
+ * \defgroup Tree
+ * \brief Group for classes related to tree handling.
  *
- * Assume that there is a set X with objects {x_1,...,x_N}.
- * A AttributiveSet is a set {a_1,...,a_N} where each
- * object a_i is asigned to an object x_i.
- * */
+ * Classes in this group use a TTBasis to generate new classes
+ * that use and work with the tree structure provided by TTBasis.
+ * The classes in this group should either inherit from
+ * TreeStructureObject (for classes that have some object at
+ * EVERY node in a tree) or SparseTreeStructuredObject (for classes
+ * that have some object at a SUBSET of all nodes in the tree).
+ */
 
 template<class A>
-class TreeStructuredObject {
+class TreeStructuredObject
+/**
+ * \class TreeStructuredObject
+ * \ingroup Tree
+ * \brief Base class for creating objects at every node in a tree.
+ *
+ * For every node in a TTBasis, there is one corresponding Object
+ * of class A. Inherit from this class for fast prototyping.
+ * Make sure that attributes gets cleared and filled in a constructor.
+ * Automatically provides iterators and bracket operators for Node objects.
+ * */
+{
 public:
 	// Getter for the attribute to object a
 	A& operator[](const Node& x) {

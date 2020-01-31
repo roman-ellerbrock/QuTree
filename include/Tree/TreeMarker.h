@@ -11,13 +11,21 @@
 #include <map>
 #include <chrono>
 
+
+class TreeMarker
 /**
  * \class TreeMarker
- * \brief This class marks active upper nodes, given a list of physical modes
+ * \brief This class marks a subset of active Nodes in a tree.
  *
+ * The class is used to mark Nodes when working with sparseness in
+ * tree structure. Typically, nodes are marked by providing a list
+ * of active leaves. In this case, the TreeMarker searches for the
+ * Nodes connectinb the leaves and saving the corresponding Node
+ * pointers in a list.
+ * co_address stores the mapping of the global Node address in
+ * TTBasis to the sparse address.
  * */
-
-class TreeMarker {
+{
 public:
 
 	TreeMarker(const vector<size_t>& modes,

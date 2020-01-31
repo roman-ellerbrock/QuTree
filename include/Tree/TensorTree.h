@@ -9,7 +9,15 @@
 #include "Core/Tensor_Implementation.h"
 
 template<typename T>
-class TensorTree: public TreeStructuredObject<Tensor<T>> {
+class TensorTree: public TreeStructuredObject<Tensor<T>>
+	/**
+	 * \class TensorTree
+	 * \ingroup Tree
+	 * \brief This is the tensor tree class.
+	 *
+	 *
+	 */
+{
 public:
 	using TreeStructuredObject<Tensor<T>>::attributes;
 
