@@ -6,7 +6,6 @@ class TensorABC {
  * \class TensorABC
  * \brief This class holds contracted (multi-shape) dimensions of a tensor.
  */
-
 public:
 	TensorABC()
 		: before_(0), after_(0), active_(0), total_(0) {}
@@ -27,7 +26,6 @@ private:
 	size_t active_;
 	size_t total_;
 };
-
 
 class TensorDim
 /**

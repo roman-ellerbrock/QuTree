@@ -20,7 +20,7 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	// Standard Constructor
 	Vector()
-		: Vector(1), dim_(1) {}
+		: Vector(1)  {}
 
 	// Constructor
 	explicit Vector(size_t dim);
