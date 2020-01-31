@@ -76,17 +76,30 @@ Matrixcd hole_product(Tensorcd A, Tensorcd B) {
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
         cout << "Trace: " << h.Trace() << endl;
-        // TODO: do we have machinery for B = hk * A ?
+        // TODO: do we have machinery for B = hk * A ? Use FactorMatrixcd
     }
     return h;
 }
 
-int main() {
+void reshape (Tensorcd A) {
+    cout << "\nreshape:\n" << endl;
+    cout << "A.Dim() = " << endl;
+    A.Dim().print();
+    vector<size_t> dims = {2, 3, 2, 2}; // fourth order order tensor
+    size_t ntensor = 2; // group of two tensors
+    TensorDim tdim(dims, ntensor);
+    assert(tdim.getdimpart() == A.Dim().getdimpart());
+    cout << "d = " << tdim.getdimpart() << endl;
+    A.Reshape(tdim);
+    cout << "A.Dim() = " << endl;
+    A.Dim().print();
+}
 
+int main() {
     Tensorcd A = create_tensor();
     A = fill_tensor(A);
     Tensorcd B = A;
     Matrixcd w = dot_product(A, B);
     Matrixcd h = hole_product(A, B);
-
+    reshape(A);
 }
