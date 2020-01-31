@@ -18,7 +18,7 @@ void SparseHoleMatrixTree<T>::Initialize(const TTBasis& basis) {
 	attributes.clear();
 	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
-		size_t dim = node.TDim().getntensor();
+		size_t dim = node.TDim().GetNumTensor();
 		attributes.emplace_back(Matrix<T>(dim, dim));
 	}
 }
