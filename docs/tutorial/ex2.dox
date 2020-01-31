@@ -1,0 +1,61 @@
+/**
+\page dev_ex_2 Developer's tutorial - Exercise 2
+
+# Aim of this exercise
+The aim of this exercise is to learn fundamental usage of QDlib.
+
+# Information
+This programming tasks in this exercise exclusively use the classes
+TensorDim, Tensor and SingleParticleOperator.
+The class declarations can be found in (relative to project directory):
+
+- ./QDlib/TensorDim.h
+- ./QDlib/Tensor.h
+- ./QDlib/SingleParticleOperator.h
+
+The additional information about QDlib on @ref doc_program will be
+central to solve this exercise.
+Please read the following pages before continuing
+
+- @ref doc_spo "About Single-Particle-Operators"
+
+- - -
+# Exercise 2
+
+We want to create a SPO and apply it to a Tensor. 
+
+The class SingleParticleOperators, like the class Tensor, is a template class that
+can be initialized using different base types.
+For simplicitly you can use the base type complex<double>, i.e. the classes
+Tensorcd and SPOcd.
+
+1.) Create a TensorsDim named "tdim" with 4 lower indices. The upper index' dimension (ntensor)
+    shall be 3. The lower indices' dimensions shall be 2, 3, 4 and 5.
+
+2.) Create 2 Tensors, A and B, with the dimensions given by tdim. Initialize the
+    coefficients of the Tensor using varying values and use a Gram-Schmidt to orthonormalize
+    the entries.
+
+3.) Create a SingleParticleOperator named "mat" acting on an arbitrary index of A and B.
+    Fill it with entries (create, e.g., a unit-operator, null-operator, ..)
+    and apply it to A or B.
+    Investigate the resulting Tensors C = mat * A.
+
+4.) Calculate and investigate the dot-product (A, C) = (A, mat * A).
+
+If you are interested to go even deeper into the QDlib and understand the implementation of
+the Tensor class, you can try to solve the following exercises:
+
+5.) Write a function that performs a product of a SPOcd and a Tensorcd.
+
+6.) Write a function that performs a Tensor-Hole product for a Tensorcd with a hole in
+    index k.
+
+The functions "mattensor" and "TensorHoleProduct" in Tensor_Implementation.h perform
+the tasks 8.) and 9.), respectively. However, these functions are hard to read, because they
+avoid the usage of bracket operators due to their overhead. In the present exercise you can use
+all bracket operators. This significantly facilitates writing these functions.
+The function "OldStateAveragedHoleProduct" has an unoptimized version of a hole-product that
+can be used as a reference. It is the intended solution for 9.).
+
+*/

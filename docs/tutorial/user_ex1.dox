@@ -1,0 +1,203 @@
+/**
+\page us_ex_1 User's tutorial - Exercise 1
+- - -
+
+# Aim of this exercise
+The aim of this exercise is to perform simulation for a build-in systems via the Parser.
+
+This exercise is meant to be an introductory example to use mctdh++ and to get to a
+chemical result as fast as possible.
+The first exercise does not aim to provide a detailed description on the input,
+on how analyse the output, etc..
+
+Before starting this tutorial, please just ensure that mctdh++ compiles correctly.
+Refer to the ReadMe and Getting Started section for help.
+
+# Information
+In this tutorial we will calculate the photodissociation spectrum of NOCl[1]
+after S0-S1 excitaton.
+We will reproduce the results originally presented in Ref. [1].
+For a detailed description of the simulation details, please refer to the paper. Here,
+a brief summary will be given.
+
+First, we will perform a real-time dynamics simulation of the nuclei on the excited
+potential energy surface of NOCl. The starting wavefunction is a Hartree product which
+approximately describes the wavefunction after vertical excitation from the S0
+potential energy surface.
+Then, we will calculate the spectrum by calculating the autocorrelation function and
+performing a Fourier transformation.
+
+The simulations are performed using an internal coordinate system for the nuclei
+(see Sec. IV. A. in Ref. [1]). The coordinates denoted by rv, rd and theta correspond to
+the modes 0, 1 and 2 in the in- and output, respectively.
+
+Note: additional information about the Parser on @ref doc_program can be helpful for
+solving this exercise
+
+This tutorial was performed on git commit acd560379c0934e1f3acdc8cc3db1c3ac18794c2 (master).
+If you have technical issues while performing this exercise, try checking out this version.
+
+- - -
+# Exercise 1
+First create a working directory where you would like to perform the current calculations.
+Create a file named nocl.in that contains the following content
+
+## nocl.in
+```
+//////////////////////////////////////////////////
+// Photo-dissociation of NOCl
+//
+// Perform a real-time propagation on the
+// electronic S1 state
+//////////////////////////////////////////////////
+
+// This sets the reference-directory for this project.
+// File-management will be relative to this directory.
+mainfolder = nocl/
+
+// Accuracy parameters
+eps = {
+// general accuracy parameter
+eps_general=1E-6
+
+// accuracy of the constant-mean field integrator
+eps_cmf=5E-4
+
+// accuracy of the Bulirsch-Stoer integrator for local propagation
+epx_bs=5E-5
+}
+
+// Integrator parameters including start- and end-time,
+// initial time step, output interval and flag that
+// determines wether the wavefunction will be saved in
+// each time-step
+integrator={
+start=0
+end=1985.376
+dt=0.1
+out=41.362
+iteration=1
+savepsi=true
+}
+
+// Specify the Hamiltonian for this system
+Hamiltonian=NOCl
+// Specify kinetic energy operator variables (KEO_var)
+KEO_Var={
+// Will the NOCl potential be included (true/false)?
+potential=true
+}
+// Specify the PES for this system
+//Potential=NOCl
+
+job=integrate
+
+// Specify tool in toolbox
+tool=spectrum
+
+// Basis definition
+basis=
+{
+// Definition of the multilayer-tree.
+// Note that modes range from 0-(f-1)
+tree=[
+1	-3
+	3	-1
+		24	0	0
+   	3	-1
+    	96	1	1
+    3	-1
+    	60	2	2
+]
+
+
+// Parameter list for the primitive basis.
+// For DVR-like basis types the parameters define
+// 1. frequency (for legendre irrelevant but not 0)
+// 2. reference geometry (irrelevant for legendre)
+// 3. frequency of initial wavefunction
+// 4. reference geometry of initial wavefunction
+//
+// For FFT:
+// 1. x-start
+// 2. x-end
+// 3. frequency of initial wavefunction
+// 4. reference geometry of initial wavefunction
+
+parameters=[
+0.010006	249.24	    251.		0.008
+583.54	    1407.36	    740.56	    0.0027
+1000.		0.		    2.22		90.
+]
+
+}
+```
+
+In the working directory, create a subdirectory named "nocl". Copy or link the mctdh++
+binary and the ToolBox binary to the working directory.
+
+1.) Perform a real-time propagation on the S1 electronic state of NOCl with the input file
+    nocl.in by executing: "./mctdh++ nocl.in".
+
+2.) Calculate the photodetachment spectrum of NOCl by executing the Toolbox on the nocl.in:
+    "./ToolBox nocl.in". The spectrum can be found in "./nocl/spectrum.dat" where the first
+    column is the energy in Hartree and the second column contains the intensity. Compare the
+    calculated spectrum to the ones in Fig. 2 in Ref. [1].
+
+3.) Perform convergence tests by modifying the number of SPFs and compare your results to those from
+    Fig. 2 in Ref. [1].
+    The number of SPF can be changed to e.g. 4 SPF per mode by changing the tree wildcard:
+```
+tree=[
+1	-3
+	4	-1
+		24	0	0
+   	4	-1
+    	96	1	1
+    4	-1
+    	60	2	2
+]
+```
+
+4.) Perform convergence tests by modifying the number of primitive basis functions for each coordinate.
+    The number of primitive basis functions can be modified by adjusting the corresponding part in the
+    tree definition. As an example, the following code increases the number of harmonic osscilator functions
+    for mode 0 (rv) from 24 to 34:
+```
+tree=[
+1	-3
+	4	-1
+		34	0	0
+   	4	-1
+    	96	1	1
+    4	-1
+    	60	2	2
+]
+```
+    The primitive basis in the tree is always given by three integer numbers. The first gives the number
+    of primitive basis functions, the second integer identifies which primitive basis type is chosen and
+    the third denotes the corresponding primitive mode. An example:
+```
+    24  0   0
+```
+    Indicates that there are 24 basis functions, the basis type is 0 ( which is a Harmonic Osscilator basis)
+    and the mode is 0.
+    The primitive basis is furthermore specified by the parameter list in the input:
+```
+parameters=[
+0.010006	249.24	    251.		0.008
+583.54	    1407.36	    740.56	    0.0027
+1000.		0.		    2.22		90.
+]
+```
+    Each mode (0, 1, ...) is specified subsequently and for each mode, there must be precisely four floats.
+    The first two numbers specify the basis and the meaning of parameters depends on the type of the basis.
+    The second two numbers specify the position and frequency of a starting gaussian wavepacket. In the present
+    approach these numbers are chosen to represent the vibrational ground state on the S0 PES.
+
+# References
+- [1] U. Manthe, H. D. Meyer, J. Chem. Phys., 97, 3199 (1992)
+
+Suggestions to romanellerbrock@gmail.com.
+
+*/

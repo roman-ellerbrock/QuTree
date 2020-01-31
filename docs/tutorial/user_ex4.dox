@@ -1,0 +1,109 @@
+/**
+\page us_ex_4 User's tutorial - Exercise 4
+- - -
+
+# Aim of this exercise
+In this exercise, we will learn how to create sum-of-product (SOP) operators and add wildcards to the
+parser that allow us to use these SOP operators. As an exemplary system, we will take a coupled harmonic
+oscillator, add anharmonic part to the potential and calculate the vibrational eigenstates.
+
+# Information
+The Hamiltonian of a chemical of physical system can typically be expressed in SOP form.
+That is, a sum of products of single-particle operators.
+
+Single-particle operators (SingleParticleOperator) are operators that operate on a single coordinate
+or, which is equivalent, on the corresponding one-dimensional basis sets only. Single-particle operators
+are typically functions of fundamental operators like x and p or powers of these operators. Depending on the
+choice of the primitive basis functions other fundamental operators can be useful like, e.g. the Pauli-matrices.
+
+Products of single-particle operators are called Multi-Particle-Operators (MultiParticleOperator MPO) and
+are the next building block in mctdh++. They are represented as a vector of SingleParticleOperators.
+
+Sum-of-product Operators (SumOfProductOperator) are build from a vector of MPOs and correponding coefficients.
+
+In mctdh++ SOP operators can be activated via the mctdhParser by setting the Hamiltonian flag in the input.
+The relevant part can be found in the function SOP MCTDH_Parser::make_sop(const mctdhBasis&) in mctdh_parser.cpp.
+
+The SOP operator we are going to implement is a modified version of the CoupledHO. You can look at the
+corresponding .h and .cpp files at any time for help.
+The steps we go through in this tutorial are prototypical for each new SOP operator. At the end of this
+tutorial you can find a check-list for implementing new SOP operators.
+
+- - -
+# Exercise 4
+
+1.) Create a new directory in ./Hamiltonians/Operators/ named AnharmonicOscillator. In the new directory,
+    create a new .cpp and .h file with the same name as the directory. Furthermore, create a new
+    CMakeLists.txt file with the following content
+
+```
+add_library(AnharmonicOscillator AnharmonicOscillator.cpp AnharmonicOscillator.h)
+target_include_directories (AnharmonicOscillator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries (AnharmonicOscillator MCTDHlib)
+```
+    If you chose a different name for your .cpp/.h files, adjust the content of the .txt file accordingly.
+
+2.) In the new .cpp/.h files, create a new class named AnharmonicOscillator which inherits (public)
+    from SOP. Create a default destructor for the class. Create the following constructor for the class:
+
+```
+    explicit AnharmonicOscillator(const mctdhBasis& basis) { Initialize(basis); }
+```
+    This constructor calls the base-class function Initialize which assures that basic functionality of
+    the class works properly. The base-class functions calls the private function "SpecialInitialize"
+    which initializes the system-specific operator.
+
+    Declare the following member function in the .h-file:
+```
+    void SpecialInitialize(const mctdhBasis& basis) override;
+```
+
+3.) In the .cpp-file, create the definition of the SpecialInitialize function. The building blocks
+    for the MPOs are the fundamental operators which are defined in the primitive basis. It is convenient
+    to define short cuts for relevant operators. The following code allows us to access operators for
+    x, x2, the kinetic energy operator (kin) and the momentum operator (p):
+
+```
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> x = &PrimitiveBasis::applyX;
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> x2 = &PrimitiveBasis::ApplyX2;
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> kin = &PrimitiveBasis::ApplyKin;
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> p = &PrimitiveBasis::ApplyP;
+```
+    In the following code, you can find code-examples of how to create a MPO which consists of a single
+    SPO and multiple SPOs and how to append them to the SOP operator.
+```
+    // Create a MPO which consists of only a kinetic energy operator acting on mode "0". Save it to the SOP operator.
+    {
+        // Constructor of a MPO for a single SPO and the corresponding mode
+        MPO M(kin, 0);
+       // save it to the SOP with a coefficient of 1.
+        push_back(M, 1.);
+    }
+
+    // Create a MPO consisting of a SPO in mode 0 (x) and mode 1 (p). Save it to the SOP with a coefficient of 0.5
+    // M = 0.5 * x(0) * p(1)
+    {
+        MPO M;
+        M.push_back(x, 0);
+        M.push_back(p, 1);
+        push_back(M, 0.5);
+    }
+```
+    Create a SOP operator for a 4-dimensional seperable Harmonic oscillator (HO) with the hamiltonian
+
+    H = kin(0) + kin(1) + kin(2) + kin(3) + w * (x(1)**2 + x(2)**2 + x(3)**2 + x(4)**2)
+
+    Here the constant w should be corresponding to 4000 cm^(-1). Note that all constants in mctdh++ have to
+    be transformed to atomic units. Relevant constants can be found in the namespace QM (see QDlib).
+
+4.) Perform an eigenstate calculation for the Hamiltonian. Verify that the ground state can be described
+    accurately by a Hartree-product.
+
+5.) Add linear coupling terms between the coordinates 0 and 1, 1 and 2, 2 and 3 & 3 and 0. with a constant
+    coupling strength of 2000 cm^(-1). Calculate the 5 first eigenstates and compare the eigenvalues to the
+    ones in Ref. [1].
+
+# References
+- [1] U. Manthe J. Chem. Phys. 130, 054109 (2009)
+
+*/

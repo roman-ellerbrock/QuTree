@@ -1,0 +1,64 @@
+/**
+\page dev_ex_7 Developer's tutorial - Exercise 7
+---
+
+# Aim of this exercise 
+The aim of this exercise is to learn the basics of the parser class from a developers 
+standpoint. It might be helpful to read about the usage from a users perspective first 
+in the section \ref parser.
+
+# Information
+The class MCTDH_parser(parser) is introduced in this exercise. 
+It relies on the class Token, which is used to store its data.
+The functionalities of of the Token class are also covered as they are 
+essential to acces data from the parser. 
+The definitions of the classes mentioned here can be found in
+
+- ./MCTDH/Parser/mctdh_parser.h
+- ./MCTDH/Parser/token.h
+
+In this exercise we will first have a look at the basic features of the Parser.
+Therefore, we will write a little program which utilizes the parser to get Information
+from an input file (How to create such a "tool" is described in \ref doc_tool).
+A reference implementation for this exercise can be found in ex7.cpp.
+
+
+# Exercise 7
+Consider the input file ex7.in:
+- Use this file as an input for a MCTDH_parser. Construct the parser. 
+  Also construct a parser with an empty input file for comparison. 
+- Use the MCTDH_parser's print function to compare both parsers. 
+  Can you spot what both have in common?
+- As you can see in the task before the MCTDH_parser reads not only what is in the input file
+  but also some defaults. Can you override these defaults when defining them differently
+  in the input file? Try it.
+- There is a second way to define default values for the MCTDH. You can use a file 'defaults.in' 
+  to define default values. 
+  Use this method to define some more variables.
+  Can you figure out the hierarchy of the three different mechanisms to define variables.
+  Which mechanism overrides which?
+- The data of the parser is stored in the format of the Token class (see token.h).
+  This structure allows for easy navigation. With the function get_data_token of the 
+  MCTDH_parser you can get all its underlying data. Use this function and store 
+  all data of your parser in a Token variable. 
+- The Token itself holds a list of subtokens which are again Tokens. You can access
+  a token via its key using the [] operator. Now, store the token corresponding to 
+  the key "stuff" in a separate variable and print out this variable.
+- With this recursive scheme of tokens a tree structure is obtained. The 'leafs' of
+  this tree are tokens which only have a key and no subtokens. You can access the 
+  key of this leaf tokens directly by using the ()-operator. This is useful because 
+  all data you need for your calculations is stored in such leaf tokens. 
+  Now, get the values (i.e. the leaf token behind ) corresponding to "simple_var" 
+  and print it out.
+- There is a different way to access subtokens. One can not only use a key but also 
+  an integer n to access the nth element in a list. Use this to access the fourth 
+  value of the sentence token and print it. (It should be the string "whole")
+- One advanced functionality of the tokens which comes in handy to define different
+  kinds of parsers on your own is provided by the function Token_helper::join. This 
+  function joins two tokens together. To explore this function a little create a 
+  second parser with the file "ex7_2.in". Use the get_data_token function to get the
+  data from the initial and the new parser. Join these two tokens in different order.
+  Can you spot the differences? How can this mechanism e.g. be used to incorporate
+  default files? 
+
+*/
