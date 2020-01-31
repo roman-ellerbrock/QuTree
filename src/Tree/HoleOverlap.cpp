@@ -33,7 +33,7 @@ void HoleOverlap<T>::Initialize(const TTBasis& basis) {
 	attributes.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
-		size_t n = tdim.getntensor();
+		size_t n = tdim.GetNumTensor();
 		attributes.emplace_back(Matrix<T>(n, n));
 	}
 }

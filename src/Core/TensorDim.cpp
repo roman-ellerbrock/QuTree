@@ -38,14 +38,14 @@ TensorDim::TensorDim(const string& file)
 void TensorDim::Initialize(const vector<size_t>& dim, size_t ntensor) {
 	assert(!dim.empty());
 	assert(ntensor > 0);
-	f_ = dim.size();
+    order_ = dim.size();
 	abc_.clear();
 	for (size_t i = 0; i < dim.size(); i++) {
 		abc_.emplace_back(TensorABC(i, dim));
 	}
-	dimpart_ = abc_[0].gettotal();
-	ntensor_ = ntensor;
-	dimtot_ = dimpart_ * ntensor_;
+    dimPart_ = abc_[0].GetTotal();
+    nTensor_ = ntensor;
+	dimTot_ = dimPart_ * nTensor_;
 }
 
 void TensorDim::Write(ostream& os) const {
@@ -53,15 +53,15 @@ void TensorDim::Write(ostream& os) const {
 	os.write("TDIM", 4);
 
 	// Write dof
-	int32_t n_write = getntensor();
+	int32_t n_write = GetNumTensor();
 	os.write((char *) &n_write, sizeof(int32_t));
 
 	// Write dof
-	int32_t f_write = f_;
+	int32_t f_write = order_;
 	os.write((char *) &f_write, sizeof(int32_t));
 
 	// Write active-dims
-	for (size_t k = 0; k < f_; k++) {
+	for (size_t k = 0; k < order_; k++) {
 		int32_t act = Active(k);
 		os.write((char *) &act, sizeof(int32_t));
 	}
@@ -92,8 +92,8 @@ void TensorDim::ReadDim(istream& is) {
 	// Read vector with dimensions of Tensor
 	vector<size_t> dim_read;
 	int32_t dim_now;
-	f_ = f_read;
-	for (size_t k = 0; k < f_; k++) {
+    order_ = f_read;
+	for (size_t k = 0; k < order_; k++) {
 		is.read((char *) &dim_now, sizeof(int32_t));
 		dim_read.push_back(dim_now);
 	}
@@ -102,62 +102,62 @@ void TensorDim::ReadDim(istream& is) {
 	(*this) = TensorDim(dim_read, ntens);
 }
 
-vector<size_t> TensorDim::getdimlist() const {
+vector<size_t> TensorDim::GetDimList() const {
 	vector<size_t> dimlist;
-	for (size_t i = 0; i < f_; i++) {
+	for (size_t i = 0; i < order_; i++) {
 		dimlist.push_back(Active(i));
 	}
 	return dimlist;
 }
 
 const TensorABC& TensorDim::getabc(size_t k) {
-	assert(k < f_);
+	assert(k < order_);
 	return abc_[k];
 }
 
 size_t TensorDim::Active(size_t k) const {
-	assert(k < f_);
-	return abc_[k].getactive();
+	assert(k < order_);
+	return abc_[k].GetActive();
 }
 
 size_t TensorDim::After(size_t k) const {
-	assert(k < f_);
-	return abc_[k].getafter();
+	assert(k < order_);
+	return abc_[k].GetAfter();
 }
 
 size_t TensorDim::Before(size_t k) const {
-	assert(k < f_);
-	return abc_[k].getbefore();
+	assert(k < order_);
+	return abc_[k].GetBefore();
 }
 
-void TensorDim::setntensor(size_t newntensor) {
-	dimtot_ /= ntensor_;
-	ntensor_ = newntensor;
-	dimtot_ *= ntensor_;
+void TensorDim::SetNumTensor(size_t newntensor) {
+	dimTot_ /= nTensor_;
+    nTensor_ = newntensor;
+	dimTot_ *= nTensor_;
 }
 
-void TensorDim::setactive(size_t act, size_t k) {
-	assert(k < f_);
+void TensorDim::SetActive(size_t act, size_t k) {
+	assert(k < order_);
 
-	vector<size_t> dim(F());
-	for (int l = 0; l < F(); l++) {
+	vector<size_t> dim(GetOrder());
+	for (int l = 0; l < GetOrder(); l++) {
 		dim.emplace_back(Active(l));
 	}
 
 	dim[k] = act;
-	Initialize(dim, ntensor_);
+	Initialize(dim, nTensor_);
 }
 
 void TensorDim::print(ostream& os) const {
-	if (f_ > 0) {
+	if (order_ > 0) {
 		os << "(";
-		for (size_t k = 0; k < f_ - 1; ++k) {
+		for (size_t k = 0; k < order_ - 1; ++k) {
 			os << Active(k) << ", ";
 		}
-		os << Active(f_ - 1) << "); ";
-		os << ntensor_ << endl;
+		os << Active(order_ - 1) << "); ";
+		os << nTensor_ << endl;
 	} else {
-		os << "( ); " << ntensor_ << endl;
+		os << "( ); " << nTensor_ << endl;
 	}
 }
 
@@ -172,11 +172,11 @@ istream& operator>>(istream& is, TensorDim& tdim) {
 }
 
 bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
-	if (tdima.F() != tdimb.F()) { return false; }
-	for (size_t k = 0; k < tdima.F(); k++) {
+	if (tdima.GetOrder() != tdimb.GetOrder()) { return false; }
+	for (size_t k = 0; k < tdima.GetOrder(); k++) {
 		if (tdima.Active(k) != tdimb.Active(k)) { return false; }
 	}
-	return (tdima.getntensor() == tdimb.getntensor());
+	return (tdima.GetNumTensor() == tdimb.GetNumTensor());
 }
 
 bool operator!=(const TensorDim& tdima, const TensorDim& tdimb) {

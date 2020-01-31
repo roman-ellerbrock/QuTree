@@ -6,8 +6,8 @@ void LogicalBasis::Initialize(double par1, double par2, double par3, double par4
 
 void LogicalBasis::InitSPF(Tensorcd& SPF)const {
 	const TensorDim& tdim = SPF.Dim();
-	size_t ntensor = tdim.getntensor();
-	size_t dimpart = tdim.getdimpart();
+	size_t ntensor = tdim.GetNumTensor();
+	size_t dimpart = tdim.GetDimPart();
 	SPF.Zero();
 	assert(ntensor == dimpart);
 	for (size_t n = 0; n < ntensor; n++) {

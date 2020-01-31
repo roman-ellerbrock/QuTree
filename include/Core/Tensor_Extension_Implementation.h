@@ -4,8 +4,8 @@ namespace Tensor_Extension {
 
 	tuple<Tensorcd, Matrixcd, Vectord> SVD(const Tensorcd& A) {
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.getdimpart();
-		size_t ntensor = tdim.getntensor();
+		size_t dimpart = tdim.GetDimPart();
+		size_t ntensor = tdim.GetNumTensor();
 
 		using namespace Eigen;
 		MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0), dimpart, ntensor);
@@ -77,8 +77,8 @@ namespace Tensor_Extension {
 	template<typename T>
 	Matrix<T> Map(const Tensor<T>& A) {
 		const TensorDim& tdim = A.Dim();
-		size_t ntensor = tdim.getntensor();
-		size_t dimpart = tdim.getdimpart();
+		size_t ntensor = tdim.GetNumTensor();
+		size_t dimpart = tdim.GetDimPart();
 		Matrix<T> M(dimpart, ntensor);
 		for (size_t n = 0; n < ntensor; ++n) {
 			for (size_t i = 0; i < dimpart; ++i) {
@@ -101,7 +101,7 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	void Generate(Tensor<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.Dim().getdimtot(), gen);
+		Generate_normal(&A[0], A.Dim().GetDimTot(), gen);
 	}
 
 	template<typename T>
@@ -126,11 +126,11 @@ namespace Tensor_Extension {
 		// Merge two Tensors into one.
 		const TensorDim& tdim1 = A.Dim();
 		const TensorDim& tdim2 = B.Dim();
-		size_t ntens1 = tdim1.getntensor();
-		size_t ntens2 = tdim2.getntensor();
+		size_t ntens1 = tdim1.GetNumTensor();
+		size_t ntens2 = tdim2.GetNumTensor();
 		A = A.AdjustStateDim(ntens1 + ntens2);
 		for (size_t n = 0; n < ntens2; ++n) {
-			for (size_t i = 0; i < tdim1.getdimpart(); ++i) {
+			for (size_t i = 0; i < tdim1.GetDimPart(); ++i) {
 				A(i, ntens1 + n) = B(i, n);
 			}
 		}
@@ -141,8 +141,8 @@ namespace Tensor_Extension {
 	void OuterProductAdd(Matrix<T>& M,
 		const Tensor<T>& A, const Tensor<T>& B) {
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.getdimpart();
-		size_t ntensor = tdim.getntensor();
+		size_t dimpart = tdim.GetDimPart();
+		size_t ntensor = tdim.GetNumTensor();
 
 #pragma omp parallel for
 		for (size_t i = 0; i < dimpart; i++) {
@@ -158,7 +158,7 @@ namespace Tensor_Extension {
 	Matrix<T> OuterProduct(const Tensor<T>& A, const Tensor<T>& B) {
 
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.getdimpart();
+		size_t dimpart = tdim.GetDimPart();
 		Matrix<T> M(dimpart, dimpart);
 		OuterProductAdd(M, A, B);
 		return M;
@@ -191,13 +191,13 @@ namespace Tensor_Extension {
 	template<typename T, typename U>
 	Tensor<T> OldmultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorDim tdim(B.Dim());
-		assert(mode < tdim.F());
+		assert(mode < tdim.GetOrder());
 		assert(mode >= 0);
 		assert(A.Dim1() == A.Dim2());
 		assert(A.Dim1() == B.Dim().Active(mode));
 
 		Tensor<T> C(tdim);
-		for (size_t n = 0; n < tdim.getntensor(); n++)
+		for (size_t n = 0; n < tdim.GetNumTensor(); n++)
 			for (size_t k = 0; k < tdim.After(mode); k++)
 				for (size_t l = 0; l < tdim.Active(mode); l++)
 					for (size_t j = 0; j < tdim.Active(mode); j++)
@@ -213,7 +213,7 @@ namespace Tensor_Extension {
 		// check wether tensordims are equal
 		assert(tdim == B.Dim());
 
-		size_t nstates = tdim.getntensor();
+		size_t nstates = tdim.GetNumTensor();
 		size_t active = tdim.Active(k);
 		size_t before = tdim.Before(k);
 		size_t behind = tdim.After(k);
@@ -246,9 +246,9 @@ namespace Tensor_Extension {
 		assert(A.Dim2() == B.Dim().getntensor());
 
 		Tensor<T> C(tdim);
-		for (size_t n = 0; n < tdim.getntensor(); n++)
-			for (size_t m = 0; m < tdim.getntensor(); m++)
-				for (size_t i = 0; i < tdim.getdimpart(); i++)
+		for (size_t n = 0; n < tdim.GetNumTensor(); n++)
+			for (size_t m = 0; m < tdim.GetNumTensor(); m++)
+				for (size_t i = 0; i < tdim.GetDimPart(); i++)
 					C(i, m) += A(m, n) * B(i, n);
 
 		return C;

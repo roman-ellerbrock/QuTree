@@ -106,7 +106,7 @@ TensorTreeBasis::TensorTreeBasis(size_t order,
 	tree = move(nodes.front());
 	tree.SetUp(nullptr);
 	auto& tdim = tree.TDim();
-	tdim.setntensor(1);
+    tdim.SetNumTensor(1);
 	tree.UpdatePosition(NodePosition());
 	Update();
 	ResetLeafModes(*this);

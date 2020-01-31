@@ -52,11 +52,11 @@ template<typename T>
 void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	mt19937& gen, const Node& node, bool delta_lowest) {
 
-	assert(Phi.Dim().getdimtot() > 0);
+	assert(Phi.Dim().GetDimTot() > 0);
 	Tensor_Extension::Generate(Phi, gen);
 	// Set ground-state to "Hartree-Product" if flag is set
 	if (delta_lowest) {
-		for (size_t i = 0; i < Phi.Dim().getdimpart(); ++i) {
+		for (size_t i = 0; i < Phi.Dim().GetDimPart(); ++i) {
 			Phi(i, 0) = 0.;
 		}
 		Phi(0, 0) = 1.;

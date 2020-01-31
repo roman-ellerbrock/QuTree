@@ -20,14 +20,14 @@ Tensorcd FFT::reverseOrder(const Tensorcd& in)
 {
 	//get the next best size for fft
 	const TensorDim& dim = in.Dim();
-	size_t size = dim.getdimpart();
-	size_t states = dim.getntensor();
+	size_t size = dim.GetDimPart();
+	size_t states = dim.GetNumTensor();
 	size_t N = getGoodSize(size);
 
 	//build the output tensor withe the new sizes
 	vector<size_t> d;
 	d.push_back(N);
-	TensorDim newdim(d, dim.getntensor());
+	TensorDim newdim(d, dim.GetNumTensor());
 	Tensorcd out(newdim);
 	
 	for(size_t n = 0; n < states; n++)
@@ -66,8 +66,8 @@ Tensorcd FFT::generalFFT(const Tensorcd& in, const int sign)
 {
 	//get sizes for fft
 	const TensorDim& dim = in.Dim();
-	size_t size = dim.getdimpart();
-	size_t states = dim.getntensor();
+	size_t size = dim.GetDimPart();
+	size_t states = dim.GetNumTensor();
 
 	//get primefactors
 	vector<size_t> primefactors = primeFactorization(size);
@@ -85,8 +85,8 @@ Tensorcd FFT::dft(const Tensorcd& in, const int sign)
 {
 	//get sizes for dft
 	const TensorDim& dim = in.Dim();
-	size_t size = dim.getdimpart();
-	size_t states = dim.getntensor();
+	size_t size = dim.GetDimPart();
+	size_t states = dim.GetNumTensor();
 
 	//otherwise perform dft
 	vector<size_t> d;
@@ -123,8 +123,8 @@ void FFT::danielsonLanczosAlgorithm(Tensorcd& in, const int sign)
 {
 	//get sizes for fft
 	const TensorDim& dim = in.Dim();
-	size_t size = dim.getdimpart();
-	size_t states = dim.getntensor();
+	size_t size = dim.GetDimPart();
+	size_t states = dim.GetNumTensor();
 
 	//save some intermediat results
 	complex<double> tmp(0., 0.);

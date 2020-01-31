@@ -81,7 +81,7 @@ public:
 	// Math Operators
 	double Norm() const;
 
-	void zero();
+	void Zero();
 
 	// Setter & Getter
 	inline size_t Dim() const { return dim_; }

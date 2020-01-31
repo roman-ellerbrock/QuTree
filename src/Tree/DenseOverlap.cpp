@@ -29,7 +29,7 @@ void DenseOverlap<T>::Initialize(const TTBasis& basis) {
 	attributes.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
-		const size_t dim = tdim.getntensor();
+		const size_t dim = tdim.GetNumTensor();
 		const auto k = (size_t) node.ChildIdx();
 		FactorMatrix<T> mat(dim, k);
 		attributes.push_back(mat);

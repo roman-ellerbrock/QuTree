@@ -10,7 +10,7 @@ template<typename T>
 Vector<T>::Vector(size_t dim)
 	:dim_(dim), coeffs_(new T[dim]) {
 	assert(dim > 0);
-	zero();
+    Zero();
 }
 
 template<typename T>
@@ -184,7 +184,7 @@ double Vector<T>::Norm() const {
 }
 
 template<typename T>
-void Vector<T>::zero() {
+void Vector<T>::Zero() {
 	for (size_t i = 0; i < dim_; i++)
 		coeffs_[i] = 0;
 }
