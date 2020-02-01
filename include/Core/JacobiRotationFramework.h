@@ -1,40 +1,106 @@
 #pragma once
 #include "FactorMatrix.h"
 
-namespace JacobiRotationFramework {
-	// Perform a Givens-rotation on an SPO 
+namespace JacobiRotationFramework
+/**
+ * \namespace JacobiRotationFramework
+ * \brief This namespace contains functions for Jacobi rotations algorithms
+ */
+{
+	/**
+	 * \brief Perform a Givens-rotation on an FactorMatrix
+	 * @param B matrix to rotate
+	 * @param c givins matrix cos element
+	 * @param s givins matrix sin element
+	 * @param i target index in B
+	 * @param j target index in B
+	 */
 	void GivensRotation(FactorMatrixcd& B, complex<double> c, complex<double> s,
 		int i, int j);
 
-	// Perform a Givens-Rotation on a set of SPOs A
+	/**
+	 * \brief Perform a Givens-Rotation on a set of FactorMatrices A
+	 * @param A Set of rotated matrices
+	 * @param c Givens matrix cos element
+	 * @param s Givens matrix sin element
+	 * @param i Target index in A
+	 * @param j Target index in A
+	 */
 	void RotateMatrices(vector<FactorMatrixcd>& A, complex<double> c,
 		complex<double> s, int i, int j);
 
-	// Rotate Transformation matrix
+	/**
+	 * \brief Rotate Transformation matrix
+	 * @param trafo transformation matrix
+	 * @param c Givens matrix cos element
+	 * @param s Givens matrix sin element
+	 * @param i Target index in A
+	 * @param j Target index in A
+	 */
 	void GivensTrafoRotation(FactorMatrixcd& trafo, complex<double> c,
 		complex<double> s, int i, int j);
 
-	// Calculate Jacobi-Angles c, s for given elemtents i, j
+	/**
+	 * \brief Calculate Jacobi-Angles c, s for given elemtents i, j
+	 * @param c Givens matrix sin element
+	 * @param s Givens matrix sin element
+	 * @param i Target index in A
+	 * @param j Target index in A
+	 * @param A Set of matrices
+	 */
 	void CalculateAngles(complex<double>& c, complex<double>& s,
 		int i, int j, const vector<FactorMatrixcd>& A);
 
-	// Build the Matrix G, that is required to Calculate Jacobi-angles
+	/**
+	 * \brief Build the Matrix G, that is required to Calculate Jacobi-angles
+	 * @param i Target index in A
+	 * @param j Target index in A
+	 * @param A Matrices for which G is built
+	 * @return G-matrix
+	 */
 	FactorMatrixcd BuildGMatrix(int i, int j, const vector<FactorMatrixcd>& A);
 
-	// Weight the matrices in A with the weight matrix W
+	/**
+	 * \brief Weight matrices, i.e. x_w = 0.5 (AX + XA)
+	 * @param A Matrices to be weighted
+	 * @param W Weighting matrix
+	 */
 	void WeightMatrices(vector<FactorMatrixcd>& A, const FactorMatrixcd& W);
 
-	// Build Hessian for RFO
+	/**
+	 * \brief Build hessian from precalculated objects
+	 */
 	Matrixd RFO_BuildHessian(const Matrixd& preHessian,
 		const Vectord& grad, double a);
 
-	// Interpret a Vectord(2) as a complex<double>
+	/**
+	 * \brief Interpret a Vectord(2) as a complex<double>
+	 * @param vec Vectod(2)
+	 * @return complex number
+	 */
 	complex<double> InterpretComplex(const Vectord& vec);
 
-	// Change of the Diagonals of a matrix under Givens-rotation
+	/**
+	 * \brief Change of the Diagonals of a matrix under Givens-rotation
+	 * @param A Matrices to be rotated
+	 * @param p target index
+	 * @param q target index
+	 * @param c cos of alpha in givens matrix
+	 * @param s sin of alpha in givens matrix
+	 * @return Change of diagonality-measure
+	 */
 	Vectord RotatedDiagonals(const FactorMatrixcd& A, int p, int q,
 		complex<double> c, complex<double> s);
 
+	/**
+	 * \brief Rotate a FactorMatrix
+	 * @param A Matrix that is rotated
+	 * @param p target index
+	 * @param q target index
+	 * @param c cos(alpha) in Givens matrix
+	 * @param s sin(alpha) in Givens matrix
+	 * @return Rotated matrix A
+	 */
 	Matrixcd Rotate(const FactorMatrixcd& A,
 		int p, int q, complex<double> c, complex<double> s);
 };

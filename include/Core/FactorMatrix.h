@@ -7,8 +7,8 @@ template<typename T>
 class FactorMatrix: public Matrix<T> {
 /**
  * \class FactorMatrix
- * \brief This class represents a factor matrix.
  * \ingroup Core
+ * \brief This class represents a factor matrix.
  *
  * Factor Matrices can be multiplied with tensors and result from
  * performing tensor-hole products.
