@@ -72,7 +72,7 @@ ostream& operator<<(ostream& os, const FactorMatrixTree<T>& S);
 template<typename T>
 istream& operator>>(istream& is, FactorMatrixTree<T>& S);
 
-typedef FactorMatrixTree<complex<double>> DenseOverlapcd;
+typedef FactorMatrixTree<complex<double>> FactorMatrixTreecd;
 
-typedef FactorMatrixTree<complex<double>> DenseOverapd;
+typedef FactorMatrixTree<complex<double>> FactorMatrixTreed;
 

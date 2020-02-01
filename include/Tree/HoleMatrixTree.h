@@ -9,14 +9,14 @@
 template<typename T>
 class HoleMatrixTree: public TreeStructuredObject<Matrix<T>>
 /**
- * \class HoleOverlap
+ * \class HoleMatrixTree
  * \ingroup Tree
  * \brief Calculate Hole-Overlaps (A, B)_(p)
  *
  * This class calculates hole-overlaps and holds the resulting
- * Matrices. HoleOverlaps can be calculated from TensorTree
- * objects and corresponding DenseOverlap objects. Similar to
- * the DenseOverlap class, it works also for
+ * Matrices. HoleMatrixTrees can be calculated from TensorTree
+ * objects and corresponding FactorMatrixTree objects. Similar to
+ * the FactorMatrixTree class, it works also for
  * non-orthogonal TensorTrees.
  */
 {
@@ -39,30 +39,31 @@ public:
 	HoleMatrixTree(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const FactorMatrixTree<T>& S, const TTBasis& basis);
 
+	/// Construct, allocate and calculate non-othorgonal
+	HoleMatrixTree(const TensorTree<T>& Psi, const TTBasis& basis);
+
 	/// Default destructor
 	~HoleMatrixTree() = default;
 
 	/// (Re-)allocate memory for every node
 	void Initialize(const TTBasis& basis);
 
-	/// Calculate hole-matrices locally
+	/// calculate hole-matrices locally, non-othorgonal
 	void CalculateLayer(const TensorTree<T>& Psi,
 		const TensorTree<T>& Chi, const FactorMatrixTree<T>& S,
 		const Node& node);
 
-	/// Calculate hole-matrices for the whole tree
+	/// Calculate hole-matrices for the whole tree, non-othorgonal
 	void Calculate(
 		const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const FactorMatrixTree<T>& S, const TTBasis& basis);
 
 	/// Calculate hole-matrices assuming orthogonal tensor tree
 	void Calculate(
-		const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const TTBasis& basis);
+		const TensorTree<T>& Psi, const TTBasis& basis);
 
 	/// Calculate hole-matrices locally
-	void CalculateLayer(const TensorTree<T>& Psi,
-		const TensorTree<T>& Chi, const Node& node);
+	void CalculateLayer(const TensorTree<T>& Psi, const Node& node);
 
 	/// I/O
 	/// Print in human readable format
@@ -84,8 +85,8 @@ ostream& operator<<(ostream& os, const HoleMatrixTree<T>& S);
 template<typename T>
 istream& operator>>(istream& is, HoleMatrixTree<T>& S);
 
-typedef HoleMatrixTree<complex<double>> HoleOverlapcd;
+typedef HoleMatrixTree<complex<double>> HoleMatrixTreecd;
 
-typedef HoleMatrixTree<double> HoleOverlapd;
+typedef HoleMatrixTree<double> HoleMatrixTreed;
 
 #endif //MCTDH_HOLEOVERLAP_H

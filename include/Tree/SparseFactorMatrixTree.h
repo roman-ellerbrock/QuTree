@@ -103,6 +103,6 @@ ostream& operator>>(ostream& os, const SparseFactorMatrixTree<T>& hmat);
 template<typename T>
 istream& operator<<(istream& is, SparseFactorMatrixTree<T>& hmat);
 
-typedef SparseFactorMatrixTree<complex<double>> FMatrixTreecd;
+typedef SparseFactorMatrixTree<complex<double>> SparseFactorMatrixTreecd;
 
-typedef SparseFactorMatrixTree<double> FMatrixTreed;
+typedef SparseFactorMatrixTree<double> SparseFactorMatrixTreed;

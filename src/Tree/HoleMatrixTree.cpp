@@ -29,6 +29,12 @@ HoleMatrixTree<T>::HoleMatrixTree(const TensorTree<T>& Psi1,
 }
 
 template<typename T>
+HoleMatrixTree<T>::HoleMatrixTree(const TensorTree<T>& Psi, const TTBasis& basis) {
+	Initialize(basis);
+	Calculate(Psi, basis);
+}
+
+template<typename T>
 void HoleMatrixTree<T>::Initialize(const TTBasis& basis) {
 	attributes.clear();
 	for (const Node& node : basis) {
@@ -38,14 +44,18 @@ void HoleMatrixTree<T>::Initialize(const TTBasis& basis) {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////
+/// Calculate for othorgonal tensor trees
+////////////////////////////////////////////////////////////////////////
+
 template<typename T>
 void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
-	const TensorTree<T>& Chi, const Node& node) {
+	const Node& node) {
 	// @TODO: improve efficiency
 
 	const Node& parent = node.Up();
 	const Tensor<T>& Bra = Psi[parent];
-	Tensor<T> Ket = Chi[parent];
+	Tensor<T> Ket = Psi[parent];
 
 	// Transform with upper hole matrix
 	if (!parent.IsToplayer()) {
@@ -60,15 +70,19 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 
 template<typename T>
 void HoleMatrixTree<T>::Calculate(const TensorTree<T>& Psi1,
-	const TensorTree<T>& Psi2, const TTBasis& basis) {
+	const TTBasis& basis) {
 	// Calculate the holematrices for two different wavefunctions.
 
 	// Top-down_ swipe. Note that the top-node is excluded from swipe!
 	for (int n = (int) basis.nNodes() - 2; n >= 0; --n) {
 		const Node& node = basis.GetNode(n);
-		CalculateLayer(Psi1, Psi2, node);
+		CalculateLayer(Psi1, node);
 	}
 }
+
+////////////////////////////////////////////////////////////////////////
+/// Calculate for non-othorgonal tensor trees
+////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
