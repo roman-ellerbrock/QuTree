@@ -1,162 +1,125 @@
 #include "FactorMatrixTree.h"
 
-vector<size_t> cast_to_vector_size_t(const vector<int>& a) {
-	vector<size_t> b(a.size());
-	for (size_t i = 0; i < a.size(); ++i) {
-		b[i] = a[i];
-	}
-	return b;
+template<typename T>
+FactorMatrixTree<T>::FactorMatrixTree(istream& is) {
+	Read(is);
+}
+
+template<typename T>
+FactorMatrixTree<T>::FactorMatrixTree(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
+
+template<typename T>
+FactorMatrixTree<T>::FactorMatrixTree(const TTBasis& basis) {
+	Initialize(basis);
+}
+
+template<typename T>
+FactorMatrixTree<T>::FactorMatrixTree(const TensorTree<T>& Psi,
+	const TensorTree<T>& Chi, const TTBasis& basis) {
+	Initialize(basis);
+	Calculate(Psi, Chi, basis);
 }
 
 template<typename T>
 void FactorMatrixTree<T>::Initialize(const TTBasis& basis) {
+	// Clear the overlaps for reinitialization
 	attributes.clear();
-	for (const Node *const node_ptr : Active()) {
-		const Node& node = *node_ptr;
-		size_t dim = node.TDim().GetNumTensor();
-		attributes.emplace_back(FactorMatrix<T>(dim, node.ChildIdx()));
+	for (const Node& node : basis) {
+		const TensorDim& tdim = node.TDim();
+		const size_t dim = tdim.GetNumTensor();
+		const auto k = (size_t) node.ChildIdx();
+		FactorMatrix<T> mat(dim, k);
+		attributes.push_back(mat);
 	}
 }
 
 template<typename T>
-void FactorMatrixTree<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-	const MPO<T>& M, const TTBasis& basis) {
-	for (size_t n = 0; n < Active().size(); ++n) {
-		const Node& node = Active().MCTDHNode(n);
-		CalculateLayer(Bra[node], Ket[node], M, node);
-	}
-}
+FactorMatrix<T> FactorMatrixTree<T>::Calculate(const TensorTree<T>& Psi,
+	const TensorTree<T>& Chi, const TTBasis& basis) {
 
-template<typename T>
-FactorMatrix<T> FactorMatrixTree<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
-	const Node& node) {
-	// @TODO: Optimize with switchbool trick
-	// Swipe through children and apply active children's SPOs.
-	Tensor<T> hKet(Ket);
-	for (size_t l = 0; l < node.nChildren(); l++) {
-		const Node& child = node.Down(l);
-		if (!Active(child)) { continue; }
-		const FactorMatrix<T>& h = operator[](child);
-		hKet = h * hKet;
+	for (const Node& node : basis) {
+		CalculateLayer(Psi[node], Chi[node], node);
 	}
 
-	// calculate overlap
-	size_t ChildIdx = node.ChildIdx();
-	Matrix<T> resultmat = Bra.DotProduct(hKet);
-	return FactorMatrix<T>(resultmat, ChildIdx);
+	const Node& topnode = basis.TopNode();
+	return this->operator[](topnode);
 }
 
 template<typename T>
-FactorMatrix<T> FactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra,
-	const Tensor<T>& Ket, const MPO<T>& M, const Node& node, const Leaf& phys) {
-
-	Tensor<T> MKet = M.ApplyBottomLayer(Ket, phys);
-	int ChildIdx = node.ChildIdx();
-	Matrix<T> resultmat = Bra.DotProduct(MKet);
-	return FactorMatrix<T>(resultmat, ChildIdx);
-}
-
-template<typename T>
-void FactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Bra,
-	const Tensor<T>& Ket, const MPO<T>& M, const Node& node) {
-	if (!Active(node)) { return; }
-
-	if (node.IsBottomlayer()) {
-		operator[](node) = CalculateBottom(Bra, Ket, M, node, node.PhysCoord());
-	} else {
-		operator[](node) = CalculateUpper(Bra, Ket, node);
-	}
-}
-
-template<typename T>
-Tensor<T> FactorMatrixTree<T>::Apply(const Tensor<T>& Phi, const MPO<T>& M,
-	const Node& node) const {
-	if (!Active(node)) { return Phi; }
-	if (node.IsBottomlayer()) {
-		const Leaf& phys = node.PhysCoord();
-		return M.ApplyBottomLayer(Phi, phys);
-	} else {
-		return ApplyUpper(Phi, node);
-	}
-}
-
-template<typename T>
-Tensor<T> FactorMatrixTree<T>::ApplyUpper(Tensor<T> Phi, const Node& node) const {
-	Tensor<T> hPhi(Phi.Dim());
-	bool switchbool = true;
-	for (size_t k = 0; k < node.nChildren(); ++k) {
-		const Node& child = node.Down(k);
-		if (!Active(child)) { continue; }
-		const FactorMatrix<T>& h = operator[](child);
-		if (switchbool) {
-			multAB(hPhi, h, Phi, true);
-		} else {
-			multAB(Phi, h, hPhi, true);
+void FactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Phi,
+	Tensor<T> AChi, const Node& node) {
+	// Get references to the ACoefficients at each node
+	if (!node.IsBottomlayer()) {
+		for (int k = 0; k < node.nChildren(); k++) {
+			// Get overlap-matrix from down_ under
+			const Node& child = node.Down(k);
+			const FactorMatrix<T>& spo = this->operator[](child);
+			// Apply it to the right-hand side
+			AChi = spo * AChi;
 		}
-		switchbool = !switchbool;
 	}
-	if (switchbool) {
-		return Phi;
-	} else {
-		return hPhi;
-	}
+	int kchild = node.ChildIdx();
+	Matrix<T> resultmat = Phi.DotProduct(AChi);
+	this->operator[](node) = FactorMatrix<T>(resultmat, kchild);
 }
 
 template<typename T>
-Tensor<T> FactorMatrixTree<T>::ApplyHole(Tensor<T> Phi, const Node& hole_node) const {
-	// @TODO: Optimize with switchbool trick
-	assert(!hole_node.IsToplayer());
-	const Node& parent = hole_node.Up();
-	size_t drop = hole_node.ChildIdx();
-
-	for (size_t k = 0; k < parent.nChildren(); ++k) {
-		const Node& child = parent.Down(k);
-		if ((child.ChildIdx() == drop) || (!Active(child))) { continue; }
-		const FactorMatrix<T>& h = operator[](child);
-		const TensorDim& tdim = Phi.Dim();
-		Phi = h * Phi;
+Tensor<T> FactorMatrixTree<T>::TransformTensor(const Tensor<T>& Phi,
+	const Node& node) const {
+	if (!node.IsBottomlayer()) {
+		Tensor<T> hPhi(Phi);
+		for (size_t k = 0; k < node.nChildren(); ++k) {
+			const Node& child = node.Down(k);
+			const FactorMatrix<T>& s = this->operator[](child);
+			hPhi = s * hPhi;
+		}
+		return hPhi;
+	} else {
+		return Phi;
 	}
-	return Phi;
 }
 
-/// I/O functionality
+/// I/O
 
 template<typename T>
 void FactorMatrixTree<T>::print(const TTBasis& basis, ostream& os) const {
-	for (const Node *const node_ptr : Active()) {
-		const Node& node = *node_ptr;
-		node.info();
-		this->operator[](node).print();
+	for (const Node& node : basis) {
+		node.info(os);
+		(*this).operator[](node).print(os);
 	}
 }
 
 template<typename T>
+void FactorMatrixTree<T>::print(ostream& os) const {
+	for (const auto& x : *this) {
+		x.print(os);
+	}
+}
+
+template <typename T>
 void FactorMatrixTree<T>::Write(ostream& os) const {
-	os.write("FMTr", 4);
+	os.write("TTDo", 4);
 
 	// write number of nodes
 	auto nnodes = (int32_t) attributes.size();
 	os.write((char *) &nnodes, sizeof(int32_t));
 
 	// Write Tensors
-	for (const auto& m : attributes) {
-		os << m;
+	for (const auto& Phi : attributes) {
+		os << Phi;
 	}
 	os << flush;
 }
 
-template<typename T>
-void FactorMatrixTree<T>::Write(const string& filename) const {
-	ofstream os(filename);
-	Write(os);
-}
-
-template<typename T>
+template <typename T>
 void FactorMatrixTree<T>::Read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
-	string s_key("FMTr");
+	string s_key("TTDo");
 	assert(s_key == s_check);
 
 	int32_t nnodes;
@@ -170,24 +133,30 @@ void FactorMatrixTree<T>::Read(istream& is) {
 	}
 }
 
-template<typename T>
-void FactorMatrixTree<T>::Read(const string& filename) {
-	ifstream is(filename);
-	Read(is);
+template <typename T>
+ostream& operator<<(ostream& os, const FactorMatrixTree<T>& S) {
+	if (&os == &std::cout ) {
+		S.print(os);
+	} else{
+		S.Write(os);
+	}
+	return os;
 }
 
-template<typename T>
-ostream& operator>>(ostream& os, const FactorMatrixTree<T>& hmat) {
-	hmat.Write(os);
+template <typename T>
+istream& operator>>(istream& is, FactorMatrixTree<T>& S) {
+	S.Read(is);
+	return is;
 }
 
-template<typename T>
-istream& operator<<(istream& is, FactorMatrixTree<T>& hmat) {
-	hmat.Read(is);
-}
+typedef complex<double> cd;
+template class FactorMatrixTree<cd>;
+template ostream& operator<< <cd> (ostream&, const FactorMatrixTree<cd>& );
+template istream& operator>> <cd> (istream&, FactorMatrixTree<cd>& );
 
-template
-class FactorMatrixTree<complex<double>>;
+typedef double d;
+template class FactorMatrixTree<d>;
+template ostream& operator<< <d> (ostream&, const FactorMatrixTree<d>& );
+template istream& operator>> <d> (istream&, FactorMatrixTree<d>& );
 
-template
-class FactorMatrixTree<double>;
+

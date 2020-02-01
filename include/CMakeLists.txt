@@ -6,6 +6,7 @@ set(QDlib_INCLUDE_FILES
         Core/FFTCooleyTukey.h
         Core/JacobiRotationFramework.h
         Core/Lanzcos.h
+        Core/long_integer.h
         Core/Matrix.h
         Core/Matrix_Implementation.h
         Core/MultiIndex.h
@@ -23,7 +24,7 @@ set(QDlib_INCLUDE_FILES
         Core/TreeNode.h
         Core/Vector.h
         Core/Vector_Implementation.h
-        Core/long_integer.h
+        Core/WeightedSimultaneousDiagonalization.h
         Core/stdafx.h
         )
 
@@ -37,11 +38,11 @@ set(TENSOR_TREE_FILES
         Tree/TreeStructuredObject.h
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h
-        Tree/DenseOverlap.h
+        Tree/FactorMatrixTree.h
         Tree/TreeStructuredObject.h
         Tree/TreeMarker.h
-        Tree/FactorMatrixTree.h
-        Tree/HoleMatrixTree.h
+        Tree/SparseFactorMatrixTree.h
+        Tree/SparseHoleMatrixTree.h
         )
 
 set(OPERATOR_FILES
