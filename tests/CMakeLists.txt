@@ -15,7 +15,10 @@ set(QDlib_tests
         test_Tensor.cpp
         tests.cpp
         test_Tree.cpp
-        test_Operators.cpp test_TensorTreeOverlaps.cpp test_HMatrices.cpp)
+        test_Operators.cpp
+        test_.FactorMatrixTree.cpp
+        test_SparseFactorMatrixTree.cpp
+        test_Core.cpp)
 
 add_executable(TestQDlib ${QDlib_tests})
 target_link_libraries(TestQDlib QDlib)

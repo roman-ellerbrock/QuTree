@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-27.
 //
-#include "FactorMatrixTree.h"
-#include "Tree/HoleMatrixTree.h"
+#include "SparseFactorMatrixTree.h"
+#include "Tree/SparseHoleMatrixTree.h"
 #include "UnitTest++/UnitTest++.h"
 
 
@@ -39,7 +39,7 @@ SUITE (HMatrices) {
 		TensorTreecd Psi(basis, rng);
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
-		FMatrixTreecd hmat(Psi, M, basis);
+		SparseFactorMatrixTreecd hmat(Psi, M, basis);
 			CHECK_CLOSE(0.25, real(hmat[basis.TopNode()](0, 0)), 0E-12);
 	}
 
@@ -54,11 +54,11 @@ SUITE (HMatrices) {
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
 		// Build  matrix representation for operator
-		FMatrixTreecd hmat(Psi, M, basis);
+		SparseFactorMatrixTreecd hmat(Psi, M, basis);
 
 		string filename("Hmat.dat");
 		hmat.Write(filename);
-		FMatrixTreecd gmat(M, basis, filename);
+		SparseFactorMatrixTreecd gmat(M, basis, filename);
 			CHECK_EQUAL(hmat.Size(), gmat.Size());
 		const auto& active = hmat.Active();
 		for (const Node *node_ptr : active) {
@@ -78,7 +78,7 @@ SUITE (HMatrices) {
 		MPOcd M(x, 0);
 		M.push_back(x, 3);
 		// Build  matrix representation for operator
-		FMatrixTreecd hmat(Psi, M, basis);
+		SparseFactorMatrixTreecd hmat(Psi, M, basis);
 		HoleMatrixTreecd hhole(Psi, hmat, M, basis);
 		Psi.Write("Psi.dat");
 		TensorTreecd Chi("Psi.dat");

@@ -1,108 +1,78 @@
 #pragma once
-#include "Core/Matrix.h"
 #include "TensorTree.h"
-#include "SparseTreeStructuredObject.h"
-#include "MultiParticleOperator.h"
 #include "Core/FactorMatrix.h"
-
-
-vector<size_t> cast_to_vector_size_t(const vector<int>& a);
+#include "TreeStructuredObject.h"
 
 template<typename T>
-class FactorMatrixTree: public SparseTreeStructuredObject<FactorMatrix<T>>
-/**
- * \class FactorMatrixTree
- *
- * \ingroup Tree
- *
- * \brief This class represents the FactorMatrices for Trees.
- *
- * The FactorMatrices are the result of Tensor-products of tensor trees.
- * In a physical context, the hole-matrices are representation of
- * mean-field operators when working with tensor tree wavefunctions.
- * */
-	{
+class FactorMatrixTree
+	: public TreeStructuredObject<FactorMatrix<T>>
+	/**
+	 * \class DenseOverlap
+	 * \ingroup Tree
+	 * \brief Calculate the Overlap between non-orthogonal TensorTrees
+	 *
+	 *
+	 */
+{
 public:
-	using SparseTreeStructuredObject<FactorMatrix<T>>::Active;
-	using SparseTreeStructuredObject<FactorMatrix<T>>::operator[];
-	using SparseTreeStructuredObject<FactorMatrix<T>>::Initialize;
-	using SparseTreeStructuredObject<FactorMatrix<T>>::attributes;
+	using TreeStructuredObject<FactorMatrix<T>>::attributes;
+	/// Default constructor
+	FactorMatrixTree() = default;
 
-	/// Create FactorMatrices for relevant nodes when representing an operator
-	FactorMatrixTree(const MPO<T>& M, const TTBasis& basis)
-		: SparseTreeStructuredObject<FactorMatrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
-		Initialize(basis);
-	}
+	/// Construct from stream
+	explicit FactorMatrixTree(istream& is);
 
-	/// Create and calculate FactorMatrixTree for an operator
-	FactorMatrixTree(const TensorTree<T>& Psi, const MPO<T>& M, const TTBasis& basis)
-		: FactorMatrixTree(M, basis) {
-		Calculate(Psi, M, basis);
-	}
+	/// Construct from file
+	explicit FactorMatrixTree(const string& filename);
 
-	/// Create FactorMatrices for externally marked nodes
-	FactorMatrixTree(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
-		: SparseTreeStructuredObject<FactorMatrix<T>>(active_, basis) {
-		Initialize(basis);
-	}
+	/// Construct and allocate memory for every node
+	explicit FactorMatrixTree(const TTBasis& basis);
 
-	/// Read FactorMatrixTree from file
-	FactorMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename)
-		: FactorMatrixTree(M, basis) {
-		Read(filename);
-	}
+	/// Construct, allocate and calculate
+	FactorMatrixTree(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+		const TTBasis& basis);
 
 	/// Default destructor
 	~FactorMatrixTree() = default;
 
-	/// Fill FactorMatrices at internally marked nodes. TreeMarker must be initialized
-	void Initialize(const TTBasis& basis) override;
+	/// Allocate a FactorMatrix at every node
+	void Initialize(const TTBasis& basis);
 
-	/// Calculate (cross-)TreeMatrix-representation of an operator
-	void Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const MPO<T>& M, const TTBasis& basis);
+	/// Calculate the tensor tree dot-product (Psi, Chi)_p
+	FactorMatrix<T> Calculate(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+		const TTBasis& basis);
 
-	/// Calculate TreeMatrix-representation of an operator
-	void Calculate(const TensorTree<T>& Psi,
-		const MPO<T>& M, const TTBasis& basis) {
-		Calculate(Psi, Psi, M, basis);
+	/// Calculate the local tensor tree dot-product
+	void CalculateLayer(const Tensor<T>& Phi,
+		Tensor<T> Chi, const Node& node);
+
+	/// Perform the (local) FactorMatrix tree - tensor tree product
+	Tensor<T> TransformTensor(const Tensor<T>& Phi, const Node& node) const;
+
+	/// Get FactorMatrix at Toplayer
+	FactorMatrix<T>& Get() {
+		assert(attributes.size() > 0);
+		return attributes.back();
 	}
 
-	/// Calculate matrices locally at a node
-	void CalculateLayer(const Tensor<T>& Bra, const Tensor<T>& Ket,
-		const MPO<T>& M, const Node& node);
-
-	/// Apply factor matrices locally
-	Tensor<T> Apply(const Tensor<T>& Phi, const MPO<T>& M, const Node& node) const;
-
-	Tensor<T> ApplyUpper(Tensor<T> Phi, const Node& node) const;
-
-	Tensor<T> ApplyHole(Tensor<T> Phi, const Node& hole_node) const;
-
-	/// I/O functions
-	/// print human readable
+	/// I/O
+	/// Print human readable
 	void print(const TTBasis& basis, ostream& os = cout) const;
-	/// Write in readable format
+	void print(ostream& os = cout) const;
+
+	/// Write in binary format
 	void Write(ostream& os) const;
-	void Write(const string& filename) const;
-	/// Read previously written (Write(..)) FactorMatrixTree
+	/// Read in binary format
 	void Read(istream& is);
-	void Read(const string& filename);
-
-protected:
-	FactorMatrix<T> CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
-		const Node& node);
-
-	FactorMatrix<T> CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
-		const MPO<T>& M, const Node& node, const Leaf& phys);
 };
 
 template<typename T>
-ostream& operator>>(ostream& os, const FactorMatrixTree<T>& hmat);
+ostream& operator<<(ostream& os, const FactorMatrixTree<T>& S);
 
 template<typename T>
-istream& operator<<(istream& is, FactorMatrixTree<T>& hmat);
+istream& operator>>(istream& is, FactorMatrixTree<T>& S);
 
-typedef FactorMatrixTree<complex<double>> FMatrixTreecd;
+typedef FactorMatrixTree<complex<double>> FactorMatrixTreecd;
 
-typedef FactorMatrixTree<double> FMatrixTreed;
+typedef FactorMatrixTree<complex<double>> FactorMatrixTreed;
+

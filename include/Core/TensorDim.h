@@ -4,6 +4,7 @@
 class TensorABC {
 /**
  * \class TensorABC
+ * \ingroup Core
  * \brief This class holds contracted (multi-shape) dimensions of a tensor.
  */
 public:
@@ -62,7 +63,7 @@ public:
 
 	void ReadDim(istream& is);
 
-    inline size_t GetOrder() const { return order_; }
+	inline size_t GetOrder() const { return order_; }
 
 	inline size_t GetDimTot() const { return dimTot_; }
 

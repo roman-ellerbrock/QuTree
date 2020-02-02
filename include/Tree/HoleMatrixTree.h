@@ -1,85 +1,92 @@
-#pragma once
-#include "TreeStructuredObject.h"
-#include "TensorTree.h"
-#include "SingleParticleOperator.h"
-#include "FactorMatrixTree.h"
-#include "SparseTreeStructuredObject.h"
+//
+// Created by Roman on 3/29/2019.
+//
 
+#ifndef MCTDH_HOLEOVERLAP_H
+#define MCTDH_HOLEOVERLAP_H
+#include "FactorMatrixTree.h"
 
 template<typename T>
-class HoleMatrixTree: public SparseTreeStructuredObject<Matrix<T>>
+class HoleMatrixTree: public TreeStructuredObject<Matrix<T>>
 /**
  * \class HoleMatrixTree
+ * \ingroup Tree
+ * \brief Calculate Hole-Overlaps (A, B)_(p)
  *
- * \ingroup Tree-Classes
- *
- * \brief This class represents the Hole-Matrices for Trees.
- *
- * The Hole-Matrices are the result of hole-products of tensor trees.
- * In a physical context, the hole-matrices are representation of
- * mean-field operators when working with tensor tree wavefunctions.
- * */
+ * This class calculates hole-overlaps and holds the resulting
+ * Matrices. HoleMatrixTrees can be calculated from TensorTree
+ * objects and corresponding FactorMatrixTree objects. Similar to
+ * the FactorMatrixTree class, it works also for
+ * non-orthogonal TensorTrees.
+ */
 {
 public:
-	using SparseTreeStructuredObject<Matrix<T>>::Active;
-	using SparseTreeStructuredObject<Matrix<T>>::operator[];
-	using SparseTreeStructuredObject<Matrix<T>>::Initialize;
-	using SparseTreeStructuredObject<Matrix<T>>::attributes;
+	using TreeStructuredObject<Matrix<T>>::attributes;
 
-	/// Create HoleMatrixTree from file
-	HoleMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename);
+	/// Default Constructor
+	HoleMatrixTree() = default;
 
-	/// Create HoleMatrixTree for a given tree-marker
-	HoleMatrixTree(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
-		: SparseTreeStructuredObject<Matrix<T>>(active_, basis) {
-		Initialize(basis);
-	}
+	/// Construct from stream
+	explicit HoleMatrixTree(istream& is);
 
-	/// Create HoleMatrixTree only for relevant nodes for a given Operator
-	HoleMatrixTree(const MPO<T>& M, const TTBasis& basis)
-		: SparseTreeStructuredObject<Matrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
-		Initialize(basis);
-	}
+	/// Construct from file
+	explicit HoleMatrixTree(const string& filename);
 
-	/// Create and calculate HoleMatrixTree
-	HoleMatrixTree(const TensorTree<T>& Psi, const FactorMatrixTree<T>& hmat,
-		const MPO<T>& M, const TTBasis& basis);
+	/// Construct and allocate memory for every node
+	explicit HoleMatrixTree(const TTBasis& basis);
 
+	/// Construct, allocate and calculate
+	HoleMatrixTree(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+		const FactorMatrixTree<T>& S, const TTBasis& basis);
+
+	/// Construct, allocate and calculate non-othorgonal
+	HoleMatrixTree(const TensorTree<T>& Psi, const TTBasis& basis);
+
+	/// Default destructor
 	~HoleMatrixTree() = default;
 
-	/// Create Matrices for active nodes in the tree
-	void Initialize(const TTBasis& basis) override;
+	/// (Re-)allocate memory for every node
+	void Initialize(const TTBasis& basis);
 
-	/// Calculate Hole-Matrices form FactorMatrixTree
-	void Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const FactorMatrixTree<T>& hmat, const TTBasis& basis);
+	/// calculate hole-matrices locally, non-othorgonal
+	void CalculateLayer(const TensorTree<T>& Psi,
+		const TensorTree<T>& Chi, const FactorMatrixTree<T>& S,
+		const Node& node);
 
-	/// Calculate Hole-Matrices form FactorMatrixTree
-	void Calculate(const TensorTree<T>& Psi,
-		const FactorMatrixTree<T>& hmat, const TTBasis& basis) {
-		Calculate(Psi, Psi, hmat, basis);
-	}
+	/// Calculate hole-matrices for the whole tree, non-othorgonal
+	void Calculate(
+		const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+		const FactorMatrixTree<T>& S, const TTBasis& basis);
 
-	/// Apply HoleMatrix locally to a Tensor
-	Tensor<T> Apply(const Tensor<T>& Phi, const Node& node) const;
+	/// Calculate hole-matrices assuming orthogonal tensor tree
+	void Calculate(
+		const TensorTree<T>& Psi, const TTBasis& basis);
+
+	/// Calculate hole-matrices locally
+	void CalculateLayer(const TensorTree<T>& Psi, const Node& node);
 
 	/// I/O
-	void print(ostream& os = cout);
+	/// Print in human readable format
+	void print(const TTBasis& basis, ostream& os = cout) const;
+	void print(ostream& os = cout) const;
+
+	/// Write in binary format
 	void Write(ostream& os) const;
 	void Write(const string& filename) const;
+
+	/// Read in binary format
 	void Read(istream& is);
 	void Read(const string& filename);
 };
 
 template<typename T>
-ostream& operator>>(ostream& os, const HoleMatrixTree<T>& hmat);
+ostream& operator<<(ostream& os, const HoleMatrixTree<T>& S);
 
 template<typename T>
-istream& operator<<(istream& is, HoleMatrixTree<T>& hmat);
+istream& operator>>(istream& is, HoleMatrixTree<T>& S);
 
 typedef HoleMatrixTree<complex<double>> HoleMatrixTreecd;
 
 typedef HoleMatrixTree<double> HoleMatrixTreed;
 
-
-
+#endif //MCTDH_HOLEOVERLAP_H
