@@ -353,7 +353,7 @@ void Node::UpdateTDim() {
 		}
 	}
 
-	// Create a new TensorDim from the dim-vector and ntensor
+	// Create a new TensorDim from the dim_-vector and ntensor
 	tensorDim_ = TensorDim(dim_new, tensorDim_.GetNumTensor());
 }
 

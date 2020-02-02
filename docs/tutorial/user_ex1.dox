@@ -56,7 +56,7 @@ Create a file named nocl.in that contains the following content
 mainfolder = nocl/
 
 // Accuracy parameters
-eps = {
+eps_ = {
 // general accuracy parameter
 eps_general=1E-6
 

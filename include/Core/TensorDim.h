@@ -36,7 +36,7 @@ class TensorDim
  * The class manages dimensions and super-index mappings in a n-th
  * order tensor.
  * \image html TensorDim_1.png
- * \image latex TensorDim_1.eps
+ * \image latex TensorDim_1.eps_
  *
  * Usage:
  * TensorDim tdim({2, 3, 4}, 5);

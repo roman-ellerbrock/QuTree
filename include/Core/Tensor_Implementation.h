@@ -309,7 +309,7 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	assert(mode < dim.GetOrder());
 	assert(active > 0);
 
-	// Create a new Tensor with the adjusted dim
+	// Create a new Tensor with the adjusted dim_
 	vector<size_t> dimlist = dim.GetDimList();
 	dimlist[mode] = active;
 	size_t ntensor = dim.GetNumTensor();

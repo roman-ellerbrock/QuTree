@@ -16,7 +16,7 @@ class Matrix {
  * simulations.
  *
  * Usage:
- * Matrixcd M(dim1, dim2);
+ * Matrixcd M(dim1_, dim2_);
  * Matrixcd A(M);
  * A = M * (A + M);
  *
@@ -57,11 +57,11 @@ public:
 	T& operator()(const size_t i, const size_t j);
 
 	inline T& operator[](const size_t idx) const {
-		return coeffs[idx];
+		return coeffs_[idx];
 	}
 
 	inline T& operator[](const size_t idx) {
-		return coeffs[idx];
+		return coeffs_[idx];
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -145,11 +145,11 @@ public:
 	// Getter & Setter
 	//////////////////////////////////////////////////////////////////////
 
-	size_t Dim1() const { return dim1; }
+	size_t Dim1() const { return dim1_; }
 
-	size_t Dim2() const { return dim2; }
+	size_t Dim2() const { return dim2_; }
 
-	T *Coeffs() const { return coeffs; }
+	T *Coeffs() const { return coeffs_; }
 
 protected:
 	double conjugate(const double d) const {
@@ -160,9 +160,9 @@ protected:
 		return conj(c);
 	}
 
-	T *coeffs;
-	size_t dim1;
-	size_t dim2;
+	T *coeffs_;
+	size_t dim1_;
+	size_t dim2_;
 };
 
 //////////////////////////////////////////////////////////////////////

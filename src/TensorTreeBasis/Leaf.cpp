@@ -11,7 +11,7 @@ Leaf::Leaf(istream& file, AbstractNode *up_, NodePosition position_)
 	file >> mode_;
 	assert(dim_ > 0);
 	assert(type_ >= 0);
-//	cout << "Leaf: " << dim << " " << type << " " << mode << endl;
+//	cout << "Leaf: " << dim_ << " " << type << " " << mode << endl;
 	CreatePrimitiveBasis(type_, subType_, dim_);
 }
 

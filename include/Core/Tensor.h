@@ -17,8 +17,8 @@ class Tensor
  * class functions.
  *
  * Usage:
- * TensorDim dim({2, 3, 4}, 1);
- * Tensorcd A(dim);
+ * TensorDim dim_({2, 3, 4}, 1);
+ * Tensorcd A(dim_);
  *
  * */
 {

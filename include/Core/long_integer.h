@@ -24,7 +24,7 @@ public:
 	explicit long_integer(size_t a = 0, size_t n_bit = 32);
 
 	void add(long_integer a);
-	void substract(long_integer a);
+	void subtract(long_integer a);
 
 	void mod(const long_integer& N);
 

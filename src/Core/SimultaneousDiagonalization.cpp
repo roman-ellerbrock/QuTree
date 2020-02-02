@@ -3,22 +3,22 @@
 void SimultaneousDiagonalization::Initialization(vector<FactorMatrixcd>& A,
 	double eps_) {
 	// Number of matrices
-	nmat = A.size();
-	assert(nmat > 0);
+	nmat_ = A.size();
+	assert(nmat_ > 0);
 
 	// Dimension of matrices
 	FactorMatrixcd& B = A[0];
-	dim = B.Dim1();
+    dim_ = B.Dim1();
 
 	// Dimension check
-	for (size_t k = 0; k < nmat; k++) {
+	for (size_t k = 0; k < nmat_; k++) {
 		FactorMatrixcd& B = A[k];
-		assert(B.Dim1() == dim);
-		assert(B.Dim2() == dim);
+		assert(B.Dim1() == dim_);
+		assert(B.Dim2() == dim_);
 	}
 
 	// Set convergence parameter
-	eps = eps_;
+	eps_ = eps_;
 }
 
 void SimultaneousDiagonalization::Calculate(vector<FactorMatrixcd>& A,
@@ -31,7 +31,7 @@ void SimultaneousDiagonalization::Calculate(vector<FactorMatrixcd>& A,
 	// representation of one of the matrices in A. This
 	// avoids stationary points during the optimization process.
 	trafo.Zero();
-	for (size_t i = 0; i < dim; i++)
+	for (size_t i = 0; i < dim_; i++)
 		trafo(i, i) = 1.;
 
 	// This rotates to the eigenspace of the first matrix
@@ -51,7 +51,7 @@ void SimultaneousDiagonalization::Calculate(vector<FactorMatrixcd>& A,
 		delta_off = MeasureOffDiagonals(A);
 
 		// Check convergence
-		if (delta < eps) { converged = true; }
+		if (delta < eps_) { converged = true; }
 
 //		cout << iter << " : " << delta << "\t" << delta_off << endl;
 
@@ -68,8 +68,8 @@ void SimultaneousDiagonalization::JacobiRotations(vector<FactorMatrixcd>& A,
 	complex<double> c, s = 0;
 
 	// Swipe over the matrix-dimensions and perform jacobi-rotations
-	for (size_t i = 0; i < dim - 1; i++) {
-		for (size_t j = i + 1; j < dim; j++) {
+	for (size_t i = 0; i < dim_ - 1; i++) {
+		for (size_t j = i + 1; j < dim_; j++) {
 			// Calculate Angles c and s for the elements i and j
 			CalculateAngles(c, s, i, j, A);
 
@@ -105,11 +105,11 @@ double SimultaneousDiagonalization::MeasureDiagonality(vector<FactorMatrixcd>& A
 	// Measure the norm of off-diagonal elements
 	double eps = 0;
 
-	for (size_t k = 0; k < nmat; k++) {
+	for (size_t k = 0; k < nmat_; k++) {
 		FactorMatrixcd& B = A[k];
 
-		for (size_t n = 0; n < dim; n++)
-			for (size_t m = 0; m < dim; m++)
+		for (size_t n = 0; n < dim_; n++)
+			for (size_t m = 0; m < dim_; m++)
 				if (m != n) {
 					eps += pow(abs(B(m, n)), 2);
 				}

@@ -20,33 +20,33 @@ public:
 	BS_integrator(){}
 	~BS_integrator(){}
 
-	void Initialize(int dim_, double eps_, T& initializer)
+	void Initialize(int dim, double eps, T& initializer)
 	{
 		// set control parameters
-		dim = dim_;
-		eps = eps_;
-		maxuse = 7;
-		max = 11;
-		shrink = 0.95;
-		grow = 1.2;
+		dim_ = dim;
+		eps_ = eps;
+		maxuse_ = 7;
+		max_ = 11;
+		shrink_ = 0.95;
+		grow_ = 1.2;
 
-		// calculate sequence
-		sequence.resize(max);
-		sequence[0] = 2;
-		sequence[1] = 4;
-		sequence[2] = 6;
-		for (int i = 3; i < max; i++)
-			sequence[i] = sequence[i - 2] * 2;
-//			sequence[i] = 2 * (i + 1);
+		// calculate sequence_
+		sequence_.resize(max_);
+		sequence_[0] = 2;
+		sequence_[1] = 4;
+		sequence_[2] = 6;
+		for (int i = 3; i < max_; i++)
+			sequence_[i] = sequence_[i - 2] * 2;
+//			sequence_[i] = 2 * (i + 1);
 
 		// allocate work objects
 		T a(initializer);
 		for (int i = 0; i < 5; i++)
-			yvec.push_back(a);
-		for (int i = 0; i < maxuse; i++)
-			ytab.push_back(a);
-		for (int i = 0; i < max; i++)
-			xtab.push_back(0);
+			yvec_.push_back(a);
+		for (int i = 0; i < maxuse_; i++)
+			ytab_.push_back(a);
+		for (int i = 0; i < max_; i++)
+			xtab_.push_back(0);
 
 	}
 
@@ -63,11 +63,11 @@ public:
 
 	void clearmemory()
 	{
-		// yvec
-		for (int i = 0; i < yvec.size(); i++)
+		// yvec_
+		for (int i = 0; i < yvec_.size(); i++)
 		{
-			T& ynow = yvec[i];
-			for (int j = 0; j < dim; j++)
+			T& ynow = yvec_[i];
+			for (int j = 0; j < dim_; j++)
 			{
 				//				ynow(j) = 1E66;
 				ynow(j) = 0;
@@ -75,20 +75,20 @@ public:
 
 		}
 
-		// ytab
-		for (int i = 0; i < ytab.size(); i++)
+		// ytab_
+		for (int i = 0; i < ytab_.size(); i++)
 		{
-			T& ynow = ytab[i];
-			for (int j = 0; j < dim; j++)
+			T& ynow = ytab_[i];
+			for (int j = 0; j < dim_; j++)
 			{
 				//				ynow(j) = 1E66;
 				ynow(j) = 0;
 			}
 		}
-		for (int i = 0; i < xtab.size(); i++)
+		for (int i = 0; i < xtab_.size(); i++)
 		{
-			//			xtab[i] = 1E66;
-			xtab[i] = 0;
+			//			xtab_[i] = 1E66;
+			xtab_[i] = 0;
 		}
 	}
 
@@ -100,13 +100,13 @@ public:
 		clearmemory();
 
 		// save 
-		T& y0=yvec[0];
-		T& y3=yvec[3];
+		T& y0=yvec_[0];
+		T& y3=yvec_[3];
 		y0 = y;
 		y3 = y;
 
 		// calculate derivative and save on [5]
-		ddx(container, x, yvec[4], y);
+		ddx(container, x, yvec_[4], y);
 
 		// Initialize 
 		double h = dx;
@@ -116,42 +116,42 @@ public:
 		{
 			int i = 0;
 			// interpolation scheme
-			while (!(end || (i >= max)))
+			while (!(end || (i >= max_)))
 			{
 				// Midpoint integration
-				mmid(yvec, x, h / (1.0*sequence[i]), sequence[i], ddx, container);
+				mmid(yvec_, x, h / (1.0*sequence_[i]), sequence_[i], ddx, container);
 
 				// Extrapolation
-				double x_estimate = pow(h / (1.*sequence[i]), 2);
-				rzextr(i, x_estimate, yvec[0], yvec[1], yvec[2]);
+				double x_estimate = pow(h / (1.*sequence_[i]), 2);
+				rzextr(i, x_estimate, yvec_[0], yvec_[1], yvec_[2]);
 
-				yvec[0] = yvec[1];
+				yvec_[0] = yvec_[1];
 				// y1=y1+y2
-				T& y1 = yvec[1];
-				T& y2 = yvec[2];
+				T& y1 = yvec_[1];
+				T& y2 = yvec_[2];
 				#pragma omp for
-				for (int j = 0; j < dim; j++)
+				for (int j = 0; j < dim_; j++)
 					y1(j) += y2(j);
 
 				// Calculate error and adjust step size
-				double error = err(container, yvec[0], yvec[1]);
+				double error = err(container, yvec_[0], yvec_[1]);
 
-				if (error < eps)
+				if (error < eps_)
 				{
 					x += h;
-					if (i == maxuse - 1)
+					if (i == maxuse_ - 1)
 					{
-						dx = h*shrink;
+						dx = h*shrink_;
 					}
 					else
 					{
-						if (i == maxuse - 2)
+						if (i == maxuse_ - 2)
 						{
-							dx = h*grow;
+							dx = h*grow_;
 						}
 						else
 						{
-							dx = (h*sequence[maxuse - 2]) / (1.*sequence[i]);
+							dx = (h*sequence_[maxuse_ - 2]) / (1.*sequence_[i]);
 						}
 					}
 					end = true;
@@ -163,7 +163,7 @@ public:
 			if (!end)
 			{
 				h = h / 4.;
-				for (int i = 0; i < (max - maxuse) / 2.; i++)
+				for (int i = 0; i < (max_ - maxuse_) / 2.; i++)
 				{
 					h /= 2.;
 				}
@@ -190,7 +190,7 @@ public:
 		T& y4 = y[4];
 
 		y[0] = y[3];
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < dim_; i++)
 		{
 			y1(i) = y3(i) + h*y4(i);
 		}
@@ -201,7 +201,7 @@ public:
 
 		for (int n = 1; n < step; n++)
 		{
-			for (int i = 0; i < dim; i++)
+			for (int i = 0; i < dim_; i++)
 			{
 				y2(i) = y0(i) + 2 * h*y2(i);
 			}
@@ -214,7 +214,7 @@ public:
 		}
 
 		// y= (y+ y1 + h*y2)*0.5
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < dim_; i++)
 		{
 			y0(i) = (y0(i) + y1(i) + h*y2(i)) / 2.;
 		}
@@ -227,37 +227,37 @@ public:
 
 		int mi = 0;
 		vector<double> fx;
-		fx.resize(maxuse);
+		fx.resize(maxuse_);
 
-		xtab[i_estimate] = x_estimate;
+		xtab_[i_estimate] = x_estimate;
 
 		if (i_estimate == 0)
 		{
 			ysav = yest;
 			dy = yest;
-			ytab[0] = yest;
+			ytab_[0] = yest;
 		}
 		else
 		{
-			if (i_estimate < maxuse)
+			if (i_estimate < maxuse_)
 			{
 				mi = i_estimate + 1;
 			}
 			else {
-				mi = maxuse;
+				mi = maxuse_;
 			}
 			#pragma omp for
 			for (int k = 1; k < mi; k++)
 			{
-				fx[k] = xtab[i_estimate - k] / x_estimate;
+				fx[k] = xtab_[i_estimate - k] / x_estimate;
 			}
 
 			#pragma omp for
-			for (int j = 0; j < dim; j++)
+			for (int j = 0; j < dim_; j++)
 			{
 				U ddy;
 				U yy = yest(j);
-				T& ynow = ytab[0];
+				T& ynow = ytab_[0];
 				U v = ynow(j);
 				U c = yy;
 				ynow(j) = yy;
@@ -275,7 +275,7 @@ public:
 					{
 						ddy = v;
 					}
-					T& ynex = ytab[k];
+					T& ynex = ytab_[k];
 					v = ynex(j);
 					ynex(j) = ddy;
 					yy = yy + ddy;
@@ -289,13 +289,13 @@ public:
 
 protected:
 
-	vector<int> sequence;
-	vector<T> yvec;
-	vector<double> xtab;
-	vector<T> ytab;
-	int dim;
-	int max, maxuse;
-	double eps;
-	double shrink, grow;
+	vector<int> sequence_;
+	vector<T> yvec_;
+	vector<double> xtab_;
+	vector<T> ytab_;
+	int dim_;
+	int max_, maxuse_;
+	double eps_;
+	double shrink_, grow_;
 };
 

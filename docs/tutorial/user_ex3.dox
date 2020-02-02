@@ -25,7 +25,7 @@ First create a new working directory and a file named ch3.in with the following 
 // Vibrational eigenstates of CH3
 //////////////////////////////////////////////////////////////////#
 mainfolder = results/
-eps = {
+eps_ = {
 eps_general=1E-6
 eps_cmf=5E-4
 epx_bs=5E-5

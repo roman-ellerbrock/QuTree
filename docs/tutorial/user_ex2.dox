@@ -29,7 +29,7 @@ Create a file named nocl_gs.in that contains the following content
 // Vibrational ground state calculation on the electronic S0 state
 //////////////////////////////////////////////////////////////////
 mainfolder = nocl/
-eps = {
+eps_ = {
 eps_general=1E-6
 eps_cmf=1E-4
 epx_bs=1E-5

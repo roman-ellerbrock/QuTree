@@ -70,7 +70,7 @@ void long_integer::pad(size_t n_bit) {
 
 void long_integer::mod(const long_integer& N) {
 	while (!smaller_than_samesize(N)) {
-		substract(N);
+        subtract(N);
 	}
 }
 
@@ -109,7 +109,7 @@ void long_integer::add(long_integer a) {
 	}
 }
 
-void long_integer::substract(long_integer a) {
+void long_integer::subtract(long_integer a) {
 	// b <- b - a where b = *this
 	align(a, *this);
 

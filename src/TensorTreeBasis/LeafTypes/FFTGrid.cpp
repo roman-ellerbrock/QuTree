@@ -14,7 +14,7 @@ void FFTGrid::Initialize(double x0_, double x1_, double wfr0_, double wfomega_)
 	// Set x values
 	double dx = (x1 - x0) / (dim - 1);
 	cout << "dx= " << dx << endl;
-	cout << "dim = " << dim << endl;
+	cout << "dim_ = " << dim << endl;
 	for (int i = 0; i < dim; i++)
 	{
 		x(i) = x0 + i*dx;
