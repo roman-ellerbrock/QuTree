@@ -32,7 +32,7 @@ public:
 
 	bool smallest() const { return bits.back(); }
 
-	/// Shift this integer by x bits, i.e. multiply with 2**x.
+	/// Shift this integer by x_ bits, i.e. multiply with 2**x_.
 	void bitshift(size_t i);
 
 	/// Perform bitshift and modulo operation (mod is performed for each bitshift independently)

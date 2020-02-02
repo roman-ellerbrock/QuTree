@@ -4,7 +4,7 @@ namespace TensorDim_Extension {
 // Adjust dimensions of TensorDim
 TensorDim ReplaceActive(const TensorDim& tdim, size_t mode, size_t new_dim) {
 
-	// Replace the active dim_ in mode
+	// Replace the active_ dim_ in mode
 	vector<size_t> dimlist = tdim.GetDimList();
 	assert(mode < dimlist.size());
 	dimlist[mode] = new_dim;

@@ -85,8 +85,8 @@ namespace JacobiRotationFramework
 	 * @param A Matrices to be rotated
 	 * @param p target index
 	 * @param q target index
-	 * @param c cos of alpha in givens matrix
-	 * @param s sin of alpha in givens matrix
+	 * @param c cos of alpha_ in givens matrix
+	 * @param s sin of alpha_ in givens matrix
 	 * @return Change of diagonality-measure
 	 */
 	Vectord RotatedDiagonals(const FactorMatrixcd& A, int p, int q,
@@ -97,8 +97,8 @@ namespace JacobiRotationFramework
 	 * @param A Matrix that is rotated
 	 * @param p target index
 	 * @param q target index
-	 * @param c cos(alpha) in Givens matrix
-	 * @param s sin(alpha) in Givens matrix
+	 * @param c cos(alpha_) in Givens matrix
+	 * @param s sin(alpha_) in Givens matrix
 	 * @return Rotated matrix A
 	 */
 	Matrixcd Rotate(const FactorMatrixcd& A,

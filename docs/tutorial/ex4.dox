@@ -34,7 +34,7 @@ For more information take a look at the class.
 - - -
 # Exercise 4
 ## Analytic Exercises
-1.) Write down the Ansatz for a multilayer MCTDH wavefunction in the state-averaged approach[1].
+1.) Write down the Ansatz for a multilayer MCTDH wavefunction in the state_-averaged approach[1].
 
 2.) Think about the correspondance of the expansion coefficients and a multidimensional Tensor.
 

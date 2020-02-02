@@ -36,11 +36,11 @@ HoleMatrixTree<T>::HoleMatrixTree(const TensorTree<T>& Psi, const TTBasis& basis
 
 template<typename T>
 void HoleMatrixTree<T>::Initialize(const TTBasis& basis) {
-	attributes.clear();
+	attributes_.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
 		size_t n = tdim.GetNumTensor();
-		attributes.emplace_back(Matrix<T>(n, n));
+		attributes_.emplace_back(Matrix<T>(n, n));
 	}
 }
 
@@ -63,7 +63,7 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 		Ket = multStateAB(holemat, Ket);
 	}
 
-	// Calculate hole-product and save to attributes
+	// Calculate hole-product and save to attributes_
 	auto child_idx = (size_t) node.ChildIdx();
 	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
 }
@@ -108,7 +108,7 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 		Ket = multStateAB(holemat, Ket);
 	}
 
-	// Calculate hole-product and save to attributes
+	// Calculate hole-product and save to attributes_
 	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
 }
 
@@ -149,11 +149,11 @@ void HoleMatrixTree<T>::Write(ostream& os) const {
 	os.write("TTHP", 4);
 
 	// write number of nodes
-	auto nnodes = (int32_t) attributes.size();
+	auto nnodes = (int32_t) attributes_.size();
 	os.write((char *) &nnodes, sizeof(int32_t));
 
 	// Write Tensors
-	for (const auto& x : attributes) {
+	for (const auto& x : attributes_) {
 		os << x;
 	}
 	os << flush;
@@ -177,10 +177,10 @@ void HoleMatrixTree<T>::Read(istream& is) {
 	is.read((char *) &nnodes, sizeof(nnodes));
 
 	// Read all Tensors
-	attributes.clear();
+	attributes_.clear();
 	for (int i = 0; i < nnodes; i++) {
 		Matrix<T> M(is);
-		attributes.emplace_back(M);
+		attributes_.emplace_back(M);
 	}
 }
 

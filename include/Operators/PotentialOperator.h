@@ -6,7 +6,7 @@
  * \brief This Operator tells if a potential operator is present.
  *
  * This operator tells that a potential acts is present. It also manages
- * the number of degrees of freedom used in the PES and the state used
+ * the number of degrees of freedom used in the PES and the state_ used
  * in the PES.
  * */
 
@@ -22,24 +22,24 @@ class PotentialOperator
 {
 public:
 	PotentialOperator()
-	  :f(0),state(0){}
+	  : f_(0), state_(0){}
 
 	PotentialOperator(size_t f_, size_t state_)
-	:f(f_), state(state_){}
+	: f_(f_), state_(state_){}
 
 	~PotentialOperator() = default;
 
 	size_t F()const {
-		return f;
+		return f_;
 	}
 
 	size_t State()const {
-		return state;
+		return state_;
 	}
 	
 protected:
-	size_t f;
-	size_t state;
+	size_t f_;
+	size_t state_;
 
 };
 

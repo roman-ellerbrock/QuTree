@@ -30,7 +30,7 @@ long_integer::long_integer(size_t a, size_t n_bit) {
 }
 
 void long_integer::bitshift(size_t x) {
-	/// Shift this integer by x bits, i.e. multiply with 2**x.
+	/// Shift this integer by x_ bits, i.e. multiply with 2**x_.
 	assert(x < size());
 	for (int i = size() - 1; i >= x; --i) {
 		bits[i] = bits[i - x];
@@ -269,7 +269,7 @@ long_integer EuclidicInverse(const long_integer& a, const long_integer& N) {
 	if (x > max) { x += NN; }
 	if (y > max) { y += NN; }
 	cout << "g = " << g << endl;
-	cout << "x = " << x << endl;
+	cout << "x_ = " << x << endl;
 	cout << "y = " << y << endl;
 	if (g != 1) {
 		cerr << "gcd(a, N) is not 1!\nPlease choose valid numbers.\n";

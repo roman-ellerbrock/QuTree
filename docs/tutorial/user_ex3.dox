@@ -82,8 +82,8 @@ parameters=[
     wavefunction.
 
 2.) Investigate the natural occupations at the end of the calculation. The occupancy of the
-    last SPFs in some coordinates is still pretty high which can indicate that the calculations
-    are not converged. We might want to take the last wavefunction and adjust the number of
+    last_ SPFs in some coordinates is still pretty high which can indicate that the calculations
+    are not converged. We might want to take the last_ wavefunction and adjust the number of
     SPFs without restarting the whole calculation. For this task, we can use the ToolBox.
     Copy ch3.in to a second input file (e.g. to ch3.2.in) and adjust the number of SPFs.
     For example by changing the basis to

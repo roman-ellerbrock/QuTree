@@ -30,15 +30,15 @@ TensorTree<T>::TensorTree(const TTBasis& basis,
 
 template<typename T>
 void TensorTree<T>::Initialize(const TTBasis& basis) {
-	attributes.clear();
+	attributes_.clear();
 	for (const Node& node : basis) {
-		attributes.emplace_back(Tensor<T>(node.TDim()));
+		attributes_.emplace_back(Tensor<T>(node.TDim()));
 	}
 }
 
 template<typename T>
 void TensorTree<T>::Generate(const TTBasis& basis, mt19937& gen, bool delta_lowest) {
-	assert(basis.nNodes() == attributes.size());
+	assert(basis.nNodes() == attributes_.size());
 	for (const Node& node : basis) {
 		if (node.IsBottomlayer()) {
 			FillBottom(this->operator[](node), node);
@@ -54,7 +54,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 
 	assert(Phi.Dim().GetDimTot() > 0);
 	Tensor_Extension::Generate(Phi, gen);
-	// Set ground-state to "Hartree-Product" if flag is set
+	// Set ground-state_ to "Hartree-Product" if flag is set
 	if (delta_lowest) {
 		for (size_t i = 0; i < Phi.Dim().GetDimPart(); ++i) {
 			Phi(i, 0) = 0.;
@@ -81,11 +81,11 @@ void TensorTree<T>::Write(ostream& os) const {
 	os.write("TTre", 4);
 
 	// write number of nodes
-	auto nnodes = (int32_t) attributes.size();
+	auto nnodes = (int32_t) attributes_.size();
 	os.write((char *) &nnodes, sizeof(int32_t));
 
 	// Write Tensors
-	for (const Tensor<T>& Phi : attributes) {
+	for (const Tensor<T>& Phi : attributes_) {
 		os << Phi;
 	}
 	os << flush;
@@ -111,10 +111,10 @@ void TensorTree<T>::Read(istream& is) {
 	is.read((char *) &nnodes, sizeof(nnodes));
 
 	// Read all Tensors
-	attributes.clear();
+	attributes_.clear();
 	for (int i = 0; i < nnodes; i++) {
 		Tensor<T> Phi(is);
-		attributes.emplace_back(Phi);
+		attributes_.emplace_back(Phi);
 	}
 }
 

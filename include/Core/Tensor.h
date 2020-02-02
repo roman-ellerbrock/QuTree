@@ -144,7 +144,7 @@ public:
 	// Adjust Dimensions to a new TensorDim
 	Tensor<T> AdjustDimensions(const TensorDim& newTDim)const;
 
-	// Adjust the number of the active mode
+	// Adjust the number of the active_ mode
 	Tensor<T> AdjustActiveDim(size_t active, size_t mode)const;
 
 	// Adjust the number of Tensors

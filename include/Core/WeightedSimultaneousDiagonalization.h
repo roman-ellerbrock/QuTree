@@ -58,8 +58,8 @@ namespace WeightedSimultaneousDiagonalization
 
 	/**
 	 * \brief Calculate the optimal angles for WSD using Rational function optimizer
-	 * @param c cos(alpha); Element in Jacobi-matrix
-	 * @param s sin(alpha); Element in Jacobi-matrix
+	 * @param c cos(alpha_); Element in Jacobi-matrix
+	 * @param s sin(alpha_); Element in Jacobi-matrix
 	 * @param i target index in X
 	 * @param j target index in X
 	 * @param X Matrices that should be diagonalized

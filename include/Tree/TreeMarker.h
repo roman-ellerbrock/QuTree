@@ -15,11 +15,11 @@
 class TreeMarker
 /**
  * \class TreeMarker
- * \brief This class marks a subset of active Nodes in a tree.
+ * \brief This class marks a subset of active_ Nodes in a tree.
  *
  * The class is used to mark Nodes when working with sparseness in
  * tree structure. Typically, nodes are marked by providing a list
- * of active leaves. In this case, the TreeMarker searches for the
+ * of active_ leaves. In this case, the TreeMarker searches for the
  * Nodes connectinb the leaves and saving the corresponding Node
  * pointers in a list.
  * co_address stores the mapping of the global Node address in
@@ -96,7 +96,7 @@ public:
 	}
 
 	void Initialize(const TTBasis& basis) {
-//        attributes.resize(basis.nTotalNodes());
+//        attributes_.resize(basis.nTotalNodes());
 	}
 
 	void print(const TTBasis& basis, ostream& os = cout) const{

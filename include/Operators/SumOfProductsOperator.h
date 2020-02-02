@@ -27,50 +27,50 @@ public:
 	explicit SumOfProductsOperator(const MPO<T>& M, T c = 1.);
 
 	void Initialize(const TTBasis& basis) {
-		coeff.clear();
-		mpos.clear();
+		coeff_.clear();
+		mpos_.clear();
 		SpecialInitialize(basis);
 	}
 
 	// Get the number of MPOs in the Hamiltonian
-	virtual int size() const { return mpos.size(); }
+	virtual int size() const { return mpos_.size(); }
 
 	// Get a product-operator from the Hamiltonian
 	virtual const MPO<T>& operator()(size_t part) const {
-		assert(part < mpos.size());
-		return mpos[part];
+		assert(part < mpos_.size());
+		return mpos_[part];
 	}
 
 	// Get a product-operator from the Hamiltonian
 	virtual const MPO<T>& operator[](size_t part) const {
-		assert(part < mpos.size());
-		return mpos[part];
+		assert(part < mpos_.size());
+		return mpos_[part];
 	}
 
 	virtual MPO<T>& operator()(size_t part) {
-		assert(part < mpos.size());
-		return mpos[part];
+		assert(part < mpos_.size());
+		return mpos_[part];
 	}
 
 	// append a new summand
-	void push_back(const MPO<T>& M, complex<double> coeff_) {
-		mpos.push_back(M);
-		coeff.push_back(coeff_);
+	void push_back(const MPO<T>& M, complex<double> coeff) {
+		mpos_.push_back(M);
+		coeff_.push_back(coeff);
 	}
 
 	complex<double> Coeff(size_t i) const {
-		assert(i < coeff.size());
-		return coeff[i];
+		assert(i < coeff_.size());
+		return coeff_[i];
 	}
 
 //	vector<MPO<T>>::const_iterator begin() const {
 	auto begin() const {
-		return mpos.begin();
+		return mpos_.begin();
 	}
 
 //	vector<MPO<T>>::const_iterator end() const {
 	auto end() const {
-		return mpos.end();
+		return mpos_.end();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -99,8 +99,8 @@ public:
 		const SumOfProductsOperator& B);
 
 protected:
-	vector<MPO<T>> mpos;
-	vector<complex<double> > coeff;
+	vector<MPO<T>> mpos_;
+	vector<complex<double> > coeff_;
 
 private:
 	virtual void SpecialInitialize(const TTBasis& basis) {

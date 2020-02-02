@@ -11,7 +11,7 @@ class HoleMatrixTree: public TreeStructuredObject<Matrix<T>>
 /**
  * \class HoleMatrixTree
  * \ingroup Tree
- * \brief Calculate Hole-Overlaps (A, B)_(p)
+ * \brief Calculate Hole-Overlaps (A, B)_(p_)
  *
  * This class calculates hole-overlaps and holds the resulting
  * Matrices. HoleMatrixTrees can be calculated from TensorTree
@@ -21,7 +21,7 @@ class HoleMatrixTree: public TreeStructuredObject<Matrix<T>>
  */
 {
 public:
-	using TreeStructuredObject<Matrix<T>>::attributes;
+	using TreeStructuredObject<Matrix<T>>::attributes_;
 
 	/// Default Constructor
 	HoleMatrixTree() = default;

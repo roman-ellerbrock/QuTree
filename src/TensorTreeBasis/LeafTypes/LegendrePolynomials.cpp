@@ -1,9 +1,9 @@
 #include "LegendrePolynomials.h"
 
-void LegendrePolynomials::Initialize(double omega_, double r0_, double wfr0_, double wfomega_)
+void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, double wfomega)
 {
 	// save all parameters
-	omega = omega_;
+	omega_ = omega_;
 	r0 = r0_;
 	wfr0 = wfr0_;
 	wfomega = wfomega_;
@@ -11,47 +11,47 @@ void LegendrePolynomials::Initialize(double omega_, double r0_, double wfr0_, do
 	//
 	FactorMatrixd xmat = InitXmat();
 	// @TODO: temporary test until proven!!!
-	for (size_t i = 0; i < p.Dim(); i++)
-		for (size_t j = 0; j < p.Dim(); j++)
-			p(j, i) = xmat(j, i);
-	xmat.rDiag(trafo, x);
+	for (size_t i = 0; i < p_.Dim(); i++)
+		for (size_t j = 0; j < p_.Dim(); j++)
+			p_(j, i) = xmat(j, i);
+	xmat.rDiag(trafo_, x_);
 
-	for (int i = 0; i < dim; i++)
+	for (int i = 0; i < dim_; i++)
 	{
-		x(i) = acos(x(i));
-		x(i) += r0;
-		x(i) = cos(x(i));
+        x_(i) = acos(x_(i));
+        x_(i) += r0;
+        x_(i) = cos(x_(i));
 /*
-		x(i) = acos(x(i));
-		cout << x(i) << endl;
+		x_(i) = acos(x_(i));
+		cout << x_(i) << endl;
 		*/
-//		x(i) += r0;
-//		x(i) = cos(x(i));
+//		x_(i) += r0_;
+//		x_(i) = cos(x_(i));
 	}
 
 	//
-	kin = InitKin();
-	kin = SPOUnitarySimilarityTrafo(kin, trafo);
+	kin_ = InitKin();
+	kin_ = SPOUnitarySimilarityTrafo(kin_, trafo_);
 
 }
 
 
 void LegendrePolynomials::InitSPF(Tensorcd & phi)const
 {
-	// set ground state wf
-	for (int i = 0; i < dim; i++)
+	// set ground state_ wf
+	for (int i = 0; i < dim_; i++)
 	{
-		double w = trafo(0, i);
-		double xnow = acos(x(i));
-//		double xnow = x(i);
-		phi(i, 0) = w*exp(-0.5*wfomega*pow(xnow - wfr0, 2));
+		double w = trafo_(0, i);
+		double xnow = acos(x_(i));
+//		double xnow = x_(i);
+		phi(i, 0) = w*exp(-0.5 * wfomega_ * pow(xnow - wfr0_, 2));
 	}
 
-	// excited state wavefunction
+	// excited state_ wavefunction
 	for (int n=1; n< phi.Dim().GetNumTensor(); n++)
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < dim_; i++)
 		{
-			phi(i, n) = phi(i, n - 1)*x(i);
+			phi(i, n) = phi(i, n - 1) * x_(i);
 		}
 
 	// orthonormalize
@@ -60,10 +60,10 @@ void LegendrePolynomials::InitSPF(Tensorcd & phi)const
 
 FactorMatrixd LegendrePolynomials::InitXmat()
 {
-	FactorMatrixd xmat(dim, 0);
-	for (int i = 0; i < dim; i++)
+	FactorMatrixd xmat(dim_, 0);
+	for (int i = 0; i < dim_; i++)
 	{
-		for (int j = 0; j < dim; j++)
+		for (int j = 0; j < dim_; j++)
 		{
 			//			if (i == j + 1) { xmat(i, j) = j*j / (4. * j*j- 1); }
 			//			if (i == j - 1) { xmat(i, j) = j*j / (2. * j + 1); }
@@ -76,8 +76,8 @@ FactorMatrixd LegendrePolynomials::InitXmat()
 
 FactorMatrixd LegendrePolynomials::InitKin()
 {
-	FactorMatrixd kin(dim, 0);
-	for (int j = 0; j < dim; j++)
+	FactorMatrixd kin(dim_, 0);
+	for (int j = 0; j < dim_; j++)
 	{
 		kin(j, j) = 0.5*j*(j + 1);
 	}

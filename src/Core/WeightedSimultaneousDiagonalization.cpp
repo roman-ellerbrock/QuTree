@@ -48,7 +48,7 @@ namespace WeightedSimultaneousDiagonalization {
 
 		if (!converged) {
 //			cout << "D_WSD: " <<
-//			MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo) << endl;
+//			MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo_) << endl;
 		}
 	}
 
@@ -205,27 +205,27 @@ namespace WeightedSimultaneousDiagonalization {
 	/*
 	double WeightedJacobiLoc(
 			const vector<FactorMatrixcd>& Xs, const vector<FactorMatrixcd>& XXs,
-			const FactorMatrixcd& W, size_t p, size_t q,
+			const FactorMatrixcd& W, size_t p_, size_t q,
 			complex<double> c, complex<double> s) {
 		// Weight matrix contribution
 		// First rotation W*J^H
 		constexpr double lambda = 1e-4;
 //		constexpr double lambda = 0.;
-		Vectord W_new = RotatedDiagonals(W, p, q, c, s);
+		Vectord W_new = RotatedDiagonals(W, p_, q, c, s);
 
 		// Change of Xw-Matrix diagonals
 		Vectord delta(2), correct(2);
 		Vectord x_old(2), x_new(2), W_old(2);
-		W_old(0) = real(W(p, p));
+		W_old(0) = real(W(p_, p_));
 		W_old(1) = real(W(q, q));
 		for(size_t i = 0; i < Xs.size(); ++i) {
 			const FactorMatrixcd& Xw = Xs[i];
 			const FactorMatrixcd& XXw = XXs[i];
-			// Calculate the reduced measure for first order (x)
-			delta(0) = pow(real(Xw(p, p)), 2) / W_old(0);
+			// Calculate the reduced measure for first order (x_)
+			delta(0) = pow(real(Xw(p_, p_)), 2) / W_old(0);
 			delta(1) = pow(real(Xw(q, q)), 2) / W_old(1);
-			// Calculate the correction for the second order (x²)
-			correct(0) = lambda * (-2 * real(XXw(p, p)) + delta(0)) / W_old(0);
+			// Calculate the correction for the second order (x_²)
+			correct(0) = lambda * (-2 * real(XXw(p_, p_)) + delta(0)) / W_old(0);
 			correct(1) = lambda * (-2 * real(XXw(q, q)) + delta(1)) / W_old(1);
 			x_old(0) += delta(0) * (1 + correct(0));
 			x_old(1) += delta(1) * (1 + correct(1));
@@ -234,12 +234,12 @@ namespace WeightedSimultaneousDiagonalization {
 		for(size_t i = 0; i < Xs.size(); ++i) {
 			const FactorMatrixcd& Xw = Xs[i];
 			const FactorMatrixcd& XXw = XXs[i];
-			Vectord Xw_rot = RotatedDiagonals(Xw, p, q, c, s);
-			Vectord XXw_rot = RotatedDiagonals(XXw, p, q, c, s);
-			// Calculate the reduced measure for first order (x)
+			Vectord Xw_rot = RotatedDiagonals(Xw, p_, q, c, s);
+			Vectord XXw_rot = RotatedDiagonals(XXw, p_, q, c, s);
+			// Calculate the reduced measure for first order (x_)
 			delta(0) = pow(Xw_rot(0), 2) / (W_new(0));
 			delta(1) = pow(Xw_rot(1), 2) / (W_new(1));
-			// Calculate the correction for the second order (x²)
+			// Calculate the correction for the second order (x_²)
 			correct(0) = lambda * (-2 * XXw_rot(0) + delta(0)) / W_new(0);
 			correct(1) = lambda * (-2 * XXw_rot(1) + delta(1)) / W_new(1);
 			x_new(0) += delta(0) * (1 + correct(0));
@@ -335,7 +335,7 @@ double MeasureWeightedOffDiagonality(
 			X_diag(i, i) = real(Xw(i, i) / W(i, i));
 		}
 
-		// Xd = trafo^A * Xd * trafo
+		// Xd = trafo_^A * Xd * trafo_
 		Matrixcd X_trafo_mat = UnitarySimilarityTrafo(X, trafo);
 		FactorMatrixcd X_trafo = FactorMatrixcd(X_trafo_mat, X.Mode());
 

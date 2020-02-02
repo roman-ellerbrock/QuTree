@@ -24,7 +24,7 @@ public:
 	using SparseTreeStructuredObject<Matrix<T>>::Active;
 	using SparseTreeStructuredObject<Matrix<T>>::operator[];
 	using SparseTreeStructuredObject<Matrix<T>>::Initialize;
-	using SparseTreeStructuredObject<Matrix<T>>::attributes;
+	using SparseTreeStructuredObject<Matrix<T>>::attributes_;
 
 	/// Create HoleMatrixTree from file
 	SparseHoleMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename);
@@ -47,7 +47,7 @@ public:
 
 	~SparseHoleMatrixTree() = default;
 
-	/// Create Matrices for active nodes in the tree
+	/// Create Matrices for active_ nodes in the tree
 	void Initialize(const TTBasis& basis) override;
 
 	/// Calculate Hole-Matrices form FactorMatrixTree

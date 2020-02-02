@@ -286,7 +286,7 @@ Tensor<T> Tensor<T>::AdjustDimensions(const TensorDim& newTDim) const {
 	// to new TensorDim 
 
 	assert(newTDim.GetOrder() == dim.GetOrder());
-	// Increase the active modes
+	// Increase the active_ modes
 	Tensor<T> Acoeff(*this);
 	for (size_t k = 0; k < dim.GetOrder(); k++) {
 		size_t act = newTDim.Active(k);
@@ -302,8 +302,8 @@ Tensor<T> Tensor<T>::AdjustDimensions(const TensorDim& newTDim) const {
 
 template<typename T>
 Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
-	// Adjust the active dimension in the coordinate "mode".
-	// If the new active is smaller, the norm of the tensors is
+	// Adjust the active_ dimension in the coordinate "mode".
+	// If the new active_ is smaller, the norm of the tensors is
 	// not conserved.
 
 	assert(mode < dim.GetOrder());

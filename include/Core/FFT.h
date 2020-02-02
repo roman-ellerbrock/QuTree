@@ -18,7 +18,7 @@ protected:
 	Tensorcd dft(const Tensorcd& in, const int sign);
 	
 	//rearanges the complex number of each vector
-	//The state indeces lable the vectors
+	//The state_ indeces lable the vectors
 	Tensorcd reverseOrder(const Tensorcd& in);
 
 	//execute the fft

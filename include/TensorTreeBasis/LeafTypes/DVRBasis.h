@@ -25,23 +25,23 @@ public:
 
 	int oSQR() const override { return -1; }
 
-	Vectord& GetX() override { return x; }
+	Vectord& GetX() override { return x_; }
 
-	const Vectord& GetX() const override { return x; }
+	const Vectord& GetX() const override { return x_; }
 
 	bool HasDVR() const override { return true; }
 
 protected:
 
 	// location operators
-	Vectord x;
-	FactorMatrixd trafo;
+	Vectord x_;
+	FactorMatrixd trafo_;
 
 	// derivative operators
-	FactorMatrixd kin;
-	FactorMatrixcd p;
+	FactorMatrixd kin_;
+	FactorMatrixcd p_;
 
 	// parameters that define the basis
-	double omega, r0, wfr0, wfomega;
-	int dim;
+	double omega_, r0_, wfr0_, wfomega_;
+	int dim_;
 };
