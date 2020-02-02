@@ -115,7 +115,9 @@ public:
 	Matrix<complex<double> > cInv() const;
 
 	// Diagonalization
-	void rDiag(Matrix<double>& Transformation, Vector<double>& ev);
+	void rDiag(Matrix<double>& Transformation, Vector<double>& ev) const;
+
+	pair<Matrix<double>, Vectord> rDiag()const;
 
 	void cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const;
 
@@ -165,6 +167,16 @@ protected:
 	size_t dim2;
 };
 
+typedef Matrix<complex<double>> Matrixcd;
+typedef Matrix<double> Matrixd;
+
+template <typename T>
+using SpectralDecomposition = pair<Matrix<T>, Vectord>;
+
+typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
+
+typedef SpectralDecomposition<double> SpectralDecompositiond;
+
 //////////////////////////////////////////////////////////////////////
 // Non-Member functions
 //////////////////////////////////////////////////////////////////////
@@ -197,6 +209,21 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B);
 template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 
+SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A);
+
+void Diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A);
+
+SpectralDecompositiond Diagonalize(const Matrix<double>& A);
+
+void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A);
+
+template<typename T>
+pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
+
+Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
+
+Matrixd BuildMatrix(const SpectralDecompositiond& X);
+
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 		const Matrix<T>& B);
@@ -217,8 +244,4 @@ template<typename T>
 ostream& operator<<(ostream& os, const Matrix<T>& A);
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A);
-
-typedef Matrix<complex<double>> Matrixcd;
-typedef Matrix<double> Matrixd;
-typedef pair<Matrixcd, Vectord> SpectralDecomposition;
 

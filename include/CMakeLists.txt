@@ -43,6 +43,7 @@ set(TENSOR_TREE_FILES
         Tree/TreeMarker.h
         Tree/SparseFactorMatrixTree.h
         Tree/SparseHoleMatrixTree.h
+        Tree/SpectralDecompositionTree.h
         )
 
 set(OPERATOR_FILES

@@ -135,7 +135,7 @@ bool Matrix<T>::operator==(const Matrix<T>& A) const {
 }
 
 template<typename T>
-bool Matrix<T>::operator!=(const Matrix<T>& A)const {
+bool Matrix<T>::operator!=(const Matrix<T>& A) const {
 	return !(this->operator==(A));
 }
 
@@ -174,7 +174,15 @@ Matrix<T> Matrix<T>::Transpose() {
 }
 
 template<typename T>
-void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) {
+SpectralDecompositiond Matrix<T>::rDiag() const {
+	Matrixd trafo(dim1, dim2);
+	Vectord ev(dim1);
+	rDiag(trafo, ev);
+	return pair<Matrixd, Vectord>(trafo, ev);
+}
+
+template<typename T>
+void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) const {
 	assert(dim1 == dim2);
 	assert(ev.Dim() == dim1);
 	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs, dim1, dim2);
@@ -200,7 +208,7 @@ void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) {
 }
 
 template<typename T>
-SpectralDecomposition Matrix<T>::cDiag() const {
+SpectralDecompositioncd Matrix<T>::cDiag() const {
 	Matrixcd trafo(dim1, dim2);
 	Vectord ev(dim1);
 	cDiag(trafo, ev);
@@ -403,6 +411,75 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
 			C(i, j) = A(i, j) - B(i, j);
 	return C;
 }
+
+/// Working towards a generalized diagonalization routine
+template<typename T>
+void Diagonalize(Matrix<T>& trafo, Vector<double> & ev, const Matrix<T>& B) {
+	assert(B.Dim1() == B.Dim2());
+	assert(ev.Dim() == B.Dim1());
+	typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> EigenMatrix;
+
+	EigenMatrix A = EigenMatrix((T *) B.Coeffs(), B.Dim1(), B.Dim2());
+	Eigen::SelfAdjointEigenSolver<EigenMatrix> solver;
+	solver.compute(A);
+	EigenMatrix vectors = solver.eigenvectors();
+	// typedef Eigen::Matrix<U, Eigen::Dynamic, 1> EigenVector; auto in next line should be this template
+	auto eigenv = solver.eigenvalues();
+	for (size_t i = 0; i < B.Dim1(); i++)
+		ev(i) = eigenv(i);
+	for (size_t i = 0; i < B.Dim1(); i++)
+		for (size_t j = 0; j < B.Dim2(); j++)
+			trafo(j, i) = vectors(j, i);
+
+	// Set phase convention
+	for (size_t i = 0; i < B.Dim1(); i++) {
+		if (real(trafo(0, i)) < 0) {
+			for (size_t j = 0; j < B.Dim1(); j++) {
+				trafo(j, i) *= -1;
+			}
+		}
+	}
+}
+
+SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A) {
+	return A.cDiag();
+}
+
+void Diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A) {
+	A.cDiag(S.first, S.second);
+}
+
+SpectralDecompositiond Diagonalize(const Matrix<double>& A) {
+	return A.rDiag();
+}
+
+void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
+	A.rDiag(S.first, S.second);
+}
+/*
+Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
+	const auto& mat = X.first;
+	const auto& vec = X.second;
+	assert(vec.Dim() > 0);
+	assert(mat.Dim1() == vec.Dim());
+	assert(mat.Dim1() == mat.Dim2());
+	size_t dim = vec.Dim();
+	Matrixcd A(dim, dim);
+	/// Could be improved by multiplying B = diag(vec)*mat
+	for (size_t i = 0; i < dim; ++i) {
+		for (size_t j = 0; j < dim; ++j) {
+			for (size_t k = 0; k < dim; ++k) {
+				A(j, i) +=
+			}
+		}
+	}
+	return A;
+}
+
+Matrixd BuildMatrix(const SpectralDecompositiond& X) {
+
+}
+*/
 
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,

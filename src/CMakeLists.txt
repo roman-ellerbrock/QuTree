@@ -23,6 +23,7 @@ set(QDlib_SOURCE_FILES
         Tree/HoleMatrixTree.cpp
         Tree/SparseFactorMatrixTree.cpp
         Tree/SparseHoleMatrixTree.cpp
+        Tree/SpectralDecompositionTree.cpp
         Operators/MultiParticleOperator.cpp
         Operators/SingleParticleOperatorFunction.cpp
         Operators/SingleParticleOperatorMatrix.cpp

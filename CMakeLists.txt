@@ -84,6 +84,8 @@ endif ()
 #####################################################################
 # Recurse into subdirectories
 #####################################################################
+# @TODO: Remove include_directories, instead use target_include_directories
+
 include_directories("include")
 include_directories("include/Tree")
 include_directories("include/TensorTreeBasis/LeafTypes")

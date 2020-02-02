@@ -3,6 +3,7 @@
 //
 #include "Tree/FactorMatrixTree.h"
 #include "Tree/HoleMatrixTree.h"
+#include "Tree/SpectralDecompositionTree.h"
 #include "UnitTest++/UnitTest++.h"
 
 double eps = 1e-12;
@@ -79,6 +80,20 @@ SUITE (TensorTreeOverlaps) {
 					CHECK_CLOSE(1., d, eps);
 				auto r = Residual(Rho[node], Rho2[node]);
 					CHECK_CLOSE(0., r, eps);
+			}
+		}
+	}
+
+	TEST (SpectralDecompositionTree_Calc) {
+		TensorTreeBasis basis(12, 2, 2);
+		mt19937 gen(1993);
+		TensorTreecd Psi(basis, gen);
+		HoleMatrixTreecd Rho(Psi, basis);
+		SpectralDecompositionTreecd X(Rho, basis);
+		CHECK_EQUAL(Rho.size(), X.size());
+		for (const Node& node : basis) {
+			if (!node.IsToplayer()) {
+				CHECK_CLOSE(1., X[node].second(1), eps);
 			}
 		}
 	}
