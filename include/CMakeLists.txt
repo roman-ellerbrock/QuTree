@@ -35,6 +35,7 @@ set(TENSOR_TREE_FILES
         TensorTreeBasis/Node.h
         TensorTreeBasis/NodePosition.h
         TensorTreeBasis/TensorTreeBasis.h
+        TensorTreeBasis/TTBasisFactory.h
         Tree/TreeStructuredObject.h
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h

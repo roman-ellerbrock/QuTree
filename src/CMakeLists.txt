@@ -18,6 +18,7 @@ set(QDlib_SOURCE_FILES
         TensorTreeBasis/Node.cpp
         TensorTreeBasis/NodePosition.cpp
         TensorTreeBasis/TensorTreeBasis.cpp
+        TensorTreeBasis/TTBasisFactory.cpp
         Tree/TensorTree_Instantiation.cpp
         Tree/FactorMatrixTree.cpp
         Tree/HoleMatrixTree.cpp

@@ -5,8 +5,7 @@
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
-#include "FactorMatrixTree.h"
-#include "HoleMatrixTree.h"
+#include "TensorTreeBasis/TTBasisFactory.h"
 
 SUITE (Tree) {
 
@@ -68,6 +67,15 @@ SUITE (Tree) {
 					CHECK_EQUAL(k++, leaf.Mode());
 			}
 		}
+	}
+
+	TEST (TensorTreeBasis_Train) {
+		size_t nLeaves = 12;
+		auto basis = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
+			CHECK_EQUAL(2 * nLeaves - 1, basis.nNodes());
+		mt19937 gen(2468);
+		TensorTreecd Psi(basis, gen);
+			CHECK_EQUAL(basis.nNodes(), Psi.size());
 	}
 
 	TEST (TensorTree_FILE_IO) {
