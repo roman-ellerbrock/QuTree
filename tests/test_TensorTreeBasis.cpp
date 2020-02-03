@@ -5,7 +5,7 @@
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTreeBasis/TTBasisFactory.h"
 
-SUITE(TensorTreeBasis) {
+SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_Generator) {
 		size_t n_leaf = 4;
 		size_t n_node = 2;
@@ -66,10 +66,35 @@ SUITE(TensorTreeBasis) {
 		}
 	}
 
-	TEST(TensorTreeBasis_Train){
+	TEST (TensorTreeBasis_Train) {
 		size_t nLeaves = 12;
 		auto basis = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
 			CHECK_EQUAL(2 * nLeaves - 1, basis.nNodes());
 	}
 
+	TEST (TensorTreeBasis_Copy) {
+		/// Construct a tree and check that it works
+		TensorTreeBasis basis(12, 4, 3);
+			CHECK_EQUAL(true, basis.IsWorking());
+
+		{
+			/// Copy-constructor test
+			TensorTreeBasis basis_copy_construct(basis);
+				CHECK_EQUAL(true, basis_copy_construct.IsWorking());
+
+			/// Move constructor
+			TensorTreeBasis basis_move_construct(move(basis_copy_construct));
+				CHECK_EQUAL(true, basis_move_construct.IsWorking());
+		}
+
+		{
+			/// Copy-asignment test
+			TensorTreeBasis basis_copy_asign = basis;
+				CHECK_EQUAL(true, basis_copy_asign.IsWorking());
+
+			/// Move asignment operator
+			TensorTreeBasis basis_move_asign = move(basis_copy_asign);
+				CHECK_EQUAL(true, basis_move_asign.IsWorking());
+		}
+	}
 }

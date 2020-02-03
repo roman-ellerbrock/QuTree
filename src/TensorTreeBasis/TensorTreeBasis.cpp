@@ -253,6 +253,75 @@ void TensorTreeBasis::info(ostream& os) const {
 	os << "Number of Nodes = " << nNodes() << endl;
 }
 
+bool TensorTreeBasis::IsWorking() {
+
+	bool works = true;
+	int counter = 0;
+	for (int i = 0; i < nTotalNodes(); i++) {
+		const AbstractNode& abstract_node = nextNode();
+		if (abstract_node.NodeType() == 1) {
+			auto& node = (Node&) (abstract_node);
+			// 1.) Check global address
+			// Do not break here to leave nodes in a valid state
+			if (counter != node.Address()) { works = false; }
+			counter++;
+
+			if (!node.IsBottomlayer()) {
+				for (size_t k = 0; k < node.nChildren(); ++k) {
+					const Node& child = node.Down(k);
+					if (&node != &child.Up()) {
+						cerr << "Connectivity between child and parent is broken." << endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	if (!works) {
+		cerr << "Corrupted address in tree." << endl;
+		return false;
+	}
+
+	/// Check linearized Nodes
+	if (nNodes() != linearizedNodes_.size()) {
+		cerr << "linearizedNodes_ size does not match tree-size" << endl;
+		return false;
+	}
+	counter = 0;
+	for (int i = 0; i < nTotalNodes(); i++) {
+		const AbstractNode& abstract_node = nextNode();
+		if (abstract_node.NodeType() == 1) {
+			auto& node = (Node&) (abstract_node);
+			// Do not break here to leave nodes in a valid state
+			if (&node != &linearizedNodes_[counter].get()) { works = false; }
+			counter++;
+		}
+	}
+	if (!works) {
+		cerr << "Corrupted linearizedNodes_. Missing Update()?" << endl;
+		return false;
+	}
+	if (!linearizedNodes_.back().get().IsToplayer()) {
+		cerr << "Last node does not fulfill top-criterium." << endl;
+		return false;
+	}
+
+	for (int i = 0; i < nTotalNodes(); i++) {
+		AbstractNode& abstract_node = nextNode();
+		// If this node is a physical mode push it back
+		if (abstract_node.NodeType() == 0) {
+			auto& leaf = (Leaf&) (abstract_node);
+			if (&leaf != &linearizedLeaves_[leaf.Mode()]) { works = false; }
+		}
+	}
+	if (!works) {
+		cerr << "Corrupted linearizedLeaves." << endl;
+		return false;
+	}
+
+	return true;
+}
+
 ostream& operator<<(ostream& os, const TensorTreeBasis& basis) {
 	if(&os == &cout) {
 		basis.info(os);

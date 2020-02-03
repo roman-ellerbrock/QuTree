@@ -51,9 +51,6 @@ public:
 	void Generate(const TTBasis& basis,
 		mt19937& gen, bool delta_lowest = true);
 
-	/// Check whether TensorTreeBasis is working correctly
-	bool IsWorking() const;
-
 	/// (File) I/O
 	/// Read TensorTree from stream (binary format)
 	void Read(istream& is);

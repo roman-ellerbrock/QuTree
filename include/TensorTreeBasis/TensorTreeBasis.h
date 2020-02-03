@@ -131,6 +131,9 @@ public:
 		return linearizedNodes_.end();
 	}
 
+	/// Check whether TensorTreeBasis is working correctly
+	bool IsWorking();
+
 protected:
 	void LinearizeNodes();
 

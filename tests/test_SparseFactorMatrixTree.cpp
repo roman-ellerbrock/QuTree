@@ -21,8 +21,6 @@ SUITE (HMatrices) {
 			rng_ = mt19937(1993);
 			basis_ = TTBasis(8, 2, 2);
 
-			TensorTreecd Psi(basis_, rng_);
-			Psi.print(basis_);
 			Psi_ = TensorTreecd (basis_, rng_);
 
 			// Generate an bit-flip operator and Fmatrix

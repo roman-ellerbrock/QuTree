@@ -76,16 +76,6 @@ void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 	grid.InitSPF(Phi);
 }
 
-template<typename T>
-bool TensorTree<T>::IsWorking() const {
-	size_t i = 0;
-	for (const Node& node : *this) {
-
-	}
-
-}
-
-
 /// (File) I/O
 template<typename T>
 void TensorTree<T>::Write(ostream& os) const {
