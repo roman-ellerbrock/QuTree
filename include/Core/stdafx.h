@@ -1,4 +1,4 @@
-// stdafx.h: Includedatei f�r Standardsystem-Includedateien
+// stdafx.h: Includedatei f_�r Standardsystem-Includedateien
 // oder h�ufig verwendete projektspezifische Includedateien,
 // die nur in unregelm��igen Abst�nden ge�ndert werden.
 //

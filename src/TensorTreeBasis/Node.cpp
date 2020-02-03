@@ -313,12 +313,12 @@ void Node::ExpandChild(size_t i) {
 	topnode.Updatennodes();
 
 	// Set the nextNodeNum_ for a correct nextNode() sweep that starts
-	// at the last node
+	// at the last_ node
 	nextNodeNum_ = down_.size() - 1;
 }
 
 void Node::Update(const NodePosition& p) {
-	// @TODO: Should reset state and Update(connectivity) be in separate routines?
+	// @TODO: Should reset state_ and Update(connectivity) be in separate routines?
 	ResetCounters();
 	UpdatePosition(p);
 	Updatennodes();
@@ -332,9 +332,9 @@ void Node::UpdateTDim() {
 		ntensor = tensorDim_.getntensor();
 	} else {
 		// If this node is not a toplayer-node, ntensor is given by the parents 
-		// active size
+		// active_ size
 		Node& parent = Up();
-		// @TODO: This looks wrong - check again. Doesnt it have to be active(k)?
+		// @TODO: This looks wrong - check again. Doesnt it have to be active_(k)?
 		ntensor = parent.TDim().GetNumTensor();
 	}*/
 
@@ -351,7 +351,7 @@ void Node::UpdateTDim() {
 		}
 	}
 
-	// Create a new TensorDim from the dim-vector and ntensor
+	// Create a new TensorDim from the dim_-vector and ntensor
 	tensorDim_ = TensorDim(dim_new, tensorDim_.GetNumTensor());
 }
 

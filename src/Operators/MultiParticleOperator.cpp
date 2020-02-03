@@ -3,7 +3,7 @@
 
 template <typename T>
 MultiParticleOperator<T>::MultiParticleOperator()
-	: hasV(false) {
+	: hasV_(false) {
 	mode_.clear();
 }
 
@@ -43,7 +43,7 @@ Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	bool switchbool = true;
 	// Applying the MPO uses switching of the result Tensor to increase performance.
 	for (size_t l = 0; l < list.size(); l++) {
-		// get the active part in the MPO
+		// get the active_ part in the MPO
 		int part = list[l];
 		shared_ptr<SPO<T>> spo = operator[](part);
 
@@ -73,7 +73,7 @@ TensorTree<T> MultiParticleOperator<T>::Apply(TensorTree<T> Psi,
 			const PrimitiveBasis& grid = phy.PrimitiveGrid();
 			int coord = phy.Mode();
 
-			// build list with active parts
+			// build list with active_ parts
 			vector<int> activelayerparts;
 			for (size_t l = 0; l < SingParOp.size(); l++) {
 				if (mode_[l] == coord) {
@@ -90,8 +90,8 @@ TensorTree<T> MultiParticleOperator<T>::Apply(TensorTree<T> Psi,
 
 template <typename T>
 void MultiParticleOperator<T>::SetV(const PotentialOperator& V_) {
-	v = V_;
-	hasV = true;
+    v_ = V_;
+    hasV_ = true;
 }
 
 template class MultiParticleOperator<complex<double>>;

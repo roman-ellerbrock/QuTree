@@ -125,22 +125,22 @@ public:
 	}
 
 	/// Check whether a Potential operator is included in the MPO. Important for CDVR.
-	bool HasV() const { return hasV; }
+	bool HasV() const { return hasV_; }
 
 	/// Get a reference to the PotentialOperator
 	PotentialOperator& V() {
-		return v;
+		return v_;
 	}
 
 	/// Get a reference to the PotentialOperator
 	const PotentialOperator& V() const {
-		return v;
+		return v_;
 	}
 
 	/// Set the PotentialOperator
 	void SetV(const PotentialOperator& V);
 
-	/// Return vector of all active modes in this operator
+	/// Return vector of all active_ modes in this operator
 	const vector<int>& Modes()const { return mode_; }
 
 protected:
@@ -149,9 +149,9 @@ protected:
 	/// These are the modes the SPOs act on
 	vector<int> mode_;
 	/// The potential operator
-	PotentialOperator v;
+	PotentialOperator v_;
 	/// Is there a PotentialOperator?
-	bool hasV;
+	bool hasV_;
 };
 
 template <typename T>

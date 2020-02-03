@@ -60,7 +60,7 @@ void TensorDim::Write(ostream& os) const {
 	int32_t f_write = order_;
 	os.write((char *) &f_write, sizeof(int32_t));
 
-	// Write active-dims
+	// Write active_-dims
 	for (size_t k = 0; k < order_; k++) {
 		int32_t act = Active(k);
 		os.write((char *) &act, sizeof(int32_t));

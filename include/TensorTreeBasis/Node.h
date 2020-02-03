@@ -145,7 +145,7 @@ protected:
 	// vector of references to the children nodes
 	vector<unique_ptr<AbstractNode>> down_;
 
-	// reference to the last node that was pointed at at a sweep through the layer_
+	// reference to the last_ node that was pointed at at a sweep through the layer_
 	int nextNodeNum_;
 	size_t nextNodeNumFortran_;
 

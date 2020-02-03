@@ -4,204 +4,204 @@
 class MultiIndex
 {
 public:
-	MultiIndex(vector<size_t>& bounderies_)
+	MultiIndex(vector<size_t>& boundaries)
 	{
-		bounderies = bounderies_;
-	  length = bounderies.size();
+		boundaries_ = boundaries;
+	  length_ = boundaries_.size();
 
-	  //used for fast linearization
-	  linear = 0;
+	  //used for fast linear_ization
+	  linear_ = 0;
 
 	  //Catch special case
-	  if(length == 0) 
+	  if(length_ == 0)
 	  {
-		  bounderies.push_back(1);
-		  currentState.push_back(0);
-		  length = 1;
+		  boundaries_.push_back(1);
+		  currentState_.push_back(0);
+		  length_ = 1;
 	  }
 
-		currentState.clear();
-	  for(int i = 0; i < length; i++){
-		  currentState.push_back(0);
+		currentState_.clear();
+	  for(int i = 0; i < length_; i++){
+		  currentState_.push_back(0);
 		}
 
 		calculateTotal();
 	}
 
-	MultiIndex(size_t size, size_t length_)
+	MultiIndex(size_t size, size_t length)
 	{
-		length = length_;
+		length_ = length;
 		
-		bounderies.clear(); 
-		currentState.clear();
+		boundaries_.clear();
+		currentState_.clear();
 		
-	  //used for fast linearization
-	  linear = 0;
-	  total = 1;
+	  //used for fast linear_ization
+	  linear_ = 0;
+	  total_ = 1;
 
 	  //Catch special case
-	  if(length == 0) 
+	  if(length_ == 0)
 	  {
-		  bounderies.push_back(1);
-		  currentState.push_back(0);
-		  length =1;
+		  boundaries_.push_back(1);
+		  currentState_.push_back(0);
+		  length_ =1;
 	  }
 	  else
 	  {
-		  for(int i = 0; i < length; i++)
+		  for(int i = 0; i < length_; i++)
 		  {
-			  bounderies.push_back(size);
-			  total *= size;
-			  currentState.push_back(0);
+			  boundaries_.push_back(size);
+			  total_ *= size;
+			  currentState_.push_back(0);
 		  }
 	  }
 	}
 
 	MultiIndex(const MultiIndex& multi)
 	{
-	  length = multi.length;
-	  total = multi.total;
+	  length_ = multi.length_;
+	  total_ = multi.total_;
 
-	  for(int i = 0; i < length; i++)
+	  for(int i = 0; i < length_; i++)
 	  {
-		  bounderies.push_back(multi.bounderies[i]);
-		  currentState.push_back(0);
+		  boundaries_.push_back(multi.boundaries_[i]);
+		  currentState_.push_back(0);
 	  }
 	
-	  linear = 0;
+	  linear_ = 0;
 	}
 
 	void Zero()
 	{
-		for(int i = 0; i < length; i++){
-			currentState[i] = 0;
+		for(int i = 0; i < length_; i++){
+			currentState_[i] = 0;
 		}
 
-		linear = 0;
+		linear_ = 0;
 	}
 
 	void Max()
 	{
-		for(int i = 0; i < length; i++)
-			currentState[i] = bounderies[i]-1;
+		for(int i = 0; i < length_; i++)
+			currentState_[i] = boundaries_[i]-1;
 
-		linear = linearize();
+		linear_ = Linearize();
 	}
 
 	void print() const {
-		for(int i = 0; i < length; i++)
+		for(int i = 0; i < length_; i++)
 		{
-			cout << currentState[i] << " ";
+			cout << currentState_[i] << " ";
 		}
 		cout<< endl;
-		for(int i = 0; i < length; i++){
-			cout << bounderies[i] << " ";
+		for(int i = 0; i < length_; i++){
+			cout << boundaries_[i] << " ";
 		}
 		cout<< endl;	
 	}
 
 	void operator++(int a){
-		for(int i = 0; i < length; i++)
+		for(int i = 0; i < length_; i++)
 		{
-			currentState[i]++;
-			if(currentState[i] < bounderies[i] || i == length - 1) break;
+			currentState_[i]++;
+			if(currentState_[i] < boundaries_[i] || i == length_ - 1) break;
 
-			currentState[i] = 0;
+			currentState_[i] = 0;
 		}
 
-		linear++;
+		linear_++;
 	}
 
 	void operator--(int a){
-		for(int i = length-1; i >= 0; i--)
+		for(int i = length_-1; i >= 0; i--)
 		{
-			currentState[i]--;
-			//Thats a hack if size_t goes below zero it becomes very big
-			if(currentState[i] < bounderies[i]-1 || i == 0) break;
+			currentState_[i]--;
+			//Thats a hack if size_t goes Below zero it becomes very big
+			if(currentState_[i] < boundaries_[i]-1 || i == 0) break;
 
-			currentState[i] = bounderies[i]-1;
+			currentState_[i] = boundaries_[i]-1;
 		}
 
-		linear--;
+		linear_--;
 	}
 
 	size_t operator()(size_t a) const
 	{
-		assert(a < length);
-		return currentState[a];
+		assert(a < length_);
+		return currentState_[a];
 	}
 
 	size_t operator[](size_t a) const
 	{
-		return currentState[a];
+		return currentState_[a];
 	}
 	
-	bool below() const
+	bool Below() const
 	{
-		return currentState[length-1] < bounderies[length-1];
+		return currentState_[length_-1] < boundaries_[length_-1];
 	}
 	
-	bool above() const
+	bool After() const
 	{
-		//Thats a hack if size_t goes below zero it becomes very big
-		return currentState[0] < bounderies[0];
+		//Thats a hack if size_t goes Below zero it becomes very big
+		return currentState_[0] < boundaries_[0];
 	}
 
 	MultiIndex operator+(MultiIndex& multi)
 	{
-		vector<size_t> newVector = bounderies;
-		for(int i = 0; i < multi.length; i++)
-			newVector.push_back(multi.bounderies[i]);
+		vector<size_t> newVector = boundaries_;
+		for(int i = 0; i < multi.length_; i++)
+			newVector.push_back(multi.boundaries_[i]);
 		return MultiIndex(newVector);
 	}
 	
-	void erase(size_t position)
+	void Erase(size_t position)
 	{
-		bounderies.erase(bounderies.begin()+position);
-		currentState.erase(currentState.begin()+position);
-		length--;
+		boundaries_.Erase(boundaries_.begin()+position);
+		currentState_.Erase(currentState_.begin()+position);
+		length_--;
 		calculateTotal();
 	}
 	
-  void erase(size_t startPosition, size_t endPosition)
+  void Erase(size_t startPosition, size_t endPosition)
 	{
-		bounderies.erase(bounderies.begin()+startPosition,
-		                 bounderies.begin()+endPosition+1);
-		currentState.erase(currentState.begin()+startPosition,
-		                   currentState.begin()+endPosition+1);
-		length -= endPosition - startPosition + 1;
+		boundaries_.Erase(boundaries_.begin()+startPosition,
+		                 boundaries_.begin()+endPosition+1);
+		currentState_.Erase(currentState_.begin()+startPosition,
+		                   currentState_.begin()+endPosition+1);
+		length_ -= endPosition - startPosition + 1;
 		calculateTotal();
 	}
 	
   void pop_back()
 	{
-		bounderies.pop_back();
-		currentState.pop_back();
-		length--;
+		boundaries_.pop_back();
+		currentState_.pop_back();
+		length_--;
 		calculateTotal();
 	}
 	
-  void replace(size_t position, size_t newBoundary)
+  void Replace(size_t position, size_t newBoundary)
 	{
-		bounderies[position] = newBoundary;
+		boundaries_[position] = newBoundary;
 		calculateTotal();
 	}
 
-	size_t linearize()
+	size_t Linearize()
 	{
 		size_t out = 0;
 		size_t factor = 1;
-		for(size_t i = 0; i < length; i++)
+		for(size_t i = 0; i < length_; i++)
 		{
-			out += currentState[i]*factor;
-			factor *= bounderies[i];
+			out += currentState_[i]*factor;
+			factor *= boundaries_[i];
 		}
 		return out;
 	}
 	
-	size_t fastlinearize()
+	size_t FastLinearize()
 	{
-		return linear;
+		return linear_;
 	}
 
 	size_t Before(size_t a)
@@ -209,42 +209,42 @@ public:
 		size_t factor = 1;
 		for(size_t i = 0; i < a; i++)
 		{
-			factor *= bounderies[i];
+			factor *= boundaries_[i];
 		}
 		return factor;
 	}
 
 	size_t Active(size_t a)
 	{
-		return bounderies[a];
+		return boundaries_[a];
 	}
 	
 	size_t After(size_t a)
 	{
 		size_t factor = 1;
-		for(size_t i = a+1; i < length; i++)
+		for(size_t i = a+1; i < length_; i++)
 		{
-			factor *= bounderies[i];
+			factor *= boundaries_[i];
 		}
 		return factor;
 	}
 
-	size_t dimtot() const
+	size_t DimTot() const
 	{
-		return total;
+		return total_;
 	}
 
 protected:
 	void calculateTotal()
 	{
-		total = 1;
-		for(size_t i = 0; i < length; i++)
-			total *= bounderies[i];
+		total_ = 1;
+		for(size_t i = 0; i < length_; i++)
+			total_ *= boundaries_[i];
 	}
 	
-	vector<size_t> currentState;
-	vector<size_t> bounderies;
-	size_t length;
-	size_t linear;
-	size_t total;
+	vector<size_t> currentState_;
+	vector<size_t> boundaries_;
+	size_t length_;
+	size_t linear_;
+	size_t total_;
 };

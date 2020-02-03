@@ -232,8 +232,8 @@ namespace Tensor_Extension {
 		}
 
 		// divide by number of states
-//	for (size_t j = 0; j < active; j++)
-//		for (size_t i = 0; i < active; i++)
+//	for (size_t j = 0; j < active_; j++)
+//		for (size_t i = 0; i < active_; i++)
 //			S(i, j) /= nstates;
 
 		return S;

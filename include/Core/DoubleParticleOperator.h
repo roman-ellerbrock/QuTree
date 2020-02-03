@@ -7,41 +7,41 @@ class DoubleParticleOperator:
 	public Matrix<T>
 {
 public:
-	DoubleParticleOperator(size_t nl_, size_t nr_, size_t k1, size_t k2)
-		:Matrix<T>(nl_*nl_,nr_*nr_), mode1(k1), mode2(k2), nl(nl_), nr(nr_)
+	DoubleParticleOperator(size_t nl, size_t nr, size_t k1, size_t k2)
+		:Matrix<T>(nl*nl,nr*nr), mode1_(k1), mode12_(k2), nl_(nl), nr_(nr)
 	{
-		assert(nl > 0);
-		assert(nr > 0);
+		assert(nl_ > 0);
+		assert(nr_ > 0);
 	}
 
 	T operator()(size_t il, size_t jl, size_t ir, size_t jr)const
 	{
-		size_t L = nl * jl + il;
-		size_t R = nr * jr + ir;
+		size_t L = nl_ * jl + il;
+		size_t R = nr_ * jr + ir;
 		return Matrix<T>::operator()(L, R);
 	}
 
 	T& operator()(size_t il, size_t jl, size_t ir, size_t jr)
 	{
-		size_t L = nl * jl + il;
-		size_t R = nr * jr + ir;
+		size_t L = nl_ * jl + il;
+		size_t R = nr_ * jr + ir;
 		assert(L < ProdDimL());
 		assert(R < ProdDimR());
 		return Matrix<T>::operator()(L, R);
 	}
 
-	size_t DimL()const { return nl; }
-	size_t DimR()const { return nr; }
+	size_t DimL()const { return nl_; }
+	size_t DimR()const { return nr_; }
 
-	size_t ProdDimL()const { return nl*nl; }
-	size_t ProdDimR()const { return nr*nr; }
+	size_t ProdDimL()const { return nl_*nl_; }
+	size_t ProdDimR()const { return nr_*nr_; }
 
-	size_t Mode1()const { return mode1; }
-	size_t Mode2()const { return mode2; }
+	size_t Mode1()const { return mode1_; }
+	size_t Mode2()const { return mode12_; }
 
 protected:
-	size_t nl, nr;
-	size_t mode1, mode2;
+	size_t nl_, nr_;
+	size_t mode1_, mode12_;
 
 };
 

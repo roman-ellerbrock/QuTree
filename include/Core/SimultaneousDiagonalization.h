@@ -21,7 +21,7 @@ public:
 	~SimultaneousDiagonalization() = default;
 
 	// Initialize Simultaneous Diagonalization
-	void Initialization(vector<FactorMatrixcd>& A, double eps_);
+	void Initialization(vector<FactorMatrixcd>& A, double eps);
 
 	// Perform the Simultaneous Diagonalization
 	void Calculate(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
@@ -39,8 +39,8 @@ protected:
 	// Preconditioning of SD
 	void InitialTransformation(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
 
-	int dim;
-	int nmat;
-	double eps;
+	int dim_;
+	int nmat_;
+	double eps_;
 };
 

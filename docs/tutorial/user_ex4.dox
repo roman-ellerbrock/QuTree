@@ -13,7 +13,7 @@ That is, a sum of products of single-particle operators.
 
 Single-particle operators (SingleParticleOperator) are operators that operate on a single coordinate
 or, which is equivalent, on the corresponding one-dimensional basis sets only. Single-particle operators
-are typically functions of fundamental operators like x and p or powers of these operators. Depending on the
+are typically functions of fundamental operators like x_ and p_ or powers of these operators. Depending on the
 choice of the primitive basis functions other fundamental operators can be useful like, e.g. the Pauli-matrices.
 
 Products of single-particle operators are called Multi-Particle-Operators (MultiParticleOperator MPO) and
@@ -61,13 +61,13 @@ target_link_libraries (AnharmonicOscillator MCTDHlib)
 3.) In the .cpp-file, create the definition of the SpecialInitialize function. The building blocks
     for the MPOs are the fundamental operators which are defined in the primitive basis. It is convenient
     to define short cuts for relevant operators. The following code allows us to access operators for
-    x, x2, the kinetic energy operator (kin) and the momentum operator (p):
+    x_, x2, the kinetic energy operator (kin_) and the momentum operator (p_):
 
 ```
-    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> x = &PrimitiveBasis::applyX;
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> x_ = &PrimitiveBasis::applyX;
     function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> x2 = &PrimitiveBasis::ApplyX2;
-    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> kin = &PrimitiveBasis::ApplyKin;
-    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> p = &PrimitiveBasis::ApplyP;
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> kin_ = &PrimitiveBasis::ApplyKin;
+    function<Tensorcd(const PrimitiveBasis&, const Tensorcd&)> p_ = &PrimitiveBasis::ApplyP;
 ```
     In the following code, you can find code-examples of how to create a MPO which consists of a single
     SPO and multiple SPOs and how to append them to the SOP operator.
@@ -75,28 +75,28 @@ target_link_libraries (AnharmonicOscillator MCTDHlib)
     // Create a MPO which consists of only a kinetic energy operator acting on mode "0". Save it to the SOP operator.
     {
         // Constructor of a MPO for a single SPO and the corresponding mode
-        MPO M(kin, 0);
+        MPO M(kin_, 0);
        // save it to the SOP with a coefficient of 1.
         push_back(M, 1.);
     }
 
-    // Create a MPO consisting of a SPO in mode 0 (x) and mode 1 (p). Save it to the SOP with a coefficient of 0.5
-    // M = 0.5 * x(0) * p(1)
+    // Create a MPO consisting of a SPO in mode 0 (x_) and mode 1 (p_). Save it to the SOP with a coefficient of 0.5
+    // M = 0.5 * x_(0) * p_(1)
     {
         MPO M;
-        M.push_back(x, 0);
-        M.push_back(p, 1);
+        M.push_back(x_, 0);
+        M.push_back(p_, 1);
         push_back(M, 0.5);
     }
 ```
     Create a SOP operator for a 4-dimensional seperable Harmonic oscillator (HO) with the hamiltonian
 
-    H = kin(0) + kin(1) + kin(2) + kin(3) + w * (x(1)**2 + x(2)**2 + x(3)**2 + x(4)**2)
+    H = kin_(0) + kin_(1) + kin_(2) + kin_(3) + w * (x_(1)**2 + x_(2)**2 + x_(3)**2 + x_(4)**2)
 
     Here the constant w should be corresponding to 4000 cm^(-1). Note that all constants in mctdh++ have to
     be transformed to atomic units. Relevant constants can be found in the namespace QM (see QDlib).
 
-4.) Perform an eigenstate calculation for the Hamiltonian. Verify that the ground state can be described
+4.) Perform an eigenstate calculation for the Hamiltonian. Verify that the ground state_ can be described
     accurately by a Hartree-product.
 
 5.) Add linear coupling terms between the coordinates 0 and 1, 1 and 2, 2 and 3 & 3 and 0. with a constant

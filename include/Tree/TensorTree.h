@@ -24,7 +24,7 @@ class TensorTree: public TreeStructuredObject<Tensor<T>>
 	 */
 {
 public:
-	using TreeStructuredObject<Tensor<T>>::attributes;
+	using TreeStructuredObject<Tensor<T>>::attributes_;
 
 	/// Default constructor without memory allocation
 	TensorTree() = default;

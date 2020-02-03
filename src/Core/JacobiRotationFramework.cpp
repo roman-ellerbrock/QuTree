@@ -64,7 +64,7 @@ void JacobiRotationFramework::CalculateAngles(complex<double>& c,
 	// Build the G-Matrix
 	FactorMatrixcd G = BuildGMatrix(i, j, A);
 
-	// Diagonalize it (phase convention is important here (x>0)!)
+	// Diagonalize it (phase convention is important here (x_>0)!)
 	FactorMatrixcd trafo(3, 3);
 	Vectord ev(3);
 	G.cDiag(trafo, ev);

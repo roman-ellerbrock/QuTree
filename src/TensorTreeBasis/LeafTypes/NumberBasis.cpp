@@ -2,14 +2,14 @@
 
 
 
-NumberBasis::NumberBasis(int dim_,bool fermion_)
+NumberBasis::NumberBasis(int dim,bool fermion)
 	:PrimitiveBasis()
 {
-	dim=dim_;
-	fermion=fermion_;
+    dim_=dim;
+    fermion_=fermion;
 
 	//check basis size for fermions
-	if(fermion) assert(dim <= 2);
+	if(fermion_) assert(dim_ <= 2);
 }
 
 NumberBasis::~NumberBasis()
@@ -22,11 +22,11 @@ void NumberBasis::Initialize(double occ,
                              double dummy3)
 {  
 	// save all parameters
-	startocc = (int)occ;
-	osqrtree = (int)oSQR;
-	minOcc = (int)minimalOccupation;
+	startOcc_ = (int)occ;
+    osqrtree_ = (int)oSQR;
+    minOcc_ = (int)minimalOccupation;
 	
-	if(minOcc > startocc)
+	if(minOcc_ > startOcc_)
 	{
 		cout << "Error: Minimal occupation must not be bigger than\n"
 		     << "the initial occupation.\n";
@@ -39,13 +39,13 @@ void NumberBasis::InitSPF(Tensorcd& phi)const
 	TensorDim tdim(phi.Dim());
 	int nstates = tdim.GetNumTensor();
 
-	if(fermion && nstates > 2)
+	if(fermion_ && nstates > 2)
 	{
 		cout << "Error: there can be only two fermionic states\n"
 		     << "per mode.\n";
 		assert(0);
 	}
-	if(fermion && minOcc > 2)
+	if(fermion_ && minOcc_ > 2)
 	{
 		cout << "Error: For fermions the minimal Occupation must be\n"
 		     << "Zero.\n";
@@ -54,25 +54,25 @@ void NumberBasis::InitSPF(Tensorcd& phi)const
 
 	// soft check for bottom layer_
 	assert(tdim.GetOrder() == 1);
-	assert(tdim.GetDimPart() == dim);
-	assert(startocc - minOcc < dim);
+	assert(tdim.GetDimPart() == dim_);
+	assert(startOcc_ - minOcc_ < dim_);
 	
-	// set ground state wf
-	for (int i = 0; i < dim; i++)
+	// set ground state_ wf
+	for (int i = 0; i < dim_; i++)
 	{
 		phi(i, 0) = 1.e-7;
 	}
-	phi(startocc - minOcc , 0) = 1.0;
+	phi(startOcc_ - minOcc_ , 0) = 1.0;
   
 	// excitations
 	int count = 0;
 	for (int n = 1; n < nstates; n++)
 	{
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < dim_; i++)
 		{
 			phi(i,n) = 0.0;
 		}
-		if(count == startocc - minOcc) count++;
+		if(count == startOcc_ - minOcc_) count++;
 		phi(count,n) = 1.0;
 		count++;
 	}
@@ -109,13 +109,13 @@ Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi)const
 	int nstates = tdim.GetNumTensor();
 	int active = tdim.GetDimPart();
 	
-	assert(active == dim);
+	assert(active == dim_);
 
 	for (int n = 0; n < nstates; n++)
 	{
 		for (int i = 0; i < active; i++)
 		{
-			psi(i, n) = (1.0*(i + minOcc))*phi(i, n);
+			psi(i, n) = (1.0*(i + minOcc_)) * phi(i, n);
 		}
 	}
 	return psi;
@@ -134,14 +134,14 @@ Tensorcd NumberBasis::ApplyP(const Tensorcd& phi)const
 		psi[n*prim]=0.0;
 		for (size_t i = 1; i < prim; i++)
 		{
-			psi[n*prim + i] = sqrt(1.*(i + minOcc))*phi[n*prim + i - 1];
+			psi[n*prim + i] = sqrt(1.*(i + minOcc_)) * phi[n * prim + i - 1];
 		}
 	}
 	return psi;
 }
 
 
-// Apply primitive x for several single particle functions
+// Apply primitive x_ for several single particle functions
 Tensorcd NumberBasis::applyX(const Tensorcd& phi)const
 {
 	const TensorDim& tdim = phi.Dim();
@@ -155,7 +155,7 @@ Tensorcd NumberBasis::applyX(const Tensorcd& phi)const
 		psi[n * prim + prim - 1] = 0.0;
 		for (int i = 1; i < prim; i++)
 		{
-			psi[n*prim + i - 1] = sqrt(1.*(i + minOcc))*phi[n*prim + i];
+			psi[n*prim + i - 1] = sqrt(1.*(i + minOcc_)) * phi[n * prim + i];
 		}
 	}
 	return psi;

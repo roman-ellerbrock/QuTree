@@ -24,7 +24,7 @@ public:
 	explicit long_integer(size_t a = 0, size_t n_bit = 32);
 
 	void add(long_integer a);
-	void substract(long_integer a);
+	void subtract(long_integer a);
 
 	void mod(const long_integer& N);
 
@@ -32,7 +32,7 @@ public:
 
 	bool smallest() const { return bits.back(); }
 
-	/// Shift this integer by x bits, i.e. multiply with 2**x.
+	/// Shift this integer by x_ bits, i.e. multiply with 2**x_.
 	void bitshift(size_t i);
 
 	/// Perform bitshift and modulo operation (mod is performed for each bitshift independently)

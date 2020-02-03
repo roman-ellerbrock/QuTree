@@ -19,7 +19,7 @@ int NodePosition::ChildIdx() const {
 }
 
 NodePosition operator*(NodePosition p, int k) {
-	// contruct p+k by going from p to direction k
+	// contruct p_+k by going from p_ to direction k
 	NodePosition pnew(p);
 	pnew.layer_++;
 	pnew.push_back(k);
@@ -27,7 +27,7 @@ NodePosition operator*(NodePosition p, int k) {
 }
 
 NodePosition operator*(NodePosition p, NodePosition q) {
-	// contruct p+q by going from root to p and then to q
+	// contruct p_+q by going from root to p_ and then to q
 	NodePosition pnew(p);
 	pnew.layer_ = p.layer_ + q.layer_;
 	for (int i = 0; i < q.path_.size(); i++) {

@@ -11,10 +11,10 @@ Matrix<T>::Matrix()
 
 template<typename T>
 Matrix<T>::Matrix(size_t dim1_, size_t dim2_)
-	:dim1(dim1_), dim2(dim2_),
-	 coeffs(new T[dim1_ * dim2_]) {
-	assert(dim1 > 0);
-	assert(dim2 > 0);
+	:dim1_(dim1_), dim2_(dim2_),
+	 coeffs_(new T[dim1_ * dim2_]) {
+	assert(dim1_ > 0);
+	assert(dim2_ > 0);
 	Zero();
 }
 
@@ -33,17 +33,17 @@ Matrix<T>::Matrix(const string& filename)
 // Copy constructor
 template<typename T>
 Matrix<T>::Matrix(const Matrix& old)
-	:Matrix(old.dim1, old.dim2) {
-	for (size_t i = 0; i < dim1 * dim2; i++)
-		coeffs[i] = old.coeffs[i];
+	:Matrix(old.dim1_, old.dim2_) {
+	for (size_t i = 0; i < dim1_ * dim2_; i++)
+		coeffs_[i] = old.coeffs_[i];
 }
 
 // Move constructor
 template<typename T>
 Matrix<T>::Matrix(Matrix&& old) noexcept
-	:dim1(old.dim1), dim2(old.dim2),
-	 coeffs(old.coeffs) {
-	old.coeffs = nullptr;
+	:dim1_(old.dim1_), dim2_(old.dim2_),
+	 coeffs_(old.coeffs_) {
+	old.coeffs_ = nullptr;
 }
 
 // Copy Assignment Operator
@@ -59,17 +59,17 @@ Matrix<T>& Matrix<T>::operator=(const Matrix& other) {
 template<typename T>
 Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept {
 	//@TODO: copy dims??// seems to be done, but maybe check again
-	dim1 = other.dim1;
-	dim2 = other.dim2;
-	delete[] coeffs;
-	coeffs = other.coeffs;
-	other.coeffs = nullptr;
+	dim1_ = other.dim1_;
+    dim2_ = other.dim2_;
+	delete[] coeffs_;
+	coeffs_ = other.coeffs_;
+	other.coeffs_ = nullptr;
 	return *this;
 }
 
 template<typename T>
 Matrix<T>::~Matrix() {
-	delete[] coeffs;
+	delete[] coeffs_;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -77,16 +77,16 @@ Matrix<T>::~Matrix() {
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 inline T& Matrix<T>::operator()(const size_t i, const size_t j) const {
-	assert(i < dim1);
-	assert(j < dim2);
-	return coeffs[j * dim1 + i];
+	assert(i < dim1_);
+	assert(j < dim2_);
+	return coeffs_[j * dim1_ + i];
 }
 
 template<typename T>
 inline T& Matrix<T>::operator()(const size_t i, const size_t j) {
-	assert(i < dim1);
-	assert(j < dim2);
-	return coeffs[j * dim1 + i];
+	assert(i < dim1_);
+	assert(j < dim2_);
+	return coeffs_[j * dim1_ + i];
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -114,8 +114,8 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& B) {
 
 template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
-	for (size_t i = 0; i < dim1 * dim2; ++i) {
-		coeffs[i] *= coeff;
+	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
+		coeffs_[i] *= coeff;
 	}
 	return *this;
 }
@@ -126,9 +126,9 @@ bool Matrix<T>::operator==(const Matrix<T>& A) const {
 	/// Note: The routine should not be used to check for approximate
 	/// equivalence!
 	bool result = true;
-	if (dim1 != A.Dim1()) { result = false; }
-	if (dim2 != A.Dim2()) { result = false; }
-	for (size_t i = 0; i < dim1 * dim2; ++i) {
+	if (dim1_ != A.Dim1()) { result = false; }
+	if (dim2_ != A.Dim2()) { result = false; }
+	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
 		if (operator[](i) != A[i]) { result = false; }
 	}
 	return result;
@@ -146,8 +146,8 @@ bool Matrix<T>::operator!=(const Matrix<T>& A)const {
 template<typename T>
 double Matrix<T>::FrobeniusNorm() const {
 	double norm = 0;
-	for (size_t i = 0; i < dim2; ++i) {
-		for (size_t j = 0; j < dim1; ++j) {
+	for (size_t i = 0; i < dim2_; ++i) {
+		for (size_t j = 0; j < dim1_; ++j) {
 			norm += pow(abs(operator()(j, i)), 2);
 		}
 	}
@@ -156,9 +156,9 @@ double Matrix<T>::FrobeniusNorm() const {
 
 template<typename T>
 T Matrix<T>::Trace() const {
-	assert(dim1 == dim2);
+	assert(dim1_ == dim2_);
 	T norm = 0;
-	for (size_t i = 0; i < dim1; i++) {
+	for (size_t i = 0; i < dim1_; i++) {
 		norm += operator()(i, i);
 	}
 	return norm;
@@ -166,33 +166,33 @@ T Matrix<T>::Trace() const {
 
 template<typename T>
 Matrix<T> Matrix<T>::Transpose() {
-	Matrix B(dim1, dim2);
-	for (size_t i = 0; i < dim1; i++)
-		for (size_t j = 0; j < dim2; j++)
+	Matrix B(dim1_, dim2_);
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
 			B(i, j) = conjugate(operator()(j, i));
 	return B;
 }
 
 template<typename T>
 void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) {
-	assert(dim1 == dim2);
-	assert(ev.Dim() == dim1);
-	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs, dim1, dim2);
+	assert(dim1_ == dim2_);
+	assert(ev.Dim() == dim1_);
+	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs_, dim1_, dim2_);
 
 	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver;
 	solver.compute(A);
 	Eigen::MatrixXd vectors = solver.eigenvectors();
 	Eigen::VectorXd eigenv = solver.eigenvalues();
-	for (size_t i = 0; i < dim1; i++)
+	for (size_t i = 0; i < dim1_; i++)
 		ev(i) = eigenv(i);
-	for (size_t i = 0; i < dim1; i++)
-		for (size_t j = 0; j < dim2; j++)
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
 			Transformation(j, i) = vectors(j, i);
 
 	// Phase convention
-	for (size_t i = 0; i < dim1; i++) {
+	for (size_t i = 0; i < dim1_; i++) {
 		if (Transformation(0, i) < 0) {
-			for (size_t j = 0; j < dim1; j++) {
+			for (size_t j = 0; j < dim1_; j++) {
 				Transformation(j, i) *= -1;
 			}
 		}
@@ -201,32 +201,32 @@ void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) {
 
 template<typename T>
 SpectralDecomposition Matrix<T>::cDiag() const {
-	Matrixcd trafo(dim1, dim2);
-	Vectord ev(dim1);
+	Matrixcd trafo(dim1_, dim2_);
+	Vectord ev(dim1_);
 	cDiag(trafo, ev);
 	return pair<Matrixcd, Vectord>(trafo, ev);
 }
 
 template<typename T>
 void Matrix<T>::cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const {
-	assert(dim1 == dim2);
-	assert(ev.Dim() == dim1);
-	Eigen::MatrixXcd A = Eigen::Map<Eigen::MatrixXcd>((complex<double> *) coeffs, dim1, dim2);
+	assert(dim1_ == dim2_);
+	assert(ev.Dim() == dim1_);
+	Eigen::MatrixXcd A = Eigen::Map<Eigen::MatrixXcd>((complex<double> *) coeffs_, dim1_, dim2_);
 
 	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXcd> solver;
 	solver.compute(A);
 	Eigen::MatrixXcd vectors = solver.eigenvectors();
 	Eigen::VectorXd eigenv = solver.eigenvalues();
-	for (size_t i = 0; i < dim1; i++)
+	for (size_t i = 0; i < dim1_; i++)
 		ev(i) = eigenv(i);
-	for (size_t i = 0; i < dim1; i++)
-		for (size_t j = 0; j < dim2; j++)
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
 			Transformation(j, i) = vectors(j, i);
 
 	// Phase convention
-	for (size_t i = 0; i < dim1; i++) {
+	for (size_t i = 0; i < dim1_; i++) {
 		if (real(Transformation(0, i)) < 0) {
-			for (size_t j = 0; j < dim1; j++) {
+			for (size_t j = 0; j < dim1_; j++) {
 				Transformation(j, i) *= -1;
 			}
 		}
@@ -236,18 +236,18 @@ void Matrix<T>::cDiag(Matrix<complex<double>>& Transformation, Vector<double>& e
 //Inverts a complex matrix
 template<typename T>
 Matrix<complex<double> > Matrix<T>::cInv() const {
-	assert(dim1 == dim2);
+	assert(dim1_ == dim2_);
 
 	//map everything on classes of Eigen
-	Eigen::MatrixXcd A = Eigen::Map<Eigen::MatrixXcd>((complex<double> *) coeffs, dim1, dim2);
+	Eigen::MatrixXcd A = Eigen::Map<Eigen::MatrixXcd>((complex<double> *) coeffs_, dim1_, dim2_);
 
 	//Invert the matrix
 	Eigen::MatrixXcd B = A.inverse();
 
 	//map the result back to MCTDH Matrices
-	Matrix<complex<double> > Inverse(dim1, dim2);
-	for (size_t i = 0; i < dim1; i++)
-		for (size_t j = 0; j < dim2; j++)
+	Matrix<complex<double> > Inverse(dim1_, dim2_);
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
 			Inverse(j, i) = B(j, i);
 
 	return Inverse;
@@ -258,8 +258,8 @@ Matrix<complex<double> > Matrix<T>::cInv() const {
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 void Matrix<T>::print(ostream& os) const {
-	for (size_t i = 0; i < dim2; i++) {
-		for (size_t j = 0; j < dim1; j++) {
+	for (size_t i = 0; i < dim2_; i++) {
+		for (size_t j = 0; j < dim1_; j++) {
 			os << (*this)(j, i) << " ";
 		}
 		os << endl;
@@ -271,12 +271,12 @@ template<typename T>
 void Matrix<T>::Write(ostream& os) const {
 	// Verification
 	os.write("MATR", 4);
-	os.write((char *) &dim1, sizeof(dim1));
-	os.write((char *) &dim2, sizeof(dim2));
+	os.write((char *) &dim1_, sizeof(dim1_));
+	os.write((char *) &dim2_, sizeof(dim2_));
 
 	int32_t size = sizeof(T);
 	os.write((char *) &size, sizeof(size));
-	for (size_t i = 0; i < dim1 * dim2; i++) {
+	for (size_t i = 0; i < dim1_ * dim2_; i++) {
 		T Coeff_now = operator[](i);
 		os.write((char *) &Coeff_now, size);
 	}
@@ -298,9 +298,9 @@ void Matrix<T>::Read(istream& is) {
 	assert(s_key == s_check);
 
 	// Read dimensions
-	is.read((char *) &dim1, sizeof(dim1));
-	is.read((char *) &dim2, sizeof(dim2));
-	(*this) = Matrix<T>(dim1, dim2);
+	is.read((char *) &dim1_, sizeof(dim1_));
+	is.read((char *) &dim2_, sizeof(dim2_));
+	(*this) = Matrix<T>(dim1_, dim2_);
 
 	// Read the size of type
 	int32_t size;
@@ -308,7 +308,7 @@ void Matrix<T>::Read(istream& is) {
 	assert(size == sizeof(T));
 
 	// Read the coefficients
-	for (size_t i = 0; i < dim1 * dim2; i++) {
+	for (size_t i = 0; i < dim1_ * dim2_; i++) {
 		T Coeff_now;
 		is.read((char *) &Coeff_now, size);
 		operator[](i) = Coeff_now;
@@ -323,8 +323,8 @@ void Matrix<T>::Read(const string& filename) {
 
 template<typename T>
 void Matrix<T>::Zero() {
-	for (size_t i = 0; i < dim1 * dim2; i++)
-		coeffs[i] = 0;
+	for (size_t i = 0; i < dim1_ * dim2_; i++)
+		coeffs_[i] = 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -475,18 +475,18 @@ Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
 template<typename T>
 Vectord Matrix<T>::SolveSLE(const Vectord& b_) {
 	// Re-organize b to Eigen-format
-	Eigen::VectorXd b(dim1);
-	for (size_t i = 0; i < dim1; i++)
+	Eigen::VectorXd b(dim1_);
+	for (size_t i = 0; i < dim1_; i++)
 		b(i) = b_(i);
 
 	// Solve equations
-	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs, dim1, dim2);
+	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs_, dim1_, dim2_);
 	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> dec(A);
 	Eigen::VectorXd x = dec.solve(b);
 
 	// Save to QDlib-Vectord
-	Vectord x_(dim2);
-	for (size_t i = 0; i < dim2; i++)
+	Vectord x_(dim2_);
+	for (size_t i = 0; i < dim2_; i++)
 		x_(i) = x(i);
 	return x_;
 }

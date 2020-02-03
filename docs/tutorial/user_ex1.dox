@@ -48,7 +48,7 @@ Create a file named nocl.in that contains the following content
 // Photo-dissociation of NOCl
 //
 // Perform a real-time propagation on the
-// electronic S1 state
+// electronic S1 state_
 //////////////////////////////////////////////////
 
 // This sets the reference-directory for this project.
@@ -56,7 +56,7 @@ Create a file named nocl.in that contains the following content
 mainfolder = nocl/
 
 // Accuracy parameters
-eps = {
+eps_ = {
 // general accuracy parameter
 eps_general=1E-6
 
@@ -99,7 +99,7 @@ tool=spectrum
 basis=
 {
 // Definition of the multilayer-tree.
-// Note that modes range from 0-(f-1)
+// Note that modes range from 0-(f_-1)
 tree=[
 1	-3
 	3	-1
@@ -119,8 +119,8 @@ tree=[
 // 4. reference geometry of initial wavefunction
 //
 // For FFT:
-// 1. x-start
-// 2. x-end
+// 1. x_-start
+// 2. x_-end
 // 3. frequency of initial wavefunction
 // 4. reference geometry of initial wavefunction
 
@@ -136,7 +136,7 @@ parameters=[
 In the working directory, create a subdirectory named "nocl". Copy or link the mctdh++
 binary and the ToolBox binary to the working directory.
 
-1.) Perform a real-time propagation on the S1 electronic state of NOCl with the input file
+1.) Perform a real-time propagation on the S1 electronic state_ of NOCl with the input file
     nocl.in by executing: "./mctdh++ nocl.in".
 
 2.) Calculate the photodetachment spectrum of NOCl by executing the Toolbox on the nocl.in:
@@ -193,7 +193,7 @@ parameters=[
     Each mode (0, 1, ...) is specified subsequently and for each mode, there must be precisely four floats.
     The first two numbers specify the basis and the meaning of parameters depends on the type of the basis.
     The second two numbers specify the position and frequency of a starting gaussian wavepacket. In the present
-    approach these numbers are chosen to represent the vibrational ground state on the S0 PES.
+    approach these numbers are chosen to represent the vibrational ground state_ on the S0 PES.
 
 # References
 - [1] U. Manthe, H. D. Meyer, J. Chem. Phys., 97, 3199 (1992)

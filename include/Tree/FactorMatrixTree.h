@@ -15,7 +15,7 @@ class FactorMatrixTree
 	 */
 {
 public:
-	using TreeStructuredObject<FactorMatrix<T>>::attributes;
+	using TreeStructuredObject<FactorMatrix<T>>::attributes_;
 	/// Default constructor
 	FactorMatrixTree() = default;
 
@@ -51,8 +51,8 @@ public:
 
 	/// Get FactorMatrix at Toplayer
 	FactorMatrix<T>& Get() {
-		assert(attributes.size() > 0);
-		return attributes.back();
+		assert(attributes_.size() > 0);
+		return attributes_.back();
 	}
 
 	/// I/O
