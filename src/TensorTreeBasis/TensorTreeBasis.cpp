@@ -10,8 +10,7 @@ TensorTreeBasis::TensorTreeBasis(const TensorTreeBasis& T)
 
 TensorTreeBasis::TensorTreeBasis(TensorTreeBasis&& T) noexcept {
 	tree = move(T.tree);
-	linearizedNodes_ = move(T.linearizedNodes_);
-	linearizedLeaves_ = move(T.linearizedLeaves_);
+	Update();
 }
 
 TensorTreeBasis& TensorTreeBasis::operator=(const TensorTreeBasis& T) {
@@ -20,9 +19,8 @@ TensorTreeBasis& TensorTreeBasis::operator=(const TensorTreeBasis& T) {
 }
 
 TensorTreeBasis& TensorTreeBasis::operator=(TensorTreeBasis&& T) noexcept {
-	std::swap(tree, T.tree);
-	std::swap(linearizedNodes_, T.linearizedNodes_);
-	std::swap(linearizedLeaves_, T.linearizedLeaves_);
+	tree = move(T.tree);
+	Update();
 	return *this;
 }
 

@@ -65,6 +65,13 @@ public:
 		const TensorTree<T>& Ket, const SparseFactorMatrixTree<T>& hmat,
 		const TreeMarker& act);
 
+	/// Calculate Hole-Matrices from FactorMatrixTree at active nodes
+	void Calculate(const TensorTree<T>& Psi,
+		const SparseFactorMatrixTree<T>& hmat,
+		const TreeMarker& act) {
+		Calculate(Psi, Psi, hmat, act);
+	}
+
 	/// Apply HoleMatrix locally to a Tensor
 	Tensor<T> Apply(const Tensor<T>& Phi, const Node& node) const;
 

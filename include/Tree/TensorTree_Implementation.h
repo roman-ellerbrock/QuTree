@@ -6,7 +6,7 @@
 
 template<typename T>
 TensorTree<T>::TensorTree(const TTBasis& basis) {
-	TensorTree::Initialize(basis);
+	TensorTree<T>::Initialize(basis);
 }
 
 template<typename T>
@@ -38,12 +38,14 @@ void TensorTree<T>::Initialize(const TTBasis& basis) {
 
 template<typename T>
 void TensorTree<T>::Generate(const TTBasis& basis, mt19937& gen, bool delta_lowest) {
+	Initialize(basis);
 	assert(basis.nNodes() == attributes.size());
 	for (const Node& node : basis) {
+		Tensor<T>& Phi = this->operator[](node);
 		if (node.IsBottomlayer()) {
-			FillBottom(this->operator[](node), node);
+			FillBottom(Phi, node);
 		} else {
-			FillUpper(this->operator[](node), gen, node, delta_lowest);
+			FillUpper(Phi, gen, node, delta_lowest);
 		}
 	}
 }
@@ -73,6 +75,16 @@ void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 	const PrimitiveBasis& grid = coord.PrimitiveGrid();
 	grid.InitSPF(Phi);
 }
+
+template<typename T>
+bool TensorTree<T>::IsWorking() const {
+	size_t i = 0;
+	for (const Node& node : *this) {
+
+	}
+
+}
+
 
 /// (File) I/O
 template<typename T>
