@@ -12,7 +12,7 @@
 template <typename T>
 class SpectralDecompositionTree : public TreeStructuredObject<SpectralDecomposition<T>> {
 public:
-	using TreeStructuredObject<SpectralDecomposition<T>>::attributes;
+	using TreeStructuredObject<SpectralDecomposition<T>>::attributes_;
 
 	SpectralDecompositionTree() = default;
 

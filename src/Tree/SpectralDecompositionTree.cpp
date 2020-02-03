@@ -17,12 +17,12 @@ SpectralDecompositionTree<T>::SpectralDecompositionTree(const HoleMatrixTree<T>&
 
 template <typename T>
 void SpectralDecompositionTree<T>::Initialize(const TTBasis & basis) {
-	attributes.clear();
+	attributes_.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
 		size_t dim = tdim.GetNumTensor();
 		auto x = SpectralDecomposition<T>(Matrix<T>(dim, dim), Vectord(dim));
-		attributes.emplace_back(x);
+		attributes_.emplace_back(x);
 	}
 }
 
@@ -38,7 +38,7 @@ void SpectralDecompositionTree<T>::Calculate(const HoleMatrixTree<T> & H,
 
 template<typename T>
 HoleMatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, double eps) {
-	assert(attributes.size() == basis.nNodes());
+	assert(attributes_.size() == basis.nNodes());
 	HoleMatrixTree<T> Inv_Hole(basis);
 	for (const Node& node : basis) {
 		const auto& x = this->operator[](node);
