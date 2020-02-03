@@ -33,46 +33,12 @@ public:
 		SparseInitialize(modes, basis, tail);
 	}
 
-	void SparseInitialize(const vector<size_t>& modes, const TTBasis& basis, bool tail = true) {
-		co_address.clear();
-		for (size_t k : modes) {
-			const Leaf& phy = basis.GetLeaf(k);
-			auto node = (const Node *) &phy.Up();
-			const auto& beg = co_address.begin();
-			while (true) {
-				size_t addr = node->Address();
-				size_t count = co_address.count(addr);
-				// If node already there, increase its rank, otherwise add the node
-				if (count == 0) {
-					co_address.insert(beg, pair<int, int>(node->Address(), 0));
-				} else {
-					co_address[addr] += 1;
-				}
-				if (node->IsToplayer()) {
-					break;
-				} else {
-					node = &(node->Up());
-				}
-			}
-		}
-
-		size_t n = 0;
-		nodes.clear();
-		for (auto& entry : co_address) {
-			entry.second = n++;
-			const Node *node = &basis.GetNode(entry.first);
-			nodes.push_back(node);
-		}
-	}
+	void SparseInitialize(const vector<size_t>& modes,
+		const TTBasis& basis, bool tail = true);
 
 	size_t Active(const Node& node) const {
 		size_t count = co_address.count(node.Address());
-//		return !(count == 0); ?
-		if (0 == count) {
-			return false;
-		} else {
-			return true;
-		}
+		return (count != 0);
 	}
 
 	size_t size() const { return nodes.size(); }
@@ -95,15 +61,7 @@ public:
 		return co_address.at(addr);
 	}
 
-	void Initialize(const TTBasis& basis) {
-//        attributes.resize(basis.nTotalNodes());
-	}
-
-	void print(const TTBasis& basis, ostream& os = cout) const{
-		for (const Node* node : *this) {
-			node->info();
-		}
-	}
+	void print(const TTBasis& basis, ostream& os = cout) const;
 
 protected:
 	vector<const Node *> nodes;

@@ -79,19 +79,29 @@ SUITE (HMatrices) {
 		M.push_back(x, 3);
 		// Build  matrix representation for operator
 		SparseFactorMatrixTreecd hmat(Psi, M, basis);
-		HoleMatrixTreecd hhole(Psi, hmat, M, basis);
+		SparseHoleMatrixTreecd hhole(Psi, hmat, M, basis);
 		Psi.Write("Psi.dat");
 		TensorTreecd Chi("Psi.dat");
 
 		string filename("HHole.dat");
 		hhole.Write(filename);
-		HoleMatrixTreecd ghole(M, basis, filename);
+		SparseHoleMatrixTreecd ghole(M, basis, filename);
 			CHECK_EQUAL(hhole.Size(), ghole.Size());
 		const auto& active = hmat.Active();
 		for (const Node *node_ptr : active) {
 			const Node& node = *node_ptr;
 				CHECK_EQUAL(hhole[node], ghole[node]);
 		}
+	}
+
+	TEST_FIXTURE (HelperFactory, TreeMarker_NoTail) {
+		Initialize();
+		TTBasis basis(7, 2, 2);
+		MPOcd M(x, 0);
+		M.push_back(x, 3);
+		SparseHoleMatrixTreecd H(M, basis);
+		TreeMarker active(cast_to_vector_size_t(M.Modes()), basis, false);
+		CHECK_EQUAL(5, active.size());
 	}
 }
 

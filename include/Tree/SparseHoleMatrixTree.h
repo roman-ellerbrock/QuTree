@@ -82,9 +82,9 @@ ostream& operator>>(ostream& os, const SparseHoleMatrixTree<T>& hmat);
 template<typename T>
 istream& operator<<(istream& is, SparseHoleMatrixTree<T>& hmat);
 
-typedef SparseHoleMatrixTree<complex<double>> HoleMatrixTreecd;
+typedef SparseHoleMatrixTree<complex<double>> SparseHoleMatrixTreecd;
 
-typedef SparseHoleMatrixTree<double> HoleMatrixTreed;
+typedef SparseHoleMatrixTree<double> SparseHoleMatrixTreed;
 
 
 

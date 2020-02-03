@@ -40,7 +40,7 @@ set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/LogicalBasis.cpp
         TensorTreeBasis/LeafTypes/NumberBasis.cpp
         TensorTreeBasis/LeafTypes/SpinGroup.cpp
-        )
+        Tree/TreeMarker.cpp)
 
 # Compile objects only once for both static and shared libraries
 # From https://stackoverflow.com/a/29824424/3052876
