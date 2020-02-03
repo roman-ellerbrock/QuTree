@@ -7,6 +7,7 @@
 #include "TreeStructuredObject.h"
 #include "Core/Matrix.h"
 #include "HoleMatrixTree.h"
+#include "Core/Vector.h"
 
 template <typename T>
 class SpectralDecompositionTree : public TreeStructuredObject<SpectralDecomposition<T>> {
@@ -25,7 +26,7 @@ public:
 
 	void Calculate(const HoleMatrixTree<T>& H, const TTBasis& basis);
 
-//	HoleMatrixTree<T> Invert(const TTBasis& basis);
+	HoleMatrixTree<T> Invert(const TTBasis& basis, double eps = 1e-7);
 
 	/// I/O
 	void print(const TTBasis& basis) const;

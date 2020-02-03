@@ -97,6 +97,9 @@ double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 template<typename T>
 double Residual(const Vector<T>& A, const Vector<T>& B);
 
+template<typename T>
+Vector<T> Inverse(Vector<T> A, double eps = 1e-7);
+
 typedef Vector<double> Vectord;
 
 typedef Vector<complex<double>> Vectorcd;

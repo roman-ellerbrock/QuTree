@@ -14,6 +14,7 @@ set(QDlib_INCLUDE_FILES
         Core/QMConstants.h
         Core/SimultaneousDiagonalization.h
         Core/FactorMatrix.h
+        Core/RandomMatrices.h
         Core/Tensor.h
         Core/TensorDim.h
         Core/TensorDim_Extension.h

@@ -204,3 +204,11 @@ double Residual(const Vector<T>& A, const Vector<T>& B) {
 	return euclidean_distance(A, B);
 }
 
+template<typename T>
+Vector<T> Inverse(Vector<T> A, double eps) {
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		A(i) = 1. / (A(i) + eps * exp(-A(i) / eps));
+	}
+	return A;
+}
+

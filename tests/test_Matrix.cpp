@@ -3,6 +3,8 @@
 //
 #include "UnitTest++/UnitTest++.h"
 #include "Core/Matrix.h"
+#include <random>
+#include "Core/RandomMatrices.h"
 
 SUITE (Matrix) {
 	class MatrixFactory {
@@ -125,5 +127,17 @@ SUITE (Matrix) {
 			auto Amc(move(Create()));
 				CHECK_CLOSE(Residual(A, Amc), 0., eps);
 		}
+	}
+
+	TEST (Matrix_Rebuild) {
+		mt19937 gen(1990);
+		size_t dim = 10;
+		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		auto x = Diagonalize(A);
+		Matrixcd B = BuildMatrix(x);
+		A.print();
+		B.print();
+		auto residual = Residual(A, B);
+		CHECK_CLOSE(0., residual, eps);
 	}
 }

@@ -9,6 +9,7 @@ set(QDlib_SOURCE_FILES
         Core/long_integer.cpp
         Core/Vector_Instantiations.cpp
         Core/Matrix_Instantiations.cpp
+        Core/RandomMatrices.cpp
         Core/Tensor_Instantiations.cpp
         Core/Tensor_Extension_Instantiations.cpp
         Core/stdafx.cpp

@@ -35,14 +35,20 @@ void SpectralDecompositionTree<T>::Calculate(const HoleMatrixTree<T> & H,
 		this->operator[](node) = y;
 	}
 }
-/*
+
 template<typename T>
-HoleMatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis) {
+HoleMatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, double eps) {
+	assert(attributes.size() == basis.nNodes());
 	HoleMatrixTree<T> Inv_Hole(basis);
 	for (const Node& node : basis) {
-
+		const auto& x = this->operator[](node);
+		const Vectord& vec = x.second;
+//		auto inv_ev = Inverse(vec, eps);
+		SpectralDecomposition<T> y(x.first, x.second);
+		Inv_Hole[node] = BuildMatrix(y);
 	}
-}*/
+	return Inv_Hole;
+}
 
 template <typename T>
 void SpectralDecompositionTree<T>::print(const TTBasis& basis) const {

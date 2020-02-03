@@ -1,6 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2020-01-27.
 //
+#include "Core/RandomMatrices.h"
 #include "Tree/FactorMatrixTree.h"
 #include "Tree/HoleMatrixTree.h"
 #include "Tree/SpectralDecompositionTree.h"
@@ -96,5 +97,23 @@ SUITE (TensorTreeOverlaps) {
 				CHECK_CLOSE(1., X[node].second(1), eps);
 			}
 		}
+	}
+
+	TEST (SpectralDecompositionTree_Inverse) {
+		TensorTreeBasis basis(12, 2, 2);
+		mt19937 gen(1993);
+		HoleMatrixTreecd H(basis);
+	 	for (const Node& node : basis) {
+	 		const TensorDim& dim = node.TDim();
+			H[node] = RandomMatrices::GUE(dim.GetNumTensor(), gen);
+	 	}
+		SpectralDecompositionTreecd X(H, basis);
+		auto H_inv = X.Invert(basis);
+
+		HoleMatrixTreecd Identity(basis);
+		for (const Node& node : basis) {
+			Identity[node] = H_inv[node] * H[node];
+		}
+		Identity.print(basis);
 	}
 }

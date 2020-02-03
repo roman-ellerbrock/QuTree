@@ -456,7 +456,7 @@ SpectralDecompositiond Diagonalize(const Matrix<double>& A) {
 void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
 	A.rDiag(S.first, S.second);
 }
-/*
+
 Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
@@ -465,11 +465,11 @@ Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
 	assert(mat.Dim1() == mat.Dim2());
 	size_t dim = vec.Dim();
 	Matrixcd A(dim, dim);
-	/// Could be improved by multiplying B = diag(vec)*mat
+	/// Could be improved by multiplying B = mat * diag(vec)
 	for (size_t i = 0; i < dim; ++i) {
 		for (size_t j = 0; j < dim; ++j) {
 			for (size_t k = 0; k < dim; ++k) {
-				A(j, i) +=
+				A(j, i) += mat(j, k) * vec(k) * conj(mat(i, k));
 			}
 		}
 	}
@@ -477,9 +477,23 @@ Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
 }
 
 Matrixd BuildMatrix(const SpectralDecompositiond& X) {
-
+	const auto& mat = X.first;
+	const auto& vec = X.second;
+	assert(vec.Dim() > 0);
+	assert(mat.Dim1() == vec.Dim());
+	assert(mat.Dim1() == mat.Dim2());
+	size_t dim = vec.Dim();
+	Matrixd A(dim, dim);
+	/// Could be improved by multiplying B = mat * diag(vec)
+	for (size_t i = 0; i < dim; ++i) {
+		for (size_t j = 0; j < dim; ++j) {
+			for (size_t k = 0; k < dim; ++k) {
+				A(j, i) += mat(j, k) * vec(k) * mat(i, k);
+			}
+		}
+	}
+	return A;
 }
-*/
 
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
