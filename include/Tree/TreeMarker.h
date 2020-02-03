@@ -29,11 +29,11 @@ class TreeMarker
 public:
 
 	TreeMarker(const vector<size_t>& modes,
-		const TTBasis& basis) {
-		SparseInitialize(modes, basis);
+		const TTBasis& basis, bool tail = true) {
+		SparseInitialize(modes, basis, tail);
 	}
 
-	void SparseInitialize(const vector<size_t>& modes, const TTBasis& basis) {
+	void SparseInitialize(const vector<size_t>& modes, const TTBasis& basis, bool tail = true) {
 		co_address.clear();
 		for (size_t k : modes) {
 			const Leaf& phy = basis.GetLeaf(k);

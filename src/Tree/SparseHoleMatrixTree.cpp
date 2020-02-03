@@ -111,6 +111,21 @@ void SparseHoleMatrixTree<T>::Read(const string& filename) {
 }
 
 template<typename T>
+void SparseHoleMatrixTree<T>::Calculate(const TensorTree<T>& Bra,
+	const TensorTree<T>& Ket, const SparseFactorMatrixTree<T>& hmat,
+	const TreeMarker& act) {
+	for (const Node* node_ptr : act) {
+		const Node& node = *node_ptr;
+		const Node& parent = node.Up();
+		Tensor<T> hKet = hmat.ApplyHole(Ket[parent], node);
+		if (!parent.IsToplayer()) {
+			hKet = multStateAB(this->operator[](parent), hKet);
+		}
+		operator[](node) = HoleProduct(Bra[parent], hKet, node.ChildIdx());
+	}
+}
+
+template<typename T>
 ostream& operator>>(ostream& os, const SparseHoleMatrixTree<T>& hmat) {
 	hmat.Write(os);
 }

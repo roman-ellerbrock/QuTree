@@ -50,15 +50,20 @@ public:
 	/// Create Matrices for active nodes in the tree
 	void Initialize(const TTBasis& basis) override;
 
-	/// Calculate Hole-Matrices form FactorMatrixTree
+	/// Calculate Hole-Matrices from FactorMatrixTree
 	void Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseFactorMatrixTree<T>& hmat, const TTBasis& basis);
 
-	/// Calculate Hole-Matrices form FactorMatrixTree
+	/// Calculate Hole-Matrices from FactorMatrixTree
 	void Calculate(const TensorTree<T>& Psi,
 		const SparseFactorMatrixTree<T>& hmat, const TTBasis& basis) {
 		Calculate(Psi, Psi, hmat, basis);
 	}
+
+	/// Calculate Hole-Matrices from FactorMatrixTree at active nodes
+	void Calculate(const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket, const SparseFactorMatrixTree<T>& hmat,
+		const TreeMarker& act);
 
 	/// Apply HoleMatrix locally to a Tensor
 	Tensor<T> Apply(const Tensor<T>& Phi, const Node& node) const;
