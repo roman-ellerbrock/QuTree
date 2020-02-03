@@ -15,11 +15,11 @@ SparseHoleMatrixTree<T>::SparseHoleMatrixTree(const TensorTree<T>& Psi,
 
 template<typename T>
 void SparseHoleMatrixTree<T>::Initialize(const TTBasis& basis) {
-	attributes.clear();
+	attributes_.clear();
 	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
 		size_t dim = node.TDim().GetNumTensor();
-		attributes.emplace_back(Matrix<T>(dim, dim));
+		attributes_.emplace_back(Matrix<T>(dim, dim));
 	}
 }
 
@@ -69,11 +69,11 @@ void SparseHoleMatrixTree<T>::Write(ostream& os) const {
 	os.write("HMTr", 4);
 
 	// write number of nodes
-	auto nnodes = (int32_t) attributes.size();
+	auto nnodes = (int32_t) attributes_.size();
 	os.write((char *) &nnodes, sizeof(int32_t));
 
 	// Write Tensors
-	for (const auto& m : attributes) {
+	for (const auto& m : attributes_) {
 		os << m;
 	}
 	os << flush;
@@ -97,10 +97,10 @@ void SparseHoleMatrixTree<T>::Read(istream& is) {
 	is.read((char *) &nnodes, sizeof(nnodes));
 
 	// Read all Tensors
-	attributes.clear();
+	attributes_.clear();
 	for (int i = 0; i < nnodes; i++) {
 		Matrix<T> M(is);
-		attributes.emplace_back(M);
+		attributes_.emplace_back(M);
 	}
 }
 

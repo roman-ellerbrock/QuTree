@@ -36,28 +36,28 @@ public:
 		}
 	}
 
-	void Init(int dim_)
+	void Init(int dim)
 	{
-		dim = dim_;
+		dim_ = dim;
 
-		logdim = 0;
-		int rest = dim;
+		logdim_ = 0;
+		int rest = dim_;
 		while ((rest % 2) == 0)
 		{
-			logdim++;
+			logdim_++;
 			rest /= 2;
 		}
 		assert(rest % 2 == 1);
 
-		trafo = Vectorcd(dim);
-		trafoback = Vectorcd(dim);
+		trafo_ = Vectorcd(dim_);
+		trafoback_ = Vectorcd(dim_);
 		complex<double> im(0, 1);
 		double pi = 3.14159265359;
-		for (int i = 0; i < dim; i++)
-			trafo(i) = exp(im*2.*pi*(1.*i) / (1.*dim));
+		for (int i = 0; i < dim_; i++)
+			trafo_(i) = exp(im*2.*pi*(1.*i) / (1.*dim_));
 
-		for (int i = 0; i < dim; i++)
-			trafoback(i) = exp(-im*2.*pi*(1.*i) / (1.*dim));
+		for (int i = 0; i < dim_; i++)
+			trafoback_(i) = exp(-im*2.*pi*(1.*i) / (1.*dim_));
 	}
 
 	void fft(Vectorcd& A)
@@ -67,10 +67,10 @@ public:
 		int divisor = 2;
 		int offset = 1;
 		int rest = 0;
-		for (int i = 0; i < logdim; i++)
+		for (int i = 0; i < logdim_; i++)
 		{
-			rest = dim / (offset*divisor);
-			B = subfft(B, offset, rest, trafo);
+			rest = dim_ / (offset*divisor);
+			B = subfft(B, offset, rest, trafo_);
 			offset *= divisor;
 		}
 		A = B;
@@ -89,10 +89,10 @@ public:
 		int divisor = 2;
 		int offset = 1;
 		int rest = 0;
-		for (int i = 0; i < logdim; i++)
+		for (int i = 0; i < logdim_; i++)
 		{
-			rest = dim / (offset*divisor);
-			B = subfft(B, offset, rest, trafoback);
+			rest = dim_ / (offset*divisor);
+			B = subfft(B, offset, rest, trafoback_);
 			offset *= divisor;
 		}
 	}
@@ -110,7 +110,7 @@ public:
 			{
 				int left   = offset * 2 * j + i;
 				int right  = left + offset;
-				int twiidx = dim / offset*j;
+				int twiidx = dim_ / offset*j;
 				B(left) = A(left) + twiddle(twiidx)*A(right);
 			}
 		}
@@ -118,9 +118,9 @@ public:
 	}
 
 protected:
-	int dim;
-	int logdim;
-	Vectorcd trafo;
-	Vectorcd trafoback;
+	int dim_;
+	int logdim_;
+	Vectorcd trafo_;
+	Vectorcd trafoback_;
 };
 

@@ -26,13 +26,13 @@ FactorMatrixTree<T>::FactorMatrixTree(const TensorTree<T>& Psi,
 template<typename T>
 void FactorMatrixTree<T>::Initialize(const TTBasis& basis) {
 	// Clear the overlaps for reinitialization
-	attributes.clear();
+	attributes_.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
 		const size_t dim = tdim.GetNumTensor();
 		const auto k = (size_t) node.ChildIdx();
 		FactorMatrix<T> mat(dim, k);
-		attributes.push_back(mat);
+		attributes_.push_back(mat);
 	}
 }
 
@@ -104,11 +104,11 @@ void FactorMatrixTree<T>::Write(ostream& os) const {
 	os.write("TTDo", 4);
 
 	// write number of nodes
-	auto nnodes = (int32_t) attributes.size();
+	auto nnodes = (int32_t) attributes_.size();
 	os.write((char *) &nnodes, sizeof(int32_t));
 
 	// Write Tensors
-	for (const auto& Phi : attributes) {
+	for (const auto& Phi : attributes_) {
 		os << Phi;
 	}
 	os << flush;
@@ -126,10 +126,10 @@ void FactorMatrixTree<T>::Read(istream& is) {
 	is.read((char *) &nnodes, sizeof(nnodes));
 
 	// Read all Tensors
-	attributes.clear();
+	attributes_.clear();
 	for (int i = 0; i < nnodes; i++) {
 		FactorMatrix<T> M(is);
-		attributes.emplace_back(M);
+		attributes_.emplace_back(M);
 	}
 }
 

@@ -2,9 +2,9 @@
 #include <chrono>
 
 void SpinGroup::Initialize(double par0, double par1, double par2, double par3) {
-	last = false;
-	alpha = par2 * 3.1415926538;
-	if (par3 < 0) { last = true; }
+    last_ = false;
+    alpha_ = par2 * 3.1415926538;
+	if (par3 < 0) { last_ = true; }
 }
 
 Tensorcd SpinGroup::applyX(const Tensorcd& A) const {
@@ -33,13 +33,13 @@ void SpinGroup::InitSPF(Tensorcd& A) const {
 	mt19937 gen(seed);
 	uniform_real_distribution<double> dist;
 
-	if (dim == 2) {
+	if (dim_ == 2) {
 		assert(ntensor == 2);
 		assert(dimpart == 2);
-		A(0, 0) = cos(alpha);
-		A(1, 0) = sin(alpha);
-		A(0, 1) = -sin(alpha);
-		A(1, 1) = cos(alpha);
+		A(0, 0) = cos(alpha_);
+		A(1, 0) = sin(alpha_);
+		A(0, 1) = -sin(alpha_);
+		A(1, 1) = cos(alpha_);
 	} else {
 		for (size_t n = 0; n < ntensor; ++n) {
 			for (size_t i = 1; i < dimpart; ++i) {
@@ -51,7 +51,7 @@ void SpinGroup::InitSPF(Tensorcd& A) const {
 		}
 		A(0, 0) = 1.;
 
-		if (last) {
+		if (last_) {
 			for (size_t i = 0; i < dimpart; ++i) {
 				A(i, 0) = 0.;
 			}

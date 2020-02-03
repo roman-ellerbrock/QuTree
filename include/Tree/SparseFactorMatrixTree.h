@@ -26,7 +26,7 @@ public:
 	using SparseTreeStructuredObject<FactorMatrix<T>>::Active;
 	using SparseTreeStructuredObject<FactorMatrix<T>>::operator[];
 	using SparseTreeStructuredObject<FactorMatrix<T>>::Initialize;
-	using SparseTreeStructuredObject<FactorMatrix<T>>::attributes;
+	using SparseTreeStructuredObject<FactorMatrix<T>>::attributes_;
 
 	/// Create FactorMatrices for relevant nodes when representing an operator
 	SparseFactorMatrixTree(const MPO<T>& M, const TTBasis& basis)

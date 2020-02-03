@@ -270,8 +270,8 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 # using this tag. The format is ext=language, where ext is a file extension, and
 # language is one of the parsers supported by doxygen: IDL, Java, Javascript,
 # C#, C, C++, D, PHP, Objective-C, Python, Fortran, VHDL. For instance to make
-# doxygen treat .inc files as Fortran files (default is PHP), and .f files as C
-# (default is Fortran), use: inc=Fortran f=C.
+# doxygen treat .inc files as Fortran files (default is PHP), and .f_ files as C
+# (default is Fortran), use: inc=Fortran f_=C.
 # 
 # Note For files without extension you can use no_extension as a placeholder.
 # 
@@ -322,7 +322,7 @@ CPP_CLI_SUPPORT        = NO
 
 SIP_SUPPORT            = NO
 
-# For Microsoft's IDL there are propget and propput attributes to indicate
+# For Microsoft's IDL there are propget and propput attributes_ to indicate
 # getter and setter methods for a property. Setting this option to YES will make
 # doxygen to replace the get and set methods by a property in the documentation.
 # This will only work if the methods are indeed getting or setting a simple
@@ -760,7 +760,7 @@ INPUT_ENCODING         = UTF-8
 # following patterns are tested:*.c, *.cc, *.cxx, *.cpp, *.c++, *.java, *.ii,
 # *.ixx, *.ipp, *.i++, *.inl, *.idl, *.ddl, *.odl, *.h, *.hh, *.hxx, *.hpp,
 # *.h++, *.cs, *.d, *.php, *.php4, *.php5, *.phtml, *.inc, *.m, *.markdown,
-# *.md, *.mm, *.dox, *.py, *.f90, *.f, *.for, *.tcl, *.vhd, *.vhdl, *.ucf,
+# *.md, *.mm, *.dox, *.py, *.f90, *.f_, *.for, *.tcl, *.vhd, *.vhdl, *.ucf,
 # *.qsf, *.as and *.js.
 
 FILE_PATTERNS          = *.c \
@@ -796,7 +796,7 @@ FILE_PATTERNS          = *.c \
                          *.dox \
                          *.py \
                          *.f90 \
-                         *.f \
+                         *.f_ \
                          *.for \
                          *.tcl \
                          *.vhd \
@@ -1325,7 +1325,7 @@ QHP_VIRTUAL_FOLDER     = doc
 
 QHP_CUST_FILTER_NAME   = 
 
-# The QHP_CUST_FILTER_ATTRS tag specifies the list of the attributes of the
+# The QHP_CUST_FILTER_ATTRS tag specifies the list of the attributes_ of the
 # custom filter to add. For more information please see Qt Help Project / Custom
 # Filters (see: http://qt-project.org/doc/qt-4.8/qthelpproject.html#custom-
 # filters).
@@ -1333,9 +1333,9 @@ QHP_CUST_FILTER_NAME   =
 
 QHP_CUST_FILTER_ATTRS  = 
 
-# The QHP_SECT_FILTER_ATTRS tag specifies the list of the attributes this
+# The QHP_SECT_FILTER_ATTRS tag specifies the list of the attributes_ this
 # project's filter section matches. Qt Help Project / Filter Attributes (see:
-# http://qt-project.org/doc/qt-4.8/qthelpproject.html#filter-attributes).
+# http://qt-project.org/doc/qt-4.8/qthelpproject.html#filter-attributes_).
 # This tag requires that the tag GENERATE_QHP is set to YES.
 
 QHP_SECT_FILTER_ATTRS  = 
@@ -1619,8 +1619,8 @@ COMPACT_LATEX          = NO
 
 # The PAPER_TYPE tag can be used to set the paper type that is used by the
 # printer.
-# Possible values are: a4 (210 x 297 mm), letter (8.5 x 11 inches), legal (8.5 x
-# 14 inches) and executive (7.25 x 10.5 inches).
+# Possible values are: a4 (210 x_ 297 mm), letter (8.5 x_ 11 inches), legal (8.5 x_
+# 14 inches) and executive (7.25 x_ 10.5 inches).
 # The default value is: a4.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
@@ -1652,7 +1652,7 @@ EXTRA_PACKAGES         =
 LATEX_HEADER           = 
 
 # The LATEX_FOOTER tag can be used to specify a personal LaTeX footer for the
-# generated LaTeX document. The footer should contain everything after the last
+# generated LaTeX document. The footer should contain everything after the last_
 # chapter. If it is left blank doxygen will generate a standard footer.
 # 
 # Note: Only use a user-defined footer if you know what you are doing!

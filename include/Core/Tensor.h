@@ -17,8 +17,8 @@ class Tensor
  * class functions.
  *
  * Usage:
- * TensorDim dim({2, 3, 4}, 1);
- * Tensorcd A(dim);
+ * TensorDim dim_({2, 3, 4}, 1);
+ * Tensorcd A(dim_);
  *
  * */
 {
@@ -144,7 +144,7 @@ public:
 	// Adjust Dimensions to a new TensorDim
 	Tensor<T> AdjustDimensions(const TensorDim& newTDim)const;
 
-	// Adjust the number of the active mode
+	// Adjust the number of the active_ mode
 	Tensor<T> AdjustActiveDim(size_t active, size_t mode)const;
 
 	// Adjust the number of Tensors

@@ -10,11 +10,11 @@ vector<size_t> cast_to_vector_size_t(const vector<int>& a) {
 
 template<typename T>
 void SparseFactorMatrixTree<T>::Initialize(const TTBasis& basis) {
-	attributes.clear();
+	attributes_.clear();
 	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
 		size_t dim = node.TDim().GetNumTensor();
-		attributes.emplace_back(FactorMatrix<T>(dim, node.ChildIdx()));
+		attributes_.emplace_back(FactorMatrix<T>(dim, node.ChildIdx()));
 	}
 }
 
@@ -31,7 +31,7 @@ template<typename T>
 FactorMatrix<T> SparseFactorMatrixTree<T>::CalculateUpper(const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const Node& node) {
 	// @TODO: Optimize with switchbool trick
-	// Swipe through children and apply active children's SPOs.
+	// Swipe through children and apply active_ children's SPOs.
 	Tensor<T> hKet(Ket);
 	for (size_t l = 0; l < node.nChildren(); l++) {
 		const Node& child = node.Down(l);
@@ -135,11 +135,11 @@ void SparseFactorMatrixTree<T>::Write(ostream& os) const {
 	os.write("FMTr", 4);
 
 	// write number of nodes
-	auto nnodes = (int32_t) attributes.size();
+	auto nnodes = (int32_t) attributes_.size();
 	os.write((char *) &nnodes, sizeof(int32_t));
 
 	// Write Tensors
-	for (const auto& m : attributes) {
+	for (const auto& m : attributes_) {
 		os << m;
 	}
 	os << flush;
@@ -163,10 +163,10 @@ void SparseFactorMatrixTree<T>::Read(istream& is) {
 	is.read((char *) &nnodes, sizeof(nnodes));
 
 	// Read all Tensors
-	attributes.clear();
+	attributes_.clear();
 	for (int i = 0; i < nnodes; i++) {
 		FactorMatrix<T> M(is);
-		attributes.emplace_back(M);
+		attributes_.emplace_back(M);
 	}
 }
 
