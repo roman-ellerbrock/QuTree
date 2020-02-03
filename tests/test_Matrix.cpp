@@ -135,9 +135,19 @@ SUITE (Matrix) {
 		Matrixcd A = RandomMatrices::GUE(dim, gen);
 		auto x = Diagonalize(A);
 		Matrixcd B = BuildMatrix(x);
-		A.print();
-		B.print();
 		auto residual = Residual(A, B);
+		CHECK_CLOSE(0., residual, eps);
+	}
+
+	TEST(Matrix_BuildInverse) {
+		mt19937 gen(1990);
+		size_t dim = 10;
+		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		auto x = Diagonalize(A);
+		Matrixcd B = BuildInverse(x, 1e-12);
+		Matrixcd I_test = A * B;
+		Matrixcd I = IdentityMatrix<complex<double>>(A.Dim2());
+		auto residual = Residual(I, I_test);
 		CHECK_CLOSE(0., residual, eps);
 	}
 }

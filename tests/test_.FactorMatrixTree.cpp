@@ -7,7 +7,7 @@
 #include "Tree/SpectralDecompositionTree.h"
 #include "UnitTest++/UnitTest++.h"
 
-double eps = 1e-12;
+double eps = 1e-7;
 
 SUITE (TensorTreeOverlaps) {
 
@@ -108,12 +108,16 @@ SUITE (TensorTreeOverlaps) {
 			H[node] = RandomMatrices::GUE(dim.GetNumTensor(), gen);
 	 	}
 		SpectralDecompositionTreecd X(H, basis);
-		auto H_inv = X.Invert(basis);
+		auto H_inv = X.Invert(basis, 1e-10);
 
 		HoleMatrixTreecd Identity(basis);
 		for (const Node& node : basis) {
 			Identity[node] = H_inv[node] * H[node];
 		}
-		Identity.print(basis);
+		for (const Node& node : basis) {
+			const Matrixcd& I_test = Identity[node];
+			auto r = Residual(I_test, IdentityMatrix<complex<double>>(I_test.Dim1()));
+			CHECK_CLOSE(0., r, eps);
+		}
 	}
 }

@@ -224,6 +224,13 @@ Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
 
 Matrixd BuildMatrix(const SpectralDecompositiond& X);
 
+Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps = 1e-7);
+
+Matrixd BuildInverse(const SpectralDecompositiond& X, double eps = 1e-7);
+
+template<typename T>
+Matrix<T> IdentityMatrix(size_t dim);
+
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 		const Matrix<T>& B);

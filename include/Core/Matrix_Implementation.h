@@ -495,6 +495,25 @@ Matrixd BuildMatrix(const SpectralDecompositiond& X) {
 	return A;
 }
 
+Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps) {
+	auto inv_vec = Inverse(X.second, eps);
+	return BuildMatrix({X.first, inv_vec});
+}
+
+Matrixd BuildInverse(const SpectralDecompositiond& X, double eps) {
+	auto inv_vec = Inverse(X.second, eps);
+	return BuildMatrix({X.first, inv_vec});
+}
+
+template<typename T>
+Matrix<T> IdentityMatrix(size_t dim) {
+	Matrix<T> I(dim, dim);
+	for (size_t i = 0; i < dim; ++i) {
+		I(i, i) = 1.;
+	}
+	return I;
+}
+
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 	const Matrix<T>& B) {

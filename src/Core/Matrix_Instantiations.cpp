@@ -17,6 +17,7 @@ template Matrix<cd> multAB(const Matrix<cd>& A, const Matrix<cd>& B);
 template Matrix<cd> addAB(const Matrix<cd>& A, const Matrix<cd>& B);
 template Matrix<cd> multscalar<cd, cd>(const cd sca, const Matrix<cd>& B);
 template Matrix<cd> substAB<cd>(const Matrix<cd>& A, const Matrix<cd>& B);
+template Matrix<cd> IdentityMatrix(size_t dim);
 template Matrix<cd> UnitarySimilarityTrafo<cd>(const Matrix<cd>& A,
 	const Matrix<cd>& B);
 template Matrix<cd> Merge(const Matrix<cd>& A, const Matrix<cd>& B,
@@ -35,6 +36,7 @@ template Matrix<cd> multscalar<cd, doub>(const double sca,
 	const Matrix<cd>& B);
 template Matrix<doub> multscalar<doub, doub>(const double sca,
 	const Matrix<doub>& B);
+template Matrix<doub> IdentityMatrix(size_t dim);
 template Matrix<double> UnitarySimilarityTrafo<doub>(const Matrix<double>& A,
 	const Matrix<double>& B);
 template ostream& operator<< <doub> (ostream& os, const Matrix<doub>& A);
