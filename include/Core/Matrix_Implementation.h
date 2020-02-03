@@ -412,7 +412,6 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
 	return C;
 }
 
-/// Working towards a generalized diagonalization routine
 template<typename T>
 void Diagonalize(Matrix<T>& trafo, Vector<double> & ev, const Matrix<T>& B) {
 	assert(B.Dim1() == B.Dim2());

@@ -209,25 +209,77 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B);
 template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 
+/**
+ * \brief Diagonalize a complex double matrix
+ * @param A Matrix to be diagonalized
+ * @return Decomposed matrix
+ */
 SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A);
 
+/**
+ * \brief Diagonalize a complex double martrix
+ * @param S Decomposed matrix (call-by-reference)
+ * @param A Matrix to be diagonalized
+ */
 void Diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A);
 
+/**
+ * \brief Diagonalize a double matrix
+ * @param A Matrix to be diagonalized
+ * @return Decomposed matrix
+ */
 SpectralDecompositiond Diagonalize(const Matrix<double>& A);
 
+/**
+ * \brief Diagonalize a double martrix
+ * @param S Decomposed matrix (call-by-reference)
+ * @param A Matrix to be diagonalized
+ */
 void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A);
 
+/**
+ * \brief Diagonalization routine for remaining types (Eigenvector always double; not generally applicable)
+ * @tparam T
+ * @param B
+ * @return
+ */
 template<typename T>
 pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
 
+/**
+ * \brief Construct matrix from its decomposition
+ * @param X Decomposed matrix
+ * @return Re-constructed matrix
+ */
 Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
 
+/**
+ * \brief Construct matrix from its decomposition
+ * @param X Decomposed matrix
+ * @return Re-constructed matrix
+ */
 Matrixd BuildMatrix(const SpectralDecompositiond& X);
 
+/**
+ * \brief Construct inverse matrix from SpectralDecomposition
+ * @param X Decomposed matrix
+ * @return Inverse matrix
+ */
 Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps = 1e-7);
 
+/**
+ * \brief Construct inverse matrix from SpectralDecomposition
+ * @param X Decomposed matrix
+ * @return Inverse matrix
+ */
 Matrixd BuildInverse(const SpectralDecompositiond& X, double eps = 1e-7);
 
+/**
+ * \brief Create an identity matrix
+ * @tparam T Type of identity matrix
+ * @param dim dimension
+ * @return Identity-matrix
+ */
 template<typename T>
 Matrix<T> IdentityMatrix(size_t dim);
 
