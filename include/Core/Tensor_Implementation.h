@@ -475,7 +475,8 @@ Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	size_t nstates = tdim_a.GetNumTensor();
 	size_t active1 = tdim_a.Active(k);
 	size_t before = tdim_a.Before(k);
-	size_t after = tdim_a.After(k) * nstates;
+//	size_t after = tdim_a.After(k) * nstates;
+	size_t after = tdim_a.TotAfter(k);
 	size_t active2 = tdim_b.Active(k);
 	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
 
@@ -607,12 +608,13 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 	TensorDim tdim(B.Dim());
 	TensorDim tdimC(C.Dim());
 
-	size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//	size_t after = tdim.After(mode) * tdim.GetNumTensor();
+	size_t after = tdim.TotAfter(mode);
 	size_t before = tdim.Before(mode);
 	size_t active1 = A.Dim1();
 	size_t active2 = A.Dim2();
 
-	assert(mode < tdim.GetOrder());
+	assert(mode <= tdim.GetOrder());
 	assert(A.Dim2() == tdim.Active(mode));
 	assert(A.Dim1() == tdimC.Active(mode));
 
@@ -628,7 +630,8 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
 		mattensor(C, A, B, before, active, active, after, false);
@@ -639,7 +642,8 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t active2 = A.Dim2();
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, active1);
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t before = tdim.Before(mode);
 		assert(active1 == C.Dim().Active(mode));
 		assert(active2 == B.Dim().Active(mode));
@@ -658,7 +662,8 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
 		Tmattensor(C, A, B, before, active, active, after, false);
@@ -668,7 +673,8 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t activeB = A.Dim1();
 		TensorDim tdim(B.Dim());
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, A.Dim2());
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t before = tdim.Before(mode);
 		Tensor<T> C(tdim);
 		cout << "non-quadratic mattensor implemented but not tested, yet.\n";

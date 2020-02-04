@@ -28,3 +28,12 @@ target_link_libraries(TestQDlib UnitTest++)
 add_custom_command(TARGET TestQDlib
     POST_BUILD COMMAND TestQDlib
     COMMENT "Running unit tests")
+
+
+set(QDlib_benchmarks
+        benchmarks/benchmark_Tensor.cpp
+        benchmarks/benchmark_Tensor.h
+        )
+
+add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QDlib_benchmarks})
+target_link_libraries(benchmarks QDlib)
