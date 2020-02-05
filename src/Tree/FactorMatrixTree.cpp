@@ -58,12 +58,11 @@ void FactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Phi,
 			const Node& child = node.Down(k);
 			const FactorMatrix<T>& spo = this->operator[](child);
 			// Apply it to the right-hand side
-			AChi = spo * AChi;
+			 AChi = spo * AChi;
 		}
 	}
-	int kchild = node.ChildIdx();
-	Matrix<T> resultmat = Phi.DotProduct(AChi);
-	this->operator[](node) = FactorMatrix<T>(resultmat, kchild);
+	FactorMatrix<T>& S = this->operator[](node);
+	DotProduct(S, Phi, AChi);
 }
 
 template<typename T>

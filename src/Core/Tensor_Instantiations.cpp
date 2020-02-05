@@ -24,6 +24,7 @@ template void multAdd<cd, cd>(Tensor<cd>& A, const Tensor<cd>& B, cd coeff);
 template Tensor<cd> conj<cd>(Tensor<cd> A);
 template double Residual(Tensorcd A, const Tensorcd& B);
 template void TensorHoleProduct<cd>(Matrix<cd>&, const Tensor<cd>&, const Tensor<cd>&, size_t, size_t, size_t, size_t);
+template void mattensor<cd>(Tensor<cd>& B, const Matrix<cd>& S, const Tensor<cd>&  A, size_t, size_t, size_t, size_t, bool);
 
 template ostream& operator<< <cd> (ostream&, const Tensor<cd>& );
 template istream& operator>> <cd> (istream&, Tensor<cd>& );

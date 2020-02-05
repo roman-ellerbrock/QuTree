@@ -1,9 +1,12 @@
 //
 // Created by Roman Ellerbrock on 2/3/20.
 //
-#include "../tests/benchmarks/benchmark_Tensor.h"
+#include <iomanip>
+#include "../tests/benchmarks/benchmark_tensor.h"
+#include "../tests/benchmarks/benchmark_helper.h"
+#include "benchmark_tree.h"
 
-namespace benchmark_tensor {
+namespace benchmark {
 	TensorDim make_TensorDim(size_t order, size_t dim) {
 		assert(order > 1);
 		assert(dim > 0);
@@ -14,114 +17,167 @@ namespace benchmark_tensor {
 		return TensorDim(dims, dim);
 	}
 
-	void dot_product(mt19937& gen, size_t dim, size_t max_order, ostream& os) {
-		assert(max_order >= 2);
-		for (size_t order = 2; order <= max_order; ++order) {
-			auto tdim =  make_TensorDim(order, dim);
-			/// Initialize memory
-			std::chrono::time_point<std::chrono::system_clock> allocate_start, allocate_end;
-			allocate_start = std::chrono::system_clock::now();
-			Tensorcd A(tdim, false);
-			Tensorcd B(tdim, false);
-			Tensor_Extension::Generate(A, gen);
-			Tensor_Extension::Generate(B, gen);
-			Matrixcd S(dim, dim);
-			size_t bef = tdim.GetDimPart();
-			size_t act = tdim.GetNumTensor();
-
-			allocate_end = std::chrono::system_clock::now();
-			std::chrono::duration<double> allocate_elapsed_seconds = allocate_end - allocate_start;
-			os << "Preparation time: " << allocate_elapsed_seconds.count() << endl;
+	auto hole_product_sample(Matrixcd& S, const Tensorcd& A,
+		const Tensorcd& B, size_t nsample, size_t bef, size_t act, size_t aft) {
+		vector<chrono::microseconds> duration_vec;
+		for (size_t n = 0; n < nsample; ++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
-			/// Run hole-product
 			start = std::chrono::system_clock::now();
-			TensorHoleProduct(S, A, B, bef, act, act, 1);
+			TensorHoleProduct(S, A, B, bef, act, act, aft);
 			end = std::chrono::system_clock::now();
+			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
+		}
 
-			std::chrono::duration<double> elapsed_seconds = end - start;
-			os << dim << "\t" << order << "\t" << elapsed_seconds.count() << endl;
+		return statistic_helper(duration_vec);
+	}
+
+	auto hole_product(mt19937& gen, size_t dim, size_t order, size_t mode, size_t nsample, ostream& os) {
+		/// Initialize memory
+		auto tdim = make_TensorDim(order, dim);
+		Tensorcd A(tdim, false);
+		Tensorcd B(tdim, false);
+		Tensor_Extension::Generate(A, gen);
+		Tensor_Extension::Generate(B, gen);
+		Matrixcd S(dim, dim);
+		size_t aft = tdim.After(mode);
+		size_t act = tdim.Active(mode);
+		size_t bef = tdim.Before(mode);
+
+		/// Run hole-product
+		return hole_product_sample(S, A, B, nsample, bef, act, aft);
+	}
+
+	auto matrix_tensor_sample(Tensorcd& B, const Matrixcd& S, const Tensorcd& A,
+		size_t nsample, size_t bef, size_t act, size_t aft) {
+		vector<chrono::microseconds> duration_vec;
+		for (size_t n = 0; n < nsample; ++n) {
+			std::chrono::time_point<std::chrono::system_clock> start, end;
+			start = std::chrono::system_clock::now();
+			mattensor(B, S, A, bef, act, act, aft, true);
+			end = std::chrono::system_clock::now();
+			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
+		}
+
+		return statistic_helper(duration_vec);
+	}
+
+	auto matrix_tensor(mt19937& gen, size_t dim, size_t order, size_t mode, size_t nsample, ostream& os) {
+		/// Initialize memory
+		std::chrono::time_point<std::chrono::system_clock> allocate_start, allocate_end;
+		allocate_start = std::chrono::system_clock::now();
+		auto tdim = make_TensorDim(order, dim);
+		Tensorcd A(tdim, false);
+		Matrixcd S(dim, dim);
+		Tensor_Extension::Generate(A, gen);
+		Tensor_Extension::Generate(S, gen);
+		Tensorcd B(tdim, true);
+		size_t aft = tdim.After(mode);
+		size_t act = tdim.Active(mode);
+		size_t bef = tdim.Before(mode);
+
+		return matrix_tensor_sample(B, S, A, nsample, bef, act, aft);
+	}
+
+	void screen_order(mt19937& gen, ostream& os, size_t nsample) {
+		/// Screen order of tensor
+		size_t dim = 2;
+		size_t max_order = 29;
+		os << "# Matrix tensor\n";
+		for (size_t order = 3; order <= max_order; order += 2) {
+			size_t mode = order / 2 + 1;
+			os << std::setprecision(6);
+			os << dim << "\t" << order;
+			auto stat = matrix_tensor(gen, dim, order, mode, nsample, cout);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+		}
+
+		os << "# tensor hole product\n";
+		for (size_t order = 3; order <= max_order; order += 2) {
+			size_t mode = order / 2 + 1;
+			os << std::setprecision(6);
+			os << dim << "\t" << order;
+			auto stat = hole_product(gen, dim, order, mode, nsample, cout);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 
-	void hole_product(mt19937& gen, size_t dim, size_t max_order, ostream& os) {
-		assert(max_order >= 2);
-		for (size_t order = 3; order <= max_order; order += 2) {
+	void screen_dim(mt19937& gen, ostream& os, size_t nsample) {
+
+		/// Screen dim of tensor
+		size_t order = 3;
+		size_t min_dim = 50;
+		size_t max_dim = 250;
+		size_t step_dim = 20;
+		os << "# matrix tensor product\n";
+		for (size_t dim = min_dim; dim <= max_dim; dim += step_dim) {
+			size_t mode = order / 2 + 1;
+			os << std::setprecision(6);
 			os << dim << "\t" << order;
-			size_t step = (order)/2;
+			auto stat = matrix_tensor(gen, dim, order, mode, nsample, cout);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+		}
 
-			step = (step == 0) ? 1 : step;
-			for (size_t mode = 0; mode < order; mode += step) {
-				auto tdim = make_TensorDim(order, dim);
-				/// Initialize memory
-				std::chrono::time_point<std::chrono::system_clock> allocate_start, allocate_end;
-				allocate_start = std::chrono::system_clock::now();
-				Tensorcd A(tdim, false);
-				Tensorcd B(tdim, false);
-				Tensor_Extension::Generate(A, gen);
-				Tensor_Extension::Generate(B, gen);
-				Matrixcd S(dim, dim);
-				size_t aft = tdim.After(mode);
-				size_t act = tdim.Active(mode);
-				size_t bef = tdim.Before(mode);
-
-				allocate_end = std::chrono::system_clock::now();
-				std::chrono::duration<double> allocate_elapsed_seconds = allocate_end - allocate_start;
-//				os << "Preparation time: " << allocate_elapsed_seconds.count() << endl;
-
-				/// Run hole-product
-				std::chrono::time_point<std::chrono::system_clock> start, end;
-				start = std::chrono::system_clock::now();
-				TensorHoleProduct(S, A, B, bef, act, act, aft);
-				end = std::chrono::system_clock::now();
-
-				auto duration = chrono::duration_cast<chrono::microseconds>(end-start).count();
-				os << "\t" <<  duration;
-			}
-			os << endl;
+		os << "# tensor hole product\n";
+		for (size_t dim = min_dim; dim <= max_dim; dim += step_dim) {
+			size_t mode = order / 2 + 1;
+			os << std::setprecision(6);
+			os << dim << "\t" << order;
+			auto stat = hole_product(gen, dim, order, mode, nsample, cout);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 
-	void matrix_tensor(mt19937& gen, size_t dim, size_t max_order, ostream& os) {
-		assert(max_order >= 2);
-		for (size_t order = 3; order <= max_order; order += 2) {
-			size_t step = (order)/2;
+	void screen_nleaves(mt19937& gen, ostream& os, size_t nsample) {
 
+		/// Screen dim of nleaves
+		os << "# hole-matrix tree\n";
+		size_t dim = 2;
+		auto max_order = (size_t) pow(2, 20);
+		size_t min_order = 4;
+		/*
+		for (size_t order = min_order; order <= max_order; order *= 2) {
+			size_t mode = order / 2 + 1;
+			os << std::setprecision(6);
 			os << dim << "\t" << order;
-			step = (step == 0) ? 1 : step;
-			for (size_t mode = 0; mode < order; mode += step) {
-				/// Initialize memory
-				std::chrono::time_point<std::chrono::system_clock> allocate_start, allocate_end;
-				allocate_start = std::chrono::system_clock::now();
-				auto tdim = make_TensorDim(order, dim);
-				Tensorcd A(tdim, false);
-				Matrixcd S(dim, dim);
-				Tensor_Extension::Generate(A, gen);
-				Tensor_Extension::Generate(S, gen);
-				Tensorcd B(tdim, true);
+			auto stat = benchmark::holematrixtree(gen,  dim, order, nsample, os);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+		}
+		*/
 
-				auto start = std::chrono::system_clock::now();
-				multAB(B, S, A, mode);
-				auto end = std::chrono::system_clock::now();
-				auto duration = chrono::duration_cast<chrono::microseconds>(end-start).count();
-				os << "\t" <<  duration;
-			}
-			os << endl;
+		/*
+		os << "# Factor-matrix tree\n";
+		for (size_t order = min_order; order <= max_order; order *= 2) {
+			size_t mode = order / 2 + 1;
+			os << dim << "\t" << order;
+			auto stat = benchmark::factormatrixtree(gen,  dim, order, nsample, os);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+		}
+		os << "# Sparse factor matrix tree\n";
+		for (size_t order = min_order; order <= max_order; order *= 2) {
+			size_t mode = order / 2 + 1;
+			os << dim << "\t" << order;
+			auto stat = benchmark::sparse_factormatrixtree(gen,  dim, order, 100 * nsample, os);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+		}
+		*/
+
+		os << "# Sparse hole matrix tree\n";
+		for (size_t order = min_order; order <= max_order; order *= 2) {
+			size_t mode = order / 2 + 1;
+			os << dim << "\t" << order;
+			auto stat = benchmark::sparse_holematrixtree(gen,  dim, order, 100 * nsample, os);
+			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 
 	void run() {
 		mt19937 gen(1989);
-/*		dot_product(gen, 2, 25);
-		dot_product(gen, 32, 5);
-		dot_product(gen, 64, 4);
-*/
+		size_t nsample = 20;
+		ostream& os = cout;
 
-		size_t dim = 2;
-		size_t max_order =  29;
-		hole_product(gen, dim, max_order, cout);
-
-		matrix_tensor(gen, dim, max_order, cout);
-
+//		screen_order(gen, os, nsample);
+//		screen_dim(gen, os, nsample);
+		screen_nleaves(gen, os, nsample);
 	}
 }
 

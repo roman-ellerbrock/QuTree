@@ -7,11 +7,10 @@
 #include "Core/Tensor.h"
 #include <random>
 #include "Core/Tensor_Extension.h"
+#include "../tests/benchmarks/benchmark_helper.h"
 
-namespace benchmark_tensor {
+namespace benchmark {
 	TensorDim make_TensorDim(size_t order, size_t dim);
-
-	void dot_product(mt19937& gen, size_t dim = 5, size_t max_order = 5, ostream& os = cout);
 
 	void run();
 

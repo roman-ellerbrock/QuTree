@@ -144,6 +144,25 @@ Tensor<T> multATB(const FactorMatrix<U>& A, const Tensor<T>& B) {
 }
 
 template<typename T>
+void HoleProduct(FactorMatrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t mode) {
+	const TensorDim& tdim = A.Dim();
+	size_t bef = tdim.Before(mode);
+	size_t act = tdim.Active(mode);
+	size_t aft = tdim.After(mode);
+	TensorHoleProduct(S, A, B, bef, act, act, aft);
+}
+
+template<typename T>
+void DotProduct(FactorMatrix<T>& S, const Tensor<T>& A, const Tensor<T>& B) {
+	const TensorDim& tdim = A.Dim();
+	size_t mode = tdim.GetOrder();
+	size_t bef = tdim.Before(mode);
+	size_t act = tdim.Active(mode);
+	size_t aft = tdim.After(mode);
+	TensorHoleProduct(S, A, B, bef, act, act, aft);
+}
+
+template<typename T>
 FactorMatrix<T>
 SPOUnitarySimilarityTrafo(const FactorMatrix<T>& A, const FactorMatrix<T>& B) {
 	assert(A.Mode() == B.Mode());

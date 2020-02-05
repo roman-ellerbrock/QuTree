@@ -4,6 +4,6 @@
 #include "../tests/benchmarks/benchmark_Tensor.h"
 
 int main() {
-	benchmark_tensor::run();
+	benchmark::run();
 }
 
