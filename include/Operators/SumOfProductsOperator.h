@@ -77,26 +77,26 @@ public:
 	// Operators
 	//////////////////////////////////////////////////////////////////////
 	// multiply with coefficient
-	friend SumOfProductsOperator operator*(T c,
-		const SumOfProductsOperator& A);
+	friend SumOfProductsOperator<T> operator*(T c,
+		const SumOfProductsOperator<T>& A);
 
-	friend SumOfProductsOperator operator*(const SumOfProductsOperator& A,
+	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
 		T c);
 
 	// multiply with Multiparticleoperator
-	friend SumOfProductsOperator operator*(const MPO<T>& M,
-		const SumOfProductsOperator& A);
+	friend SumOfProductsOperator<T> operator*(const MPO<T>& M,
+		const SumOfProductsOperator<T>& A);
 
-	friend SumOfProductsOperator operator*(const SumOfProductsOperator& A,
+	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
 		const MPO<T>& M);
 
 	// multiply with SoP-Operator
-	friend SumOfProductsOperator operator*(const SumOfProductsOperator& A,
-		const SumOfProductsOperator& B);
+	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
+		const SumOfProductsOperator<T>& B);
 
 	// add SoP-Operator
-	friend SumOfProductsOperator operator+(const SumOfProductsOperator& A,
-		const SumOfProductsOperator& B);
+	friend SumOfProductsOperator<T> operator+(const SumOfProductsOperator<T>& A,
+		const SumOfProductsOperator<T>& B);
 
 protected:
 	vector<MPO<T>> mpos_;

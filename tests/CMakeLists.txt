@@ -31,8 +31,8 @@ add_custom_command(TARGET TestQDlib
 
 
 set(QDlib_benchmarks
-        benchmarks/benchmark_Tensor.cpp
-        benchmarks/benchmark_Tensor.h
+        benchmarks/benchmark_tensor.cpp
+        benchmarks/benchmark_tensor.h
         benchmarks/benchmark_tree.cpp benchmarks/benchmark_tree.h benchmarks/benchmark_helper.cpp benchmarks/benchmark_helper.h)
 
 add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QDlib_benchmarks})
