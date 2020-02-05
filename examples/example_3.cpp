@@ -5,6 +5,8 @@
 //
 
 #include "Tree/TensorTree.h"
+#include "Tree/FactorMatrixTree.h"
+#include "Tree/HoleMatrixTree.h"
 
 // Demonstrate various ways to create a TensorTree object
 TensorTreecd create_tensor_tree() {
@@ -38,13 +40,36 @@ TensorTreecd create_tensor_tree() {
     return T_rand2;
 }
 
-void dot_product_tree(TensorTreecd A, TensorTreecd B) {
-    // TODO:
+void dot_product_tree() {
+    cout << "\nTensor tree dot product:\n" << endl;
+
+    // A dot product between two tensor trees results in a factor matrix tree
+    TTBasis basis(4, 3, 2);
+    mt19937 gen(2468);
+    TensorTreecd Psi(basis, gen, false);
+    TensorTreecd Chi(Psi);
+
+    /// Construct, allocate and calculate a factor matrix tree
+    FactorMatrixTreecd w(Psi, Chi, basis);
+    w.print();
+
     return;
 }
 
-void hole_product_tree(TensorTreecd A, TensorTreecd B) {
-    // TODO:
+void hole_product_tree() {
+    cout << "\nTensor tree hole product:\n" << endl;
+
+    // A hole product between two tensor trees results in a hole matrix tree
+    TTBasis basis(4, 3, 2);
+    mt19937 gen(2468);
+    TensorTreecd Psi(basis, gen, false);
+    TensorTreecd Chi(Psi);
+    FactorMatrixTreecd w(Psi, Chi, basis);
+
+    /// Construct, allocate and calculate a hole matrix tree
+    HoleMatrixTreecd rho(Psi, Chi, w, basis);
+    rho.print();
+
     return;
 }
 
@@ -52,7 +77,9 @@ int main() {
 
     TensorTreecd T = create_tensor_tree();
     TensorTreecd T2(T);
-    dot_product_tree(T, T2);
-    hole_product_tree(T, T2);
+    dot_product_tree();
+    hole_product_tree();
+
+    // TODO: sparse versions of dot product and hole product (initialized with operators)
 
 }
