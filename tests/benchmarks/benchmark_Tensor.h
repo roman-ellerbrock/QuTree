@@ -7,7 +7,7 @@
 #include "Core/Tensor.h"
 #include <random>
 #include "Core/Tensor_Extension.h"
-#include "../tests/benchmarks/benchmark_helper.h"
+#include "benchmark_helper.h"
 
 namespace benchmark {
 	TensorDim make_TensorDim(size_t order, size_t dim);

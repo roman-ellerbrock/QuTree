@@ -4,7 +4,7 @@
 #include "benchmark_tree.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "Tree/HoleMatrixTree.h"
-#include "../tests/benchmarks/benchmark_helper.h"
+#include "benchmark_helper.h"
 #include "Tree/SparseHoleMatrixTree.h"
 
 

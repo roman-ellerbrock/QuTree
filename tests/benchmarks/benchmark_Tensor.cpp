@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/3/20.
 //
 #include <iomanip>
-#include "../tests/benchmarks/benchmark_tensor.h"
-#include "../tests/benchmarks/benchmark_helper.h"
+#include "benchmark_tensor.h"
+#include "benchmark_helper.h"
 #include "benchmark_tree.h"
 
 namespace benchmark {
