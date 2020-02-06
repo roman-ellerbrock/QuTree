@@ -12,15 +12,15 @@ class MultiLeafOperator
 	/*!
 	 * \class MultiLeafOperator
 	 * \ingroup Operators
-	 * \brief A MultiLeafOperator (MPO) is a product of general single-particle operators
+	 * \brief A MultiLeafOperator (MLO) is a product of general single-particle operators
 	 *
 	 * A MultiLeafOperator is one summand in a SumofProducts
 	 * operator. It can be applied to a TensorTree resulting in
-	 * a wavefunction with a different bottomlayer-Tensors. The MPO is
+	 * a wavefunction with a different bottomlayer-Tensors. The MLO is
 	 * central for building hamiltonians.
 	 *
 	 * Please note:
-	 * - The recommended operator to build MPO is SPOf or SPOM (due to performance)
+	 * - The recommended operator to build MLO is SPOf or SPOM (due to performance)
 	 * - SPO initialization might be removed in the future
 	 * - TensorTrees with different lower-node Tensors
 	 *   cannot (straightforwardly) be added without loss of information.
@@ -33,28 +33,28 @@ public:
 	/// Default destructor
 	~MultiLeafOperator() = default;
 
-	/// Construct a MPO from a single SPO
+	/// Construct a MLO from a single SPO
 	MultiLeafOperator(const LeafMatrix<T>& h, int mode_x)
 		: MultiLeafOperator() {
 		push_back(h, mode_x);
 	}
 
-	/// Construct a MPO from a single RefSPO
+	/// Construct a MLO from a single RefSPO
 	MultiLeafOperator(const LeafFunction<T>& h, int mode_x)
 		: MultiLeafOperator() {
 		push_back(h, mode_x);
 	}
 
-	/// This routine manages how to apply a MPO
+	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
 		const Leaf& phys) const;
 
-	/// This routine manages how to apply a MPO
+	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
 		const vector<int>& list, const PrimitiveBasis& grid) const;
 
-	/// Push back a SPO to the MPO
-	void push_back(shared_ptr<SPO<T>> h, int mode_x) {
+	/// Push back a SPO to the MLO
+	void push_back(shared_ptr<LeafOperator<T>> h, int mode_x) {
 		SingParOp.push_back(h);
 		mode_.push_back(mode_x);
 	}
@@ -66,24 +66,24 @@ public:
 		mode_.emplace_back(mode);
 	}
 
-	/// Push back a RefSPO to the MPO
+	/// Push back a RefSPO to the MLO
 	void push_back(const LeafFunction<T>& h, int mode_x) {
 		auto *spo = new LeafFunction<T>(h);
 		SingParOp.push_back(shared_ptr<LeafOperator<T>>(spo));
 		mode_.push_back(mode_x);
 	}
 
-	/// Access the i-th SPO in the MPO
+	/// Access the i-th SPO in the MLO
 	shared_ptr<LeafOperator<T>> operator()(size_t i) {
 		assert(i >= 0);
 		assert(i < SingParOp.size());
 		return SingParOp[i];
 	}
 
-	/// The number of SPOs in the MPO
+	/// The number of SPOs in the MLO
 	size_t size() const { return mode_.size(); }
 
-	/// Access the i-th SPO in the MPO
+	/// Access the i-th SPO in the MLO
 	shared_ptr<LeafOperator<T>> operator[](size_t i) const {
 		assert(i < mode_.size());
 		assert(i >= 0);
@@ -103,7 +103,7 @@ public:
 		return (mode_[part] == mode_x);
 	}
 
-	/// Apply a MPO to a wavefunction. This routine is not optimized for performance.
+	/// Apply a MLO to a wavefunction. This routine is not optimized for performance.
 	TensorTree<T> Apply(TensorTree<T> Psi, const TTBasis& basis) const;
 
 	/// On which mode does the "part"-th SPO act?
@@ -124,7 +124,7 @@ public:
 		return M;
 	}
 
-	/// Check whether a Potential operator is included in the MPO. Important for CDVR.
+	/// Check whether a Potential operator is included in the MLO. Important for CDVR.
 	bool HasV() const { return hasV_; }
 
 	/// Get a reference to the PotentialOperator
@@ -155,7 +155,7 @@ protected:
 };
 
 template <typename T>
-using MPO = MultiLeafOperator<T>;
+using MLO = MultiLeafOperator<T>;
 
-typedef MPO<complex<double>> MPOcd;
+typedef MLO<complex<double>> MLOcd;
 

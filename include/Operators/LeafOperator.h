@@ -27,7 +27,4 @@ public:
 		const Tensor<T>& Acoeff)const = 0;
 };
 
-template <typename T>
-using SPO = LeafOperator<T>;
-
-typedef LeafOperator<complex<double>> SPOcd;
+typedef LeafOperator<complex<double>> LeafOperatorcd;

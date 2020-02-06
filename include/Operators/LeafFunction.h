@@ -11,14 +11,14 @@ class LeafFunction
 	: public LeafOperator<T>
 	/**
 	 * \class LeafFunction
-	 * \ingroup operators
-	 * \brief this class allows to use functions as spos.
+	 * \ingroup Operators
+	 * \brief This class allows to use functions as LeafOperators.
 	 */
 {
 public:
 	LeafFunction() = default;
 
-	LeafFunction(const SPOF<T> h)
+	explicit LeafFunction(const SPOF<T> h)
 		: h_(move(h)) {}
 
 	~LeafFunction() = default;

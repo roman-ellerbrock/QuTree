@@ -16,7 +16,7 @@ SUITE (Operators) {
 		HelperFactory() = default;
 		~HelperFactory() = default;
 		FactorMatrixcd X;
-		SPOMcd x;
+		LeafMatrixcd x;
 		HO_Basis ho;
 
 		void Initialize() {
@@ -24,7 +24,7 @@ SUITE (Operators) {
 			X = FactorMatrixcd(2, 1);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;
-			x = SPOMcd(X);
+			x = LeafMatrixcd(X);
 			ho = HO_Basis(10);
 		}
 	};
@@ -58,7 +58,7 @@ SUITE (Operators) {
 
 	TEST_FIXTURE (HelperFactory, MPO_1) {
 		Initialize();
-		MPOcd M(x, 1);
+		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
 		TTBasis basis(4, 2, 2);
 		TensorTreecd Chi(basis);
@@ -66,7 +66,7 @@ SUITE (Operators) {
 		auto Psi = M.Apply(Chi, basis);
 
 		/// Checking
-		string filename("MPO.Apply.dat");
+		string filename("MLO.Apply.dat");
 		Psi.Write(filename);
 		TensorTreecd Xi(filename);
 			CHECK_EQUAL(Xi.size(), Psi.size());

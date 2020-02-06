@@ -15,7 +15,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	const PrimitiveBasis& grid = Phy.PrimitiveGrid();
 	bool switchbool = true;
 
-	// Applying the MPO uses switching of the result Tensor to increase performance.
+	// Applying the MLO uses switching of the result Tensor to increase performance.
 	for (size_t l = 0; l < SingParOp.size(); ++l) {
 		if (mode_x != mode_[l]) { continue; }
 
@@ -41,9 +41,9 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	const vector<int>& list, const PrimitiveBasis& grid) const {
 	Tensor<T> hAcoeff(Acoeffs.Dim());
 	bool switchbool = true;
-	// Applying the MPO uses switching of the result Tensor to increase performance.
+	// Applying the MLO uses switching of the result Tensor to increase performance.
 	for (size_t l = 0; l < list.size(); l++) {
-		// get the active_ part in the MPO
+		// get the active_ part in the MLO
 		int part = list[l];
 		shared_ptr<LeafOperator<T>> spo = operator[](part);
 

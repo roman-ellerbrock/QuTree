@@ -15,6 +15,9 @@ void LeafMatrix<T>::Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
 	multAB(hAcoeff, h_, Acoeff);
 }
 
-template class LeafMatrix<complex<double>>;
-template class LeafMatrix<double>;
+template
+class LeafMatrix<complex<double>>;
+
+template
+class LeafMatrix<double>;
 

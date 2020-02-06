@@ -11,7 +11,7 @@ class LeafMatrix: public LeafOperator<T>
 	/**
 	 * \class LeafMatrix
 	 * \ingroup Operators
-	 * \brief This class allows to create SPOs from (factor) Matrices.
+	 * \brief This class allows to create LeafOperators from (factor) Matrices.
 	 */
 {
 public:
@@ -19,7 +19,7 @@ public:
 
 	explicit LeafMatrix(FactorMatrix<T> h);
 
-	explicit LeafMatrix(Matrix<T> h);
+//	explicit LeafMatrix(Matrix<T> h); // <- can be added if needed
 
 	~LeafMatrix() = default;
 
@@ -32,11 +32,8 @@ private:
 	FactorMatrix<T> h_;
 };
 
-template<typename T>
-using SPOM = LeafMatrix<T>;
+typedef LeafMatrix<complex<double>> LeafMatrixcd;
 
-typedef SPOM<complex<double>> SPOMcd;
-
-typedef SPOM<double> SPOMd;
+typedef LeafMatrix<double> LeafMatrixd;
 
 #endif //LEAFMATRIX_H
