@@ -1,7 +1,7 @@
 #include "TensorTreeBasis/LeafTypes/FermionNumberBasis.h"
 
-FermionNumberBasis::FermionNumberBasis(int dim_):NumberBasis(dim_,true){
-	assert(dim_<=2);
+FermionNumberBasis::FermionNumberBasis(int dim):NumberBasis(dim,true){
+	assert(dim<=2);
 }
 
 FermionNumberBasis::~FermionNumberBasis(){}

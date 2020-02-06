@@ -1,7 +1,7 @@
 #include "TensorTreeBasis/LeafTypes/DVRBasis.h"
 
-DVRBasis::DVRBasis(int dim_)
-	: dim_(dim_), trafo_(dim_, 0), x_(dim_), kin_(dim_, 0), p_(dim_, 0),
+DVRBasis::DVRBasis(int dim)
+	: dim_(dim), trafo_(dim, 0), x_(dim), kin_(dim, 0), p_(dim, 0),
       omega_(0), r0_(0), wfr0_(0), wfomega_(0) {
 }
 

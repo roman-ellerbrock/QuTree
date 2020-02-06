@@ -1,4 +1,4 @@
-find_package(UnitTest++)
+find_package(UnitTest++ QUIET)
 if (NOT UnitTest++_FOUND)
   message ( STATUS "UnitTest++ not found, switching to internal submodule" )
   execute_process(COMMAND git submodule update --init -- external/unittest-cpp

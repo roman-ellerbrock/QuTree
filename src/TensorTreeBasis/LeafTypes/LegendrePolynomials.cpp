@@ -3,10 +3,10 @@
 void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, double wfomega)
 {
 	// save all parameters
-	omega_ = omega_;
-	r0 = r0_;
-	wfr0 = wfr0_;
-	wfomega = wfomega_;
+	omega_ = omega;
+	r0_ = r0;
+	wfr0_ = wfr0;
+	wfomega_ = wfomega;
 
 	//
 	FactorMatrixd xmat = InitXmat();

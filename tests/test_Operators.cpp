@@ -34,11 +34,15 @@ SUITE (Operators) {
 		ho.Initialize(1., 0., 0., 1.);
 		TensorDim tdim({10}, 1);
 		Tensorcd A(tdim);
+		A.print();
 		ho.InitSPF(A);
+		A.print();
 		auto xA = ho.applyX(A);
 		string file("HO_Applyx.dat");
 		xA.Write(file);
+		xA.print();
 		Tensorcd B(file);
+		B.print();
 			CHECK_EQUAL(xA, B);
 	}
 

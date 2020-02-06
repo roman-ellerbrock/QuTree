@@ -1,7 +1,7 @@
 #include "TensorTreeBasis/LeafTypes/BosonNumberBasis.h"
 
-BosonNumberBasis::BosonNumberBasis(int dim_)
-	:NumberBasis(dim_,false)
+BosonNumberBasis::BosonNumberBasis(int dim)
+	:NumberBasis(dim,false)
 {
 }
 
