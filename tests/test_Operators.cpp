@@ -2,12 +2,12 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "SingleParticleOperator.h"
-#include "SingleParticleOperatorFunction.h"
-#include "SingleParticleOperatorMatrix.h"
-#include "MultiParticleOperator.h"
-#include "SumOfProductsOperator.h"
-#include "HO_Basis.h"
+#include "Operators/SingleParticleOperator.h"
+#include "Operators/SingleParticleOperatorFunction.h"
+#include "Operators/SingleParticleOperatorMatrix.h"
+#include "Operators/MultiParticleOperator.h"
+#include "Operators/SumOfProductsOperator.h"
+#include "TensorTreeBasis/LeafTypes/HO_Basis.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
 
 SUITE (Operators) {

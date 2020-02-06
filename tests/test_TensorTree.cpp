@@ -3,8 +3,8 @@
 //
 #include "UnitTest++/UnitTest++.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
-#include "TensorTree.h"
-#include "TensorTree_Implementation.h"
+#include "Tree/TensorTree.h"
+#include "Tree/TensorTree_Implementation.h"
 #include "TensorTreeBasis/TTBasisFactory.h"
 
 SUITE (TensorTree) {

@@ -1,5 +1,3 @@
-
-include_directories("include")
 find_package(UnitTest++)
 if (NOT UnitTest++_FOUND)
   message ( STATUS "UnitTest++ not found, switching to internal submodule" )
@@ -11,18 +9,19 @@ endif()
 include_directories(${UTPP_INCLUDE_DIRS})
 
 set(QDlib_tests
-        test_Matrix.cpp
-        test_Tensor.cpp
-        tests.cpp
-        test_TensorTree.cpp
-        test_Operators.cpp
-        test_FactorMatrixTree.cpp
-        test_SparseFactorMatrixTree.cpp
-        test_TensorTreeBasis.cpp)
+    test_Matrix.cpp
+    test_Tensor.cpp
+    tests.cpp
+    test_TensorTree.cpp
+    test_Operators.cpp
+    test_FactorMatrixTree.cpp
+    test_SparseFactorMatrixTree.cpp
+    test_TensorTreeBasis.cpp)
 
 add_executable(TestQDlib ${QDlib_tests})
 target_link_libraries(TestQDlib QDlib)
 target_link_libraries(TestQDlib UnitTest++)
+target_compile_features(TestQDlib PRIVATE cxx_std_14)
 
 # run unit tests as post build step
 add_custom_command(TARGET TestQDlib
@@ -37,3 +36,4 @@ set(QDlib_benchmarks
 
 add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QDlib_benchmarks})
 target_link_libraries(benchmarks QDlib)
+target_compile_features(benchmarks PRIVATE cxx_std_14)
