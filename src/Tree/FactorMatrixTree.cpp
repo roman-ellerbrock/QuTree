@@ -1,4 +1,4 @@
-#include "FactorMatrixTree.h"
+#include "Tree/FactorMatrixTree.h"
 
 template<typename T>
 FactorMatrixTree<T>::FactorMatrixTree(istream& is) {

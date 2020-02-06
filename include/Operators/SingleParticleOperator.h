@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Tensor.h"
-#include "PrimitiveBasis.h"
+#include "TensorTreeBasis/LeafTypes/PrimitiveBasis.h"
 
 /**
  * \defgroup Operators

@@ -1,11 +1,11 @@
 #pragma once
 #include "Core/Tensor.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
-#include "TensorTree.h"
-#include "SingleParticleOperator.h"
-#include "SingleParticleOperatorFunction.h"
-#include "SingleParticleOperatorMatrix.h"
-#include "PotentialOperator.h"
+#include "Tree/TensorTree.h"
+#include "Operators/SingleParticleOperator.h"
+#include "Operators/SingleParticleOperatorFunction.h"
+#include "Operators/SingleParticleOperatorMatrix.h"
+#include "Operators/PotentialOperator.h"
 
 template <typename T>
 class MultiParticleOperator

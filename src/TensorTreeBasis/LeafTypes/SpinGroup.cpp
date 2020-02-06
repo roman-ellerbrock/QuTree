@@ -1,4 +1,4 @@
-#include "SpinGroup.h"
+#include "TensorTreeBasis/LeafTypes/SpinGroup.h"
 #include <chrono>
 
 void SpinGroup::Initialize(double par0, double par1, double par2, double par3) {

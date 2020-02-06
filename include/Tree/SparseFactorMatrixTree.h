@@ -1,9 +1,10 @@
 #pragma once
 #include "Core/Matrix.h"
-#include "TensorTree.h"
-#include "SparseTreeStructuredObject.h"
-#include "MultiParticleOperator.h"
 #include "Core/FactorMatrix.h"
+#include "Tree/TensorTree.h"
+#include "Tree/SparseTreeStructuredObject.h"
+#include "Operators/MultiParticleOperator.h"
+
 
 
 vector<size_t> cast_to_vector_size_t(const vector<int>& a);

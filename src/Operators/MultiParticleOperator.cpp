@@ -1,4 +1,4 @@
-#include "MultiParticleOperator.h"
+#include "Operators/MultiParticleOperator.h"
 
 
 template <typename T>

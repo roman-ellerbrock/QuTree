@@ -4,10 +4,10 @@
 
 #ifndef MCTDH_TREEMARKER_H
 #define MCTDH_TREEMARKER_H
-#include "TreeStructuredObject.h"
+#include "Tree/TreeStructuredObject.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
-#include "MultiParticleOperator.h"
-#include "SumOfProductsOperator.h"
+#include "Operators/MultiParticleOperator.h"
+#include "Operators/SumOfProductsOperator.h"
 #include <map>
 #include <chrono>
 

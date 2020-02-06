@@ -4,7 +4,7 @@
 
 #ifndef TENSORTREE_H
 #define TENSORTREE_H
-#include "TreeStructuredObject.h"
+#include "Tree/TreeStructuredObject.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "Core/Tensor_Implementation.h"
 

@@ -1,4 +1,4 @@
-#include "SparseHoleMatrixTree.h"
+#include "Tree/SparseHoleMatrixTree.h"
 
 template<typename T>
 SparseHoleMatrixTree<T>::SparseHoleMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename)

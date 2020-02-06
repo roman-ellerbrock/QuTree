@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2/2/20.
 //
-#include "TreeMarker.h"
+#include "Tree/TreeMarker.h"
 
 void TreeMarker::SparseInitialize(const vector<size_t>& modes,
 	const TTBasis& basis, bool tail) {

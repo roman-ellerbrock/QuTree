@@ -1,4 +1,4 @@
-#include "BosonNumberBasis.h"
+#include "TensorTreeBasis/LeafTypes/BosonNumberBasis.h"
 
 BosonNumberBasis::BosonNumberBasis(int dim_)
 	:NumberBasis(dim_,false)

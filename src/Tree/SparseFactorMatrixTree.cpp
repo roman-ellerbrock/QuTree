@@ -1,4 +1,4 @@
-#include "SparseFactorMatrixTree.h"
+#include "Tree/SparseFactorMatrixTree.h"
 
 vector<size_t> cast_to_vector_size_t(const vector<int>& a) {
 	vector<size_t> b(a.size());

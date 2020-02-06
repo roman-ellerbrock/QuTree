@@ -1,9 +1,9 @@
 #pragma once
-#include "TreeStructuredObject.h"
-#include "TensorTree.h"
-#include "SingleParticleOperator.h"
-#include "SparseFactorMatrixTree.h"
-#include "SparseTreeStructuredObject.h"
+#include "Tree/TreeStructuredObject.h"
+#include "Tree/TensorTree.h"
+#include "Tree/SparseFactorMatrixTree.h"
+#include "Tree/SparseTreeStructuredObject.h"
+#include "Operators/SingleParticleOperator.h"
 
 
 template<typename T>

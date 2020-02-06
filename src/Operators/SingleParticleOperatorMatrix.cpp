@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 
-#include "SingleParticleOperatorMatrix.h"
+#include "Operators/SingleParticleOperatorMatrix.h"
 
 template<typename T>
 SingleParticleOperatorMatrix<T>::SingleParticleOperatorMatrix(FactorMatrix<T> h)

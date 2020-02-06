@@ -1,4 +1,4 @@
-#include "FFTGrid.h"
+#include "TensorTreeBasis/LeafTypes/FFTGrid.h"
 
 FFTGrid::FFTGrid(int dim)
 	: dim_(dim), x_(dim), p_(dim), trafo_(dim, 0) { }

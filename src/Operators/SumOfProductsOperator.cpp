@@ -1,4 +1,4 @@
-#include "SumOfProductsOperator.h"
+#include "Operators/SumOfProductsOperator.h"
 
 template<typename T>
 SumOfProductsOperator<T>::SumOfProductsOperator(const MPO<T>& M, T c) {

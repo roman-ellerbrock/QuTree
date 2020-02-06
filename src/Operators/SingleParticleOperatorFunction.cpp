@@ -1,4 +1,4 @@
-#include "SingleParticleOperatorFunction.h"
+#include "Operators/SingleParticleOperatorFunction.h"
 
 
 template<typename T>

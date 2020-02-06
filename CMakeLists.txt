@@ -30,7 +30,7 @@ set(QDlib_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QDlib)
 include(src/CMakeLists.txt)
 include(include/CMakeLists.txt)
 
-add_library(QDlib ${QDlib_SOURCE_FILES})
+add_library(QDlib SHARED ${QDlib_SOURCE_FILES})
 
 # Set up headers in include/ for install & build and src/ for just building
 target_include_directories(QDlib
@@ -40,10 +40,12 @@ target_include_directories(QDlib
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
+set_target_properties(QDlib PROPERTIES PUBLIC_HEADER "${QDlib_INCLUDE_FILES}")
 
 # Install rules
 install(TARGETS QDlib
     EXPORT QDlib-export
+    PUBLIC_HEADER DESTINATION ${QDlib_INSTALL_INC_DIR}
     LIBRARY DESTINATION ${QDlib_INSTALL_LIB_DIR}
     ARCHIVE DESTINATION ${QDlib_INSTALL_LIB_DIR}
     )
@@ -57,21 +59,24 @@ install(EXPORT QDlib-export
 #####################################################################
 # Set Compiler Flags
 #####################################################################
+# For debugging
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # Ensure C++14 standard
 target_compile_features(QDlib PRIVATE cxx_std_14)
 
-set(QDlib_DEBUG_FLAGS " ")
-set(QDlib_RELEASE_FLAGS "-O3 -ffast-math")
-set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
-set(QDlib_RELEASE_FLAGS "${QDlib_RELEASE_FLAGS} ${FLAGS_VECTORIZE}")
+# TODO: Figure out how to automatically get flags per compiler?
+set(FLAGS_VECTORIZE -fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect')
+set(QDlib_DEBUG_FLAGS -g ${FLAGS_VECTORIZE})
+set(QDlib_RELEASE_FLAGS -O3 -ffast-math ${FLAGS_VECTORIZE})
 if (APPLE)
     message("On OSX")
-    set(QDlib_DEBUG_FLAGS "-mmacosx-version-min=10.14 ${QDlib_DEBUG_FLAGS}")
-    set(QDlib_RELEASE_FLAGS "-mmacosx-version-min=10.14 ${QDlib_RELEASE_FLAGS}")
+    set(QDlib_DEBUG_FLAGS -mmacosx-version-min=10.14 ${QDlib_DEBUG_FLAGS})
+    set(QDlib_RELEASE_FLAGS -mmacosx-version-min=10.14 ${QDlib_RELEASE_FLAGS})
     set(CMAKE_MACOSX_RPATH 1)
 elseif (UNIX)
     message("On UNIX")
-    set(QDlib_RELEASE_FLAGS "-ftree-parallelize-loops=8  ${QDlib_RELEASE_FLAGS}")
+    set(QDlib_RELEASE_FLAGS -ftree-parallelize-loops=8  ${QDlib_RELEASE_FLAGS})
 else ()
     message("Other OS")
 endif ()

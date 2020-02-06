@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-23.
 //
-#include "TensorTree.h"
-#include "TensorTree_Implementation.h"
+#include "Tree/TensorTree.h"
+#include "Tree/TensorTree_Implementation.h"
 
 //template class Tree<double>;
 typedef complex<double> cd;
