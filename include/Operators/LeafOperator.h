@@ -12,22 +12,22 @@
  */
 
 template <typename T>
-class SingleParticleOperator
+class LeafOperator
 	/**
-	 * \class SingleParticleOperator
+	 * \class LeafOperator
 	 * \ingroup Operators
 	 * \brief This class represents a single particle operator acting on a single leaf.
 	 */
 {
 public:
-	SingleParticleOperator() = default;
-	~SingleParticleOperator() = default;
+	LeafOperator() = default;
+	~LeafOperator() = default;
 
 	virtual void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff)const = 0;
 };
 
 template <typename T>
-using SPO = SingleParticleOperator<T>;
+using SPO = LeafOperator<T>;
 
-typedef SingleParticleOperator<complex<double>> SPOcd;
+typedef LeafOperator<complex<double>> SPOcd;

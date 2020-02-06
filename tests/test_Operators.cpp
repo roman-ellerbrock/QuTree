@@ -2,10 +2,10 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "SingleParticleOperator.h"
-#include "SingleParticleOperatorFunction.h"
-#include "SingleParticleOperatorMatrix.h"
-#include "MultiParticleOperator.h"
+#include "LeafOperator.h"
+#include "LeafFunction.h"
+#include "LeafMatrix.h"
+#include "MultiLeafOperator.h"
 #include "SumOfProductsOperator.h"
 #include "HO_Basis.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"

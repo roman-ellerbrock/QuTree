@@ -1,27 +1,27 @@
 //
 // Created by Roman Ellerbrock on 2020-01-24.
 //
-#ifndef SINGLEPARTICLEOPERATORMATRIX_H
-#define SINGLEPARTICLEOPERATORMATRIX_H
-#include "SingleParticleOperator.h"
+#ifndef LEAFMATRIX_H
+#define LEAFMATRIX_H
+#include "LeafOperator.h"
 #include "Core/FactorMatrix.h"
 
 template<typename T>
-class SingleParticleOperatorMatrix: public SPO<T>
+class LeafMatrix: public LeafOperator<T>
 	/**
-	 * \class SingleParticleOperatorMatrix
+	 * \class LeafMatrix
 	 * \ingroup Operators
 	 * \brief This class allows to create SPOs from (factor) Matrices.
 	 */
 {
 public:
-	SingleParticleOperatorMatrix() = default;
+	LeafMatrix() = default;
 
-	explicit SingleParticleOperatorMatrix(FactorMatrix<T> h);
+	explicit LeafMatrix(FactorMatrix<T> h);
 
-	explicit SingleParticleOperatorMatrix(Matrix<T> h);
+	explicit LeafMatrix(Matrix<T> h);
 
-	~SingleParticleOperatorMatrix() = default;
+	~LeafMatrix() = default;
 
 	virtual void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
@@ -33,10 +33,10 @@ private:
 };
 
 template<typename T>
-using SPOM = SingleParticleOperatorMatrix<T>;
+using SPOM = LeafMatrix<T>;
 
 typedef SPOM<complex<double>> SPOMcd;
 
 typedef SPOM<double> SPOMd;
 
-#endif //SINGLEPARTICLEOPERATORMATRIX_H
+#endif //LEAFMATRIX_H

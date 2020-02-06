@@ -1,14 +1,14 @@
-#include "MultiParticleOperator.h"
+#include "MultiLeafOperator.h"
 
 
 template <typename T>
-MultiParticleOperator<T>::MultiParticleOperator()
+MultiLeafOperator<T>::MultiLeafOperator()
 	: hasV_(false) {
 	mode_.clear();
 }
 
 template <typename T>
-Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
+Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	const Leaf& Phy) const {
 	Tensor<T> hPhi(Phi.Dim());
 	size_t mode_x = Phy.Mode();
@@ -19,7 +19,7 @@ Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	for (size_t l = 0; l < SingParOp.size(); ++l) {
 		if (mode_x != mode_[l]) { continue; }
 
-		shared_ptr<SPO<T>> spo = operator[](l);
+		shared_ptr<LeafOperator<T>> spo = operator[](l);
 		// apply it
 		if (switchbool) {
 			spo->Apply(grid, hPhi, Phi);
@@ -37,7 +37,7 @@ Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 }
 
 template <typename T>
-Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
+Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	const vector<int>& list, const PrimitiveBasis& grid) const {
 	Tensor<T> hAcoeff(Acoeffs.Dim());
 	bool switchbool = true;
@@ -45,7 +45,7 @@ Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	for (size_t l = 0; l < list.size(); l++) {
 		// get the active_ part in the MPO
 		int part = list[l];
-		shared_ptr<SPO<T>> spo = operator[](part);
+		shared_ptr<LeafOperator<T>> spo = operator[](part);
 
 		// apply it
 		if (switchbool) {
@@ -64,7 +64,7 @@ Tensor<T> MultiParticleOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 }
 
 template<typename T>
-TensorTree<T> MultiParticleOperator<T>::Apply(TensorTree<T> Psi,
+TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 	const TTBasis& basis) const {
 	for (size_t i = 0; i < basis.nNodes(); i++) {
 		const Node& node = basis.GetNode(i);
@@ -89,10 +89,10 @@ TensorTree<T> MultiParticleOperator<T>::Apply(TensorTree<T> Psi,
 }
 
 template <typename T>
-void MultiParticleOperator<T>::SetV(const PotentialOperator& V_) {
+void MultiLeafOperator<T>::SetV(const PotentialOperator& V_) {
     v_ = V_;
     hasV_ = true;
 }
 
-template class MultiParticleOperator<complex<double>>;
-template class MultiParticleOperator<double>;
+template class MultiLeafOperator<complex<double>>;
+template class MultiLeafOperator<double>;

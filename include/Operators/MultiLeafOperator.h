@@ -2,19 +2,19 @@
 #include "Core/Tensor.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
-#include "SingleParticleOperator.h"
-#include "SingleParticleOperatorFunction.h"
-#include "SingleParticleOperatorMatrix.h"
+#include "LeafOperator.h"
+#include "LeafFunction.h"
+#include "LeafMatrix.h"
 #include "PotentialOperator.h"
 
 template <typename T>
-class MultiParticleOperator
+class MultiLeafOperator
 	/*!
-	 * \class MultiParticleOperator
+	 * \class MultiLeafOperator
 	 * \ingroup Operators
-	 * \brief A MultiParticleOperator (MPO) is a product of general single-particle operators
+	 * \brief A MultiLeafOperator (MPO) is a product of general single-particle operators
 	 *
-	 * A MultiParticleOperator is one summand in a SumofProducts
+	 * A MultiLeafOperator is one summand in a SumofProducts
 	 * operator. It can be applied to a TensorTree resulting in
 	 * a wavefunction with a different bottomlayer-Tensors. The MPO is
 	 * central for building hamiltonians.
@@ -28,20 +28,20 @@ class MultiParticleOperator
 {
 public:
 	/// Constructor without memory allocation
-	MultiParticleOperator();
+	MultiLeafOperator();
 
 	/// Default destructor
-	~MultiParticleOperator() = default;
+	~MultiLeafOperator() = default;
 
 	/// Construct a MPO from a single SPO
-	MultiParticleOperator(const SPOM<T>& h, int mode_x)
-		: MultiParticleOperator() {
+	MultiLeafOperator(const LeafMatrix<T>& h, int mode_x)
+		: MultiLeafOperator() {
 		push_back(h, mode_x);
 	}
 
 	/// Construct a MPO from a single RefSPO
-	MultiParticleOperator(const SPOf<T>& h, int mode_x)
-		: MultiParticleOperator() {
+	MultiLeafOperator(const LeafFunction<T>& h, int mode_x)
+		: MultiLeafOperator() {
 		push_back(h, mode_x);
 	}
 
@@ -59,22 +59,22 @@ public:
 		mode_.push_back(mode_x);
 	}
 
-	void push_back(const SPOM<T>& h, size_t mode) {
-		auto* h_ptr = new SPOM<T>(h);
+	void push_back(const LeafMatrix<T>& h, size_t mode) {
+		auto* h_ptr = new LeafMatrix<T>(h);
 		h_ptr->Mode() = 0;
-		SingParOp.push_back(shared_ptr<SPO<T>>(h_ptr));
+		SingParOp.push_back(shared_ptr<LeafOperator<T>>(h_ptr));
 		mode_.emplace_back(mode);
 	}
 
 	/// Push back a RefSPO to the MPO
-	void push_back(const SPOf<T>& h, int mode_x) {
-		auto *spo = new SPOf<T>(h);
-		SingParOp.push_back(shared_ptr<SPO<T>>(spo));
+	void push_back(const LeafFunction<T>& h, int mode_x) {
+		auto *spo = new LeafFunction<T>(h);
+		SingParOp.push_back(shared_ptr<LeafOperator<T>>(spo));
 		mode_.push_back(mode_x);
 	}
 
 	/// Access the i-th SPO in the MPO
-	shared_ptr<SPO<T>> operator()(size_t i) {
+	shared_ptr<LeafOperator<T>> operator()(size_t i) {
 		assert(i >= 0);
 		assert(i < SingParOp.size());
 		return SingParOp[i];
@@ -84,7 +84,7 @@ public:
 	size_t size() const { return mode_.size(); }
 
 	/// Access the i-th SPO in the MPO
-	shared_ptr<SPO<T>> operator[](size_t i) const {
+	shared_ptr<LeafOperator<T>> operator[](size_t i) const {
 		assert(i < mode_.size());
 		assert(i >= 0);
 		return SingParOp[i];
@@ -113,9 +113,9 @@ public:
 	}
 
 	/// Multiply two MPOs.
-	friend MultiParticleOperator operator*(const MultiParticleOperator& A,
-		const MultiParticleOperator& B) {
-		MultiParticleOperator M = B;
+	friend MultiLeafOperator operator*(const MultiLeafOperator& A,
+		const MultiLeafOperator& B) {
+		MultiLeafOperator M = B;
 
 		for (size_t i = 0; i < A.size(); i++) {
 			M.push_back(A[i], A.Mode(i));
@@ -145,7 +145,7 @@ public:
 
 protected:
 	/// These are the SPOs
-	vector<shared_ptr<SPO<T>>> SingParOp;
+	vector<shared_ptr<LeafOperator<T>>> SingParOp;
 	/// These are the modes the SPOs act on
 	vector<int> mode_;
 	/// The potential operator
@@ -155,7 +155,7 @@ protected:
 };
 
 template <typename T>
-using MPO = MultiParticleOperator<T>;
+using MPO = MultiLeafOperator<T>;
 
 typedef MPO<complex<double>> MPOcd;
 

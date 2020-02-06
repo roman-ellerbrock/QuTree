@@ -1,5 +1,5 @@
 #pragma once
-#include "MultiParticleOperator.h"
+#include "MultiLeafOperator.h"
 
 template<typename T>
 class SumOfProductsOperator

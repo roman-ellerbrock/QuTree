@@ -196,6 +196,7 @@ namespace benchmark {
 		size_t dim = 2;
 		auto max_order = (size_t) pow(2, 20);
 		size_t min_order = 4;
+		/*
 		for (size_t order = min_order; order <= max_order; order *= 2) {
 			size_t mode = order / 2 + 1;
 			os << std::setprecision(6);
@@ -203,8 +204,8 @@ namespace benchmark {
 			auto stat = benchmark::holematrixtree(gen,  dim, order, nsample, os);
 			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
+		 */
 
-		/*
 		os << "# Factor-matrix tree\n";
 		for (size_t order = min_order; order <= max_order; order *= 2) {
 			size_t mode = order / 2 + 1;
@@ -212,6 +213,7 @@ namespace benchmark {
 			auto stat = benchmark::factormatrixtree(gen,  dim, order, nsample, os);
 			os << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
+		/*
 		os << "# Sparse factor matrix tree\n";
 		for (size_t order = min_order; order <= max_order; order *= 2) {
 			size_t mode = order / 2 + 1;

@@ -2,7 +2,7 @@
 #include "Core/Matrix.h"
 #include "TensorTree.h"
 #include "SparseTreeStructuredObject.h"
-#include "MultiParticleOperator.h"
+#include "MultiLeafOperator.h"
 #include "Core/FactorMatrix.h"
 
 

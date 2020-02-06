@@ -1,7 +1,7 @@
 #pragma once
 #include "TreeStructuredObject.h"
 #include "TensorTree.h"
-#include "SingleParticleOperator.h"
+#include "LeafOperator.h"
 #include "SparseFactorMatrixTree.h"
 #include "SparseTreeStructuredObject.h"
 

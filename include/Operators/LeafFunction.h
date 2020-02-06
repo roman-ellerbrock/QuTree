@@ -1,5 +1,5 @@
 #pragma once
-#include "SingleParticleOperator.h"
+#include "LeafOperator.h"
 
 // This is the abstract form of a single particle operator
 // implemented in functional paradigma
@@ -7,21 +7,21 @@ template<typename T>
 using SPOF = function<void(const PrimitiveBasis&, Tensor<T>&, const Tensor<T>&)>;
 
 template<typename T>
-class SingleParticleOperatorFunction
-	: public SPO<T>
+class LeafFunction
+	: public LeafOperator<T>
 	/**
-	 * \class singleparticleoperatorfunction
+	 * \class LeafFunction
 	 * \ingroup operators
 	 * \brief this class allows to use functions as spos.
 	 */
 {
 public:
-	SingleParticleOperatorFunction() = default;
+	LeafFunction() = default;
 
-	SingleParticleOperatorFunction(const SPOF<T> h)
+	LeafFunction(const SPOF<T> h)
 		: h_(move(h)) {}
 
-	~SingleParticleOperatorFunction() = default;
+	~LeafFunction() = default;
 
 	void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
@@ -31,7 +31,7 @@ protected:
 };
 
 template<typename T>
-using SPOf = SingleParticleOperatorFunction<T>;
+using SPOf = LeafFunction<T>;
 
-typedef SingleParticleOperatorFunction<complex<double>> SPOfcd;
+typedef LeafFunction<complex<double>> SPOfcd;
 
