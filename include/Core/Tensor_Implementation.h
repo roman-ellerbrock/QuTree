@@ -487,6 +487,18 @@ Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	return S;
 }
 
+template<typename T>
+void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+	const TensorDim& tdim_a(A.Dim());
+	const TensorDim& tdim_b(A.Dim());
+	size_t active1 = tdim_a.Active(k);
+	size_t before = tdim_a.Before(k);
+	size_t after = tdim_a.TotAfter(k);
+	size_t active2 = tdim_b.Active(k);
+	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
+	TensorHoleProduct(S, A, B, before, active1, active2, after);
+}
+
 template<typename T, typename U>
 void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
@@ -715,16 +727,33 @@ Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 }
 
 template<typename T, typename U>
+void multStateArTB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B) {
+	const TensorDim& tdim(B.Dim());
+	size_t dimpart = tdim.GetDimPart();
+	size_t ntensor = tdim.GetNumTensor();
+	for (size_t n = 0; n < ntensor; n++) {
+		size_t B_idx = n * dimpart;
+		for (size_t m = 0; m < ntensor; m++) {
+			size_t C_idx = m * dimpart;
+			size_t A_idx = m * ntensor;
+			for (size_t i = 0; i < dimpart; i++) {
+				/// C(i, m) += A(n, m) * B(i, n);
+				C[C_idx + i] += A[A_idx + n] * B[B_idx + i];
+			}
+		}
+	}
+}
+
+template<typename T, typename U>
 Tensor<T> multStateArTB(const Matrix<U>& A, const Tensor<T>& B) {
-	TensorDim tdim(B.Dim());
+	const TensorDim& tdim(B.Dim());
+	size_t dimpart = tdim.GetDimPart();
+	size_t ntensor = tdim.GetNumTensor();
 	assert(A.Dim1() == A.Dim2());
-	assert(A.Dim2() == B.Dim().GetNumTensor());
+	assert(A.Dim2() == ntensor);
 
 	Tensor<T> C(tdim);
-	for (size_t n = 0; n < tdim.GetNumTensor(); n++)
-		for (size_t m = 0; m < tdim.GetNumTensor(); m++)
-			for (size_t i = 0; i < tdim.GetDimPart(); i++)
-				C(i, m) += A(n, m) * B(i, n);
+	multStateArTB(C, A, B);
 
 	return C;
 }
