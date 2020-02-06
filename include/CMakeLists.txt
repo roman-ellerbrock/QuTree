@@ -1,73 +1,59 @@
-
 set(QDlib_INCLUDE_FILES
-        Core/BS_integrator.h
-        Core/DoubleParticleOperator.h
-        Core/FFT.h
-        Core/FFTCooleyTukey.h
-        Core/JacobiRotationFramework.h
-        Core/Lanzcos.h
-        Core/long_integer.h
-        Core/Matrix.h
-        Core/Matrix_Implementation.h
-        Core/MultiIndex.h
-        QDlib.h
-        Core/QMConstants.h
-        Core/SimultaneousDiagonalization.h
-        Core/FactorMatrix.h
-        Core/Tensor.h
-        Core/TensorDim.h
-        Core/TensorDim_Extension.h
-        Core/Tensor_Extension.h
-        Core/Tensor_Extension_Implementation.h
-        Core/Tensor_Implementation.h
-        Core/Tree.h
-        Core/TreeNode.h
-        Core/Vector.h
-        Core/Vector_Implementation.h
-        Core/WeightedSimultaneousDiagonalization.h
-        Core/stdafx.h
-        )
-
-set(TENSOR_TREE_FILES
-        TensorTreeBasis/AbstractNode.h
-        TensorTreeBasis/Leaf.h
-        TensorTreeBasis/LinearizedLeaves.h
-        TensorTreeBasis/Node.h
-        TensorTreeBasis/NodePosition.h
-        TensorTreeBasis/TensorTreeBasis.h
-        TensorTreeBasis/TTBasisFactory.h
-        Tree/TreeStructuredObject.h
-        Tree/TensorTree.h
-        Tree/TensorTree_Implementation.h
-        Tree/FactorMatrixTree.h
-        Tree/TreeStructuredObject.h
-        Tree/TreeMarker.h
-        Tree/SparseFactorMatrixTree.h
-        Tree/SparseHoleMatrixTree.h
-        )
-
-set(OPERATOR_FILES
-        Operators/MultiParticleOperator.h
-        Operators/SingleParticleOperator.h
-        Operators/SingleParticleOperatorMatrix.h
-        Operators/SingleParticleOperatorFunction.h
-        Operators/SumOfProductsOperator.h
-        )
-
-set(LEAF_TYPE_FILES
-        TensorTreeBasis/LeafTypes/PrimitiveBasis.h
-        TensorTreeBasis/LeafTypes/BosonNumberBasis.h
-        TensorTreeBasis/LeafTypes/DVRBasis.h
-        TensorTreeBasis/LeafTypes/FermionNumberBasis.h
-        TensorTreeBasis/LeafTypes/FFTGrid.h
-        TensorTreeBasis/LeafTypes/HO_Basis.h
-        TensorTreeBasis/LeafTypes/LegendrePolynomials.h
-        TensorTreeBasis/LeafTypes/LogicalBasis.h
-        TensorTreeBasis/LeafTypes/NumberBasis.h
-        TensorTreeBasis/LeafTypes/SpinGroup.h
-        )
-
-install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)
-install(FILES ${TENSOR_TREE_FILES} DESTINATION include/QDlib/TensorTree)
-install(FILES ${OPERATOR_FILES} DESTINATION include/QDlib/Operators)
+    include/Core/BS_integrator.h
+    include/Core/DoubleParticleOperator.h
+    include/Core/FFT.h
+    include/Core/FFTCooleyTukey.h
+    include/Core/FactorMatrix.h
+    include/Core/JacobiRotationFramework.h
+    include/Core/Lanzcos.h
+    include/Core/Matrix.h
+    include/Core/Matrix_Implementation.h
+    include/Core/MultiIndex.h
+    include/Core/QMConstants.h
+    include/Core/SimultaneousDiagonalization.h
+    include/Core/Tensor.h
+    include/Core/TensorDim.h
+    include/Core/TensorDim_Extension.h
+    include/Core/Tensor_Extension.h
+    include/Core/Tensor_Extension_Implementation.h
+    include/Core/Tensor_Implementation.h
+    include/Core/Tree.h
+    include/Core/TreeNode.h
+    include/Core/Vector.h
+    include/Core/Vector_Implementation.h
+    include/Core/WeightedSimultaneousDiagonalization.h
+    include/Core/long_integer.h
+    include/Core/stdafx.h
+    include/Operators/MultiParticleOperator.h
+    include/Operators/SingleParticleOperator.h
+    include/Operators/SingleParticleOperatorFunction.h
+    include/Operators/SingleParticleOperatorMatrix.h
+    include/Operators/SumOfProductsOperator.h
+    include/QDlib.h
+    include/TensorTreeBasis/AbstractNode.h
+    include/TensorTreeBasis/Leaf.h
+    include/TensorTreeBasis/LeafTypes/BosonNumberBasis.h
+    include/TensorTreeBasis/LeafTypes/DVRBasis.h
+    include/TensorTreeBasis/LeafTypes/FFTGrid.h
+    include/TensorTreeBasis/LeafTypes/FermionNumberBasis.h
+    include/TensorTreeBasis/LeafTypes/HO_Basis.h
+    include/TensorTreeBasis/LeafTypes/LegendrePolynomials.h
+    include/TensorTreeBasis/LeafTypes/LogicalBasis.h
+    include/TensorTreeBasis/LeafTypes/NumberBasis.h
+    include/TensorTreeBasis/LeafTypes/PrimitiveBasis.h
+    include/TensorTreeBasis/LeafTypes/SpinGroup.h
+    include/TensorTreeBasis/LinearizedLeaves.h
+    include/TensorTreeBasis/Node.h
+    include/TensorTreeBasis/NodePosition.h
+    include/TensorTreeBasis/TTBasisFactory.h
+    include/TensorTreeBasis/TensorTreeBasis.h
+    include/Tree/FactorMatrixTree.h
+    include/Tree/SparseFactorMatrixTree.h
+    include/Tree/SparseHoleMatrixTree.h
+    include/Tree/TensorTree.h
+    include/Tree/TensorTree_Implementation.h
+    include/Tree/TreeMarker.h
+    include/Tree/TreeStructuredObject.h
+    include/Tree/TreeStructuredObject.h
+    )
 

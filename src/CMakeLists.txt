@@ -1,59 +1,40 @@
-
 set(QDlib_SOURCE_FILES
-        Core/TensorDim.cpp
-        Core/TensorDim_Extension.cpp
-        Core/FactorMatrix_Instantiations.cpp
-        Core/FFT.cpp
-        Core/JacobiRotationFramework.cpp
-        Core/SimultaneousDiagonalization.cpp
-        Core/long_integer.cpp
-        Core/Vector_Instantiations.cpp
-        Core/Matrix_Instantiations.cpp
-        Core/Tensor_Instantiations.cpp
-        Core/Tensor_Extension_Instantiations.cpp
-        Core/stdafx.cpp
-        Core/WeightedSimultaneousDiagonalization.cpp
-        TensorTreeBasis/Leaf.cpp
-        TensorTreeBasis/LinearizedLeaves.cpp
-        TensorTreeBasis/Node.cpp
-        TensorTreeBasis/NodePosition.cpp
-        TensorTreeBasis/TensorTreeBasis.cpp
-        TensorTreeBasis/TTBasisFactory.cpp
-        Tree/TensorTree_Instantiation.cpp
-        Tree/FactorMatrixTree.cpp
-        Tree/HoleMatrixTree.cpp
-        Tree/SparseFactorMatrixTree.cpp
-        Tree/SparseHoleMatrixTree.cpp
-        Operators/MultiParticleOperator.cpp
-        Operators/SingleParticleOperatorFunction.cpp
-        Operators/SingleParticleOperatorMatrix.cpp
-        Operators/SumOfProductsOperator.cpp
-        )
-
-set(LEAF_TYPE_CPP_FILES
-        TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
-        TensorTreeBasis/LeafTypes/DVRBasis.cpp
-        TensorTreeBasis/LeafTypes/FermionNumberBasis.cpp
-        TensorTreeBasis/LeafTypes/FFTGrid.cpp
-        TensorTreeBasis/LeafTypes/HO_Basis.cpp
-        TensorTreeBasis/LeafTypes/LegendrePolynomials.cpp
-        TensorTreeBasis/LeafTypes/LogicalBasis.cpp
-        TensorTreeBasis/LeafTypes/NumberBasis.cpp
-        TensorTreeBasis/LeafTypes/SpinGroup.cpp
-        Tree/TreeMarker.cpp)
-
-# Compile objects only once for both static and shared libraries
-# From https://stackoverflow.com/a/29824424/3052876
-add_library(objlib OBJECT ${QDlib_SOURCE_FILES} ${LEAF_TYPE_CPP_FILES})
-set_property(TARGET objlib PROPERTY POSITION_INDEPENDENT_CODE 1)
-add_library(QDlib_static STATIC $<TARGET_OBJECTS:objlib>)
-add_library(QDlib SHARED $<TARGET_OBJECTS:objlib>)
-
-# CMake <=2.8.7 compatible version to get both static and shared
-#add_library(QDlib_static STATIC  ${QDlib_SOURCE_FILES} ${LEAF_TYPE_CPP_FILES})
-#add_library(QDlib SHARED  ${QDlib_SOURCE_FILES} ${LEAF_TYPE_CPP_FILES})
-
-SET_TARGET_PROPERTIES(QDlib_static PROPERTIES OUTPUT_NAME QDlib CLEAN_DIRECT_OUTPUT 1)
-
-install(TARGETS QDlib DESTINATION lib)
-
+    src/Core/FFT.cpp
+    src/Core/FactorMatrix_Instantiations.cpp
+    src/Core/JacobiRotationFramework.cpp
+    src/Core/Matrix_Instantiations.cpp
+    src/Core/SimultaneousDiagonalization.cpp
+    src/Core/TensorDim.cpp
+    src/Core/TensorDim_Extension.cpp
+    src/Core/Tensor_Extension_Instantiations.cpp
+    src/Core/Tensor_Instantiations.cpp
+    src/Core/Vector_Instantiations.cpp
+    src/Core/WeightedSimultaneousDiagonalization.cpp
+    src/Core/long_integer.cpp
+    src/Core/stdafx.cpp
+    src/Operators/MultiParticleOperator.cpp
+    src/Operators/SingleParticleOperatorFunction.cpp
+    src/Operators/SingleParticleOperatorMatrix.cpp
+    src/Operators/SumOfProductsOperator.cpp
+    src/TensorTreeBasis/Leaf.cpp
+    src/TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
+    src/TensorTreeBasis/LeafTypes/DVRBasis.cpp
+    src/TensorTreeBasis/LeafTypes/FFTGrid.cpp
+    src/TensorTreeBasis/LeafTypes/FermionNumberBasis.cpp
+    src/TensorTreeBasis/LeafTypes/HO_Basis.cpp
+    src/TensorTreeBasis/LeafTypes/LegendrePolynomials.cpp
+    src/TensorTreeBasis/LeafTypes/LogicalBasis.cpp
+    src/TensorTreeBasis/LeafTypes/NumberBasis.cpp
+    src/TensorTreeBasis/LeafTypes/SpinGroup.cpp
+    src/TensorTreeBasis/LinearizedLeaves.cpp
+    src/TensorTreeBasis/Node.cpp
+    src/TensorTreeBasis/NodePosition.cpp
+    src/TensorTreeBasis/TTBasisFactory.cpp
+    src/TensorTreeBasis/TensorTreeBasis.cpp
+    src/Tree/FactorMatrixTree.cpp
+    src/Tree/HoleMatrixTree.cpp
+    src/Tree/SparseFactorMatrixTree.cpp
+    src/Tree/SparseHoleMatrixTree.cpp
+    src/Tree/TensorTree_Instantiation.cpp
+    src/Tree/TreeMarker.cpp
+    )
