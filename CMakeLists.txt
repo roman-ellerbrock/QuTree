@@ -60,7 +60,7 @@ install(EXPORT QDlib-export
 # Set Compiler Flags
 #####################################################################
 # For debugging
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Ensure C++14 standard
 target_compile_features(QDlib PRIVATE cxx_std_14)
