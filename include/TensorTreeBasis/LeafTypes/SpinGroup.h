@@ -1,12 +1,12 @@
 #pragma once
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
 #include "Core/Tensor.h"
 #include <random>
 
 class SpinGroup :
-	public PrimitiveBasis
+	public LeafInterface
 {
 public:
 	explicit SpinGroup(size_t dim): dim_(dim), alpha_(0.), last_(false) {}

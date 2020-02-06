@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Tensor.h"
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 
 /**
  * \defgroup Operators
@@ -23,7 +23,7 @@ public:
 	LeafOperator() = default;
 	~LeafOperator() = default;
 
-	virtual void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
+	virtual void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff)const = 0;
 };
 

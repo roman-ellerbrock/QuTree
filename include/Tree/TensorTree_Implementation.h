@@ -71,7 +71,7 @@ template<typename T>
 void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 	const Node& node) {
 	const Leaf& coord = node.PhysCoord();
-	const PrimitiveBasis& grid = coord.PrimitiveGrid();
+	const LeafInterface& grid = coord.PrimitiveGrid();
 	grid.InitSPF(Phi);
 }
 

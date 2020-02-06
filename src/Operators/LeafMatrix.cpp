@@ -10,7 +10,7 @@ LeafMatrix<T>::LeafMatrix(FactorMatrix<T> h)
 }
 
 template<typename T>
-void LeafMatrix<T>::Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
+void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	const Tensor<T>& Acoeff) const {
 	multAB(hAcoeff, h_, Acoeff);
 }

@@ -12,7 +12,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	const Leaf& Phy) const {
 	Tensor<T> hPhi(Phi.Dim());
 	size_t mode_x = Phy.Mode();
-	const PrimitiveBasis& grid = Phy.PrimitiveGrid();
+	const LeafInterface& grid = Phy.PrimitiveGrid();
 	bool switchbool = true;
 
 	// Applying the MLO uses switching of the result Tensor to increase performance.
@@ -38,7 +38,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 
 template <typename T>
 Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
-	const vector<int>& list, const PrimitiveBasis& grid) const {
+	const vector<int>& list, const LeafInterface& grid) const {
 	Tensor<T> hAcoeff(Acoeffs.Dim());
 	bool switchbool = true;
 	// Applying the MLO uses switching of the result Tensor to increase performance.
@@ -70,7 +70,7 @@ TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 		const Node& node = basis.GetNode(i);
 		if (node.IsBottomlayer()) {
 			const Leaf& phy = node.PhysCoord();
-			const PrimitiveBasis& grid = phy.PrimitiveGrid();
+			const LeafInterface& grid = phy.PrimitiveGrid();
 			int coord = phy.Mode();
 
 			// build list with active_ parts

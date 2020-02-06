@@ -51,7 +51,7 @@ public:
 
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
-		const vector<int>& list, const PrimitiveBasis& grid) const;
+		const vector<int>& list, const LeafInterface& grid) const;
 
 	/// Push back a SPO to the MLO
 	void push_back(shared_ptr<LeafOperator<T>> h, int mode_x) {

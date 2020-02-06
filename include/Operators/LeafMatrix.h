@@ -23,7 +23,7 @@ public:
 
 	~LeafMatrix() = default;
 
-	virtual void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
+	virtual void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
 
 	size_t& Mode() { return h_.Mode(); }

@@ -4,7 +4,7 @@
 // This is the abstract form of a single particle operator
 // implemented in functional paradigma
 template<typename T>
-using SPOF = function<void(const PrimitiveBasis&, Tensor<T>&, const Tensor<T>&)>;
+using SPOF = function<void(const LeafInterface&, Tensor<T>&, const Tensor<T>&)>;
 
 template<typename T>
 class LeafFunction
@@ -23,7 +23,7 @@ public:
 
 	~LeafFunction() = default;
 
-	void Apply(const PrimitiveBasis& grid, Tensor<T>& hAcoeff,
+	void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
 
 protected:

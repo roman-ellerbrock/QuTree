@@ -55,7 +55,7 @@ set(OPERATOR_FILES
         )
 
 set(LEAF_TYPE_FILES
-        TensorTreeBasis/LeafTypes/PrimitiveBasis.h
+        TensorTreeBasis/LeafTypes/LeafInterface.h
         TensorTreeBasis/LeafTypes/BosonNumberBasis.h
         TensorTreeBasis/LeafTypes/DVRBasis.h
         TensorTreeBasis/LeafTypes/FermionNumberBasis.h
