@@ -56,7 +56,7 @@ pair<double, double> factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	return factormatrixtree_sample(fmat, Psi, basis, nsample);
 }
 
-auto sparse_factormatrixtree_sample(SparseFactorMatrixTreecd& fmat, const MPOcd& M,
+auto sparse_factormatrixtree_sample(SparseFactorMatrixTreecd& fmat, const MLOcd& M,
 	const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
 
 	vector<chrono::microseconds> duration_vec;
@@ -78,15 +78,15 @@ pair<double, double> sparse_factormatrixtree(mt19937& gen, size_t dim, size_t nl
 	FactorMatrixcd X(2, 1);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
-	SPOMcd x(X);
-	MPOcd M(x, 0);
+	LeafMatrixcd x(X);
+	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
 	SparseFactorMatrixTreecd fmat(M, basis);
 	return sparse_factormatrixtree_sample(fmat, M, Psi, basis, nsample);
 }
 
 auto sparse_holematrixtree_sample(SparseHoleMatrixTreecd& hole,
-	const SparseFactorMatrixTreecd& fmat, const MPOcd& M,
+	const SparseFactorMatrixTreecd& fmat, const MLOcd& M,
 	const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
 
 	vector<chrono::microseconds> duration_vec;
@@ -108,8 +108,8 @@ pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nlea
 	FactorMatrixcd X(2, 1);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
-	SPOMcd x(X);
-	MPOcd M(x, 0);
+	LeafMatrixcd x(X);
+	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
 	SparseFactorMatrixTreecd fmat(Psi, M, basis);
 	SparseHoleMatrixTreecd hole(M, basis);

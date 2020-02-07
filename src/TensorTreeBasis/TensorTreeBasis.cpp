@@ -209,7 +209,7 @@ void TensorTreeBasis::Read(istream& file) {
 		linearizedLeaves_[i].SetPar(par);
 
 		// Initialize primitive grid (HO, FFT, Legendre, ...)
-		PrimitiveBasis& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
+		LeafInterface& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
 		primitivebasis.Initialize(par.Omega(), par.R0(), par.WFR0(), par.WFOmega());
 	}
 }

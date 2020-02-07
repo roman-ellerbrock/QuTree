@@ -3,7 +3,7 @@
 
 
 NumberBasis::NumberBasis(int dim,bool fermion)
-	:PrimitiveBasis()
+	: LeafInterface()
 {
     dim_=dim;
     fermion_=fermion;

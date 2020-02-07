@@ -1,14 +1,14 @@
 #include "SparseHoleMatrixTree.h"
 
 template<typename T>
-SparseHoleMatrixTree<T>::SparseHoleMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename)
+SparseHoleMatrixTree<T>::SparseHoleMatrixTree(const MLO<T>& M, const TTBasis& basis, const string& filename)
 	: SparseHoleMatrixTree(M, basis) {
 	Read(filename);
 }
 
 template<typename T>
 SparseHoleMatrixTree<T>::SparseHoleMatrixTree(const TensorTree<T>& Psi,
-	const SparseFactorMatrixTree<T>& hmat, const MPO<T>& M, const TTBasis& basis)
+	const SparseFactorMatrixTree<T>& hmat, const MLO<T>& M, const TTBasis& basis)
 	: SparseHoleMatrixTree(M, basis) {
 	Calculate(Psi, Psi, hmat, basis);
 }

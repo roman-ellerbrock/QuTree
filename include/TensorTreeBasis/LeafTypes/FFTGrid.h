@@ -1,12 +1,12 @@
 #pragma once
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
 #include "Core/FactorMatrix.h"
 #include "Core/Tensor.h"
 
 class FFTGrid :
-	public PrimitiveBasis
+	public LeafInterface
 {
 public:
 	explicit FFTGrid(int dim);
