@@ -3,7 +3,7 @@
 #include "AbstractNode.h"
 #include "NodePosition.h"
 
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 #include "DVRBasis.h"
 #include "HO_Basis.h"
 #include "FFTGrid.h"
@@ -123,9 +123,9 @@ public:
 
 	int NodeType() const override { return nodeType_; }
 
-	PrimitiveBasis& PrimitiveGrid() { return *primitiveBasis_; }
+	LeafInterface& PrimitiveGrid() { return *primitiveBasis_; }
 
-	const PrimitiveBasis& PrimitiveGrid() const { return *primitiveBasis_; }
+	const LeafInterface& PrimitiveGrid() const { return *primitiveBasis_; }
 
 	// This is not a GetNode& to avoid circular dependencies
 	AbstractNode& Up() const { return *up_; };
@@ -157,6 +157,6 @@ protected:
 	AbstractNode *up_;
 	PhysPar par_;
 	NodePosition position_;
-	unique_ptr<PrimitiveBasis> primitiveBasis_;
+	unique_ptr<LeafInterface> primitiveBasis_;
 };
 

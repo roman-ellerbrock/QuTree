@@ -14,7 +14,7 @@ SUITE (HMatrices) {
 		mt19937 rng_;
 		TTBasis basis_;
 		TensorTreecd Psi_;
-		MPOcd M_;
+		MLOcd M_;
 
 		void Initialize() {
 
@@ -27,8 +27,8 @@ SUITE (HMatrices) {
 			FactorMatrixcd X(2, 1);
 			X(0, 0) = 0.5;
 			X(1, 1) = 0.5;
-			SPOMcd x(X);
-			M_ = MPOcd (x, 0);
+			LeafMatrixcd x(X);
+			M_ = MLOcd (x, 0);
 			M_.push_back(x, 3);
 		}
 	};

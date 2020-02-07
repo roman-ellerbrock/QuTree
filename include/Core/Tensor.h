@@ -201,6 +201,9 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind);
 
 template<typename T>
+void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k);
+
+template<typename T>
 Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
 
 template <typename T, typename U>
@@ -225,6 +228,9 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 
 template <typename T, typename U>
 Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B);
+
+template<typename T, typename U>
+void multStateArTB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B);
 
 template <typename T, typename U>
 Tensor<T> multStateArTB(const Matrix<U>& A, const Tensor<T>& B);

@@ -1,8 +1,8 @@
 #pragma once
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 
 class LogicalBasis
-: public PrimitiveBasis
+: public LeafInterface
 {
 public:
 	LogicalBasis() = default;

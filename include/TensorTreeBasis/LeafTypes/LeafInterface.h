@@ -1,11 +1,11 @@
 #pragma once
 #include"Core/Tensor.h"
 
-class PrimitiveBasis
+class LeafInterface
 {
 public:
-	PrimitiveBasis() = default;
-	virtual ~PrimitiveBasis() = default;
+	LeafInterface() = default;
+	virtual ~LeafInterface() = default;
 
 	virtual void Initialize(double par0, double par1, double par2, double par3) = 0;
 	virtual void InitSPF(Tensorcd& A)const = 0;

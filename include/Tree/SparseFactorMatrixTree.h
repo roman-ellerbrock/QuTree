@@ -2,7 +2,7 @@
 #include "Core/Matrix.h"
 #include "TensorTree.h"
 #include "SparseTreeStructuredObject.h"
-#include "MultiParticleOperator.h"
+#include "MultiLeafOperator.h"
 #include "Core/FactorMatrix.h"
 
 
@@ -29,13 +29,13 @@ public:
 	using SparseTreeStructuredObject<FactorMatrix<T>>::attributes_;
 
 	/// Create FactorMatrices for relevant nodes when representing an operator
-	SparseFactorMatrixTree(const MPO<T>& M, const TTBasis& basis)
+	SparseFactorMatrixTree(const MLO<T>& M, const TTBasis& basis)
 		: SparseTreeStructuredObject<FactorMatrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
 		Initialize(basis);
 	}
 
 	/// Create and calculate FactorMatrixTree for an operator
-	SparseFactorMatrixTree(const TensorTree<T>& Psi, const MPO<T>& M, const TTBasis& basis)
+	SparseFactorMatrixTree(const TensorTree<T>& Psi, const MLO<T>& M, const TTBasis& basis)
 		: SparseFactorMatrixTree(M, basis) {
 		Calculate(Psi, M, basis);
 	}
@@ -47,7 +47,7 @@ public:
 	}
 
 	/// Read FactorMatrixTree from file
-	SparseFactorMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename)
+	SparseFactorMatrixTree(const MLO<T>& M, const TTBasis& basis, const string& filename)
 		: SparseFactorMatrixTree(M, basis) {
 		Read(filename);
 	}
@@ -60,20 +60,20 @@ public:
 
 	/// Calculate (cross-)TreeMatrix-representation of an operator
 	void Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const MPO<T>& M, const TTBasis& basis);
+		const MLO<T>& M, const TTBasis& basis);
 
 	/// Calculate TreeMatrix-representation of an operator
 	void Calculate(const TensorTree<T>& Psi,
-		const MPO<T>& M, const TTBasis& basis) {
+		const MLO<T>& M, const TTBasis& basis) {
 		Calculate(Psi, Psi, M, basis);
 	}
 
 	/// Calculate matrices locally at a node
 	void CalculateLayer(const Tensor<T>& Bra, const Tensor<T>& Ket,
-		const MPO<T>& M, const Node& node);
+		const MLO<T>& M, const Node& node);
 
 	/// Apply factor matrices locally
-	Tensor<T> Apply(const Tensor<T>& Phi, const MPO<T>& M, const Node& node) const;
+	Tensor<T> Apply(const Tensor<T>& Phi, const MLO<T>& M, const Node& node) const;
 
 	Tensor<T> ApplyUpper(Tensor<T> Phi, const Node& node) const;
 
@@ -94,7 +94,7 @@ protected:
 		const Node& node);
 
 	FactorMatrix<T> CalculateBottom(const Tensor<T>& Bra, const Tensor<T>& Ket,
-		const MPO<T>& M, const Node& node, const Leaf& phys);
+		const MLO<T>& M, const Node& node, const Leaf& phys);
 };
 
 template<typename T>

@@ -1,12 +1,12 @@
 #pragma once
 #include "Core/Tensor.h"
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
 #include "Core/FactorMatrix.h"
 
 class DVRBasis
-	: public PrimitiveBasis {
+	: public LeafInterface {
 public:
 	DVRBasis() = default;
 	explicit DVRBasis(int dim);

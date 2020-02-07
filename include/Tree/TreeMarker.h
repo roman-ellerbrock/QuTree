@@ -6,7 +6,7 @@
 #define MCTDH_TREEMARKER_H
 #include "TreeStructuredObject.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
-#include "MultiParticleOperator.h"
+#include "MultiLeafOperator.h"
 #include "SumOfProductsOperator.h"
 #include <map>
 #include <chrono>
@@ -69,7 +69,7 @@ protected:
 };
 
 /*
-TreeMarker(const MultiParticleOperator<T>& M,
+TreeMarker(const MultiLeafOperator<T>& M,
 	const TTBasis& basis) {
 	vector<size_t> modes;
 	for (size_t k = 0; k < M.size(); ++k) {
@@ -80,7 +80,7 @@ TreeMarker(const MultiParticleOperator<T>& M,
 
 TreeMarker(const SOP& sop, const TTBasis& basis) {
 	vector<size_t> actives;
-	for (const MultiParticleOperator<T>& M : sop) {
+	for (const MultiLeafOperator<T>& M : sop) {
 		for (size_t i = 0; i < M.size(); ++i) {
 			size_t k = M.Mode(i);
 			if (!count(actives.begin(), actives.end(), k)) {

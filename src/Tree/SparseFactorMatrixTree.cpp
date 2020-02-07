@@ -20,7 +20,7 @@ void SparseFactorMatrixTree<T>::Initialize(const TTBasis& basis) {
 
 template<typename T>
 void SparseFactorMatrixTree<T>::Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-	const MPO<T>& M, const TTBasis& basis) {
+	const MLO<T>& M, const TTBasis& basis) {
 	for (size_t n = 0; n < Active().size(); ++n) {
 		const Node& node = Active().MCTDHNode(n);
 		CalculateLayer(Bra[node], Ket[node], M, node);
@@ -48,7 +48,7 @@ FactorMatrix<T> SparseFactorMatrixTree<T>::CalculateUpper(const Tensor<T>& Bra, 
 
 template<typename T>
 FactorMatrix<T> SparseFactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra,
-	const Tensor<T>& Ket, const MPO<T>& M, const Node& node, const Leaf& phys) {
+	const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& phys) {
 
 	Tensor<T> MKet = M.ApplyBottomLayer(Ket, phys);
 	int ChildIdx = node.ChildIdx();
@@ -58,7 +58,7 @@ FactorMatrix<T> SparseFactorMatrixTree<T>::CalculateBottom(const Tensor<T>& Bra,
 
 template<typename T>
 void SparseFactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Bra,
-	const Tensor<T>& Ket, const MPO<T>& M, const Node& node) {
+	const Tensor<T>& Ket, const MLO<T>& M, const Node& node) {
 	if (!Active(node)) { return; }
 
 	if (node.IsBottomlayer()) {
@@ -69,7 +69,7 @@ void SparseFactorMatrixTree<T>::CalculateLayer(const Tensor<T>& Bra,
 }
 
 template<typename T>
-Tensor<T> SparseFactorMatrixTree<T>::Apply(const Tensor<T>& Phi, const MPO<T>& M,
+Tensor<T> SparseFactorMatrixTree<T>::Apply(const Tensor<T>& Phi, const MLO<T>& M,
 	const Node& node) const {
 	if (!Active(node)) { return Phi; }
 	if (node.IsBottomlayer()) {

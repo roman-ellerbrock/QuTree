@@ -15,7 +15,7 @@ class PotentialOperator
 	/**
 	 * \class PotentialOperator
 	 * \ingroup Operators
-	 * \brief This Operator marks a potential operator in a MultiParticleOperator
+	 * \brief This Operator marks a potential operator in a MultiLeafOperator
 	 *
 	 * The class is only relevant when working with quadrature methods on tensor trees.
 	 */

@@ -1,10 +1,10 @@
 #pragma once
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
-#include "PrimitiveBasis.h"
+#include "LeafInterface.h"
 
 class NumberBasis :
-public PrimitiveBasis
+public LeafInterface
 {
  public:
 	NumberBasis(int dim, bool fermion);
