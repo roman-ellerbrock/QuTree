@@ -43,7 +43,7 @@ if (NOT EIGEN3_FOUND)
 endif ()
 include_directories("${EIGEN3_INCLUDE_DIR}")
 
-set(openmp ON)
+set(openmp OFF)
 if (openmp)
     if (APPLE)
         # Assumes you've installed llvm openmp using homebrew (brew install llvm)
