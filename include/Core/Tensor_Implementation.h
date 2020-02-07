@@ -2,6 +2,7 @@
 #include "Tensor.h"
 #include "TensorDim_Extension.h"
 #include "stdafx.h"
+//#include <omp.h> //TODO: have this here by default?
 
 //////////////////////////////////////////////////////////
 // Operators
@@ -444,26 +445,35 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t npreidx1 = 0;
 	size_t npreidx2 = 0;
 
-//#pragma omp parallel for
-	for (size_t n = 0; n < after; n++) {
-		npreidx1 = n * actbef1;
-		npreidx2 = n * actbef2;
-		for (size_t j = 0; j < active2; j++) {
-			jpreidx = npreidx2 + j * before;
-			for (size_t i = 0; i < active1; i++) {
-				// S(i, j)
-				Sidx = j * active1 + i;
-				ipreidx = npreidx1 + i * before;
-				for (size_t l = 0; l < before; l++) {
-					// A(l, i, n)
-					Aidx = ipreidx + l;
-					// B(l, j, n)
-					Bidx = jpreidx + l;
-					S[Sidx] += conj(A[Aidx]) * B[Bidx];
-				}
-			}
-		}
+	// Avoid unnecessary thread launches
+	/*
+	const char* threads = getenv("OMP_NUM_THREADS");
+	if (threads) {
+	    if (after < atoi(threads)) {
+            omp_set_num_threads(after);
+	    }
 	}
+	*/
+    #pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
+    for (size_t n = 0; n < after; n++) {
+        npreidx1 = n * actbef1;
+        npreidx2 = n * actbef2;
+        for (size_t j = 0; j < active2; j++) {
+            jpreidx = npreidx2 + j * before;
+            for (size_t i = 0; i < active1; i++) {
+                // S(i, j)
+                Sidx = j * active1 + i;
+                ipreidx = npreidx1 + i * before;
+                for (size_t l = 0; l < before; l++) {
+                    // A(l, i, n)
+                    Aidx = ipreidx + l;
+                    // B(l, j, n)
+                    Bidx = jpreidx + l;
+                    S[Sidx] += conj(A[Aidx]) * B[Bidx];
+                }
+            }
+        }
+    }
 }
 
 template<typename T>
@@ -505,27 +515,37 @@ void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t jpreidx = 0;
 	size_t lactive = 0;
 
+    // Avoid unnecessary thread launches
+    // TODO: this requires #inclue <omp.h>
+    /*
+    const char* threads = getenv("OMP_NUM_THREADS");
+    if (threads) {
+        if (after < atoi(threads)) {
+            omp_set_num_threads(after);
+        }
+    }
+     */
 	if (before == 1) {
-//		#pragma omp for private(kpreidx, Bidx, Cidx, Aidx)
+		#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
 		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				Bidx = l + kpreidxB;
-				for (size_t j = 0; j < activeC; ++j) {
-					Cidx = j + kpreidxC;
-					Aidx = l * activeB + j;
-					Aidx = l * activeC + j;
+            kpreidxB = k * actbefB;
+            kpreidxC = k * actbefC;
+            for (size_t l = 0; l < activeB; ++l) {
+                Bidx = l + kpreidxB;
+                for (size_t j = 0; j < activeC; ++j) {
+                    Cidx = j + kpreidxC;
+                    Aidx = l * activeB + j; //TODO: why is this declared twice?
+                    Aidx = l * activeC + j;
 //					assert(Cidx < C.Dim().GetDimTot());
 //					assert(Bidx < B.Dim().GetDimTot());
 //					assert(Aidx < A.Dim1()*A.Dim2());
-					/// C(1, j, k) += A(j, l) * B(1, l, k)
-					C[Cidx] += A[Aidx] * B[Bidx];
-				}
-			}
-		}
+                    /// C(1, j, k) += A(j, l) * B(1, l, k)
+                    C[Cidx] += A[Aidx] * B[Bidx];
+                }
+            }
+        }
 	} else {
-//#pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
+        #pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
 		for (size_t k = 0; k < after; ++k) {
 			kpreidxB = k * actbefB;
 			kpreidxC = k * actbefC;
