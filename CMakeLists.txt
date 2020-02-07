@@ -60,26 +60,30 @@ install(EXPORT QDlib-export
 # Set Compiler Flags
 #####################################################################
 # For debugging
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Ensure C++14 standard
 target_compile_features(QDlib PRIVATE cxx_std_14)
 
 # TODO: Figure out how to automatically get flags per compiler?
-set(FLAGS_VECTORIZE -fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect')
-set(QDlib_DEBUG_FLAGS -g ${FLAGS_VECTORIZE})
-set(QDlib_RELEASE_FLAGS -O3 -ffast-math ${FLAGS_VECTORIZE})
+set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
+set(QDlib_DEBUG_FLAGS "-g ${FLAGS_VECTORIZE}")
+set(QDlib_RELEASE_FLAGS "-O3 -ffast-math ${FLAGS_VECTORIZE}")
 if (APPLE)
     message("On OSX")
-    set(QDlib_DEBUG_FLAGS -mmacosx-version-min=10.14 ${QDlib_DEBUG_FLAGS})
-    set(QDlib_RELEASE_FLAGS -mmacosx-version-min=10.14 ${QDlib_RELEASE_FLAGS})
+    set(QDlib_DEBUG_FLAGS "-mmacosx-version-min=10.14 ${QDlib_DEBUG_FLAGS}")
+    set(QDlib_RELEASE_FLAGS "-mmacosx-version-min=10.14 ${QDlib_RELEASE_FLAGS}")
     set(CMAKE_MACOSX_RPATH 1)
 elseif (UNIX)
     message("On UNIX")
-    set(QDlib_RELEASE_FLAGS -ftree-parallelize-loops=8  ${QDlib_RELEASE_FLAGS})
+    set(QDlib_RELEASE_FLAGS "-ftree-parallelize-loops=8  ${QDlib_RELEASE_FLAGS}")
 else ()
     message("Other OS")
 endif ()
+
+# Get command-line ready options for target_compile: https://stackoverflow.com/a/27651464/3052876
+separate_arguments(QDlib_DEBUG_FLAGS UNIX_COMMAND "${QDlib_DEBUG_FLAGS}")
+separate_arguments(QDlib_RELEASE_FLAGS UNIX_COMMAND "${QDlib_RELEASE_FLAGS}")
 
 # Set debug/release flags: https://stackoverflow.com/a/23995391/3052876
 target_compile_options(QDlib PUBLIC "$<$<CONFIG:DEBUG>:${QDlib_DEBUG_FLAGS}>")
