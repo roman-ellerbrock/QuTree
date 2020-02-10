@@ -117,6 +117,8 @@ public:
 
 	void ReplaceNode(Node& old_node, Node& new_node);
 
+	void SetRoot(Node& root) { tree = root; }
+
 	/// Bottom-up iterator over all nodes in the mctdh-tree
 	/// For top-up iteration examples refer to e.g. the density-matrix class.
 	vector<reference_wrapper<Node>>::const_iterator begin() const {
@@ -128,6 +130,9 @@ public:
 	vector<reference_wrapper<Node>>::const_iterator end() const {
 		return linearizedNodes_.end();
 	}
+
+	/// Check whether TensorTreeBasis is working correctly
+	bool IsWorking();
 
 protected:
 	void LinearizeNodes();
@@ -148,5 +153,7 @@ typedef TensorTreeBasis TTBasis;
 
 ostream& operator<<(ostream& os, const TTBasis& basis);
 istream& operator>>(istream& is, TTBasis& basis);
+
+void ResetLeafModes(TensorTreeBasis& basis);
 
 #endif //TENSORTREEBASIS_H

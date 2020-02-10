@@ -54,18 +54,25 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 	// @TODO: improve efficiency
 
 	const Node& parent = node.Up();
+	Tensor<T> Ket(parent.TDim());
 	const Tensor<T>& Bra = Psi[parent];
-	Tensor<T> Ket = Psi[parent];
 
 	// Transform with upper hole matrix
 	if (!parent.IsToplayer()) {
 		const Matrix<T>& holemat = this->operator[](parent);
-		Ket = multStateAB(holemat, Ket);
+//		Ket = multStateAB(holemat, Ket); // @TODO: Double check
+		multStateAB(Ket, holemat, Bra);
+	} else {
+		Ket = Bra;
 	}
 
 	// Calculate hole-product and save to attributes_
 	auto child_idx = (size_t) node.ChildIdx();
-	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
+	Matrix<T>& s = this->operator[](node);
+	HoleProduct(s, Bra, Ket, child_idx);
+	// @TODO: Double check whether this and the HoleProduct works
+	// @TODO: Check whether multStateArTB works
+//	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
 }
 
 template<typename T>

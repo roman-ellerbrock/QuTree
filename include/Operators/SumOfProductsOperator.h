@@ -1,5 +1,5 @@
 #pragma once
-#include "MultiParticleOperator.h"
+#include "MultiLeafOperator.h"
 
 template<typename T>
 class SumOfProductsOperator
@@ -24,7 +24,7 @@ public:
 		Initialize(basis);
 	}
 
-	explicit SumOfProductsOperator(const MPO<T>& M, T c = 1.);
+	explicit SumOfProductsOperator(const MLO<T>& M, T c = 1.);
 
 	void Initialize(const TTBasis& basis) {
 		coeff_.clear();
@@ -36,24 +36,24 @@ public:
 	virtual int size() const { return mpos_.size(); }
 
 	// Get a product-operator from the Hamiltonian
-	virtual const MPO<T>& operator()(size_t part) const {
+	virtual const MLO<T>& operator()(size_t part) const {
 		assert(part < mpos_.size());
 		return mpos_[part];
 	}
 
 	// Get a product-operator from the Hamiltonian
-	virtual const MPO<T>& operator[](size_t part) const {
+	virtual const MLO<T>& operator[](size_t part) const {
 		assert(part < mpos_.size());
 		return mpos_[part];
 	}
 
-	virtual MPO<T>& operator()(size_t part) {
+	virtual MLO<T>& operator()(size_t part) {
 		assert(part < mpos_.size());
 		return mpos_[part];
 	}
 
 	// append a new summand
-	void push_back(const MPO<T>& M, complex<double> coeff) {
+	void push_back(const MLO<T>& M, complex<double> coeff) {
 		mpos_.push_back(M);
 		coeff_.push_back(coeff);
 	}
@@ -63,12 +63,12 @@ public:
 		return coeff_[i];
 	}
 
-//	vector<MPO<T>>::const_iterator begin() const {
+//	vector<MLO<T>>::const_iterator begin() const {
 	auto begin() const {
 		return mpos_.begin();
 	}
 
-//	vector<MPO<T>>::const_iterator end() const {
+//	vector<MLO<T>>::const_iterator end() const {
 	auto end() const {
 		return mpos_.end();
 	}
@@ -77,29 +77,29 @@ public:
 	// Operators
 	//////////////////////////////////////////////////////////////////////
 	// multiply with coefficient
-	friend SumOfProductsOperator operator*(T c,
-		const SumOfProductsOperator& A);
+	friend SumOfProductsOperator<T> operator*(T c,
+		const SumOfProductsOperator<T>& A);
 
-	friend SumOfProductsOperator operator*(const SumOfProductsOperator& A,
+	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
 		T c);
 
 	// multiply with Multiparticleoperator
-	friend SumOfProductsOperator operator*(const MPO<T>& M,
-		const SumOfProductsOperator& A);
+	friend SumOfProductsOperator<T> operator*(const MLO<T>& M,
+		const SumOfProductsOperator<T>& A);
 
-	friend SumOfProductsOperator operator*(const SumOfProductsOperator& A,
-		const MPO<T>& M);
+	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
+		const MLO<T>& M);
 
 	// multiply with SoP-Operator
-	friend SumOfProductsOperator operator*(const SumOfProductsOperator& A,
-		const SumOfProductsOperator& B);
+	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
+		const SumOfProductsOperator<T>& B);
 
 	// add SoP-Operator
-	friend SumOfProductsOperator operator+(const SumOfProductsOperator& A,
-		const SumOfProductsOperator& B);
+	friend SumOfProductsOperator<T> operator+(const SumOfProductsOperator<T>& A,
+		const SumOfProductsOperator<T>& B);
 
 protected:
-	vector<MPO<T>> mpos_;
+	vector<MLO<T>> mpos_;
 	vector<complex<double> > coeff_;
 
 private:

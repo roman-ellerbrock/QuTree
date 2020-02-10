@@ -10,8 +10,7 @@ TensorTreeBasis::TensorTreeBasis(const TensorTreeBasis& T)
 
 TensorTreeBasis::TensorTreeBasis(TensorTreeBasis&& T) noexcept {
 	tree = move(T.tree);
-	linearizedNodes_ = move(T.linearizedNodes_);
-	linearizedLeaves_ = move(T.linearizedLeaves_);
+	Update();
 }
 
 TensorTreeBasis& TensorTreeBasis::operator=(const TensorTreeBasis& T) {
@@ -20,9 +19,8 @@ TensorTreeBasis& TensorTreeBasis::operator=(const TensorTreeBasis& T) {
 }
 
 TensorTreeBasis& TensorTreeBasis::operator=(TensorTreeBasis&& T) noexcept {
-	std::swap(tree, T.tree);
-	std::swap(linearizedNodes_, T.linearizedNodes_);
-	std::swap(linearizedLeaves_, T.linearizedLeaves_);
+	tree = move(T.tree);
+	Update();
 	return *this;
 }
 
@@ -211,7 +209,7 @@ void TensorTreeBasis::Read(istream& file) {
 		linearizedLeaves_[i].SetPar(par);
 
 		// Initialize primitive grid (HO, FFT, Legendre, ...)
-		PrimitiveBasis& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
+		LeafInterface& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
 		primitivebasis.Initialize(par.Omega(), par.R0(), par.WFR0(), par.WFOmega());
 	}
 }
@@ -253,6 +251,75 @@ void TensorTreeBasis::info(ostream& os) const {
 		os << endl;
 	}
 	os << "Number of Nodes = " << nNodes() << endl;
+}
+
+bool TensorTreeBasis::IsWorking() {
+
+	bool works = true;
+	int counter = 0;
+	for (int i = 0; i < nTotalNodes(); i++) {
+		const AbstractNode& abstract_node = nextNode();
+		if (abstract_node.NodeType() == 1) {
+			auto& node = (Node&) (abstract_node);
+			// 1.) Check global address
+			// Do not break here to leave nodes in a valid state
+			if (counter != node.Address()) { works = false; }
+			counter++;
+
+			if (!node.IsBottomlayer()) {
+				for (size_t k = 0; k < node.nChildren(); ++k) {
+					const Node& child = node.Down(k);
+					if (&node != &child.Up()) {
+						cerr << "Connectivity between child and parent is broken." << endl;
+						return false;
+					}
+				}
+			}
+		}
+	}
+	if (!works) {
+		cerr << "Corrupted address in tree." << endl;
+		return false;
+	}
+
+	/// Check linearized Nodes
+	if (nNodes() != linearizedNodes_.size()) {
+		cerr << "linearizedNodes_ size does not match tree-size" << endl;
+		return false;
+	}
+	counter = 0;
+	for (int i = 0; i < nTotalNodes(); i++) {
+		const AbstractNode& abstract_node = nextNode();
+		if (abstract_node.NodeType() == 1) {
+			auto& node = (Node&) (abstract_node);
+			// Do not break here to leave nodes in a valid state
+			if (&node != &linearizedNodes_[counter].get()) { works = false; }
+			counter++;
+		}
+	}
+	if (!works) {
+		cerr << "Corrupted linearizedNodes_. Missing Update()?" << endl;
+		return false;
+	}
+	if (!linearizedNodes_.back().get().IsToplayer()) {
+		cerr << "Last node does not fulfill top-criterium." << endl;
+		return false;
+	}
+
+	for (int i = 0; i < nTotalNodes(); i++) {
+		AbstractNode& abstract_node = nextNode();
+		// If this node is a physical mode push it back
+		if (abstract_node.NodeType() == 0) {
+			auto& leaf = (Leaf&) (abstract_node);
+			if (&leaf != &linearizedLeaves_[leaf.Mode()]) { works = false; }
+		}
+	}
+	if (!works) {
+		cerr << "Corrupted linearizedLeaves." << endl;
+		return false;
+	}
+
+	return true;
 }
 
 ostream& operator<<(ostream& os, const TensorTreeBasis& basis) {

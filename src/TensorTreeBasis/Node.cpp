@@ -17,12 +17,10 @@ Node::Node(const Node& node)
 	  address_(node.address_), nodeType_(node.nodeType_),
 	  bottomLayer_(node.bottomLayer_) {
 	if (IsBottomlayer()) {
-//		down_.emplace_back(unique_ptr<Leaf>(new Leaf(node.PhysCoord())));
 		down_.emplace_back(make_unique<Leaf>(node.PhysCoord()));
 		PhysCoord().SetUp(this);
 	} else {
 		for (size_t i = 0; i < node.nChildren(); i++) {
-//			down_.emplace_back(unique_ptr<AbstractNode>(new Node(node.Down(i))));
 			down_.emplace_back(make_unique<Node>(node.Down(i)));
 			Down(i).SetUp(this);
 		}

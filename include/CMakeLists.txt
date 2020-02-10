@@ -36,6 +36,7 @@ set(TENSOR_TREE_FILES
         TensorTreeBasis/Node.h
         TensorTreeBasis/NodePosition.h
         TensorTreeBasis/TensorTreeBasis.h
+        TensorTreeBasis/TTBasisFactory.h
         Tree/TreeStructuredObject.h
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h
@@ -48,15 +49,15 @@ set(TENSOR_TREE_FILES
         )
 
 set(OPERATOR_FILES
-        Operators/MultiParticleOperator.h
-        Operators/SingleParticleOperator.h
-        Operators/SingleParticleOperatorMatrix.h
-        Operators/SingleParticleOperatorFunction.h
+        Operators/MultiLeafOperator.h
+        Operators/LeafOperator.h
+        Operators/LeafMatrix.h
+        Operators/LeafFunction.h
         Operators/SumOfProductsOperator.h
         )
 
 set(LEAF_TYPE_FILES
-        TensorTreeBasis/LeafTypes/PrimitiveBasis.h
+        TensorTreeBasis/LeafTypes/LeafInterface.h
         TensorTreeBasis/LeafTypes/BosonNumberBasis.h
         TensorTreeBasis/LeafTypes/DVRBasis.h
         TensorTreeBasis/LeafTypes/FermionNumberBasis.h

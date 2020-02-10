@@ -6,7 +6,7 @@
 
 template<typename T>
 TensorTree<T>::TensorTree(const TTBasis& basis) {
-	TensorTree::Initialize(basis);
+	TensorTree<T>::Initialize(basis);
 }
 
 template<typename T>
@@ -40,10 +40,11 @@ template<typename T>
 void TensorTree<T>::Generate(const TTBasis& basis, mt19937& gen, bool delta_lowest) {
 	assert(basis.nNodes() == attributes_.size());
 	for (const Node& node : basis) {
+		Tensor<T>& Phi = this->operator[](node);
 		if (node.IsBottomlayer()) {
-			FillBottom(this->operator[](node), node);
+			FillBottom(Phi, node);
 		} else {
-			FillUpper(this->operator[](node), gen, node, delta_lowest);
+			FillUpper(Phi, gen, node, delta_lowest);
 		}
 	}
 }
@@ -54,7 +55,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 
 	assert(Phi.Dim().GetDimTot() > 0);
 	Tensor_Extension::Generate(Phi, gen);
-	// Set ground-state_ to "Hartree-Product" if flag is set
+	// Set ground-state to "Hartree-Product" if flag is set
 	if (delta_lowest) {
 		for (size_t i = 0; i < Phi.Dim().GetDimPart(); ++i) {
 			Phi(i, 0) = 0.;
@@ -70,7 +71,7 @@ template<typename T>
 void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 	const Node& node) {
 	const Leaf& coord = node.PhysCoord();
-	const PrimitiveBasis& grid = coord.PrimitiveGrid();
+	const LeafInterface& grid = coord.PrimitiveGrid();
 	grid.InitSPF(Phi);
 }
 

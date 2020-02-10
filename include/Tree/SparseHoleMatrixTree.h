@@ -1,7 +1,7 @@
 #pragma once
 #include "TreeStructuredObject.h"
 #include "TensorTree.h"
-#include "SingleParticleOperator.h"
+#include "LeafOperator.h"
 #include "SparseFactorMatrixTree.h"
 #include "SparseTreeStructuredObject.h"
 
@@ -27,7 +27,7 @@ public:
 	using SparseTreeStructuredObject<Matrix<T>>::attributes_;
 
 	/// Create HoleMatrixTree from file
-	SparseHoleMatrixTree(const MPO<T>& M, const TTBasis& basis, const string& filename);
+	SparseHoleMatrixTree(const MLO<T>& M, const TTBasis& basis, const string& filename);
 
 	/// Create HoleMatrixTree for a given tree-marker
 	SparseHoleMatrixTree(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
@@ -36,28 +36,40 @@ public:
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
-	SparseHoleMatrixTree(const MPO<T>& M, const TTBasis& basis)
+	SparseHoleMatrixTree(const MLO<T>& M, const TTBasis& basis)
 		: SparseTreeStructuredObject<Matrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
 		Initialize(basis);
 	}
 
 	/// Create and calculate HoleMatrixTree
 	SparseHoleMatrixTree(const TensorTree<T>& Psi, const SparseFactorMatrixTree<T>& hmat,
-		const MPO<T>& M, const TTBasis& basis);
+		const MLO<T>& M, const TTBasis& basis);
 
 	~SparseHoleMatrixTree() = default;
 
 	/// Create Matrices for active_ nodes in the tree
 	void Initialize(const TTBasis& basis) override;
 
-	/// Calculate Hole-Matrices form FactorMatrixTree
+	/// Calculate Hole-Matrices from FactorMatrixTree
 	void Calculate(const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseFactorMatrixTree<T>& hmat, const TTBasis& basis);
 
-	/// Calculate Hole-Matrices form FactorMatrixTree
+	/// Calculate Hole-Matrices from FactorMatrixTree
 	void Calculate(const TensorTree<T>& Psi,
 		const SparseFactorMatrixTree<T>& hmat, const TTBasis& basis) {
 		Calculate(Psi, Psi, hmat, basis);
+	}
+
+	/// Calculate Hole-Matrices from FactorMatrixTree at active nodes
+	void Calculate(const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket, const SparseFactorMatrixTree<T>& hmat,
+		const TreeMarker& act);
+
+	/// Calculate Hole-Matrices from FactorMatrixTree at active nodes
+	void Calculate(const TensorTree<T>& Psi,
+		const SparseFactorMatrixTree<T>& hmat,
+		const TreeMarker& act) {
+		Calculate(Psi, Psi, hmat, act);
 	}
 
 	/// Apply HoleMatrix locally to a Tensor
@@ -77,9 +89,9 @@ ostream& operator>>(ostream& os, const SparseHoleMatrixTree<T>& hmat);
 template<typename T>
 istream& operator<<(istream& is, SparseHoleMatrixTree<T>& hmat);
 
-typedef SparseHoleMatrixTree<complex<double>> HoleMatrixTreecd;
+typedef SparseHoleMatrixTree<complex<double>> SparseHoleMatrixTreecd;
 
-typedef SparseHoleMatrixTree<double> HoleMatrixTreed;
+typedef SparseHoleMatrixTree<double> SparseHoleMatrixTreed;
 
 
 

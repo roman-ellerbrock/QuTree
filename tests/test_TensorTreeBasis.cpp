@@ -1,15 +1,11 @@
 //
-// Created by Roman Ellerbrock on 2020-01-19.
+// Created by Roman Ellerbrock on 2/3/20.
 //
 #include "UnitTest++/UnitTest++.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
-#include "TensorTree.h"
-#include "TensorTree_Implementation.h"
-#include "FactorMatrixTree.h"
-#include "HoleMatrixTree.h"
+#include "TensorTreeBasis/TTBasisFactory.h"
 
-SUITE (Tree) {
-
+SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_Generator) {
 		size_t n_leaf = 4;
 		size_t n_node = 2;
@@ -70,31 +66,35 @@ SUITE (Tree) {
 		}
 	}
 
-	TEST (TensorTree_FILE_IO) {
-		TensorTreeBasis basis(12, 2, 4);
-		TensorTreecd T(basis);
-		T.Write("TT.tmp.dat");
-		TensorTreecd Q(basis);
-		ifstream is("TT.tmp.dat");
-		is >> Q;
-			CHECK_EQUAL(T.size(), Q.size());
-		for (const Node& node : basis) {
-				CHECK_EQUAL(T[node], Q[node]);
-		}
+	TEST (TensorTreeBasis_Train) {
+		size_t nLeaves = 12;
+		auto basis = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
+			CHECK_EQUAL(2 * nLeaves - 1, basis.nNodes());
 	}
 
-	TEST (TensorTree_RandomGenerate) {
-		TensorTreeBasis basis(12, 2, 2);
-		TensorTreecd T(basis);
-		mt19937 gen(2468);
-		T.Generate(basis, gen, false);
-		string filename("TT.RNG.dat");
-		T.Write(filename);
-		TensorTreecd Q(filename);
-			CHECK_EQUAL(T.size(), Q.size());
-		for (const Node& node : basis) {
-				CHECK_EQUAL(T[node], Q[node]);
+	TEST (TensorTreeBasis_Copy) {
+		/// Construct a tree and check that it works
+		TensorTreeBasis basis(12, 4, 3);
+			CHECK_EQUAL(true, basis.IsWorking());
+
+		{
+			/// Copy-constructor test
+			TensorTreeBasis basis_copy_construct(basis);
+				CHECK_EQUAL(true, basis_copy_construct.IsWorking());
+
+			/// Move constructor
+			TensorTreeBasis basis_move_construct(move(basis_copy_construct));
+				CHECK_EQUAL(true, basis_move_construct.IsWorking());
+		}
+
+		{
+			/// Copy-asignment test
+			TensorTreeBasis basis_copy_asign = basis;
+				CHECK_EQUAL(true, basis_copy_asign.IsWorking());
+
+			/// Move asignment operator
+			TensorTreeBasis basis_move_asign = move(basis_copy_asign);
+				CHECK_EQUAL(true, basis_move_asign.IsWorking());
 		}
 	}
 }
-

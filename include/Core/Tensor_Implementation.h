@@ -2,6 +2,7 @@
 #include "Tensor.h"
 #include "TensorDim_Extension.h"
 #include "stdafx.h"
+//#include <omp.h> //TODO: have this here by default?
 
 //////////////////////////////////////////////////////////
 // Operators
@@ -444,26 +445,35 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t npreidx1 = 0;
 	size_t npreidx2 = 0;
 
-//#pragma omp parallel for
-	for (size_t n = 0; n < after; n++) {
-		npreidx1 = n * actbef1;
-		npreidx2 = n * actbef2;
-		for (size_t j = 0; j < active2; j++) {
-			jpreidx = npreidx2 + j * before;
-			for (size_t i = 0; i < active1; i++) {
-				// S(i, j)
-				Sidx = j * active1 + i;
-				ipreidx = npreidx1 + i * before;
-				for (size_t l = 0; l < before; l++) {
-					// A(l, i, n)
-					Aidx = ipreidx + l;
-					// B(l, j, n)
-					Bidx = jpreidx + l;
-					S[Sidx] += conj(A[Aidx]) * B[Bidx];
-				}
-			}
-		}
+	// Avoid unnecessary thread launches
+	/*
+	const char* threads = getenv("OMP_NUM_THREADS");
+	if (threads) {
+	    if (after < atoi(threads)) {
+            omp_set_num_threads(after);
+	    }
 	}
+	*/
+    #pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
+    for (size_t n = 0; n < after; n++) {
+        npreidx1 = n * actbef1;
+        npreidx2 = n * actbef2;
+        for (size_t j = 0; j < active2; j++) {
+            jpreidx = npreidx2 + j * before;
+            for (size_t i = 0; i < active1; i++) {
+                // S(i, j)
+                Sidx = j * active1 + i;
+                ipreidx = npreidx1 + i * before;
+                for (size_t l = 0; l < before; l++) {
+                    // A(l, i, n)
+                    Aidx = ipreidx + l;
+                    // B(l, j, n)
+                    Bidx = jpreidx + l;
+                    S[Sidx] += conj(A[Aidx]) * B[Bidx];
+                }
+            }
+        }
+    }
 }
 
 template<typename T>
@@ -475,7 +485,8 @@ Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	size_t nstates = tdim_a.GetNumTensor();
 	size_t active1 = tdim_a.Active(k);
 	size_t before = tdim_a.Before(k);
-	size_t after = tdim_a.After(k) * nstates;
+//	size_t after = tdim_a.After(k) * nstates;
+	size_t after = tdim_a.TotAfter(k);
 	size_t active2 = tdim_b.Active(k);
 	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
 
@@ -484,6 +495,18 @@ Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	TensorHoleProduct(S, A, B, before, active1, active2, after);
 
 	return S;
+}
+
+template<typename T>
+void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+	const TensorDim& tdim_a(A.Dim());
+	const TensorDim& tdim_b(A.Dim());
+	size_t active1 = tdim_a.Active(k);
+	size_t before = tdim_a.Before(k);
+	size_t after = tdim_a.TotAfter(k);
+	size_t active2 = tdim_b.Active(k);
+	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
+	TensorHoleProduct(S, A, B, before, active1, active2, after);
 }
 
 template<typename T, typename U>
@@ -504,27 +527,37 @@ void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t jpreidx = 0;
 	size_t lactive = 0;
 
+    // Avoid unnecessary thread launches
+    // TODO: this requires #inclue <omp.h>
+    /*
+    const char* threads = getenv("OMP_NUM_THREADS");
+    if (threads) {
+        if (after < atoi(threads)) {
+            omp_set_num_threads(after);
+        }
+    }
+     */
 	if (before == 1) {
-//		#pragma omp for private(kpreidx, Bidx, Cidx, Aidx)
+		#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
 		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				Bidx = l + kpreidxB;
-				for (size_t j = 0; j < activeC; ++j) {
-					Cidx = j + kpreidxC;
-					Aidx = l * activeB + j;
-					Aidx = l * activeC + j;
+            kpreidxB = k * actbefB;
+            kpreidxC = k * actbefC;
+            for (size_t l = 0; l < activeB; ++l) {
+                Bidx = l + kpreidxB;
+                for (size_t j = 0; j < activeC; ++j) {
+                    Cidx = j + kpreidxC;
+                    Aidx = l * activeB + j; //TODO: why is this declared twice?
+                    Aidx = l * activeC + j;
 //					assert(Cidx < C.Dim().GetDimTot());
 //					assert(Bidx < B.Dim().GetDimTot());
 //					assert(Aidx < A.Dim1()*A.Dim2());
-					/// C(1, j, k) += A(j, l) * B(1, l, k)
-					C[Cidx] += A[Aidx] * B[Bidx];
-				}
-			}
-		}
+                    /// C(1, j, k) += A(j, l) * B(1, l, k)
+                    C[Cidx] += A[Aidx] * B[Bidx];
+                }
+            }
+        }
 	} else {
-//#pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
+        #pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
 		for (size_t k = 0; k < after; ++k) {
 			kpreidxB = k * actbefB;
 			kpreidxC = k * actbefC;
@@ -607,12 +640,13 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 	TensorDim tdim(B.Dim());
 	TensorDim tdimC(C.Dim());
 
-	size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//	size_t after = tdim.After(mode) * tdim.GetNumTensor();
+	size_t after = tdim.TotAfter(mode);
 	size_t before = tdim.Before(mode);
 	size_t active1 = A.Dim1();
 	size_t active2 = A.Dim2();
 
-	assert(mode < tdim.GetOrder());
+	assert(mode <= tdim.GetOrder());
 	assert(A.Dim2() == tdim.Active(mode));
 	assert(A.Dim1() == tdimC.Active(mode));
 
@@ -628,7 +662,8 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
 		mattensor(C, A, B, before, active, active, after, false);
@@ -639,7 +674,8 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t active2 = A.Dim2();
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, active1);
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t before = tdim.Before(mode);
 		assert(active1 == C.Dim().Active(mode));
 		assert(active2 == B.Dim().Active(mode));
@@ -658,7 +694,8 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
 		Tmattensor(C, A, B, before, active, active, after, false);
@@ -668,7 +705,8 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t activeB = A.Dim1();
 		TensorDim tdim(B.Dim());
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, A.Dim2());
-		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
+		size_t after = tdim.TotAfter(mode);
 		size_t before = tdim.Before(mode);
 		Tensor<T> C(tdim);
 		cout << "non-quadratic mattensor implemented but not tested, yet.\n";
@@ -709,16 +747,33 @@ Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 }
 
 template<typename T, typename U>
+void multStateArTB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B) {
+	const TensorDim& tdim(B.Dim());
+	size_t dimpart = tdim.GetDimPart();
+	size_t ntensor = tdim.GetNumTensor();
+	for (size_t n = 0; n < ntensor; n++) {
+		size_t B_idx = n * dimpart;
+		for (size_t m = 0; m < ntensor; m++) {
+			size_t C_idx = m * dimpart;
+			size_t A_idx = m * ntensor;
+			for (size_t i = 0; i < dimpart; i++) {
+				/// C(i, m) += A(n, m) * B(i, n);
+				C[C_idx + i] += A[A_idx + n] * B[B_idx + i];
+			}
+		}
+	}
+}
+
+template<typename T, typename U>
 Tensor<T> multStateArTB(const Matrix<U>& A, const Tensor<T>& B) {
-	TensorDim tdim(B.Dim());
+	const TensorDim& tdim(B.Dim());
+	size_t dimpart = tdim.GetDimPart();
+	size_t ntensor = tdim.GetNumTensor();
 	assert(A.Dim1() == A.Dim2());
-	assert(A.Dim2() == B.Dim().GetNumTensor());
+	assert(A.Dim2() == ntensor);
 
 	Tensor<T> C(tdim);
-	for (size_t n = 0; n < tdim.GetNumTensor(); n++)
-		for (size_t m = 0; m < tdim.GetNumTensor(); m++)
-			for (size_t i = 0; i < tdim.GetDimPart(); i++)
-				C(i, m) += A(n, m) * B(i, n);
+	multStateArTB(C, A, B);
 
 	return C;
 }

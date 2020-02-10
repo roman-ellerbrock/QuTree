@@ -116,18 +116,39 @@ const TensorABC& TensorDim::getabc(size_t k) {
 }
 
 size_t TensorDim::Active(size_t k) const {
-	assert(k < order_);
-	return abc_[k].GetActive();
+	assert(k <= order_);
+	if (k <order_) {
+		return abc_[k].GetActive();
+	} else {
+		return nTensor_;
+	}
 }
 
 size_t TensorDim::After(size_t k) const {
-	assert(k < order_);
-	return abc_[k].GetAfter();
+	assert(k <= order_);
+	if (k < order_) {
+		return abc_[k].GetAfter();
+	} else {
+		return 1;
+	}
 }
 
 size_t TensorDim::Before(size_t k) const {
-	assert(k < order_);
-	return abc_[k].GetBefore();
+	assert(k <= order_);
+	if  (k < order_) {
+		return abc_[k].GetBefore();
+	} else {
+		return dimPart_;
+	}
+}
+
+size_t TensorDim::TotAfter(size_t k) const {
+	assert(k <= order_);
+	if (k < order_) {
+		return abc_[k].GetAfter()*GetNumTensor();
+	} else {
+		return 1;
+	}
 }
 
 void TensorDim::SetNumTensor(size_t newntensor) {

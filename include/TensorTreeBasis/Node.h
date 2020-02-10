@@ -105,6 +105,7 @@ public:
 
 	// pointer to the next node in sweep
 	AbstractNode *nextNode() override;
+
 	// sween for pointer to the next node in sweep. Same sweep like
 	// in Uwe Manthe's fortran code
 	AbstractNode *nextNodeManthe() override;

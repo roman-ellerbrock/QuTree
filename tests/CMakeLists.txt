@@ -14,11 +14,11 @@ set(QDlib_tests
         test_Matrix.cpp
         test_Tensor.cpp
         tests.cpp
-        test_Tree.cpp
+        test_TensorTree.cpp
         test_Operators.cpp
-        test_.FactorMatrixTree.cpp
+        test_FactorMatrixTree.cpp
         test_SparseFactorMatrixTree.cpp
-        test_Core.cpp)
+        test_TensorTreeBasis.cpp)
 
 add_executable(TestQDlib ${QDlib_tests})
 target_link_libraries(TestQDlib QDlib)
@@ -28,3 +28,12 @@ target_link_libraries(TestQDlib UnitTest++)
 add_custom_command(TARGET TestQDlib
     POST_BUILD COMMAND TestQDlib
     COMMENT "Running unit tests")
+
+
+set(QDlib_benchmarks
+        benchmarks/benchmark_tensor.cpp
+        benchmarks/benchmark_tensor.h
+        benchmarks/benchmark_tree.cpp benchmarks/benchmark_tree.h benchmarks/benchmark_helper.cpp benchmarks/benchmark_helper.h)
+
+add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QDlib_benchmarks})
+target_link_libraries(benchmarks QDlib)

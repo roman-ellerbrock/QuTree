@@ -19,15 +19,16 @@ set(QDlib_SOURCE_FILES
         TensorTreeBasis/Node.cpp
         TensorTreeBasis/NodePosition.cpp
         TensorTreeBasis/TensorTreeBasis.cpp
+        TensorTreeBasis/TTBasisFactory.cpp
         Tree/TensorTree_Instantiation.cpp
         Tree/FactorMatrixTree.cpp
         Tree/HoleMatrixTree.cpp
         Tree/SparseFactorMatrixTree.cpp
         Tree/SparseHoleMatrixTree.cpp
         Tree/SpectralDecompositionTree.cpp
-        Operators/MultiParticleOperator.cpp
-        Operators/SingleParticleOperatorFunction.cpp
-        Operators/SingleParticleOperatorMatrix.cpp
+        Operators/MultiLeafOperator.cpp
+        Operators/LeafFunction.cpp
+        Operators/LeafMatrix.cpp
         Operators/SumOfProductsOperator.cpp
         )
 
@@ -41,7 +42,7 @@ set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/LogicalBasis.cpp
         TensorTreeBasis/LeafTypes/NumberBasis.cpp
         TensorTreeBasis/LeafTypes/SpinGroup.cpp
-        )
+        Tree/TreeMarker.cpp)
 
 # Compile objects only once for both static and shared libraries
 # From https://stackoverflow.com/a/29824424/3052876
