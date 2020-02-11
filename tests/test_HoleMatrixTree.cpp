@@ -4,9 +4,9 @@
 #include "UnitTest++/UnitTest++.h"
 #include "IOTree.h"
 
-double eps = 1e-7;
-
 SUITE(HoleMatrixTree) {
+	double eps = 1e-7;
+
 	TEST (HoleMatrixTree_IO) {
 		TensorTreeBasis basis(12, 2, 2);
 		string filename("TT.RNG.dat");
@@ -57,14 +57,15 @@ SUITE(HoleMatrixTree) {
 			}
 		}
 	}
-	TEST(IO) {
+
+/*	TEST(IO) {
 		mt19937 gen(1993);
 		TTBasis basis(14, 6, 4);
 		TensorTreecd Psi(basis, gen, false);
 		IOTree::Occupancy(Psi, basis);
 		HoleMatrixTreecd Rho(Psi, basis);
 		IOTree::Leafs(Psi, Rho, basis);
-	}
+	}*/
 
 
 }

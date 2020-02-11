@@ -3,13 +3,12 @@
 //
 #include "Core/RandomMatrices.h"
 #include "Tree/FactorMatrixTree.h"
-#include "Tree/HoleMatrixTree.h"
 #include "Tree/SpectralDecompositionTree.h"
 #include "UnitTest++/UnitTest++.h"
 
-double eps = 1e-7;
-
 SUITE (TensorTreeOverlaps) {
+
+	double eps = 1e-7;
 
 	TEST (FactorMatrixTree_IO) {
 		TensorTreeBasis basis(12, 2, 2);
