@@ -168,10 +168,6 @@ FactorMatrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t mode)
 	size_t act_a = tdim_a.Active(mode);
 	size_t act_b = tdim_b.Active(mode);
 	FactorMatrix<T> S(act_a, act_b, mode);
-	if (mode == tdim_a.GetOrder()) {
-		cout << "active : " << act_a << endl;
-		cout << "active : " << act_b << endl;
-	}
 	HoleProduct(S, A, B, mode);
 	return S;
 }
