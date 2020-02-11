@@ -5,6 +5,7 @@
 //
 
 #include "Core/Tensor.h"
+#include "Core/FactorMatrix.h"
 
 // Demonstrate various ways to create a Tensor object
 Tensorcd create_tensor() {
@@ -68,17 +69,16 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
     return w;
 }
 
-Matrixcd hole_product(Tensorcd A, Tensorcd B) {
+void hole_product(Tensorcd A, const Tensorcd& B) {
     cout << "\nhole_product:\n" << endl;
-    Matrixcd h;
-    for (size_t k = 0; k < A.Dim().GetOrder(); k++) { // TODO: what is GetOrder?
-        h = HoleProduct(A, B, k);
+    for (size_t k = 0; k < A.Dim().GetOrder(); k++) {
+        FactorMatrixcd h = HoleProduct(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
         cout << "Trace: " << h.Trace() << endl;
-        // TODO: do we have machinery for B = hk * A ? Use FactorMatrixcd
-    }
-    return h;
+        // Multiply
+		Tensorcd C = h * A;
+	}
 }
 
 void reshape (Tensorcd A) {
@@ -100,6 +100,6 @@ int main() {
     A = fill_tensor(A);
     Tensorcd B = A;
     Matrixcd w = dot_product(A, B);
-    Matrixcd h = hole_product(A, B);
+    hole_product(A, B);
     reshape(A);
 }
