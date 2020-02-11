@@ -21,7 +21,7 @@ class HoleMatrixTree: public TreeStructuredObject<FactorMatrix<T>>
  */
 {
 public:
-	using TreeStructuredObject<Matrix<T>>::attributes_;
+	using TreeStructuredObject<FactorMatrix<T>>::attributes_;
 
 	/// Default Constructor
 	HoleMatrixTree() = default;

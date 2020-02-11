@@ -42,7 +42,8 @@ HoleMatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, dou
 	HoleMatrixTree<T> Inv_Hole(basis);
 	for (const Node& node : basis) {
 		const auto& x = this->operator[](node);
-		Inv_Hole[node] = BuildInverse(x, eps);
+		Matrix<T> mat = BuildInverse(x, eps);
+		Inv_Hole[node] = FactorMatrix<T>(mat, node.ChildIdx());
 	}
 	return Inv_Hole;
 }

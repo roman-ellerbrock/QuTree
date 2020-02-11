@@ -1,6 +1,7 @@
 #include "Core/Tensor.h"
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
+#include "FactorMatrixTree.h"
 
 using namespace std;
 
@@ -87,7 +88,7 @@ SUITE (Tensor) {
 		CreateTensors();
 		auto x = HoleProduct(A, B, 0);
 		x.Write("Tensor_Product.dat");
-		Matrixcd s("Tensor_Product.dat");
+		FactorMatrixcd s("Tensor_Product.dat");
 		auto d = x - s;
 		double residual = d.FrobeniusNorm();
 			CHECK_CLOSE(residual, 0., eps);
@@ -97,7 +98,7 @@ SUITE (Tensor) {
 		CreateTensors();
 		auto x = HoleProduct(A, B, 1);
 		x.Write("Tensor_Product_0.dat");
-		Matrixcd s("Tensor_Product_0.dat");
+		FactorMatrixcd s("Tensor_Product_0.dat");
 		auto d = x - s;
 		double residual = d.FrobeniusNorm();
 			CHECK_CLOSE(residual, 0., eps);

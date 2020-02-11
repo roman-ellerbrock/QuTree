@@ -658,7 +658,7 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 template<typename T, typename U>
 Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorDim& tdim(B.Dim());
-	assert(mode < tdim.GetOrder());
+	assert(mode <= tdim.GetOrder());
 	assert(mode >= 0);
 //	assert(A.Dim1() == B.Dim().Active(mode));
 

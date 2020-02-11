@@ -6,12 +6,13 @@
 
 SUITE(HoleMatrixTree) {
 	TEST(IO) {
+		cout << "hole out:" << endl;
 		mt19937 gen(1993);
 		TTBasis basis(14, 4, 2);
 		TensorTreecd Psi(basis, gen, false);
 		IOTree::Occupancy(Psi, basis);
 		HoleMatrixTreecd Rho(Psi, basis);
-		IOTree::Leafs(Psi, basis);
+		IOTree::Leafs(Psi, Rho, basis);
 	}
 
 

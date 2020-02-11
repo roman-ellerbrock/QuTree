@@ -46,6 +46,8 @@ template void multStateAB<doub, doub>(Tensor<double>& C, const Matrix<double>& A
 template void multAdd<doub, doub>(Tensor<double>& A, const Tensor<double>& B, doub coeff);
 template Tensor<double> conj<double>(Tensor<double> A);
 template double Residual(Tensord A, const Tensord& B);
+template void TensorHoleProduct<doub>(Matrix<doub>&, const Tensor<doub>&, const Tensor<doub>&, size_t, size_t, size_t, size_t);
+template void mattensor<doub>(Tensor<doub>& B, const Matrix<doub>& S, const Tensor<doub>&  A, size_t, size_t, size_t, size_t, bool);
 
 template ostream& operator<< <doub> (ostream&, const Tensor<doub>& );
 template istream& operator>> <doub> (istream&, Tensor<doub>& );

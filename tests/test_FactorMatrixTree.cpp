@@ -12,6 +12,7 @@ double eps = 1e-7;
 SUITE (TensorTreeOverlaps) {
 
 	TEST (FactorMatrixTree_IO) {
+		cout << "FactorMatrixTree" << endl;
 		TensorTreeBasis basis(12, 2, 2);
 		FactorMatrixTreecd S(basis);
 		string file2("DO.tmp.dat");
@@ -41,7 +42,9 @@ SUITE (TensorTreeOverlaps) {
 		string filename("TT.RNG.dat");
 		TensorTreecd T(filename);
 		FactorMatrixTreecd S(T, T, basis);
+		cout << "CalculateRho" << endl;
 		HoleMatrixTreecd Rho(T, T, S, basis);
+		cout << "CalculateedRho" << endl;
 		string file2("HO.tmp.dat");
 		Rho.Write(file2);
 		HoleMatrixTreecd Qh(file2);
@@ -105,7 +108,8 @@ SUITE (TensorTreeOverlaps) {
 		HoleMatrixTreecd H(basis);
 	 	for (const Node& node : basis) {
 	 		const TensorDim& dim = node.TDim();
-			H[node] = RandomMatrices::GUE(dim.GetNumTensor(), gen);
+			Matrixcd mat = RandomMatrices::GUE(dim.GetNumTensor(), gen);
+			H[node] = FactorMatrixcd(mat, node.ChildIdx());
 	 	}
 		SpectralDecompositionTreecd X(H, basis);
 		auto H_inv = X.Invert(basis, 1e-10);

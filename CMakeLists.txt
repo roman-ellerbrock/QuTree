@@ -99,7 +99,7 @@ else ()
     set(CMAKE_CXX_STANDARD_REQUIRED True)
 endif ()
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -g")
 if (openmp)
     set(CMAKE_CXX_FLAGS_RELEASE "-fopenmp -O3 -ffast-math ")
     set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect' ")

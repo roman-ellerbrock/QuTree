@@ -10,6 +10,7 @@ namespace IOTree {
 	template <typename T>
 	void Occupancy(const TensorTree<T>& Psi, const TTBasis& basis, ostream& os) {
 		HoleMatrixTree<T> Rho(Psi, basis);
+		Rho.print();
 		SpectralDecompositionTree<T> specs(Rho, basis);
 		specs.print(basis);
 	}

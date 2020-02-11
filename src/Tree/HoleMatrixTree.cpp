@@ -40,13 +40,13 @@ void HoleMatrixTree<T>::Initialize(const TTBasis& basis) {
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
 		size_t n = tdim.GetNumTensor();
-		size_t mode = node.ChildIdx();
-		attributes_.emplace_back(FactorMatrix<T>(n, n, mode));
+		size_t order = tdim.GetOrder();
+		attributes_.emplace_back(FactorMatrix<T>(n, n, order));
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////
-/// Calculate for othorgonal tensor trees
+/// Calculate for orthogonal tensor trees
 ////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -63,14 +63,16 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 		const FactorMatrix<T>& holemat = this->operator[](parent);
 //		Ket = multStateAB(holemat, Ket); // @TODO: Double check
 		multStateAB(Ket, holemat, Bra);
+//		Ket = holemat * Bra;
 	} else {
 		Ket = Bra;
 	}
 
 	// Calculate hole-product and save to attributes_
-	auto child_idx = (size_t) node.ChildIdx();
+//	auto child_idx = (size_t) node.ChildIdx();
+	size_t order = node.TDim().GetOrder();
 	FactorMatrix<T>& s = this->operator[](node);
-	HoleProduct(s, Bra, Ket, child_idx);
+	HoleProduct(s, Bra, Ket, order);
 	// @TODO: Double check whether this and the HoleProduct works
 	// @TODO: Check whether multStateArTB works
 //	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
@@ -112,12 +114,16 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 
 	// Transform with upper hole matrix
 	if (!parent.IsToplayer()) {
-		const Matrix<T>& holemat = this->operator[](parent);
+		const FactorMatrix<T>& holemat = this->operator[](parent);
+		holemat.print();
+		getchar();
 		Ket = multStateAB(holemat, Ket);
+//		Ket = holemat * Ket;
 	}
 
 	// Calculate hole-product and save to attributes_
-	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
+	size_t order = node.TDim().GetOrder();
+	this->operator[](node) = HoleProduct(Bra, Ket, order);
 }
 
 template<typename T>

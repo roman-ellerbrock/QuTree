@@ -20,6 +20,9 @@ public:
 		: Matrix<T>(A), mode_(k) {
 	}
 
+	explicit FactorMatrix(size_t dim_a, size_t dim_b, size_t mode)
+		: Matrix<T>(dim_a, dim_b),  mode_(mode) {}
+
 	FactorMatrix(size_t dim_, size_t mode)
 		: Matrix<T>(dim_, dim_), mode_(mode) {}
 
@@ -27,7 +30,12 @@ public:
 		: Matrix<T>(tdim.Active(mode), tdim.Active(mode)), mode_(mode) {
 	}
 
-	FactorMatrix(istream& is) {
+	explicit FactorMatrix(istream& is) {
+		Read(is);
+	}
+
+	explicit FactorMatrix(const string& filename) {
+		ifstream is(filename);
 		Read(is);
 	}
 
@@ -111,6 +119,11 @@ public:
 		Matrix<T>::Write(os);
 	}
 
+	void Write(const string& filename) const {
+		ofstream os(filename);
+		Write(os);
+	}
+
 	void Read(istream& is) override {
 		char check[5];
 		is.read(check, 4);
@@ -119,6 +132,11 @@ public:
 		assert(s_key == s_check);
 		is.read((char *) &mode_, sizeof(mode_));
 		Matrix<T>::Read(is);
+	}
+
+	void Read(const string& filename) {
+		ifstream is(filename);
+		Read(is);
 	}
 
 protected:
@@ -150,7 +168,12 @@ FactorMatrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t mode)
 	size_t act_a = tdim_a.Active(mode);
 	size_t act_b = tdim_b.Active(mode);
 	FactorMatrix<T> S(act_a, act_b, mode);
+	if (mode == tdim_a.GetOrder()) {
+		cout << "active : " << act_a << endl;
+		cout << "active : " << act_b << endl;
+	}
 	HoleProduct(S, A, B, mode);
+	return S;
 }
 
 template<typename T>
@@ -158,7 +181,7 @@ void HoleProduct(FactorMatrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, siz
 	const TensorDim& tdim_a = A.Dim();
 	size_t bef = tdim_a.Before(mode);
 	size_t act_a = tdim_a.Active(mode);
-	size_t aft = tdim_a.After(mode);
+	size_t aft = tdim_a.TotAfter(mode);
 	const TensorDim& tdim_b = B.Dim();
 	size_t act_b = tdim_b.Active(mode);
 	assert(S.Dim1() == act_a);
@@ -172,7 +195,7 @@ void DotProduct(FactorMatrix<T>& S, const Tensor<T>& A, const Tensor<T>& B) {
 	size_t mode = tdim.GetOrder();
 	size_t bef = tdim.Before(mode);
 	size_t act = tdim.Active(mode);
-	size_t aft = tdim.After(mode);
+	size_t aft = tdim.TotAfter(mode);
 	TensorHoleProduct(S, A, B, bef, act, act, aft);
 }
 
