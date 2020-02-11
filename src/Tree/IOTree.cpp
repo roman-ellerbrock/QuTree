@@ -10,7 +10,6 @@ namespace IOTree {
 	template <typename T>
 	void Occupancy(const TensorTree<T>& Psi, const TTBasis& basis, ostream& os) {
 		HoleMatrixTree<T> Rho(Psi, basis);
-		Rho.print();
 		SpectralDecompositionTree<T> specs(Rho, basis);
 		specs.print(basis);
 	}
@@ -34,7 +33,7 @@ namespace IOTree {
 		for (size_t l = 0; l < basis.nLeaves(); ++l) {
 			const Leaf& leaf = basis.GetLeaf(l);
 			auto rho_leaf = LeafDensity(Psi, Rho, leaf, basis);
-			cout << "Leaf " << l << endl;
+			cout << "Leaf: " << l << "\n";
 			for  (size_t i = 0; i < rho_leaf.Dim(); ++i) {
 				os << abs(rho_leaf(i, i)) << "\t";
 			}

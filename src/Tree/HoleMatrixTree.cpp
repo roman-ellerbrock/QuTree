@@ -52,7 +52,6 @@ void HoleMatrixTree<T>::Initialize(const TTBasis& basis) {
 template<typename T>
 void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 	const Node& node) {
-	// @TODO: improve efficiency
 
 	const Node& parent = node.Up();
 	Tensor<T> Ket(parent.TDim());
@@ -61,9 +60,7 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 	// Transform with upper hole matrix
 	if (!parent.IsToplayer()) {
 		const FactorMatrix<T>& holemat = this->operator[](parent);
-//		Ket = multStateAB(holemat, Ket); // @TODO: Double check
 		multStateAB(Ket, holemat, Bra);
-//		Ket = holemat * Bra;
 	} else {
 		Ket = Bra;
 	}
@@ -72,9 +69,7 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 	auto child_idx = (size_t) node.ChildIdx();
 	FactorMatrix<T>& s = this->operator[](node);
 	HoleProduct(s, Bra, Ket, child_idx);
-	// @TODO: Double check whether this and the HoleProduct works
-	// @TODO: Check whether multStateArTB works
-//	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
+	s.Mode() = node.TDim().GetOrder();
 }
 
 template<typename T>
@@ -119,7 +114,9 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 	}
 
 	// Calculate hole-product and save to attributes_
-	this->operator[](node) = HoleProduct(Bra, Ket, child_idx);
+	FactorMatrix<T>& s = this->operator[](node);
+	HoleProduct(s, Bra, Ket, child_idx);
+	s.Mode() = node.TDim().GetOrder();
 }
 
 template<typename T>
