@@ -3,7 +3,7 @@
 //
 #include "SpectralDecompositionTree.h"
 
-template <typename T>
+template<typename T>
 SpectralDecompositionTree<T>::SpectralDecompositionTree(const TTBasis& basis) {
 	Initialize(basis);
 }
@@ -15,8 +15,8 @@ SpectralDecompositionTree<T>::SpectralDecompositionTree(const HoleMatrixTree<T>&
 	Calculate(H, basis);
 }
 
-template <typename T>
-void SpectralDecompositionTree<T>::Initialize(const TTBasis & basis) {
+template<typename T>
+void SpectralDecompositionTree<T>::Initialize(const TTBasis& basis) {
 	attributes_.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
@@ -26,9 +26,9 @@ void SpectralDecompositionTree<T>::Initialize(const TTBasis & basis) {
 	}
 }
 
-template <typename T>
-void SpectralDecompositionTree<T>::Calculate(const HoleMatrixTree<T> & H,
-	const TTBasis & basis) {
+template<typename T>
+void SpectralDecompositionTree<T>::Calculate(const HoleMatrixTree<T>& H,
+	const TTBasis& basis) {
 	for (const Node& node : basis) {
 		const Matrix<T>& mat = H[node];
 		auto y = Diagonalize(mat);
@@ -47,15 +47,19 @@ HoleMatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, dou
 	return Inv_Hole;
 }
 
-template <typename T>
+template<typename T>
 void SpectralDecompositionTree<T>::print(const TTBasis& basis) const {
-	for (const Node& node : basis) {
+	for (int i = basis.nNodes() - 2; i > 0; --i) {
+		const Node& node = basis.GetNode(i);
 		node.info();
 		const SpectralDecomposition<T>& x = this->operator[](node);
 		x.second.print();
 	}
 }
 
-template class SpectralDecompositionTree<complex<double>>;
-template class SpectralDecompositionTree<double>;
+template
+class SpectralDecompositionTree<complex<double>>;
+
+template
+class SpectralDecompositionTree<double>;
 

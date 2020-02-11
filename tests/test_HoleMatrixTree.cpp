@@ -7,10 +7,14 @@
 SUITE(HoleMatrixTree) {
 	TEST(IO) {
 		mt19937 gen(1993);
-		TTBasis basis(14, 2, 2);
-		TensorTreecd Psi(basis, gen);
-		IOTree::Occupancies(Psi, basis);
+		TTBasis basis(14, 4, 2);
+		TensorTreecd Psi(basis, gen, false);
+		IOTree::Occupancy(Psi, basis);
+		HoleMatrixTreecd Rho(Psi, basis);
+		IOTree::Leafs(Psi, basis);
 	}
+
+
 }
 
 

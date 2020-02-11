@@ -167,7 +167,6 @@ Node::Node(istream& file, Node *up,
 }
 
 void Node::info(ostream& os) const {
-	os << "GetNode" << endl;
 	position_.info(os);
 //	tensorDim_.print(os);
 }

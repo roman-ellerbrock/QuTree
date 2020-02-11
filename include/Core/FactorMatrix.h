@@ -144,12 +144,26 @@ Tensor<T> multATB(const FactorMatrix<U>& A, const Tensor<T>& B) {
 }
 
 template<typename T>
+FactorMatrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t mode) {
+	const TensorDim& tdim_a = A.Dim();
+	const TensorDim& tdim_b = B.Dim();
+	size_t act_a = tdim_a.Active(mode);
+	size_t act_b = tdim_b.Active(mode);
+	FactorMatrix<T> S(act_a, act_b, mode);
+	HoleProduct(S, A, B, mode);
+}
+
+template<typename T>
 void HoleProduct(FactorMatrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t mode) {
-	const TensorDim& tdim = A.Dim();
-	size_t bef = tdim.Before(mode);
-	size_t act = tdim.Active(mode);
-	size_t aft = tdim.After(mode);
-	TensorHoleProduct(S, A, B, bef, act, act, aft);
+	const TensorDim& tdim_a = A.Dim();
+	size_t bef = tdim_a.Before(mode);
+	size_t act_a = tdim_a.Active(mode);
+	size_t aft = tdim_a.After(mode);
+	const TensorDim& tdim_b = B.Dim();
+	size_t act_b = tdim_b.Active(mode);
+	assert(S.Dim1() == act_a);
+	assert(S.Dim2() == act_b);
+	TensorHoleProduct(S, A, B, bef, act_a, act_b, aft);
 }
 
 template<typename T>

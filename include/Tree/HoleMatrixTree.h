@@ -7,7 +7,7 @@
 #include "FactorMatrixTree.h"
 
 template<typename T>
-class HoleMatrixTree: public TreeStructuredObject<Matrix<T>>
+class HoleMatrixTree: public TreeStructuredObject<FactorMatrix<T>>
 /**
  * \class HoleMatrixTree
  * \ingroup Tree

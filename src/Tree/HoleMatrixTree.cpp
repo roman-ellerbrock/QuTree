@@ -40,7 +40,8 @@ void HoleMatrixTree<T>::Initialize(const TTBasis& basis) {
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
 		size_t n = tdim.GetNumTensor();
-		attributes_.emplace_back(Matrix<T>(n, n));
+		size_t mode = node.ChildIdx();
+		attributes_.emplace_back(FactorMatrix<T>(n, n, mode));
 	}
 }
 
@@ -59,7 +60,7 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 
 	// Transform with upper hole matrix
 	if (!parent.IsToplayer()) {
-		const Matrix<T>& holemat = this->operator[](parent);
+		const FactorMatrix<T>& holemat = this->operator[](parent);
 //		Ket = multStateAB(holemat, Ket); // @TODO: Double check
 		multStateAB(Ket, holemat, Bra);
 	} else {
@@ -68,7 +69,7 @@ void HoleMatrixTree<T>::CalculateLayer(const TensorTree<T>& Psi,
 
 	// Calculate hole-product and save to attributes_
 	auto child_idx = (size_t) node.ChildIdx();
-	Matrix<T>& s = this->operator[](node);
+	FactorMatrix<T>& s = this->operator[](node);
 	HoleProduct(s, Bra, Ket, child_idx);
 	// @TODO: Double check whether this and the HoleProduct works
 	// @TODO: Check whether multStateArTB works
@@ -186,7 +187,7 @@ void HoleMatrixTree<T>::Read(istream& is) {
 	// Read all Tensors
 	attributes_.clear();
 	for (int i = 0; i < nnodes; i++) {
-		Matrix<T> M(is);
+		FactorMatrix<T> M(is);
 		attributes_.emplace_back(M);
 	}
 }

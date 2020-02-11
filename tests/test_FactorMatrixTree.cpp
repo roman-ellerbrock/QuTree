@@ -100,7 +100,7 @@ SUITE (TensorTreeOverlaps) {
 	}
 
 	TEST (SpectralDecompositionTree_Inverse) {
-		TensorTreeBasis basis(12, 2, 2);
+		TensorTreeBasis basis(12, 4, 2);
 		mt19937 gen(1993);
 		HoleMatrixTreecd H(basis);
 	 	for (const Node& node : basis) {

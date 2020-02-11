@@ -476,6 +476,7 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
     }
 }
 
+/*
 template<typename T>
 Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	//
@@ -508,6 +509,7 @@ void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k)
 	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
 	TensorHoleProduct(S, A, B, before, active1, active2, after);
 }
+ */
 
 template<typename T, typename U>
 void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
