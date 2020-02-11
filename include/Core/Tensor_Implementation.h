@@ -512,7 +512,7 @@ void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k)
  */
 
 template<typename T, typename U>
-void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
 	if (zero) { C.Zero(); }
@@ -652,7 +652,7 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 	assert(A.Dim2() == tdim.Active(mode));
 	assert(A.Dim1() == tdimC.Active(mode));
 
-	mattensor(C, A, B, before, active1, active2, after, zero);
+	MatrixTensor(C, A, B, before, active1, active2, after, zero);
 }
 
 template<typename T, typename U>
@@ -668,7 +668,7 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t after = tdim.TotAfter(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
-		mattensor(C, A, B, before, active, active, after, false);
+		MatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
 		TensorDim tdim(B.Dim());
@@ -682,7 +682,7 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		assert(active1 == C.Dim().Active(mode));
 		assert(active2 == B.Dim().Active(mode));
 		cout << "non-quadratic mattensor implemented but tested only once so far.\n";
-		mattensor(C, A, B, before, active1, active2, after, false);
+		MatrixTensor(C, A, B, before, active1, active2, after, false);
 		return C;
 	}
 }
@@ -732,7 +732,7 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 	assert(A.Dim1() == active2);
 	assert(before == tdimC.GetDimPart());
 
-	mattensor(C, A, B, before, active1, active2, after, zero);
+	MatrixTensor(C, A, B, before, active1, active2, after, zero);
 }
 
 template<typename T, typename U>

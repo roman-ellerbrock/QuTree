@@ -208,8 +208,8 @@ Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
  */
 
 template <typename T, typename U>
-void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t behind, bool zero = true);
+void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+	size_t before, size_t activeC, size_t activeB, size_t after, bool zero = true);
 
 template <typename T, typename U>
 void Tmattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
