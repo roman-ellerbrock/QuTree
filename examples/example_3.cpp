@@ -70,7 +70,6 @@ void hole_product_tree() {
     HoleMatrixTreecd rho(Psi, Chi, w, basis);
     rho.print();
 
-    return;
 }
 
 #include "MatrixTree.h"
@@ -99,6 +98,15 @@ int main() {
 	MatrixTreecd Rho2(basis);
 	MatrixTreeFunctions::Contraction(Rho2, Psi, Chi, S2, basis);
 
+	cout << "NON-Orthogonal:"<<endl<<endl;
+	cout << "Rho:\n";
+	Rho.print(basis);
+	cout << "Rho2:\n";
+	Rho2.print(basis);
+
+	Rho.Calculate(Psi, basis);
+	MatrixTreeFunctions::Contraction(Rho2, Psi, basis);
+	cout << "Orthogonal:"<<endl<<endl;
 	cout << "Rho:\n";
 	Rho.print(basis);
 	cout << "Rho2:\n";
