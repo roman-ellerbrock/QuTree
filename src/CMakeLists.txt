@@ -30,7 +30,10 @@ set(QDlib_SOURCE_FILES
         Operators/LeafFunction.cpp
         Operators/LeafMatrix.cpp
         Operators/SumOfProductsOperator.cpp
-        Tree/IOTree.cpp ../include/Tree/IOTree.h)
+        Tree/IOTree.cpp
+        Tree/MatrixTree.cpp
+        Tree/MatrixTreeManager.cpp
+        )
 
 set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp

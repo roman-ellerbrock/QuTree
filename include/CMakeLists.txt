@@ -46,6 +46,9 @@ set(TENSOR_TREE_FILES
         Tree/SparseFactorMatrixTree.h
         Tree/SparseHoleMatrixTree.h
         Tree/SpectralDecompositionTree.h
+        Tree/IOTree.h
+        Tree/MatrixTree.h
+        Tree/MatrixTreeManager.h
         )
 
 set(OPERATOR_FILES
