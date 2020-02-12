@@ -5,6 +5,16 @@
 #include "MatrixTree.h"
 
 template<typename T>
+MatrixTree<T>::MatrixTree(istream& is) {
+	Read(is);
+}
+
+template<typename T>
+MatrixTree<T>::MatrixTree(const string& filename) {
+	Read(filename);
+}
+
+template<typename T>
 MatrixTree<T>::MatrixTree(const TTBasis& basis) {
 	Initialize(basis);
 }
@@ -34,6 +44,12 @@ void MatrixTree<T>::Write(ostream& os) const {
 }
 
 template <typename T>
+void MatrixTree<T>::Write(const string& filename) const  {
+	ofstream os(filename);
+	Write(os);
+}
+
+template <typename T>
 void MatrixTree<T>::Read(istream& is) {
 	char check[5];
 	is.read(check, 4);
@@ -52,6 +68,12 @@ void MatrixTree<T>::Read(istream& is) {
 	}
 }
 
+template <typename T>
+void MatrixTree<T>::Read(const string& filename) {
+	ifstream is(filename);
+	Read(is);
+}
+
 template<typename T>
 void MatrixTree<T>::print(const TTBasis& basis, ostream& os) const {
 	for (const Node& node : basis) {
@@ -65,6 +87,16 @@ void MatrixTree<T>::print(ostream& os) const {
 	for (const auto& mat : *this) {
 		mat.print();
 	}
+}
+
+template<typename T>
+ostream& operator<<(ostream& os, const MatrixTree<T>& S) {
+	S.Write(os);
+}
+
+template<typename T>
+istream& operator>>(istream& is, MatrixTree<T>& S) {
+	S.Read(is);
 }
 
 template class MatrixTree<complex<double>>;

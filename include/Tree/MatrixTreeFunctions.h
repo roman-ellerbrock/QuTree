@@ -4,8 +4,8 @@
 
 #ifndef MATRIXTREEFUNCTIONS_H
 #define MATRIXTREEFUNCTIONS_H
-#include "Tree/MatrixTree.h"
 #include "Tree/TensorTree.h"
+#include "Tree/MatrixTree.h"
 
 namespace MatrixTreeFunctions {
 
@@ -13,13 +13,10 @@ namespace MatrixTreeFunctions {
 	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Phi, Tensor<T> AChi, const Node& node);
 
 	template<typename T>
-	Matrix<T> DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& basis);
+	void DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& basis);
 
 	template<typename T>
-	Matrix<T> DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TTBasis& basis);
-
-	template<typename T>
-	MatrixTree<T> DotProduct(const TensorTree<T>& Psi, const TTBasis& basis);
+	MatrixTree<T> DotProduct(const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& basis);
 
 	template<typename T>
 	void ContractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
@@ -34,10 +31,10 @@ namespace MatrixTreeFunctions {
 		const MatrixTree<T>& S, const TTBasis& basis);
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TTBasis& basis);
+	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TTBasis& basis, bool orthogonal);
 
 	template<typename T>
-	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TTBasis& basis);
+	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TTBasis& basis, bool orthogonal);
 
 }
 

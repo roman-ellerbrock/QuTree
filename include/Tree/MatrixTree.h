@@ -16,6 +16,10 @@ public:
 
 	explicit MatrixTree(const TTBasis& basis);
 
+	explicit MatrixTree(istream& is);
+
+	explicit MatrixTree(const string& filename);
+
 	~MatrixTree() = default;
 
 	void Initialize(const TTBasis& basis);
@@ -27,9 +31,11 @@ public:
 
 	/// Read in binary format
 	void Read(istream& is);
+	void Read(const string& filename);
 
 	/// Write in binary format
 	void Write(ostream& os) const;
+	void Write(const string& filename) const;
 };
 
 template<typename T>
