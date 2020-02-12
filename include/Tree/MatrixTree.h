@@ -10,10 +10,11 @@
 template <typename T>
 class MatrixTree: public TreeStructuredObject<Matrix<T>>{
 	using TreeStructuredObject<Matrix<T>>::attributes_;
+public:
 
 	MatrixTree() = default;
 
-	MatrixTree(const TTBasis& basis);
+	explicit MatrixTree(const TTBasis& basis);
 
 	~MatrixTree() = default;
 

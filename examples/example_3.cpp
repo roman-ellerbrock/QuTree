@@ -73,6 +73,9 @@ void hole_product_tree() {
     return;
 }
 
+#include "MatrixTree.h"
+#include "MatrixTreeFunctions.h"
+
 int main() {
 
     TensorTreecd T = create_tensor_tree();
@@ -80,6 +83,27 @@ int main() {
     dot_product_tree();
     hole_product_tree();
 
-    // TODO: sparse versions of dot product and hole product (initialized with operators)
+    TTBasis basis(4, 3, 2);
+    mt19937 gen(2020);
+    TensorTreecd Psi(basis, gen, false);
+	TensorTreecd Chi(basis, gen, false);
+	FactorMatrixTreecd S(Psi, Chi, basis);
+
+    MatrixTreecd S2(basis);
+    MatrixTreeFunctions::DotProduct(S2, Psi, Chi, basis);
+	S.print(basis);
+	S2.print(basis);
+
+	HoleMatrixTreecd Rho(Psi, Chi, S, basis);
+
+	MatrixTreecd Rho2(basis);
+	MatrixTreeFunctions::Contraction(Rho2, Psi, Chi, S2, basis);
+
+	cout << "Rho:\n";
+	Rho.print(basis);
+	cout << "Rho2:\n";
+	Rho2.print(basis);
+
+	// TODO: sparse versions of dot product and hole product (initialized with operators)
 
 }

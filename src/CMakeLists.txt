@@ -32,7 +32,7 @@ set(QDlib_SOURCE_FILES
         Operators/SumOfProductsOperator.cpp
         Tree/IOTree.cpp
         Tree/MatrixTree.cpp
-        Tree/MatrixTreeManager.cpp
+        Tree/MatrixTreeFunctions.cpp
         )
 
 set(LEAF_TYPE_CPP_FILES

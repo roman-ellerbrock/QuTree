@@ -476,9 +476,8 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
     }
 }
 
-/*
 template<typename T>
-Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	//
 	const TensorDim& tdim_a(A.Dim());
 	const TensorDim& tdim_b(A.Dim());
@@ -499,7 +498,7 @@ Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 }
 
 template<typename T>
-void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorDim& tdim_a(A.Dim());
 	const TensorDim& tdim_b(A.Dim());
 	size_t active1 = tdim_a.Active(k);
@@ -509,7 +508,6 @@ void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k)
 	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
 	TensorHoleProduct(S, A, B, before, active1, active2, after);
 }
- */
 
 template<typename T, typename U>
 void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,

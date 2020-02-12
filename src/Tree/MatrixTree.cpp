@@ -14,7 +14,7 @@ void MatrixTree<T>::Initialize(const TTBasis& basis) {
 	attributes_.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
-		attributes_.emplace_back(Matrix<T>(tdim.GetNumTensor()), tdim.GetNumTensor());
+		attributes_.emplace_back(Matrix<T>(tdim.GetNumTensor(), tdim.GetNumTensor()));
 	}
 }
 
@@ -56,7 +56,7 @@ template<typename T>
 void MatrixTree<T>::print(const TTBasis& basis, ostream& os) const {
 	for (const Node& node : basis) {
 		node.info();
-		attributes_[node].print();
+		this->operator[](node).print();
 	}
 }
 
@@ -67,3 +67,5 @@ void MatrixTree<T>::print(ostream& os) const {
 	}
 }
 
+template class MatrixTree<complex<double>>;
+template class MatrixTree<double>;

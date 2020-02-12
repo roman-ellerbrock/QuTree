@@ -200,12 +200,11 @@ template<typename T>
 void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind);
 
-/*template<typename T>
-void HoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k);
+template<typename T>
+void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k);
 
 template<typename T>
-Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
- */
+Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
 
 template <typename T, typename U>
 void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
