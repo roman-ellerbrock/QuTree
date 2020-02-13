@@ -1,0 +1,66 @@
+//
+// Created by Roman Ellerbrock on 2/12/20.
+//
+
+#ifndef SPARSEMATRIXTREE_H
+#define SPARSEMATRIXTREE_H
+#include "Tree/SparseTreeStructuredObject.h"
+
+template <typename T>
+class SparseMatrixTree : SparseTreeStructuredObject<Matrix<T>>{
+/**
+ * \class atrixTree
+ *
+ * \ingroup Tree-Classes
+ *
+ * \brief This class represents a tree with matrices asigned to every node.
+ *
+ * The Hole-Matrices are the result of hole-products of tensor trees.
+ * In a physical context, the hole-matrices are representation of
+ * mean-field operators when working with tensor tree wavefunctions.
+ * */
+	using SparseTreeStructuredObject<Matrix<T>>::Active;
+	using SparseTreeStructuredObject<Matrix<T>>::operator[];
+	using SparseTreeStructuredObject<Matrix<T>>::Initialize;
+	using SparseTreeStructuredObject<Matrix<T>>::attributes_;
+public:
+
+	/// Create HoleMatrixTree for a given tree-marker
+	SparseMatrixTree(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
+	: SparseTreeStructuredObject<Matrix<T>>(active_, basis) {
+		Initialize(basis);
+	}
+
+	/// Create HoleMatrixTree only for relevant nodes for a given Operator
+	SparseMatrixTree(const MLO<T>& M, const TTBasis& basis)
+		: SparseTreeStructuredObject<Matrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
+		Initialize(basis);
+	}
+
+	~SparseMatrixTree() = default;
+
+	/// Create Matrices for active_ nodes in the tree
+	void Initialize(const TTBasis& basis) override;
+
+	/// I/O
+	void print(ostream& os = cout);
+	void Write(ostream& os) const;
+	void Write(const string& filename) const;
+	void Read(istream& is);
+	void Read(const string& filename);
+};
+
+template<typename T>
+ostream& operator>>(ostream& os, const SparseMatrixTree<T>& hmat);
+
+template<typename T>
+istream& operator<<(istream& is, SparseMatrixTree<T>& hmat);
+
+typedef SparseMatrixTree<complex<double>> SparseMatrixTreecd;
+
+typedef SparseMatrixTree<double> SparseMatrixTreed;
+
+
+
+
+#endif //SPARSEMATRIXTREE_H

@@ -31,7 +31,8 @@ set(QDlib_SOURCE_FILES
         Operators/LeafFunction.cpp
         Operators/LeafMatrix.cpp
         Operators/SumOfProductsOperator.cpp
-        )
+        Tree/SparseMatrixTree.cpp
+        ../include/Tree/SparseMatrixTreeFunctions.cpp ../include/Tree/SparseMatrixTreeFunctions.h)
 
 set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
