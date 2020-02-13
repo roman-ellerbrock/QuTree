@@ -34,7 +34,7 @@ set(QDlib_SOURCE_FILES
         Tree/SpectralDecompositionTree.cpp
         Tree/TensorTree_Instantiation.cpp
         Tree/TreeMarker.cpp
-        ../include/Tree/SparseMatrixTreeFunctions_Implementation.h)
+        )
 
 set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp

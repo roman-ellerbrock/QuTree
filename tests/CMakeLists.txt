@@ -19,7 +19,7 @@ set(QDlib_tests
         test_SparseFactorMatrixTree.cpp
         test_TensorTreeBasis.cpp
         test_MatrixTree.cpp
-        SparseMatrixTree.cpp)
+        test_SparseMatrixTree.cpp)
 
 add_executable(TestQDlib ${QDlib_tests})
 target_link_libraries(TestQDlib QDlib)

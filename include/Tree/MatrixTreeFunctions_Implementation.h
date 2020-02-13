@@ -6,11 +6,11 @@
 #define MATRIXTREE_IMPLEMENTATION_H
 #include "MatrixTreeFunctions.h"
 
+namespace MatrixTreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 /// General DotProduct for Tensor Trees
 ////////////////////////////////////////////////////////////////////////
 
-namespace MatrixTreeFunctions {
 	template<typename T>
 	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Phi, Tensor<T> AChi, const Node& node) {
 		if (!node.IsBottomlayer()) {

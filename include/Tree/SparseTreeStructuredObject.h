@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2019-04-26.
 //
 
-#ifndef MCTDH_SPARSETREESTRUCTUREDOBJECT_H
-#define MCTDH_SPARSETREESTRUCTUREDOBJECT_H
+#ifndef SPARSETREESTRUCTUREDOBJECT_H
+#define SPARSETREESTRUCTUREDOBJECT_H
 #include "TreeMarker.h"
 #include "TreeStructuredObject.h"
 
@@ -84,4 +84,4 @@ protected:
 	vector<A> attributes_;
 };
 
-#endif //MCTDH_SPARSETREESTRUCTUREDOBJECT_H
+#endif //SPARSETREESTRUCTUREDOBJECT_H

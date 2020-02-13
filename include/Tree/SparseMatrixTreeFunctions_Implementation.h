@@ -7,6 +7,9 @@
 #include "Tree/SparseMatrixTreeFunctions.h"
 
 namespace SparseMatrixTreeFunctions {
+////////////////////////////////////////////////////////////////////////
+/// Build SparseMatrixTree Bottom-Up (Forward)
+////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
 	Matrix<T> RepresentUpper(const SparseMatrixTree<T>& hmat,
@@ -74,6 +77,11 @@ namespace SparseMatrixTreeFunctions {
 		Represent(hmat, M, Psi, basis);
 		return hmat;
 	}
+
+////////////////////////////////////////////////////////////////////////
+/// Build SparseMatrixTree Top-Down (Backward)
+////////////////////////////////////////////////////////////////////////
+
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H
