@@ -1,4 +1,4 @@
-#include "Core/SimultaneousDiagonalization.h"
+#include "Util/SimultaneousDiagonalization.h"
 
 void SimultaneousDiagonalization::Initialization(vector<FactorMatrixcd>& A,
 	double eps_) {

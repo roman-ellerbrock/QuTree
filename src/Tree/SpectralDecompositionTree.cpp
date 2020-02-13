@@ -9,7 +9,7 @@ SpectralDecompositionTree<T>::SpectralDecompositionTree(const TTBasis& basis) {
 }
 
 template<typename T>
-SpectralDecompositionTree<T>::SpectralDecompositionTree(const HoleMatrixTree<T>& H,
+SpectralDecompositionTree<T>::SpectralDecompositionTree(const MatrixTree<T>& H,
 	const TTBasis& basis) {
 	Initialize(basis);
 	Calculate(H, basis);
@@ -27,7 +27,7 @@ void SpectralDecompositionTree<T>::Initialize(const TTBasis& basis) {
 }
 
 template<typename T>
-void SpectralDecompositionTree<T>::Calculate(const HoleMatrixTree<T>& H,
+void SpectralDecompositionTree<T>::Calculate(const MatrixTree<T>& H,
 	const TTBasis& basis) {
 	for (const Node& node : basis) {
 		const Matrix<T>& mat = H[node];
@@ -37,13 +37,12 @@ void SpectralDecompositionTree<T>::Calculate(const HoleMatrixTree<T>& H,
 }
 
 template<typename T>
-HoleMatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, double eps) {
+MatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, double eps) {
 	assert(attributes_.size() == basis.nNodes());
-	HoleMatrixTree<T> Inv_Hole(basis);
+	MatrixTree<T> Inv_Hole(basis);
 	for (const Node& node : basis) {
 		const auto& x = this->operator[](node);
-		Matrix<T> mat = BuildInverse(x, eps);
-		Inv_Hole[node] = FactorMatrix<T>(mat, node.ChildIdx());
+		Inv_Hole[node] = BuildInverse(x, eps);
 	}
 	return Inv_Hole;
 }

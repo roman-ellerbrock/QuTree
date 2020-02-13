@@ -4,7 +4,7 @@
 #include "UnitTest++/UnitTest++.h"
 #include "Core/Matrix.h"
 #include <random>
-#include "Core/RandomMatrices.h"
+#include "Util/RandomMatrices.h"
 
 SUITE (Matrix) {
 	class MatrixFactory {

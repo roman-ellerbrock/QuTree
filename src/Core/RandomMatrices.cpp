@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/2/20.
 //
 
-#include "Core/RandomMatrices.h"
+#include "Util/RandomMatrices.h"
 
 namespace RandomMatrices {
 	Matrixcd GUE(size_t dim, mt19937& gen) {

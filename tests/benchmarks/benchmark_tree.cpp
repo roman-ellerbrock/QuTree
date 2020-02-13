@@ -3,20 +3,22 @@
 //
 #include "benchmark_tree.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
-#include "Tree/HoleMatrixTree.h"
+#include "Tree/MatrixTreeFunctions.h"
 #include "benchmark_helper.h"
 #include "Tree/SparseHoleMatrixTree.h"
 
 
 namespace benchmark {
-	auto holematrixtree_sample(HoleMatrixTreecd& Rho, const TensorTreecd& Psi,
+	using namespace MatrixTreeFunctions;
+	auto holematrixtree_sample(MatrixTreecd& Rho, const TensorTreecd& Psi,
 		const TTBasis& basis, size_t nsample) {
 
 		vector<chrono::microseconds> duration_vec;
 		for (size_t n = 0; n < nsample; ++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			Rho.Calculate(Psi, basis);
+			Contraction(Rho, Psi, basis, true);
+//			Rho.Calculate(Psi, basis);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 		}
@@ -29,18 +31,19 @@ namespace benchmark {
 		/// Initialize memory
 		TTBasis basis(nleaves, dim, dim);
 		TensorTreecd Psi(basis, gen);
-		HoleMatrixTreecd Rho(basis);
+		MatrixTreecd Rho(basis);
 
 		return holematrixtree_sample(Rho, Psi, basis, nsample);
 	}
 
-	pair<double, double> factormatrixtree_sample(FactorMatrixTreecd & fmat,
+	pair<double, double> factormatrixtree_sample(MatrixTreecd & fmat,
 		const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
 		vector<chrono::microseconds> duration_vec;
 		for (size_t n = 0;n<nsample;++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			fmat.Calculate(Psi, Psi, basis);
+			DotProduct(fmat, Psi, Psi, basis);
+//			fmat.Calculate(Psi, Psi, basis);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 		}
@@ -52,7 +55,7 @@ pair<double, double> factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	/// Initialize memory
 	TTBasis basis(nleaves, dim, dim);
 	TensorTreecd Psi(basis, gen);
-	FactorMatrixTreecd fmat(basis);
+	MatrixTreecd fmat(basis);
 	return factormatrixtree_sample(fmat, Psi, basis, nsample);
 }
 

@@ -1,31 +1,31 @@
 
 set(QDlib_INCLUDE_FILES
-        Core/BS_integrator.h
-        Core/DoubleParticleOperator.h
-        Core/FFT.h
-        Core/FFTCooleyTukey.h
-        Core/JacobiRotationFramework.h
-        Core/Lanzcos.h
-        Core/long_integer.h
+        Util/BS_integrator.h
+        Util/DoubleParticleOperator.h
+        Util/FFT.h
+        Util/FFTCooleyTukey.h
+        Util/JacobiRotationFramework.h
+        Util/Lanzcos.h
+        Util/long_integer.h
         Core/Matrix.h
         Core/Matrix_Implementation.h
-        Core/MultiIndex.h
+        Util/MultiIndex.h
         QDlib.h
-        Core/QMConstants.h
-        Core/SimultaneousDiagonalization.h
+        Util/QMConstants.h
+        Util/SimultaneousDiagonalization.h
         Core/FactorMatrix.h
-        Core/RandomMatrices.h
+        Util/RandomMatrices.h
         Core/Tensor.h
         Core/TensorDim.h
         Core/TensorDim_Extension.h
         Core/Tensor_Extension.h
         Core/Tensor_Extension_Implementation.h
         Core/Tensor_Implementation.h
-        Core/Tree.h
-        Core/TreeNode.h
+        Util/Tree.h
+        Util/TreeNode.h
         Core/Vector.h
         Core/Vector_Implementation.h
-        Core/WeightedSimultaneousDiagonalization.h
+        Util/WeightedSimultaneousDiagonalization.h
         Core/stdafx.h
         )
 
@@ -40,7 +40,6 @@ set(TENSOR_TREE_FILES
         Tree/TreeStructuredObject.h
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h
-        Tree/FactorMatrixTree.h
         Tree/TreeStructuredObject.h
         Tree/TreeMarker.h
         Tree/SparseFactorMatrixTree.h

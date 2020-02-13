@@ -4,7 +4,9 @@
 
 #include "UnitTest++/UnitTest++.h"
 #include "Tree/MatrixTree.h"
-#include "Core/RandomMatrices.h"
+#include "Tree/SpectralDecompositionTree.h"
+#include "Tree/MatrixTreeFunctions.h"
+#include "Util/RandomMatrices.h"
 
 SUITE (MatrixTree) {
 	double eps = 1e-8;
@@ -33,8 +35,6 @@ SUITE (MatrixTree) {
 		}
 	}
 }
-
-#include "Tree/MatrixTreeFunctions.h"
 
 SUITE (MatrixTreeFunctions) {
 	using namespace MatrixTreeFunctions;
@@ -85,6 +85,43 @@ SUITE (MatrixTreeFunctions) {
 					}
 				}
 			}
+		}
+	}
+
+	TEST (SpectralDecompositionTree_Calc) {
+		mt19937 gen(1993);
+		TensorTreeBasis basis(12, 2, 2);
+		TensorTreecd Psi(basis, gen);
+		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, basis, true);
+		SpectralDecompositionTreecd X(Rho, basis);
+			CHECK_EQUAL(Rho.size(), X.size());
+		for (const Node& node : basis) {
+			if (!node.IsToplayer()) {
+					CHECK_CLOSE(1., X[node].second(1), eps);
+			}
+		}
+	}
+
+	TEST (SpectralDecompositionTree_Inverse) {
+		TensorTreeBasis basis(12, 4, 2);
+		mt19937 gen(1993);
+		MatrixTreecd H(basis);
+		for (const Node& node : basis) {
+			const TensorDim& dim = node.TDim();
+			Matrixcd mat = RandomMatrices::GUE(dim.GetNumTensor(), gen);
+			H[node] = FactorMatrixcd(mat, node.ChildIdx());
+		}
+		SpectralDecompositionTreecd X(H, basis);
+		auto H_inv = X.Invert(basis, 1e-10);
+
+		MatrixTreecd Identity(basis);
+		for (const Node& node : basis) {
+			Identity[node] = H_inv[node] * H[node];
+		}
+		for (const Node& node : basis) {
+			const Matrixcd& I_test = Identity[node];
+			auto r = Residual(I_test, IdentityMatrix<complex<double>>(I_test.Dim1()));
+				CHECK_CLOSE(0., r, eps);
 		}
 	}
 }

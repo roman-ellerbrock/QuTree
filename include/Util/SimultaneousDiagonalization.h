@@ -1,9 +1,9 @@
 #pragma once
 #include "Core/FactorMatrix.h"
-#include "Vector.h"
-#include "stdafx.h"
+#include "Core/Vector.h"
+#include "Core/stdafx.h"
 #include <random>
-#include "Core/JacobiRotationFramework.h"
+#include "JacobiRotationFramework.h"
 
 using namespace JacobiRotationFramework;
 

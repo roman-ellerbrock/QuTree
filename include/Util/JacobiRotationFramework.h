@@ -1,5 +1,5 @@
 #pragma once
-#include "FactorMatrix.h"
+#include "Core/FactorMatrix.h"
 
 namespace JacobiRotationFramework
 /**

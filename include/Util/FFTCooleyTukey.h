@@ -1,7 +1,7 @@
 #pragma once
-#include "Vector.h"
-#include "stdafx.h"
-#include "Tensor.h"
+#include "Core/Vector.h"
+#include "Core/stdafx.h"
+#include "Core/Tensor.h"
 #include <bitset>
 
 template <typename T>

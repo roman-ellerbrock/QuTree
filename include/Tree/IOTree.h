@@ -4,8 +4,8 @@
 
 #ifndef IOTREE_H
 #define IOTREE_H
-#include "HoleMatrixTree.h"
-#include "TensorTree.h"
+#include "Tree/MatrixTreeFunctions.h"
+#include "Tree/TensorTree.h"
 
 namespace IOTree {
 
@@ -13,7 +13,7 @@ namespace IOTree {
 	void Occupancy(const TensorTree<T>& Psi, const TTBasis& basis, ostream& os = cout);
 
 	template <typename T>
-	void Leafs(const TensorTree<T>& Psi, const HoleMatrixTree<T>& Rho, const TTBasis& basis, ostream& os = cout);
+	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const TTBasis& basis, ostream& os = cout);
 
 }
 

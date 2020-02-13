@@ -68,7 +68,7 @@ Tensorcd FFTGrid::ApplyP(const Tensorcd& Acoeffs)const
 	return pA;
 }
 
-#include "Core/FFT.h"
+#include "Util/FFT.h"
 Tensorcd FFTGrid::ToGrid(const Tensorcd& Acoeffs)const {
 	return multATB(trafo_, Acoeffs);
 }

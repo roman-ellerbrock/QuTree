@@ -1,7 +1,7 @@
 #pragma once
-#include "stdafx.h"
+#include "Core/stdafx.h"
 #include <functional>
-#include "Tensor.h"
+#include "Core/Tensor.h"
 
 
 

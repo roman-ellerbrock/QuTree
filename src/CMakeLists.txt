@@ -3,26 +3,27 @@ set(QDlib_SOURCE_FILES
         Core/TensorDim.cpp
         Core/TensorDim_Extension.cpp
         Core/FactorMatrix_Instantiations.cpp
-        Core/FFT.cpp
+        Util/FFT.cpp
         Core/JacobiRotationFramework.cpp
-        Core/SimultaneousDiagonalization.cpp
-        Core/long_integer.cpp
+        Util/SimultaneousDiagonalization.cpp
+        Util/long_integer.cpp
         Core/Vector_Instantiations.cpp
         Core/Matrix_Instantiations.cpp
         Core/RandomMatrices.cpp
         Core/Tensor_Instantiations.cpp
         Core/Tensor_Extension_Instantiations.cpp
         Core/stdafx.cpp
-        Core/WeightedSimultaneousDiagonalization.cpp
+        Util/WeightedSimultaneousDiagonalization.cpp
         TensorTreeBasis/Leaf.cpp
         TensorTreeBasis/LinearizedLeaves.cpp
         TensorTreeBasis/Node.cpp
         TensorTreeBasis/NodePosition.cpp
         TensorTreeBasis/TensorTreeBasis.cpp
         TensorTreeBasis/TTBasisFactory.cpp
+        Tree/IOTree.cpp
+        Tree/MatrixTree.cpp
+        Tree/MatrixTreeFunctions.cpp
         Tree/TensorTree_Instantiation.cpp
-        Tree/FactorMatrixTree.cpp
-        Tree/HoleMatrixTree.cpp
         Tree/SparseFactorMatrixTree.cpp
         Tree/SparseHoleMatrixTree.cpp
         Tree/SpectralDecompositionTree.cpp
@@ -30,9 +31,6 @@ set(QDlib_SOURCE_FILES
         Operators/LeafFunction.cpp
         Operators/LeafMatrix.cpp
         Operators/SumOfProductsOperator.cpp
-        Tree/IOTree.cpp
-        Tree/MatrixTree.cpp
-        Tree/MatrixTreeFunctions.cpp
         )
 
 set(LEAF_TYPE_CPP_FILES

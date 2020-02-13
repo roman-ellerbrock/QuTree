@@ -5,8 +5,7 @@
 //
 
 #include "Tree/TensorTree.h"
-#include "Tree/FactorMatrixTree.h"
-#include "Tree/HoleMatrixTree.h"
+#include "Tree/MatrixTreeFunctions.h"
 
 // Demonstrate various ways to create a TensorTree object
 TensorTreecd create_tensor_tree() {
@@ -50,7 +49,7 @@ void dot_product_tree() {
     TensorTreecd Chi(Psi);
 
     /// Construct, allocate and calculate a factor matrix tree
-    FactorMatrixTreecd w(Psi, Chi, basis);
+    MatrixTreecd w = MatrixTreeFunctions::DotProduct(Psi, Chi, basis);
     w.print();
 
     return;
@@ -64,16 +63,15 @@ void hole_product_tree() {
     mt19937 gen(2468);
     TensorTreecd Psi(basis, gen, false);
     TensorTreecd Chi(Psi);
-    FactorMatrixTreecd w(Psi, Chi, basis);
+//    FactorMatrixTreecd w(Psi, Chi, basis);
+    MatrixTreecd w = MatrixTreeFunctions::DotProduct(Psi, Chi, basis);
 
     /// Construct, allocate and calculate a hole matrix tree
-    HoleMatrixTreecd rho(Psi, Chi, w, basis);
+//    HoleMatrixTreecd rho(Psi, Chi, w, basis);
+    MatrixTreecd rho = MatrixTreeFunctions::Contraction(Psi, Chi,  w, basis);
     rho.print();
 
 }
-
-#include "MatrixTree.h"
-#include "MatrixTreeFunctions.h"
 
 int main() {
 
@@ -81,36 +79,6 @@ int main() {
     TensorTreecd T2(T);
     dot_product_tree();
     hole_product_tree();
-
-    TTBasis basis(4, 3, 2);
-    mt19937 gen(2020);
-    TensorTreecd Psi(basis, gen, false);
-	TensorTreecd Chi(basis, gen, false);
-	FactorMatrixTreecd S(Psi, Chi, basis);
-
-    MatrixTreecd S2(basis);
-    MatrixTreeFunctions::DotProduct(S2, Psi, Chi, basis);
-	S.print(basis);
-	S2.print(basis);
-
-	HoleMatrixTreecd Rho(Psi, Chi, S, basis);
-
-	MatrixTreecd Rho2(basis);
-	MatrixTreeFunctions::Contraction(Rho2, Psi, Chi, S2, basis);
-
-	cout << "NON-Orthogonal:"<<endl<<endl;
-	cout << "Rho:\n";
-	Rho.print(basis);
-	cout << "Rho2:\n";
-	Rho2.print(basis);
-
-	Rho.Calculate(Psi, basis);
-	MatrixTreeFunctions::Contraction(Rho2, Psi, basis);
-	cout << "Orthogonal:"<<endl<<endl;
-	cout << "Rho:\n";
-	Rho.print(basis);
-	cout << "Rho2:\n";
-	Rho2.print(basis);
 
 	// TODO: sparse versions of dot product and hole product (initialized with operators)
 

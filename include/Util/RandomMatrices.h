@@ -4,7 +4,7 @@
 
 #ifndef RANDOMMATRICES_H
 #define RANDOMMATRICES_H
-#include "Matrix.h"
+#include "Core/Matrix.h"
 #include <random>
 
 namespace RandomMatrices {

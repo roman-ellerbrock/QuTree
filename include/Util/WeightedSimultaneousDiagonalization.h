@@ -1,6 +1,6 @@
 #pragma once
-#include "FactorMatrix.h"
-#include "Vector.h"
+#include "Core/FactorMatrix.h"
+#include "Core/Vector.h"
 #include "JacobiRotationFramework.h"
 
 using namespace JacobiRotationFramework;

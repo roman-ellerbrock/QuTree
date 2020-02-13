@@ -4,7 +4,7 @@
 
 #ifndef LONG_INTEGER_H
 #define LONG_INTEGER_H
-#include "stdafx.h"
+#include "Core/stdafx.h"
 
 /**
  * \class long_integer

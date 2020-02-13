@@ -1,4 +1,4 @@
-#include "Core/WeightedSimultaneousDiagonalization.h"
+#include "Util/WeightedSimultaneousDiagonalization.h"
 
 namespace WeightedSimultaneousDiagonalization {
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "Matrix.h"
-#include "Tensor.h"
+#include "Core/Matrix.h"
+#include "Core/Tensor.h"
 
 template <typename T>
 class DoubleParticleOperator:

@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/SimultaneousDiagonalization.h"
+#include "Util/SimultaneousDiagonalization.h"
 #include "DVRBasis.h"
 
 class HO_Basis
