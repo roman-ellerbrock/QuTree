@@ -3,17 +3,17 @@
 //
 #include "UnitTest++/UnitTest++.h"
 #include "LeafOperator.h"
-#include "LeafFunction.h"
 #include "LeafMatrix.h"
 #include "MultiLeafOperator.h"
-#include "SumOfProductsOperator.h"
 #include "HO_Basis.h"
 #include "TensorTreeBasis/TensorTreeBasis.h"
 
 SUITE (Operators) {
 	class HelperFactory {
 	public:
-		HelperFactory() = default;
+		HelperFactory() {
+			Initialize();
+		}
 		~HelperFactory() = default;
 		FactorMatrixcd X;
 		LeafMatrixcd x;
@@ -45,7 +45,6 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, SPO_SPOM) {
 		// Check that applying a Matrix to a tensor
 		// or the corresponding SPOM does the same
-		Initialize();
 
 		TensorDim tdim({3, 2, 4}, 1);
 		Tensorcd A(tdim);
@@ -57,7 +56,6 @@ SUITE (Operators) {
 	}
 
 	TEST_FIXTURE (HelperFactory, MPO_1) {
-		Initialize();
 		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
 		TTBasis basis(4, 2, 2);

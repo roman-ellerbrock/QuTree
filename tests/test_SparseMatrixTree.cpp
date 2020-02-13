@@ -11,7 +11,9 @@ SUITE (SparseMatrixTree) {
 
 	class HelperFactory {
 	public:
-		HelperFactory() = default;
+		HelperFactory() {
+			Initialize();
+		}
 		~HelperFactory() = default;
 		mt19937 rng_;
 		TTBasis basis_;
@@ -44,33 +46,24 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE (HelperFactory, TreeMarker_NoTail) {
 		/// Create TreeMarker omitting higher nodes in the tree after last branch
-		Initialize();
 		TreeMarker active(M_.Modes(), basis_, false);
 			CHECK_EQUAL(5, active.size());
 	}
 
 	TEST_FIXTURE (HelperFactory, Represent) {
-		Initialize();
 		SparseMatrixTreecd hmat = SparseMatrixTreeFunctions::Represent(M_, Psi_, basis_);
 			CHECK_CLOSE(0.25, real(hmat[basis_.TopNode()](0, 0)), 0E-12);
 	}
 
 	TEST_FIXTURE (HelperFactory, Constructor) {
-		Initialize();
 		SparseMatrixTreecd hmat(M_, basis_);
 			CHECK_EQUAL(6, hmat.Size());
 	}
 
-	TEST (IO) {
-		mt19937 gen(10293);
-		auto x = RandomMatrices::GUE(2, gen);
-		LeafMatrixcd l(x);
-		MLOcd M(l, 0);
-		M.push_back(l, 4);
-		TTBasis basis(9, 2, 2);
-		SparseMatrixTreecd hmat(M, basis);
+	TEST_FIXTURE (HelperFactory, IO) {
+		SparseMatrixTreecd hmat(M_, basis_);
 		hmat.Write("SparseMatrixTree.dat");
-		SparseMatrixTreecd gmat(M, basis);
+		SparseMatrixTreecd gmat(M_, basis_);
 		gmat.Read("SparseMatrixTree.dat");
 		const TreeMarker& marker = gmat.Active();
 			CHECK_EQUAL(hmat.Size(), gmat.Size());

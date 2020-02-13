@@ -9,6 +9,9 @@
 SUITE (Matrix) {
 	class MatrixFactory {
 	public:
+		MatrixFactory() {
+			CreateMatrices();
+		}
 		Matrixcd A;
 		Matrixcd B;
 
@@ -50,7 +53,6 @@ SUITE (Matrix) {
 
 	TEST_FIXTURE (MatrixFactory, Matrix_FileIO) {
 		/// Test Matrix I/O
-		CreateMatrices();
 		A.Write("matrix1.tmp.dat");
 		Matrixcd N("matrix1.tmp.dat");
 		bool success = A == N;
@@ -58,7 +60,6 @@ SUITE (Matrix) {
 	}
 
 	TEST_FIXTURE (MatrixFactory, Matrix_Add) {
-		CreateMatrices();
 		auto S = A + B;
 		S.Write("matrix_add.dat");
 		Matrixcd S_read("matrix_add.dat");
@@ -67,7 +68,6 @@ SUITE (Matrix) {
 	}
 
 	TEST_FIXTURE (MatrixFactory, Matrix_Subst) {
-		CreateMatrices();
 		auto D = A - B;
 		D.Write("matrix_subst.dat");
 		Matrixcd D_read("matrix_subst.dat");
@@ -75,7 +75,6 @@ SUITE (Matrix) {
 	}
 
 	TEST_FIXTURE (MatrixFactory, Matrix_Prod) {
-		CreateMatrices();
 		auto D = A * B;
 		D.Write("matrix_prod.dat");
 		Matrixcd D_read("matrix_prod.dat");
@@ -84,7 +83,6 @@ SUITE (Matrix) {
 
 
 	TEST_FIXTURE (MatrixFactory, Matrix_Diagonalization) {
-		CreateMatrices();
 		auto x = A.cDiag();
 		const Matrixcd& Ua = x.first;
 		const Vectord& la = x.second;
@@ -100,7 +98,6 @@ SUITE (Matrix) {
 	}
 
 	TEST_FIXTURE (MatrixFactory, Matrix_RoF) {
-		CreateMatrices();
 		{
 			// Copy asignment operator
 			auto Aca = A;

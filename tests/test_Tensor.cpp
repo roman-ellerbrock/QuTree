@@ -7,6 +7,10 @@ using namespace std;
 SUITE (Tensor) {
 	class TensorFactory {
 	public:
+		TensorFactory() {
+			CreateTensors();
+		}
+
 		Tensorcd A;
 		Tensorcd B;
 
@@ -74,7 +78,6 @@ SUITE (Tensor) {
 
 	TEST_FIXTURE (TensorFactory, Tensor_FileIO) {
 		/// Test Tensor I/O
-		CreateTensors();
 		A.Write("tensor1.dat");
 		Tensorcd B("tensor1.dat");
 		Tensorcd C = A - B;
@@ -84,7 +87,6 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Product) {
-		CreateTensors();
 		Matrixcd x = mHoleProduct(A, B, 0);
 		x.Write("Tensor_Product.dat");
 		Matrixcd s("Tensor_Product.dat");
@@ -93,7 +95,6 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Matrix_Product) {
-		CreateTensors();
 		Matrixcd x = mHoleProduct(A, B, 1);
 		x.Write("Tensor_Product_0.dat");
 		Matrixcd s("Tensor_Product_0.dat");
@@ -102,7 +103,6 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_RoF) {
-		CreateTensors();
 		{
 			// Copy asignment operator
 			auto Aca = A;
