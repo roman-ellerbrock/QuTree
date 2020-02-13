@@ -50,6 +50,7 @@ set(TENSOR_TREE_FILES
         Tree/MatrixTreeFunctions.h
         Tree/MatrixTreeFunctions_Implementation.h
         Tree/SparseMatrixTree.h
+        Tree/SparseMatrixTreeFunctions.h
         )
 
 set(OPERATOR_FILES

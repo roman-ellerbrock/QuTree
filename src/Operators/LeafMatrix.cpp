@@ -15,6 +15,11 @@ void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	multAB(hAcoeff, h_, Acoeff);
 }
 
+template<typename T>
+LeafMatrix<T>::LeafMatrix(Matrix<T> h)
+: h_(h, 0) {
+}
+
 template
 class LeafMatrix<complex<double>>;
 

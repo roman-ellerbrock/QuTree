@@ -21,7 +21,7 @@ class SparseFactorMatrixTree: public SparseTreeStructuredObject<FactorMatrix<T>>
  * In a physical context, the hole-matrices are representation of
  * mean-field operators when working with tensor tree wavefunctions.
  * */
-	{
+{
 public:
 	using SparseTreeStructuredObject<FactorMatrix<T>>::Active;
 	using SparseTreeStructuredObject<FactorMatrix<T>>::operator[];
@@ -30,7 +30,7 @@ public:
 
 	/// Create FactorMatrices for relevant nodes when representing an operator
 	SparseFactorMatrixTree(const MLO<T>& M, const TTBasis& basis)
-		: SparseTreeStructuredObject<FactorMatrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
+		: SparseTreeStructuredObject<FactorMatrix<T>>(M.Modes(), basis) {
 		Initialize(basis);
 	}
 

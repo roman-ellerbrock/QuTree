@@ -19,7 +19,7 @@ public:
 
 	explicit LeafMatrix(FactorMatrix<T> h);
 
-//	explicit LeafMatrix(Matrix<T> h); // <- can be added if needed
+	explicit LeafMatrix(Matrix<T> h); // <- can be added if needed
 
 	~LeafMatrix() = default;
 

@@ -79,9 +79,7 @@ istream& operator<<(istream& is, SparseMatrixTree<T>& hmat) {
 	hmat.Read(is);
 }
 
-template
-class SparseMatrixTree<complex<double>>;
+template class SparseMatrixTree<complex<double>>;
 
-template
-class SparseMatrixTree<double>;
+template class SparseMatrixTree<double>;
 

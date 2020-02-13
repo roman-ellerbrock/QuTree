@@ -25,6 +25,7 @@ public:
 	using SparseTreeStructuredObject<Matrix<T>>::operator[];
 	using SparseTreeStructuredObject<Matrix<T>>::Initialize;
 	using SparseTreeStructuredObject<Matrix<T>>::attributes_;
+	using SparseTreeStructuredObject<Matrix<T>>::Size;
 
 	/// Create HoleMatrixTree from file
 	SparseHoleMatrixTree(const MLO<T>& M, const TTBasis& basis, const string& filename);
@@ -37,7 +38,7 @@ public:
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseHoleMatrixTree(const MLO<T>& M, const TTBasis& basis)
-		: SparseTreeStructuredObject<Matrix<T>>(cast_to_vector_size_t(M.Modes()), basis) {
+		: SparseTreeStructuredObject<Matrix<T>>(M.Modes(), basis) {
 		Initialize(basis);
 	}
 

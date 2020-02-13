@@ -4,6 +4,8 @@
 #include "SparseFactorMatrixTree.h"
 #include "Tree/SparseHoleMatrixTree.h"
 #include "UnitTest++/UnitTest++.h"
+#include "Tree/SparseMatrixTreeFunctions.h"
+#include "Tree/SparseMatrixTree.h"
 
 
 SUITE (HMatrices) {
@@ -21,14 +23,14 @@ SUITE (HMatrices) {
 			rng_ = mt19937(1993);
 			basis_ = TTBasis(8, 2, 2);
 
-			Psi_ = TensorTreecd (basis_, rng_);
+			Psi_ = TensorTreecd(basis_, rng_);
 
 			// Generate an bit-flip operator and Fmatrix
 			FactorMatrixcd X(2, 1);
 			X(0, 0) = 0.5;
 			X(1, 1) = 0.5;
 			LeafMatrixcd x(X);
-			M_ = MLOcd (x, 0);
+			M_ = MLOcd(x, 0);
 			M_.push_back(x, 3);
 		}
 	};
@@ -88,14 +90,15 @@ SUITE (HMatrices) {
 		/// Create TreeMarker omitting higher nodes in the tree after last branch
 		Initialize();
 
-		SparseFactorMatrixTreecd hmat (Psi_, M_, basis_);
+		SparseFactorMatrixTreecd hmat(Psi_, M_, basis_);
 		SparseHoleMatrixTreecd hhole(Psi_, hmat, M_, basis_);
-		TreeMarker active(cast_to_vector_size_t(M_.Modes()), basis_, false);
-		CHECK_EQUAL(5, active.size());
+		TreeMarker active(M_.Modes(), basis_, false);
+			CHECK_EQUAL(5, active.size());
 
 		/// Calculate sparse
 //		hhole.Calculate(Psi_, hmat, active);
 	}
+
 }
 
 

@@ -3,17 +3,21 @@ set(QDlib_SOURCE_FILES
         Core/TensorDim.cpp
         Core/TensorDim_Extension.cpp
         Core/FactorMatrix_Instantiations.cpp
-        Util/FFT.cpp
         Core/JacobiRotationFramework.cpp
-        Util/SimultaneousDiagonalization.cpp
-        Util/long_integer.cpp
         Core/Vector_Instantiations.cpp
         Core/Matrix_Instantiations.cpp
         Core/RandomMatrices.cpp
         Core/Tensor_Instantiations.cpp
         Core/Tensor_Extension_Instantiations.cpp
         Core/stdafx.cpp
+        Util/FFT.cpp
+        Util/SimultaneousDiagonalization.cpp
+        Util/long_integer.cpp
         Util/WeightedSimultaneousDiagonalization.cpp
+        Operators/MultiLeafOperator.cpp
+        Operators/LeafFunction.cpp
+        Operators/LeafMatrix.cpp
+        Operators/SumOfProductsOperator.cpp
         TensorTreeBasis/Leaf.cpp
         TensorTreeBasis/LinearizedLeaves.cpp
         TensorTreeBasis/Node.cpp
@@ -23,16 +27,14 @@ set(QDlib_SOURCE_FILES
         Tree/IOTree.cpp
         Tree/MatrixTree.cpp
         Tree/MatrixTreeFunctions.cpp
-        Tree/TensorTree_Instantiation.cpp
         Tree/SparseFactorMatrixTree.cpp
         Tree/SparseHoleMatrixTree.cpp
-        Tree/SpectralDecompositionTree.cpp
-        Operators/MultiLeafOperator.cpp
-        Operators/LeafFunction.cpp
-        Operators/LeafMatrix.cpp
-        Operators/SumOfProductsOperator.cpp
         Tree/SparseMatrixTree.cpp
-        ../include/Tree/SparseMatrixTreeFunctions.cpp ../include/Tree/SparseMatrixTreeFunctions.h)
+        Tree/SparseMatrixTreeFunctions.cpp
+        Tree/SpectralDecompositionTree.cpp
+        Tree/TensorTree_Instantiation.cpp
+        Tree/TreeMarker.cpp
+        ../include/Tree/SparseMatrixTreeFunctions_Implementation.h)
 
 set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
@@ -44,7 +46,7 @@ set(LEAF_TYPE_CPP_FILES
         TensorTreeBasis/LeafTypes/LogicalBasis.cpp
         TensorTreeBasis/LeafTypes/NumberBasis.cpp
         TensorTreeBasis/LeafTypes/SpinGroup.cpp
-        Tree/TreeMarker.cpp)
+        )
 
 # Compile objects only once for both static and shared libraries
 # From https://stackoverflow.com/a/29824424/3052876

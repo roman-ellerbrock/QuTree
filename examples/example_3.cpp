@@ -73,6 +73,8 @@ void hole_product_tree() {
 
 }
 
+#include "SparseMatrixTreeFunctions.h"
+#include "SparseFactorMatrixTree.h"
 int main() {
 
     TensorTreecd T = create_tensor_tree();
@@ -80,6 +82,24 @@ int main() {
     dot_product_tree();
     hole_product_tree();
 
+    TTBasis basis(7, 2, 2);
+	FactorMatrixcd X(2, 1);
+	X(0, 0) = 0.5;
+	X(1, 1) = 0.5;
+	LeafMatrixcd x(X);
+	MLOcd M(x, 0);
+	M.push_back(x, 3);
+
+	mt19937 gen(2020);
+	TensorTreecd Psi(basis, gen);
+
+	SparseFactorMatrixTreecd hmat(Psi, M, basis);
+	hmat.print(basis);
+
+	SparseMatrixTreecd hmats(M, basis);
+	SparseMatrixTreeFunctions::Represent(hmats, M, Psi, Psi, basis);
+	hmats.print();
 	// TODO: sparse versions of dot product and hole product (initialized with operators)
+
 
 }

@@ -34,13 +34,13 @@ public:
 	~MultiLeafOperator() = default;
 
 	/// Construct a MLO from a single SPO
-	MultiLeafOperator(const LeafMatrix<T>& h, int mode_x)
+	MultiLeafOperator(const LeafMatrix<T>& h, size_t mode_x)
 		: MultiLeafOperator() {
 		push_back(h, mode_x);
 	}
 
 	/// Construct a MLO from a single RefSPO
-	MultiLeafOperator(const LeafFunction<T>& h, int mode_x)
+	MultiLeafOperator(const LeafFunction<T>& h, size_t mode_x)
 		: MultiLeafOperator() {
 		push_back(h, mode_x);
 	}
@@ -54,7 +54,7 @@ public:
 		const vector<int>& list, const LeafInterface& grid) const;
 
 	/// Push back a SPO to the MLO
-	void push_back(shared_ptr<LeafOperator<T>> h, int mode_x) {
+	void push_back(shared_ptr<LeafOperator<T>> h, size_t mode_x) {
 		SingParOp.push_back(h);
 		mode_.push_back(mode_x);
 	}
@@ -67,7 +67,7 @@ public:
 	}
 
 	/// Push back a RefSPO to the MLO
-	void push_back(const LeafFunction<T>& h, int mode_x) {
+	void push_back(const LeafFunction<T>& h, size_t mode_x) {
 		auto *spo = new LeafFunction<T>(h);
 		SingParOp.push_back(shared_ptr<LeafOperator<T>>(spo));
 		mode_.push_back(mode_x);
@@ -86,7 +86,6 @@ public:
 	/// Access the i-th SPO in the MLO
 	shared_ptr<LeafOperator<T>> operator[](size_t i) const {
 		assert(i < mode_.size());
-		assert(i >= 0);
 		return SingParOp[i];
 	}
 
@@ -141,13 +140,13 @@ public:
 	void SetV(const PotentialOperator& V);
 
 	/// Return vector of all active_ modes in this operator
-	const vector<int>& Modes()const { return mode_; }
+	const vector<size_t>& Modes()const { return mode_; }
 
 protected:
 	/// These are the SPOs
 	vector<shared_ptr<LeafOperator<T>>> SingParOp;
 	/// These are the modes the SPOs act on
-	vector<int> mode_;
+	vector<size_t> mode_;
 	/// The potential operator
 	PotentialOperator v_;
 	/// Is there a PotentialOperator?

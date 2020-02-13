@@ -70,7 +70,6 @@ SUITE (MatrixTreeFunctions) {
 		TTBasis basis(7, 5, 4);
 		TensorTreecd Psi(basis, gen, true);
 		MatrixTreecd Rho = Contraction(Psi, basis, true);
-		Rho.print(basis);
 		for (const Node& node : basis) {
 			if (!node.IsToplayer()) {
 				Matrixcd& rho = Rho[node];
@@ -111,6 +110,7 @@ SUITE (MatrixTreeFunctions) {
 			Matrixcd mat = RandomMatrices::GUE(dim.GetNumTensor(), gen);
 			H[node] = FactorMatrixcd(mat, node.ChildIdx());
 		}
+
 		SpectralDecompositionTreecd X(H, basis);
 		auto H_inv = X.Invert(basis, 1e-10);
 
@@ -124,4 +124,6 @@ SUITE (MatrixTreeFunctions) {
 				CHECK_CLOSE(0., r, eps);
 		}
 	}
+
+	// @TODO: Move Unit tests from FactorMatrixTree to here.
 }
