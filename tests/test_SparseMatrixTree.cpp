@@ -58,7 +58,7 @@ SUITE (SparseMatrixTree) {
 	TEST_FIXTURE (HelperFactory, Constructor) {
 		Initialize();
 		SparseMatrixTreecd hmat(M_, basis_);
-			CHECK_EQUAL(5, hmat.Size());
+			CHECK_EQUAL(6, hmat.Size());
 	}
 
 	TEST (IO) {
