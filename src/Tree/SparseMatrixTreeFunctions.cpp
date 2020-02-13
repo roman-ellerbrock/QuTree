@@ -19,6 +19,13 @@ namespace SparseMatrixTreeFunctions {
 	template SparseMatrixTree<cd> Represent(const MLO<cd>& M, const TensorTree<cd>& Psi,
 		const TTBasis& basis);
 
+	template Tensor<cd> Apply(const SparseMatrixTree<cd>& mats, const Tensor<cd>& Phi,
+		const MLO<cd>& M, const Node& node);
+
+	template void Contraction(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
+		const SparseMatrixTree<cd>& mats, const TTBasis& basis);
+
+
 	typedef double d;
 	template void Represent(SparseMatrixTree<d>& hmat,
 		const MLO<d>& M, const TensorTree<d>& Bra, const TensorTree<d>& Ket,
@@ -33,4 +40,9 @@ namespace SparseMatrixTreeFunctions {
 	template SparseMatrixTree<d> Represent(const MLO<d>& M, const TensorTree<d>& Psi,
 		const TTBasis& basis);
 
+	template Tensor<d> Apply(const SparseMatrixTree<d>& mats, const Tensor<d>& Phi,
+		const MLO<d>& M, const Node& node);
+
+	template void Contraction(SparseMatrixTree<d>& holes, const TensorTree<d>& Bra, const TensorTree<d>& Ket,
+		const SparseMatrixTree<d>& mats, const TTBasis& basis);
 }

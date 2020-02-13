@@ -54,6 +54,10 @@ namespace SparseMatrixTreeFunctions {
 			const Node& node = active.MCTDHNode(n);
 			RepresentLayer(hmat, Bra[node], Ket[node], M, node);
 		}
+
+		for (auto it = basis.end(); it >= basis.begin(); it--) {
+			const Node& node = *it;
+		}
 	}
 
 	template<typename T>
@@ -79,9 +83,89 @@ namespace SparseMatrixTreeFunctions {
 	}
 
 ////////////////////////////////////////////////////////////////////////
+/// Apply SparseMatrixTree to tensor tree
+////////////////////////////////////////////////////////////////////////
+
+	template<typename T>
+	Tensor<T> ApplyUpper(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& node) {
+		Tensor<T> hPhi(Phi.Dim());
+		bool switchbool = true;
+		for (size_t k = 0; k < node.nChildren(); ++k) {
+			const Node& child = node.Down(k);
+			if (!mats.Active(child)) { continue; }
+			if (switchbool) {
+				multAB(hPhi, mats[child], Phi, true);
+			} else {
+				multAB(Phi, mats[child], hPhi, true);
+			}
+			switchbool = !switchbool;
+		}
+		if (switchbool) {
+			return Phi;
+		} else {
+			return hPhi;
+		}
+	}
+
+	/// Apply factor matrices locally
+	template<typename T>
+	Tensor<T> Apply(const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
+		const MLO<T>& M, const Node& node) {
+		if (!mats.Active(node)) { return Phi; }
+		if (node.IsBottomlayer()) {
+			const Leaf& phys = node.PhysCoord();
+			return M.ApplyBottomLayer(Phi, phys);
+		} else {
+			return ApplyUpper(mats, Phi, node);
+		}
+	}
+
+	template<typename T>
+	Tensor<T> ApplyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
+		assert(!hole_node.IsToplayer());
+		const Node& parent = hole_node.Up();
+		size_t drop = hole_node.ChildIdx();
+
+		for (size_t k = 0; k < parent.nChildren(); ++k) {
+			const Node& child = parent.Down(k);
+			size_t childidx = child.ChildIdx();
+			if ((childidx == drop) || (!mats.Active(child))) { continue; }
+			Phi = multAB(mats[child], Phi, childidx);
+		}
+		return Phi;
+	}
+
+////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-Down (Backward)
 ////////////////////////////////////////////////////////////////////////
 
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats,const TreeMarker& marker, const TTBasis& basis) {
+
+		// Swipe top-down_ but exclude topnode
+		int sub_topnode = marker.size() - 1;
+		for (int n = sub_topnode; n >= 0; --n) {
+			const Node& node = marker.MCTDHNode(n);
+			if (!node.IsToplayer()) {
+				assert(mats.Active(node));
+				assert(holes.Active(node));
+
+				const Node& parent = node.Up();
+				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
+				if (!parent.IsToplayer()) {
+					hKet = multStateAB(holes[parent], hKet);
+				}
+				holes[node] = HoleProduct(Bra[parent], hKet, node.ChildIdx());
+			}
+		}
+	}
+
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const TTBasis& basis) {
+		Contraction(holes, Bra, Ket, mats, holes.Active(), basis);
+	}
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

@@ -55,6 +55,14 @@ SUITE (SparseMatrixTree) {
 			CHECK_CLOSE(0.25, real(hmat[basis_.TopNode()](0, 0)), 0E-12);
 	}
 
+	TEST_FIXTURE (HelperFactory, Contraction) {
+		SparseMatrixTreecd mats = SparseMatrixTreeFunctions::Represent(M_, Psi_, basis_);
+		SparseMatrixTreecd holes(M_, basis_);
+		SparseMatrixTreeFunctions::Contraction(holes, Psi_, Psi_, mats, basis_);
+		mats.print();
+		holes.print();
+	}
+
 	TEST_FIXTURE (HelperFactory, Constructor) {
 		SparseMatrixTreecd hmat(M_, basis_);
 			CHECK_EQUAL(6, hmat.Size());

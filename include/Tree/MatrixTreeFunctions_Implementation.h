@@ -16,8 +16,8 @@ namespace MatrixTreeFunctions {
 		if (!node.IsBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.Down(k);
-				const Matrix<T>& spo = S[child];
-				AChi = multAB(spo, AChi, k);
+				const Matrix<T>& s = S[child];
+				AChi = multAB(s, AChi, k);
 			}
 		}
 		size_t order = node.TDim().GetOrder();
