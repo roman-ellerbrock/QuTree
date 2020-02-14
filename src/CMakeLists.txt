@@ -22,7 +22,7 @@ set(QDlib_SOURCE_FILES
         TensorTreeBasis/LinearizedLeaves.cpp
         TensorTreeBasis/Node.cpp
         TensorTreeBasis/NodePosition.cpp
-        TensorTreeBasis/TensorTreeBasis.cpp
+        TensorTreeBasis/Tree.cpp
         TensorTreeBasis/TTBasisFactory.cpp
         Tree/IOTree.cpp
         Tree/MatrixTree.cpp

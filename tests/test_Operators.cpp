@@ -6,7 +6,7 @@
 #include "LeafMatrix.h"
 #include "MultiLeafOperator.h"
 #include "HO_Basis.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 
 SUITE (Operators) {
 	class HelperFactory {
@@ -58,7 +58,7 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, MPO_1) {
 		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
-		TTBasis tree(4, 2, 2);
+		Tree tree(4, 2, 2);
 		TensorTreecd Chi(tree);
 		Chi.Generate(tree, gen, false);
 		auto Psi = M.Apply(Chi, tree);

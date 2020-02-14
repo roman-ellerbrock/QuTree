@@ -16,14 +16,14 @@ SUITE (SparseMatrixTree) {
 		}
 		~HelperFactory() = default;
 		mt19937 rng_;
-		TTBasis tree_;
+		Tree tree_;
 		TensorTreecd Psi_;
 		MLOcd M_;
 
 		void Initialize() {
 
 			rng_ = mt19937(1993);
-			tree_ = TTBasis(8, 2, 2);
+			tree_ = Tree(8, 2, 2);
 
 			Psi_ = TensorTreecd(tree_, rng_);
 
@@ -38,7 +38,7 @@ SUITE (SparseMatrixTree) {
 	};
 
 	TEST (TreeMarker) {
-		TTBasis tree(7, 4, 2);
+		Tree tree(7, 4, 2);
 		vector<size_t> modes({3, 4});
 		SubTree active(modes, tree);
 			CHECK_EQUAL(7, active.size());

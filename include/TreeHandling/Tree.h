@@ -2,19 +2,19 @@
 // Created by Roman Ellerbrock on 2020-01-21.
 //
 
-#ifndef TENSORTREEBASIS_H
-#define TENSORTREEBASIS_H
+#ifndef TREE_H
+#define TREE_H
 #include "Node.h"
 #include "LinearizedLeaves.h"
 #include <map>
 
 typedef vector<reference_wrapper<Node>> LinearizedNodes;
 
-class TensorTreeBasis {
+class Tree {
 	/**
-	 * \class TensorTreeBasis
-	 * \ingroup TensorTreeBasis
-	 * \brief This class manages the tensor tree basis.
+	 * \class Tree
+	 * \ingroup Tree
+	 * \brief This class manages the tensor tree tree.
 	 *
 	 * TensorTreeBasis (TTBasis) holds and manages the tree structure
 	 * and holds tensor dimensions at every node. It provides iterators
@@ -23,13 +23,13 @@ class TensorTreeBasis {
 	 * and get Nodes via GetNode(i).
 	 *
 	 * Usage:
-	 * TTBasis basis(n_leaves dim_leaves, dim_nodes); // Create close to balanced tree
-	 * for (const Node& node : basis) {
+	 * Tree tree(n_leaves dim_leaves, dim_nodes); // Create close to balanced tree
+	 * for (const Node& node : tree) {
 	 * 		// Do something - bottom-up swipe
 	 * }
 	 *
-	 * for (int i = basis.nNodes() - 1; i > 0; --i) {
-	 * 		const Node& node = basis.GetNode(i);
+	 * for (int i = tree.nNodes() - 1; i > 0; --i) {
+	 * 		const Node& node = tree.GetNode(i);
 	 * 		// Do something - Top-Down swipe
 	 * }
 	 *
@@ -40,53 +40,53 @@ class TensorTreeBasis {
 	 */
 public:
 	/// Default constructor
-	TensorTreeBasis() = default;
+	Tree() = default;
 
 	/// Default Destructor
-	~TensorTreeBasis() = default;
+	~Tree() = default;
 
 	/// File constructor
-	explicit TensorTreeBasis(istream& is);
+	explicit Tree(istream& is);
 
 	/// Stream constructor
-	explicit TensorTreeBasis(const string& filename);
+	explicit Tree(const string& filename);
 
 	/// Create Balanced Tree
-	TensorTreeBasis(size_t order, size_t dim_leaves, size_t dim_nodes);
+	Tree(size_t order, size_t dim_leaves, size_t dim_nodes);
 
 	/// Copy constructor
-	TensorTreeBasis(const TensorTreeBasis& T);
+	Tree(const Tree& T);
 
 	/// Move constructor
-	TensorTreeBasis(TensorTreeBasis&& T) noexcept;
+	Tree(Tree&& T) noexcept;
 
 	/// Copy assignment operator
-	TensorTreeBasis& operator=(const TensorTreeBasis& T);
+	Tree& operator=(const Tree& T);
 
 	/// Move assignment operator
-	TensorTreeBasis& operator=(TensorTreeBasis&& T) noexcept;
+	Tree& operator=(Tree&& T) noexcept;
 
 	/// Read Basis from ASCII-file
 	void Read(istream& is);
 	void Read(const string& filename);
 
-	/// Write the basis to a stream in ASCII output
+	/// Write the tree to a stream in ASCII output
 	void Write(ostream& os = cout) const;
 
-	/// Re-initialize the basis from Tree
+	/// Re-initialize the tree from Tree
 	void Update();
 
-	/// Print out basis information
+	/// Print out tree information
 	void info(ostream& os = cout) const;
 
 	/// number of Nodes
-	size_t nTotalNodes() const { return tree.nTotalNodes(); }
+	size_t nTotalNodes() const { return root_.nTotalNodes(); }
 
 	/// number of logical nodes
-	size_t nNodes() const { return tree.nNodes(); }
+	size_t nNodes() const { return root_.nNodes(); }
 
 	/// number of physical nodes
-	size_t nLeaves() const { return tree.nLeaves(); }
+	size_t nLeaves() const { return root_.nLeaves(); }
 
 	/// Number of states
 	size_t nStates() const { return TopNode().TDim().GetNumTensor(); }
@@ -94,7 +94,7 @@ public:
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.
 	/// Please use the iterator, or MCTDHNode(i) functions to address nodes!
-	AbstractNode& nextNode() { return *tree.nextNode(); }
+	AbstractNode& nextNode() { return *root_.nextNode(); }
 
 	/// get reference to Physical Coordinate i/nPhysNodes
 	Leaf& GetLeaf(size_t i);
@@ -107,7 +107,6 @@ public:
 	/// get reference to the mctdh topnode
 	Node& TopNode() { return linearizedNodes_.back(); }
 
-	// @TODO: Use vector-member back()
 	const Node& TopNode() const { return linearizedNodes_.back(); }
 
 	void ReindexLeafModes(map<size_t, size_t> Map);
@@ -117,7 +116,7 @@ public:
 
 	void ReplaceNode(Node& old_node, Node& new_node);
 
-	void SetRoot(Node& root) { tree = root; }
+	void SetRoot(Node& root) { root_ = root; }
 
 	/// Bottom-up iterator over all nodes in the mctdh-tree
 	/// For top-up iteration examples refer to e.g. the density-matrix class.
@@ -146,14 +145,12 @@ protected:
 	LinearizedNodes linearizedNodes_;
 
 	/// MCTDH tree holds memory
-	Node tree;
+	Node root_;
 };
 
-typedef TensorTreeBasis TTBasis;
+ostream& operator<<(ostream& os, const Tree& tree);
+istream& operator>>(istream& is, Tree& tree);
 
-ostream& operator<<(ostream& os, const TTBasis& basis);
-istream& operator>>(istream& is, TTBasis& basis);
+void ResetLeafModes(Tree& tree);
 
-void ResetLeafModes(TensorTreeBasis& basis);
-
-#endif //TENSORTREEBASIS_H
+#endif //TREE_H

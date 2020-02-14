@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/3/20.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
-#include "TensorTreeBasis/TTBasisFactory.h"
+#include "TreeHandling/Tree.h"
+#include "TreeHandling/TTBasisFactory.h"
 
 SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_Generator) {
@@ -14,7 +14,7 @@ SUITE (TensorTreeBasis) {
 		TensorDim tdim_bottom({n_leaf}, n_node);
 
 		for (size_t n_modes = 2; n_modes < 18; ++n_modes) {
-			TensorTreeBasis tree(n_modes, n_leaf, n_node);
+			Tree tree(n_modes, n_leaf, n_node);
 
 			for (const Node& node : tree) {
 				const TensorDim& tdim = node.TDim();
@@ -37,19 +37,19 @@ SUITE (TensorTreeBasis) {
 		TensorDim tdim_bottom({n_leaf}, n_node);
 		size_t n_modes = 13;
 
-		TensorTreeBasis tree(n_modes, n_leaf, n_node);
+		Tree tree(n_modes, n_leaf, n_node);
 		{
 			ofstream os("TTBasis.IO.tmp.dat");
 			tree.Write(os);
 			os.close();
 		}
-		TTBasis tree2("TTBasis.IO.tmp.dat");
+		Tree tree2("TTBasis.IO.tmp.dat");
 			CHECK_EQUAL(tree2.nNodes(), tree.nNodes());
 	}
 
 	TEST (TensorTreeBasis_Reindexing) {
 		size_t n_modes = 9;
-		TensorTreeBasis tree(n_modes, 2, 4);
+		Tree tree(n_modes, 2, 4);
 
 		map<size_t, size_t> Map;
 		for (size_t k = 0; k < n_modes; ++k) {
@@ -74,26 +74,26 @@ SUITE (TensorTreeBasis) {
 
 	TEST (TensorTreeBasis_Copy) {
 		/// Construct a tree and check that it works
-		TensorTreeBasis tree(12, 4, 3);
+		Tree tree(12, 4, 3);
 			CHECK_EQUAL(true, tree.IsWorking());
 
 		{
 			/// Copy-constructor test
-			TensorTreeBasis tree_copy_construct(tree);
+			Tree tree_copy_construct(tree);
 				CHECK_EQUAL(true, tree_copy_construct.IsWorking());
 
 			/// Move constructor
-			TensorTreeBasis tree_move_construct(move(tree_copy_construct));
+			Tree tree_move_construct(move(tree_copy_construct));
 				CHECK_EQUAL(true, tree_move_construct.IsWorking());
 		}
 
 		{
 			/// Copy-asignment test
-			TensorTreeBasis tree_copy_asign = tree;
+			Tree tree_copy_asign = tree;
 				CHECK_EQUAL(true, tree_copy_asign.IsWorking());
 
 			/// Move asignment operator
-			TensorTreeBasis tree_move_asign = move(tree_copy_asign);
+			Tree tree_move_asign = move(tree_copy_asign);
 				CHECK_EQUAL(true, tree_move_asign.IsWorking());
 		}
 	}

@@ -1,4 +1,4 @@
-#include "TensorTreeBasis/LinearizedLeaves.h"
+#include "TreeHandling/LinearizedLeaves.h"
 
 void LinearizedLeaves::push_back(Leaf& phys) {
 	// Check wether this node is a physical node

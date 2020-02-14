@@ -4,19 +4,19 @@
 #include "SpectralDecompositionTree.h"
 
 template<typename T>
-SpectralDecompositionTree<T>::SpectralDecompositionTree(const TTBasis& tree) {
+SpectralDecompositionTree<T>::SpectralDecompositionTree(const Tree& tree) {
 	Initialize(tree);
 }
 
 template<typename T>
 SpectralDecompositionTree<T>::SpectralDecompositionTree(const MatrixTree<T>& H,
-	const TTBasis& tree) {
+	const Tree& tree) {
 	Initialize(tree);
 	Calculate(H, tree);
 }
 
 template<typename T>
-void SpectralDecompositionTree<T>::Initialize(const TTBasis& tree) {
+void SpectralDecompositionTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		const TensorDim& tdim = node.TDim();
@@ -28,7 +28,7 @@ void SpectralDecompositionTree<T>::Initialize(const TTBasis& tree) {
 
 template<typename T>
 void SpectralDecompositionTree<T>::Calculate(const MatrixTree<T>& H,
-	const TTBasis& tree) {
+	const Tree& tree) {
 	for (const Node& node : tree) {
 		const Matrix<T>& mat = H[node];
 		auto y = Diagonalize(mat);
@@ -37,7 +37,7 @@ void SpectralDecompositionTree<T>::Calculate(const MatrixTree<T>& H,
 }
 
 template<typename T>
-MatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& tree, double eps) {
+MatrixTree<T> SpectralDecompositionTree<T>::Invert(const Tree& tree, double eps) {
 	assert(attributes_.size() == tree.nNodes());
 	MatrixTree<T> Inv_Hole(tree);
 	for (const Node& node : tree) {
@@ -48,7 +48,7 @@ MatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& tree, double e
 }
 
 template<typename T>
-void SpectralDecompositionTree<T>::print(const TTBasis& tree) const {
+void SpectralDecompositionTree<T>::print(const Tree& tree) const {
 	for (int i = tree.nNodes() - 1; i > 0; --i) {
 		const Node& node = tree.GetNode(i);
 		if (!node.IsToplayer()) {

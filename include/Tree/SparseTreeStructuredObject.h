@@ -23,20 +23,20 @@ public:
 	/// Construct object by providing a list of leaf-modes that are active_.
 	/// Will find path connecting the nodes.
 	SparseTreeStructuredObject(const vector<size_t>& modes,
-		const TTBasis& tree)
+		const Tree& tree)
 		: active_(make_shared<SubTree>(modes, tree)) {
 		SparseTreeStructuredObject::Initialize(tree);
 	}
 
 	/// Construct obejct for previously marked active_ nodes
 	SparseTreeStructuredObject(shared_ptr<SubTree>& active_,
-		const TTBasis& tree)
+		const Tree& tree)
 		: active_(active_) {
 		SparseTreeStructuredObject::Initialize(tree);
 	}
 
 	/// Allocate memory. Call only after initializing TreeMarker. Requires default constructor.
-	virtual void Initialize(const TTBasis& tree) {
+	virtual void Initialize(const Tree& tree) {
 		attributes_.resize(Active().size());
 	}
 

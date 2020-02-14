@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Tensor.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 #include "TensorTree.h"
 #include "LeafOperator.h"
 #include "LeafFunction.h"
@@ -103,7 +103,7 @@ public:
 	}
 
 	/// Apply a MLO to a wavefunction. This routine is not optimized for performance.
-	TensorTree<T> Apply(TensorTree<T> Psi, const TTBasis& tree) const;
+	TensorTree<T> Apply(TensorTree<T> Psi, const Tree& tree) const;
 
 	/// On which mode does the "part"-th SPO act?
 	size_t Mode(size_t part) const {

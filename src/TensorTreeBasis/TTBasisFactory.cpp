@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/2/20.
 //
 
-#include "TensorTreeBasis/TTBasisFactory.h"
+#include "TreeHandling/TTBasisFactory.h"
 
 namespace TTBasisFactory {
 
@@ -27,7 +27,7 @@ namespace TTBasisFactory {
 		return train;
 	}
 
-	TTBasis TensorTrain(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType) {
+	Tree TensorTrain(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType) {
 		size_t mode = 0;
 		size_t leafSubtype = 0;
 		PhysPar par;
@@ -42,7 +42,7 @@ namespace TTBasisFactory {
 		train.SetUp(nullptr);
 		auto& tdim_ = train.TDim();
 		tdim_.SetNumTensor(1);
-		TTBasis basis;
+		Tree basis;
 		basis.SetRoot(train);
 		basis.Update();
 		ResetLeafModes(basis);

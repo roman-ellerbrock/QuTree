@@ -65,7 +65,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 
 template<typename T>
 TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
-	const TTBasis& basis) const {
+	const Tree& basis) const {
 	for (size_t i = 0; i < basis.nNodes(); i++) {
 		const Node& node = basis.GetNode(i);
 		if (node.IsBottomlayer()) {

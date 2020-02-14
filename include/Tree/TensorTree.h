@@ -5,7 +5,7 @@
 #ifndef TENSORTREE_H
 #define TENSORTREE_H
 #include "TreeStructuredObject.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 #include "Core/Tensor_Implementation.h"
 
 template<typename T>
@@ -29,7 +29,7 @@ public:
 	/// Default constructor without memory allocation
 	TensorTree() = default;
 	/// Constructor with allocation of memory
-	explicit TensorTree(const TTBasis& tree);
+	explicit TensorTree(const Tree& tree);
 
 	/// Construct TensorTree from stream
 	explicit TensorTree(istream& is);
@@ -38,18 +38,18 @@ public:
 	explicit TensorTree(const string& filename);
 
 	/// Create tensor tree and occupy the coefficients
-	TensorTree(const TTBasis& tree,
-		mt19937& gen, bool delta_lowest = true);
+	TensorTree(const Tree& tree,
+		std::mt19937& gen, bool delta_lowest = true);
 
 	/// Default destructor
 	~TensorTree() = default;
 
 	/// Create Tensors for all nodes
-	virtual void Initialize(const TTBasis& tree);
+	virtual void Initialize(const Tree& tree);
 
 	/// Generate TTs
-	void Generate(const TTBasis& tree,
-		mt19937& gen, bool delta_lowest = true);
+	void Generate(const Tree& tree,
+		std::mt19937& gen, bool delta_lowest = true);
 
 	/// (File) I/O
 	/// Read TensorTree from stream (binary format)
@@ -62,11 +62,11 @@ public:
 	void Write(const string& filename) const;
 
 	/// Print info in human readable format
-	void print(const TTBasis& tree, ostream& os = cout) const;
+	void print(const Tree& tree, ostream& os = cout) const;
 
 protected:
 	void FillBottom(Tensor<T>& Phi, const Node& node);
-	void FillUpper(Tensor<T>& Phi, mt19937& gen,
+	void FillUpper(Tensor<T>& Phi, std::mt19937& gen,
 		const Node& node, bool delta_lowest = true);
 };
 

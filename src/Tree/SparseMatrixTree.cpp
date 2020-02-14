@@ -5,7 +5,7 @@
 #include "Tree/SparseMatrixTree.h"
 
 template<typename T>
-void SparseMatrixTree<T>::Initialize(const TTBasis& tree) {
+void SparseMatrixTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;

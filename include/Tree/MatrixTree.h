@@ -5,7 +5,7 @@
 #ifndef MATRIXTREE_H
 #define MATRIXTREE_H
 #include "TreeStructuredObject.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 
 template <typename T>
 class MatrixTree: public TreeStructuredObject<Matrix<T>>{
@@ -14,7 +14,7 @@ public:
 
 	MatrixTree() = default;
 
-	explicit MatrixTree(const TTBasis& tree);
+	explicit MatrixTree(const Tree& tree);
 
 	explicit MatrixTree(istream& is);
 
@@ -22,11 +22,11 @@ public:
 
 	~MatrixTree() = default;
 
-	void Initialize(const TTBasis& tree);
+	void Initialize(const Tree& tree);
 
 	/// I/O
 	/// Print human readable
-	void print(const TTBasis& tree, ostream& os = cout) const;
+	void print(const Tree& tree, ostream& os = cout) const;
 	void print(ostream& os = cout) const;
 
 	/// Read in binary format

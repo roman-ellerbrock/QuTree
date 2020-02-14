@@ -20,13 +20,13 @@ public:
 	// Destructor
 	~SumOfProductsOperator() = default;
 
-	explicit SumOfProductsOperator(const TTBasis& tree) {
+	explicit SumOfProductsOperator(const Tree& tree) {
 		Initialize(tree);
 	}
 
 	explicit SumOfProductsOperator(const MLO<T>& M, T c = 1.);
 
-	void Initialize(const TTBasis& tree) {
+	void Initialize(const Tree& tree) {
 		coeff_.clear();
 		mpos_.clear();
 		SpecialInitialize(tree);
@@ -103,7 +103,7 @@ protected:
 	vector<complex<double> > coeff_;
 
 private:
-	virtual void SpecialInitialize(const TTBasis& tree) {
+	virtual void SpecialInitialize(const Tree& tree) {
 		cerr << "Called SpecialInitialize of SOP-base class." << endl;
 	}
 };

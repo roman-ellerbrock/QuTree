@@ -5,7 +5,7 @@
 #ifndef MCTDH_TREEMARKER_H
 #define MCTDH_TREEMARKER_H
 #include "TreeStructuredObject.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 #include "MultiLeafOperator.h"
 #include "SumOfProductsOperator.h"
 #include <map>
@@ -29,12 +29,12 @@ class SubTree
 public:
 
 	SubTree(const vector<size_t>& modes,
-		const TTBasis& tree, bool tail = true) {
+		const Tree& tree, bool tail = true) {
 		SparseInitialize(modes, tree, tail);
 	}
 
 	void SparseInitialize(const vector<size_t>& modes,
-		const TTBasis& tree, bool tail = true);
+		const Tree& tree, bool tail = true);
 
 	size_t Active(const Node& node) const {
 		size_t count = co_address.count(node.Address());
@@ -61,7 +61,7 @@ public:
 		return co_address.at(addr);
 	}
 
-	void print(const TTBasis& tree, ostream& os = cout) const;
+	void print(const Tree& tree, ostream& os = cout) const;
 
 protected:
 	vector<const Node *> nodes;

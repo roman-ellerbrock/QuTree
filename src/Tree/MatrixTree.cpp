@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/11/20.
 //
 
-#include "MatrixTree.h"
+#include "Tree/MatrixTree.h"
 
 template<typename T>
 MatrixTree<T>::MatrixTree(istream& is) {
@@ -15,12 +15,12 @@ MatrixTree<T>::MatrixTree(const string& filename) {
 }
 
 template<typename T>
-MatrixTree<T>::MatrixTree(const TTBasis& tree) {
+MatrixTree<T>::MatrixTree(const Tree& tree) {
 	Initialize(tree);
 }
 
 template <typename T>
-void MatrixTree<T>::Initialize(const TTBasis& tree) {
+void MatrixTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		const TensorDim& tdim = node.TDim();
@@ -76,7 +76,7 @@ void MatrixTree<T>::Read(const string& filename) {
 }
 
 template<typename T>
-void MatrixTree<T>::print(const TTBasis& tree, ostream& os) const {
+void MatrixTree<T>::print(const Tree& tree, ostream& os) const {
 	for (const Node& node : tree) {
 		node.info();
 		this->operator[](node).print();

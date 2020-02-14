@@ -4,7 +4,7 @@
 #include "SubTree.h"
 
 void SubTree::SparseInitialize(const vector<size_t>& modes,
-	const TTBasis& tree, bool tail) {
+	const Tree& tree, bool tail) {
 
 	/// Fill co_address with addresses in original TTBasis for every occuring node
 	co_address.clear();
@@ -54,7 +54,7 @@ void SubTree::SparseInitialize(const vector<size_t>& modes,
 	}
 }
 
-void SubTree::print(const TTBasis& tree, ostream& os) const {
+void SubTree::print(const Tree& tree, ostream& os) const {
 	for (const Node *node : *this) {
 		node->info();
 	}

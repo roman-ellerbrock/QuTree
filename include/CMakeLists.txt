@@ -30,13 +30,13 @@ set(QDlib_INCLUDE_FILES
         )
 
 set(TENSOR_TREE_FILES
-        TensorTreeBasis/AbstractNode.h
-        TensorTreeBasis/Leaf.h
-        TensorTreeBasis/LinearizedLeaves.h
-        TensorTreeBasis/Node.h
-        TensorTreeBasis/NodePosition.h
-        TensorTreeBasis/TensorTreeBasis.h
-        TensorTreeBasis/TTBasisFactory.h
+        TreeHandling/AbstractNode.h
+        TreeHandling/Leaf.h
+        TreeHandling/LinearizedLeaves.h
+        TreeHandling/Node.h
+        TreeHandling/NodePosition.h
+        TreeHandling/Tree.h
+        TreeHandling/TTBasisFactory.h
         Tree/TreeStructuredObject.h
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h
@@ -61,16 +61,16 @@ set(OPERATOR_FILES
         )
 
 set(LEAF_TYPE_FILES
-        TensorTreeBasis/LeafTypes/LeafInterface.h
-        TensorTreeBasis/LeafTypes/BosonNumberBasis.h
-        TensorTreeBasis/LeafTypes/DVRBasis.h
-        TensorTreeBasis/LeafTypes/FermionNumberBasis.h
-        TensorTreeBasis/LeafTypes/FFTGrid.h
-        TensorTreeBasis/LeafTypes/HO_Basis.h
-        TensorTreeBasis/LeafTypes/LegendrePolynomials.h
-        TensorTreeBasis/LeafTypes/LogicalBasis.h
-        TensorTreeBasis/LeafTypes/NumberBasis.h
-        TensorTreeBasis/LeafTypes/SpinGroup.h
+        TreeHandling/LeafTypes/LeafInterface.h
+        TreeHandling/LeafTypes/BosonNumberBasis.h
+        TreeHandling/LeafTypes/DVRBasis.h
+        TreeHandling/LeafTypes/FermionNumberBasis.h
+        TreeHandling/LeafTypes/FFTGrid.h
+        TreeHandling/LeafTypes/HO_Basis.h
+        TreeHandling/LeafTypes/LegendrePolynomials.h
+        TreeHandling/LeafTypes/LogicalBasis.h
+        TreeHandling/LeafTypes/NumberBasis.h
+        TreeHandling/LeafTypes/SpinGroup.h
         )
 
 install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)

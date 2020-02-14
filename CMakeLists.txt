@@ -134,7 +134,7 @@ endif ()
 
 include_directories("include")
 include_directories("include/Tree")
-include_directories("include/TensorTreeBasis/LeafTypes")
+include_directories("include/TreeHandling/LeafTypes")
 include_directories("include/Operators")
 include_directories("tests/benchmarks")
 add_subdirectory("src")

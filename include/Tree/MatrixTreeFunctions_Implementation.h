@@ -12,29 +12,29 @@ namespace MatrixTreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Phi, Tensor<T> AChi, const Node& node) {
+	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket, const Node& node) {
 		if (!node.IsBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.Down(k);
 				const Matrix<T>& s = S[child];
-				AChi = multAB(s, AChi, k);
+				Ket = multAB(s, Ket, k);
 			}
 		}
 		size_t order = node.TDim().GetOrder();
-		mHoleProduct(S[node], Phi, AChi, order);
+		mHoleProduct(S[node], Bra, Ket, order);
 	}
 
 	template<typename T>
-	void DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& tree) {
+	void DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const Tree& tree) {
 		for (const Node& node : tree) {
 			DotProductLocal(S, Psi[node], Chi[node], node);
 		}
 	}
 
 	template<typename T>
-	MatrixTree<T> DotProduct(const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& tree) {
+	MatrixTree<T> DotProduct(const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
 		MatrixTree<T> S(tree);
-		DotProduct(S, Psi, Chi, tree);
+		DotProduct(S, Bra, Ket, tree);
 		return S;
 	}
 
@@ -70,7 +70,7 @@ namespace MatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const TTBasis& tree, const MatrixTree<T> *S_opt = nullptr) {
+		const Tree& tree, const MatrixTree<T> *S_opt = nullptr) {
 		if (S_opt != nullptr) {
 			assert(S_opt->size() == tree.nNodes());
 		}
@@ -87,20 +87,20 @@ namespace MatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const MatrixTree<T>& S, const TTBasis& tree) {
+		const MatrixTree<T>& S, const Tree& tree) {
 		Contraction(Rho, Psi, Chi, tree, &S);
 	}
 
 	template<typename T>
 	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const MatrixTree<T>& S, const TTBasis& tree) {
+		const MatrixTree<T>& S, const Tree& tree) {
 		MatrixTree<T> Rho(tree);
 		Contraction(Rho, Psi, Chi, S, tree);
 		return Rho;
 	}
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TTBasis& tree, bool orthogonal) {
+	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
 		if (orthogonal) {
 			Contraction(Rho, Psi, Psi, tree);
 		} else {
@@ -110,11 +110,12 @@ namespace MatrixTreeFunctions {
 	}
 
 	template<typename T>
-	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TTBasis& tree, bool orthogonal) {
+	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
 		MatrixTree<T> Rho(tree);
 		Contraction(Rho, Psi, tree, orthogonal);
 		return Rho;
 	}
+
 }
 
 #endif //MATRIXTREE_IMPLEMENTATION_H

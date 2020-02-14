@@ -5,7 +5,7 @@
 #include "Core/Tensor_Extension.h"
 
 template<typename T>
-TensorTree<T>::TensorTree(const TTBasis& tree) {
+TensorTree<T>::TensorTree(const Tree& tree) {
 	TensorTree<T>::Initialize(tree);
 }
 
@@ -22,14 +22,14 @@ TensorTree<T>::TensorTree(const string& filename) {
 
 /// Create tensor tree and occupy the coefficients
 template<typename T>
-TensorTree<T>::TensorTree(const TTBasis& tree,
+TensorTree<T>::TensorTree(const Tree& tree,
 	mt19937& gen, bool delta_lowest)
 	: TensorTree(tree) {
 	Generate(tree, gen, delta_lowest);
 }
 
 template<typename T>
-void TensorTree<T>::Initialize(const TTBasis& tree) {
+void TensorTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		attributes_.emplace_back(Tensor<T>(node.TDim()));
@@ -37,7 +37,7 @@ void TensorTree<T>::Initialize(const TTBasis& tree) {
 }
 
 template<typename T>
-void TensorTree<T>::Generate(const TTBasis& tree, mt19937& gen, bool delta_lowest) {
+void TensorTree<T>::Generate(const Tree& tree, mt19937& gen, bool delta_lowest) {
 	assert(tree.nNodes() == attributes_.size());
 	for (const Node& node : tree) {
 		Tensor<T>& Phi = this->operator[](node);
@@ -120,7 +120,7 @@ void TensorTree<T>::Read(istream& is) {
 }
 
 template<typename T>
-void TensorTree<T>::print(const TTBasis& tree, ostream& os) const {
+void TensorTree<T>::print(const Tree& tree, ostream& os) const {
 	for (const Node& node : tree) {
 		node.info(os);
 		this->operator[](node).print(os);

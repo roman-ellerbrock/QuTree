@@ -1,5 +1,5 @@
 #pragma once
-#include "TensorTreeBasis/Node.h"
+#include "TreeHandling/Node.h"
 
 /**
  * \defgroup Tree

@@ -1,4 +1,4 @@
-#include "TensorTreeBasis/NodePosition.h"
+#include "TreeHandling/NodePosition.h"
 
 void NodePosition::info(ostream& os) const {
 	os << "{ " << layer_ << " ; ";

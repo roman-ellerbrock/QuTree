@@ -10,10 +10,10 @@
 namespace IOTree {
 
 	template <typename T>
-	void Occupancy(const TensorTree<T>& Psi, const TTBasis& tree, ostream& os = cout);
+	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);
 
 	template <typename T>
-	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const TTBasis& tree, ostream& os = cout);
+	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os = cout);
 
 }
 

@@ -12,13 +12,13 @@ SUITE (MatrixTree) {
 	double eps = 1e-8;
 
 	TEST (Constructor) {
-		TTBasis tree(7, 5, 4);
+		Tree tree(7, 5, 4);
 		MatrixTreecd M(tree);
 			CHECK_EQUAL(tree.nNodes(), M.size());
 	}
 
 	TEST (IO) {
-		TTBasis tree(7, 5, 4);
+		Tree tree(7, 5, 4);
 		MatrixTreecd M(tree);
 		mt19937 gen(1988);
 		for (const Node& node : tree) {
@@ -43,7 +43,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (DotProduct) {
 		mt19937 gen(1923);
-		TTBasis tree(7, 5, 4);
+		Tree tree(7, 5, 4);
 		TensorTreecd Psi(tree, gen);
 		MatrixTreecd S = DotProduct(Psi, Psi, tree);
 		for (const Node& node : tree) {
@@ -56,7 +56,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (Contraction) {
 		mt19937 gen(1923);
-		TTBasis tree(7, 5, 4);
+		Tree tree(7, 5, 4);
 		TensorTreecd Psi(tree, gen, false);
 		TensorTreecd Chi(tree, gen, false);
 		MatrixTreecd S = DotProduct(Psi, Chi, tree);
@@ -67,7 +67,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (Density) {
 		mt19937 gen(1923);
-		TTBasis tree(7, 5, 4);
+		Tree tree(7, 5, 4);
 		TensorTreecd Psi(tree, gen, true);
 		MatrixTreecd Rho = Contraction(Psi, tree, true);
 		for (const Node& node : tree) {
@@ -89,7 +89,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (SpectralDecompositionTree_Calc) {
 		mt19937 gen(1993);
-		TensorTreeBasis tree(12, 2, 2);
+		Tree tree(12, 2, 2);
 		TensorTreecd Psi(tree, gen);
 		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
@@ -102,7 +102,7 @@ SUITE (MatrixTreeFunctions) {
 	}
 
 	TEST (SpectralDecompositionTree_Inverse) {
-		TensorTreeBasis tree(12, 4, 2);
+		Tree tree(12, 4, 2);
 		mt19937 gen(1993);
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {

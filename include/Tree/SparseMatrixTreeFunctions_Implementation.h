@@ -46,7 +46,7 @@ namespace SparseMatrixTreeFunctions {
 	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat,
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const TTBasis& tree) {
+		const Tree& tree) {
 		assert(Bra.size() == Ket.size());
 		const SubTree& active = hmat.Active();
 		for (size_t n = 0; n < active.size(); ++n) {
@@ -57,13 +57,13 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
-		const TensorTree<T>& Psi, const TTBasis& tree) {
+		const TensorTree<T>& Psi, const Tree& tree) {
 		Represent(hmat, M, Psi, Psi, tree);
 	}
 
 	template<typename T>
 	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Bra,
-		const TensorTree<T>& Ket, const TTBasis& tree) {
+		const TensorTree<T>& Ket, const Tree& tree) {
 		SparseMatrixTree<T> hmat(M, tree);
 		Represent(hmat, M, Bra, Ket, tree);
 		return hmat;
@@ -71,7 +71,7 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Psi,
-		const TTBasis& tree) {
+		const Tree& tree) {
 		SparseMatrixTree<T> hmat(M, tree);
 		Represent(hmat, M, Psi, tree);
 		return hmat;
@@ -136,7 +136,7 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const SparseMatrixTree<T>& mats,const SubTree& marker, const TTBasis& tree) {
+		const SparseMatrixTree<T>& mats,const SubTree& marker, const Tree& tree) {
 
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = marker.size() - 1;
@@ -158,13 +158,13 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const SparseMatrixTree<T>& mats, const TTBasis& tree) {
+		const SparseMatrixTree<T>& mats, const Tree& tree) {
 		Contraction(holes, Bra, Ket, mats, holes.Active(), tree);
 	}
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
-		const SparseMatrixTree<T>& mats, const TTBasis& tree) {
+		const SparseMatrixTree<T>& mats, const Tree& tree) {
 		Contraction(holes, Psi, Psi, mats, tree);
 	}
 }

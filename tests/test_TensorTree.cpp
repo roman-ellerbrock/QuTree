@@ -2,15 +2,15 @@
 // Created by Roman Ellerbrock on 2020-01-19.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
-#include "TensorTreeBasis/TTBasisFactory.h"
+#include "TreeHandling/Tree.h"
+#include "TreeHandling/TTBasisFactory.h"
 
 SUITE (TensorTree) {
 
 	TEST (TensorTree_FILE_IO) {
-		TensorTreeBasis tree(12, 2, 4);
+		Tree tree(12, 2, 4);
 		TensorTreecd T(tree);
 		T.Write("TT.tmp.dat");
 		TensorTreecd Q(tree);
@@ -23,7 +23,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST (TensorTree_RandomGenerate) {
-		TensorTreeBasis tree(12, 2, 2);
+		Tree tree(12, 2, 2);
 		TensorTreecd T(tree);
 		mt19937 gen(2468);
 		T.Generate(tree, gen, false);

@@ -1,34 +1,34 @@
 //
 // Created by Roman Ellerbrock on 2020-01-21.
 //
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 
-TensorTreeBasis::TensorTreeBasis(const TensorTreeBasis& T)
-	: tree(T.tree) {
+Tree::Tree(const Tree& T)
+	: root_(T.root_) {
 	Update();
 }
 
-TensorTreeBasis::TensorTreeBasis(TensorTreeBasis&& T) noexcept {
-	tree = move(T.tree);
+Tree::Tree(Tree&& T) noexcept {
+	root_ = move(T.root_);
 	Update();
 }
 
-TensorTreeBasis& TensorTreeBasis::operator=(const TensorTreeBasis& T) {
-	*this = TTBasis(T);
+Tree& Tree::operator=(const Tree& T) {
+	*this = Tree(T);
 	return *this;
 }
 
-TensorTreeBasis& TensorTreeBasis::operator=(TensorTreeBasis&& T) noexcept {
-	tree = move(T.tree);
+Tree& Tree::operator=(Tree&& T) noexcept {
+	root_ = move(T.root_);
 	Update();
 	return *this;
 }
 
-TensorTreeBasis::TensorTreeBasis(const string& filename) {
+Tree::Tree(const string& filename) {
 	Read(filename);
 }
 
-TensorTreeBasis::TensorTreeBasis(istream& is) {
+Tree::Tree(istream& is) {
 	Read(is);
 }
 
@@ -56,7 +56,7 @@ vector<Node> Partition(const vector<Node>& nodes,
 	return groups;
 }
 
-void ResetLeafModes(TensorTreeBasis& basis) {
+void ResetLeafModes(Tree& basis) {
 	size_t n_modes = basis.nLeaves();
 	assert(n_modes > 0);
 	int mode = n_modes - 1;
@@ -69,7 +69,7 @@ void ResetLeafModes(TensorTreeBasis& basis) {
 	basis.Update();
 }
 
-void TensorTreeBasis::ReindexLeafModes(map<size_t, size_t> Map) {
+void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
 	for (Node& node : *this) {
 		if (node.IsBottomlayer()) {
 			Leaf& leaf = node.PhysCoord();
@@ -78,7 +78,7 @@ void TensorTreeBasis::ReindexLeafModes(map<size_t, size_t> Map) {
 	}
 }
 
-TensorTreeBasis::TensorTreeBasis(size_t order,
+Tree::Tree(size_t order,
 	size_t dim_leaves, size_t dim_nodes) {
 	/// Create close-to-balanced Tree
 	size_t leaf_type = 6;
@@ -101,32 +101,32 @@ TensorTreeBasis::TensorTreeBasis(size_t order,
 			exit(1);
 		}
 	}
-	tree = move(nodes.front());
-	tree.SetUp(nullptr);
-	auto& tdim = tree.TDim();
+	root_ = move(nodes.front());
+	root_.SetUp(nullptr);
+	auto& tdim = root_.TDim();
     tdim.SetNumTensor(1);
-	tree.UpdatePosition(NodePosition());
+	root_.UpdatePosition(NodePosition());
 	Update();
 	ResetLeafModes(*this);
 }
 
-Leaf& TensorTreeBasis::GetLeaf(size_t i) {
+Leaf& Tree::GetLeaf(size_t i) {
 	return linearizedLeaves_[i];
 }
 
-const Leaf& TensorTreeBasis::GetLeaf(size_t i) const {
+const Leaf& Tree::GetLeaf(size_t i) const {
 	return linearizedLeaves_[i];
 }
 
-Node& TensorTreeBasis::GetNode(size_t i) {
+Node& Tree::GetNode(size_t i) {
 	return linearizedNodes_[i];
 }
 
-const Node& TensorTreeBasis::GetNode(size_t i) const {
+const Node& Tree::GetNode(size_t i) const {
 	return linearizedNodes_[i];
 }
 
-void TensorTreeBasis::ExpandNode(Node& node) {
+void Tree::ExpandNode(Node& node) {
 	assert(!node.IsToplayer());
 	assert(!node.IsBottomlayer());
 
@@ -136,15 +136,15 @@ void TensorTreeBasis::ExpandNode(Node& node) {
 	LinearizeNodes();
 }
 
-void TensorTreeBasis::Update() {
+void Tree::Update() {
 	// Tree is assumed to be updated, but the rest not:
 	// Update everything
-	tree.Update(NodePosition());
+	root_.Update(NodePosition());
 	LinearizeLeaves();
 	LinearizeNodes();
 }
 
-void TensorTreeBasis::ReplaceNode(Node& old_node, Node& new_node) {
+void Tree::ReplaceNode(Node& old_node, Node& new_node) {
 	// The old node must not be the toplayer node, otherwise change the
 	// whole tree
 	assert(!old_node.IsToplayer());
@@ -160,7 +160,7 @@ void TensorTreeBasis::ReplaceNode(Node& old_node, Node& new_node) {
 	LinearizeNodes();
 }
 
-void TensorTreeBasis::LinearizeNodes() {
+void Tree::LinearizeNodes() {
 	// block has to be cleared, because logical block
 	// must be resistant to re-feed (important for e.g. expand node)
 	// This routine adds every mctdh node to the logical block
@@ -177,7 +177,7 @@ void TensorTreeBasis::LinearizeNodes() {
 	}
 }
 
-void TensorTreeBasis::LinearizeLeaves() {
+void Tree::LinearizeLeaves() {
 	// This routine attends physical coordinates to the linearizedLeaves_ block
 	linearizedLeaves_.clear();
 	linearizedLeaves_.resizeaddress(nLeaves());
@@ -197,9 +197,9 @@ void TensorTreeBasis::LinearizeLeaves() {
 
 /// I/O
 
-void TensorTreeBasis::Read(istream& file) {
+void Tree::Read(istream& file) {
 	// feed linearizedLeaves_ and logical block with references
-	tree.Initialize(file, nullptr, NodePosition());
+	root_.Initialize(file, nullptr, NodePosition());
 	Update();
 
 	// Add new PhysPar for every physical coordinate
@@ -214,26 +214,26 @@ void TensorTreeBasis::Read(istream& file) {
 	}
 }
 
-void TensorTreeBasis::Read(const string& filename) {
+void Tree::Read(const string& filename) {
 	ifstream is(filename);
 	Read(is);
 }
 
-void TensorTreeBasis::Write(ostream& os) const {
-	tree.Write(os);
+void Tree::Write(ostream& os) const {
+	root_.Write(os);
 }
 
-ostream& operator<<(ostream& os, TTBasis& basis) {
+ostream& operator<<(ostream& os, Tree& basis) {
 	basis.Write(os);
 	return os;
 }
 
-istream& operator<<(istream& is, TTBasis& basis) {
+istream& operator<<(istream& is, Tree& basis) {
 	basis.Read(is);
 	return is;
 }
 
-void TensorTreeBasis::info(ostream& os) const {
+void Tree::info(ostream& os) const {
 	os << "List of Leaves:" << endl;
 	for (size_t i = 0; i < this->nLeaves(); i++) {
 		const Leaf& node = GetLeaf(i);
@@ -253,7 +253,7 @@ void TensorTreeBasis::info(ostream& os) const {
 	os << "Number of Nodes = " << nNodes() << endl;
 }
 
-bool TensorTreeBasis::IsWorking() {
+bool Tree::IsWorking() {
 
 	bool works = true;
 	int counter = 0;
@@ -322,7 +322,7 @@ bool TensorTreeBasis::IsWorking() {
 	return true;
 }
 
-ostream& operator<<(ostream& os, const TensorTreeBasis& basis) {
+ostream& operator<<(ostream& os, const Tree& basis) {
 	if(&os == &cout) {
 		basis.info(os);
 	} else {
@@ -331,7 +331,7 @@ ostream& operator<<(ostream& os, const TensorTreeBasis& basis) {
 	return os;
 }
 
-istream& operator>>(istream& is, TensorTreeBasis& basis) {
+istream& operator>>(istream& is, Tree& basis) {
 	basis.Read(is);
 	return is;
 }

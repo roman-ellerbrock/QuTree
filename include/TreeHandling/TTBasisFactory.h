@@ -4,10 +4,10 @@
 
 #ifndef TTBASISFACTORY_H
 #define TTBASISFACTORY_H
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "TreeHandling/Tree.h"
 
 namespace TTBasisFactory {
-	TTBasis TensorTrain(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType);
+	Tree TensorTrain(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType);
 }
 
 #endif //TTBASISFACTORY_H

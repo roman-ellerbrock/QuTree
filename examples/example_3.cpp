@@ -15,7 +15,7 @@ TensorTreecd create_tensor_tree() {
     size_t num_leaves = 4;
     size_t dim_leaves = 3;
     size_t dim_nodes = 2;
-    TTBasis tree(num_leaves, dim_leaves, dim_nodes); // Creates a balanced tree by default
+    Tree tree(num_leaves, dim_leaves, dim_nodes); // Creates a balanced tree by default
     tree.info();
     cout << "\nNo. total nodes: " << tree.nTotalNodes() << endl;
     cout << "No. logical nodes: " << tree.nNodes() << endl;
@@ -44,7 +44,7 @@ void dot_product_tree() {
     cout << "\nTensor tree dot product:\n" << endl;
 
     // A dot product between two tensor trees results in a factor matrix tree
-    TTBasis tree(4, 3, 2);
+    Tree tree(4, 3, 2);
     mt19937 gen(2468);
     TensorTreecd Psi(tree, gen, false);
     TensorTreecd Chi(Psi);
@@ -60,7 +60,7 @@ void hole_product_tree() {
     cout << "\nTensor tree hole product:\n" << endl;
 
     // A hole product between two tensor trees results in a hole matrix tree
-    TTBasis tree(4, 3, 2);
+    Tree tree(4, 3, 2);
     mt19937 gen(2468);
     TensorTreecd Psi(tree, gen, false);
     TensorTreecd Chi(Psi);
@@ -81,7 +81,7 @@ int main() {
     dot_product_tree();
     hole_product_tree();
 
-    TTBasis tree(7, 2, 2);
+    Tree tree(7, 2, 2);
 	FactorMatrixcd X(2, 1);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
