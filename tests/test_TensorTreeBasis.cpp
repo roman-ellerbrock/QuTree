@@ -14,9 +14,9 @@ SUITE (TensorTreeBasis) {
 		TensorDim tdim_bottom({n_leaf}, n_node);
 
 		for (size_t n_modes = 2; n_modes < 18; ++n_modes) {
-			TensorTreeBasis basis(n_modes, n_leaf, n_node);
+			TensorTreeBasis tree(n_modes, n_leaf, n_node);
 
-			for (const Node& node : basis) {
+			for (const Node& node : tree) {
 				const TensorDim& tdim = node.TDim();
 				if (node.IsToplayer()) {
 						CHECK_EQUAL(tdim_top, tdim);
@@ -37,28 +37,28 @@ SUITE (TensorTreeBasis) {
 		TensorDim tdim_bottom({n_leaf}, n_node);
 		size_t n_modes = 13;
 
-		TensorTreeBasis basis(n_modes, n_leaf, n_node);
+		TensorTreeBasis tree(n_modes, n_leaf, n_node);
 		{
 			ofstream os("TTBasis.IO.tmp.dat");
-			basis.Write(os);
+			tree.Write(os);
 			os.close();
 		}
-		TTBasis basis2("TTBasis.IO.tmp.dat");
-			CHECK_EQUAL(basis2.nNodes(), basis.nNodes());
+		TTBasis tree2("TTBasis.IO.tmp.dat");
+			CHECK_EQUAL(tree2.nNodes(), tree.nNodes());
 	}
 
 	TEST (TensorTreeBasis_Reindexing) {
 		size_t n_modes = 9;
-		TensorTreeBasis basis(n_modes, 2, 4);
+		TensorTreeBasis tree(n_modes, 2, 4);
 
 		map<size_t, size_t> Map;
 		for (size_t k = 0; k < n_modes; ++k) {
 			Map[k] = n_modes - 1 - k;
 		}
-		basis.ReindexLeafModes(Map);
+		tree.ReindexLeafModes(Map);
 
 		size_t k = 0;
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 			if (node.IsBottomlayer()) {
 				const Leaf& leaf = node.PhysCoord();
 					CHECK_EQUAL(k++, leaf.Mode());
@@ -68,33 +68,33 @@ SUITE (TensorTreeBasis) {
 
 	TEST (TensorTreeBasis_Train) {
 		size_t nLeaves = 12;
-		auto basis = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
-			CHECK_EQUAL(2 * nLeaves - 1, basis.nNodes());
+		auto tree = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
+			CHECK_EQUAL(2 * nLeaves - 1, tree.nNodes());
 	}
 
 	TEST (TensorTreeBasis_Copy) {
 		/// Construct a tree and check that it works
-		TensorTreeBasis basis(12, 4, 3);
-			CHECK_EQUAL(true, basis.IsWorking());
+		TensorTreeBasis tree(12, 4, 3);
+			CHECK_EQUAL(true, tree.IsWorking());
 
 		{
 			/// Copy-constructor test
-			TensorTreeBasis basis_copy_construct(basis);
-				CHECK_EQUAL(true, basis_copy_construct.IsWorking());
+			TensorTreeBasis tree_copy_construct(tree);
+				CHECK_EQUAL(true, tree_copy_construct.IsWorking());
 
 			/// Move constructor
-			TensorTreeBasis basis_move_construct(move(basis_copy_construct));
-				CHECK_EQUAL(true, basis_move_construct.IsWorking());
+			TensorTreeBasis tree_move_construct(move(tree_copy_construct));
+				CHECK_EQUAL(true, tree_move_construct.IsWorking());
 		}
 
 		{
 			/// Copy-asignment test
-			TensorTreeBasis basis_copy_asign = basis;
-				CHECK_EQUAL(true, basis_copy_asign.IsWorking());
+			TensorTreeBasis tree_copy_asign = tree;
+				CHECK_EQUAL(true, tree_copy_asign.IsWorking());
 
 			/// Move asignment operator
-			TensorTreeBasis basis_move_asign = move(basis_copy_asign);
-				CHECK_EQUAL(true, basis_move_asign.IsWorking());
+			TensorTreeBasis tree_move_asign = move(tree_copy_asign);
+				CHECK_EQUAL(true, tree_move_asign.IsWorking());
 		}
 	}
 }

@@ -12,16 +12,16 @@ SUITE (MatrixTree) {
 	double eps = 1e-8;
 
 	TEST (Constructor) {
-		TTBasis basis(7, 5, 4);
-		MatrixTreecd M(basis);
-			CHECK_EQUAL(basis.nNodes(), M.size());
+		TTBasis tree(7, 5, 4);
+		MatrixTreecd M(tree);
+			CHECK_EQUAL(tree.nNodes(), M.size());
 	}
 
 	TEST (IO) {
-		TTBasis basis(7, 5, 4);
-		MatrixTreecd M(basis);
+		TTBasis tree(7, 5, 4);
+		MatrixTreecd M(tree);
 		mt19937 gen(1988);
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 			Matrixcd& m = M[node];
 			m = RandomMatrices::GUE(m.Dim1(), gen);
 		}
@@ -29,7 +29,7 @@ SUITE (MatrixTree) {
 		string filename("MatrixTree.dat");
 		M.Write(filename);
 		MatrixTreecd Mread(filename);
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 			double delta = Residual(M[node], Mread[node]);
 				CHECK_CLOSE(0., delta, eps);
 		}
@@ -43,10 +43,10 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (DotProduct) {
 		mt19937 gen(1923);
-		TTBasis basis(7, 5, 4);
-		TensorTreecd Psi(basis, gen);
-		MatrixTreecd S = DotProduct(Psi, Psi, basis);
-		for (const Node& node : basis) {
+		TTBasis tree(7, 5, 4);
+		TensorTreecd Psi(tree, gen);
+		MatrixTreecd S = DotProduct(Psi, Psi, tree);
+		for (const Node& node : tree) {
 			const Matrixcd& s = S[node];
 			Matrixcd Identity = IdentityMatrix<complex<double>>(s.Dim1());
 			double r = Residual(Identity, s);
@@ -56,21 +56,21 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (Contraction) {
 		mt19937 gen(1923);
-		TTBasis basis(7, 5, 4);
-		TensorTreecd Psi(basis, gen, false);
-		TensorTreecd Chi(basis, gen, false);
-		MatrixTreecd S = DotProduct(Psi, Chi, basis);
-		MatrixTreecd Rho = Contraction(Psi, Chi, S, basis);
-			CHECK_EQUAL(basis.nNodes(), Rho.size());
-			CHECK_EQUAL(basis.nNodes(), S.size());
+		TTBasis tree(7, 5, 4);
+		TensorTreecd Psi(tree, gen, false);
+		TensorTreecd Chi(tree, gen, false);
+		MatrixTreecd S = DotProduct(Psi, Chi, tree);
+		MatrixTreecd Rho = Contraction(Psi, Chi, S, tree);
+			CHECK_EQUAL(tree.nNodes(), Rho.size());
+			CHECK_EQUAL(tree.nNodes(), S.size());
 	}
 
 	TEST (Density) {
 		mt19937 gen(1923);
-		TTBasis basis(7, 5, 4);
-		TensorTreecd Psi(basis, gen, true);
-		MatrixTreecd Rho = Contraction(Psi, basis, true);
-		for (const Node& node : basis) {
+		TTBasis tree(7, 5, 4);
+		TensorTreecd Psi(tree, gen, true);
+		MatrixTreecd Rho = Contraction(Psi, tree, true);
+		for (const Node& node : tree) {
 			if (!node.IsToplayer()) {
 				Matrixcd& rho = Rho[node];
 					CHECK_EQUAL(rho.Dim2(), rho.Dim1());
@@ -89,12 +89,12 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (SpectralDecompositionTree_Calc) {
 		mt19937 gen(1993);
-		TensorTreeBasis basis(12, 2, 2);
-		TensorTreecd Psi(basis, gen);
-		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, basis, true);
-		SpectralDecompositionTreecd X(Rho, basis);
+		TensorTreeBasis tree(12, 2, 2);
+		TensorTreecd Psi(tree, gen);
+		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, tree, true);
+		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 			if (!node.IsToplayer()) {
 					CHECK_CLOSE(1., X[node].second(1), eps);
 			}
@@ -102,23 +102,23 @@ SUITE (MatrixTreeFunctions) {
 	}
 
 	TEST (SpectralDecompositionTree_Inverse) {
-		TensorTreeBasis basis(12, 4, 2);
+		TensorTreeBasis tree(12, 4, 2);
 		mt19937 gen(1993);
-		MatrixTreecd H(basis);
-		for (const Node& node : basis) {
+		MatrixTreecd H(tree);
+		for (const Node& node : tree) {
 			const TensorDim& dim = node.TDim();
 			Matrixcd mat = RandomMatrices::GUE(dim.GetNumTensor(), gen);
 			H[node] = FactorMatrixcd(mat, node.ChildIdx());
 		}
 
-		SpectralDecompositionTreecd X(H, basis);
-		auto H_inv = X.Invert(basis, 1e-10);
+		SpectralDecompositionTreecd X(H, tree);
+		auto H_inv = X.Invert(tree, 1e-10);
 
-		MatrixTreecd Identity(basis);
-		for (const Node& node : basis) {
+		MatrixTreecd Identity(tree);
+		for (const Node& node : tree) {
 			Identity[node] = H_inv[node] * H[node];
 		}
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 			const Matrixcd& I_test = Identity[node];
 			auto r = Residual(I_test, IdentityMatrix<complex<double>>(I_test.Dim1()));
 				CHECK_CLOSE(0., r, eps);

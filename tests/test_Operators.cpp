@@ -58,17 +58,17 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, MPO_1) {
 		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
-		TTBasis basis(4, 2, 2);
-		TensorTreecd Chi(basis);
-		Chi.Generate(basis, gen, false);
-		auto Psi = M.Apply(Chi, basis);
+		TTBasis tree(4, 2, 2);
+		TensorTreecd Chi(tree);
+		Chi.Generate(tree, gen, false);
+		auto Psi = M.Apply(Chi, tree);
 
 		/// Checking
 		string filename("MLO.Apply.dat");
 		Psi.Write(filename);
 		TensorTreecd Xi(filename);
 			CHECK_EQUAL(Xi.size(), Psi.size());
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 				CHECK_EQUAL(Xi[node], Psi[node]);
 		}
 	}
