@@ -146,6 +146,8 @@ public:
 	/// Check whether TensorTreeBasis is working correctly
 	bool IsWorking();
 
+	void print() const;
+
 protected:
 	void LinearizeNodes();
 

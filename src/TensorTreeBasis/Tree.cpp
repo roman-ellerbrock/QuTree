@@ -322,6 +322,14 @@ bool Tree::IsWorking() {
 	return true;
 }
 
+void Tree::print() const {
+	for (auto it = this->rbegin(); it !=  this->rend(); it++) {
+		const Node& node = *it;
+		node.info();
+		node.TDim().print();
+	}
+}
+
 ostream& operator<<(ostream& os, const Tree& basis) {
 	if(&os == &cout) {
 		basis.info(os);
