@@ -32,6 +32,10 @@ class Tree {
 	 * 		const Node& node = tree.GetNode(i);
 	 * 		// Do something - Top-Down swipe
 	 * }
+	 * or
+	 * for (auto it = tree.rbegin(); it != tree.rend(); it++) {
+	 *
+	 * }
 	 *
 	 * for (size_t l = 0; l < nLeaves; ++l) {
 	 * 		const Leaf& leaf = GetLeaf(l);
@@ -130,6 +134,15 @@ public:
 		return linearizedNodes_.end();
 	}
 
+	/// Top-down iterator over all nodes in the mctdh-tree
+	vector<reference_wrapper<Node>>::const_reverse_iterator  rbegin() const {
+		return linearizedNodes_.rbegin();
+	}
+
+	/// Bottom-up const iterator over all nodes in the mctdh-tree
+	vector<reference_wrapper<Node>>::const_reverse_iterator  rend() const {
+		return linearizedNodes_.rend();
+	}
 	/// Check whether TensorTreeBasis is working correctly
 	bool IsWorking();
 
