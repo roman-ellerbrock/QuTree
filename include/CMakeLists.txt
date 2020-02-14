@@ -37,11 +37,11 @@ set(TENSOR_TREE_FILES
         TreeHandling/NodePosition.h
         TreeHandling/Tree.h
         TreeHandling/TTBasisFactory.h
-        Tree/TreeStructuredObject.h
+        Tree/NodeAttribute.h
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h
-        Tree/TreeStructuredObject.h
-        Tree/SubTree.h
+        Tree/NodeAttribute.h
+        Tree/SparseTree.h
         Tree/SpectralDecompositionTree.h
         Tree/IOTree.h
         Tree/MatrixTree.h

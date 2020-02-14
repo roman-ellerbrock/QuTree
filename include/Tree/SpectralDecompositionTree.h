@@ -4,15 +4,15 @@
 
 #ifndef SPECTRALDECOMPOSITIONTREE_H
 #define SPECTRALDECOMPOSITIONTREE_H
-#include "TreeStructuredObject.h"
+#include "NodeAttribute.h"
 #include "Core/Matrix.h"
 #include "Tree/MatrixTreeFunctions.h"
 #include "Core/Vector.h"
 
 template <typename T>
-class SpectralDecompositionTree : public TreeStructuredObject<SpectralDecomposition<T>> {
+class SpectralDecompositionTree : public NodeAttribute<SpectralDecomposition<T>> {
 public:
-	using TreeStructuredObject<SpectralDecomposition<T>>::attributes_;
+	using NodeAttribute<SpectralDecomposition<T>>::attributes_;
 
 	SpectralDecompositionTree() = default;
 

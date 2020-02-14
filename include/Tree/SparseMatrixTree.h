@@ -3,10 +3,10 @@
 //
 #ifndef SPARSEMATRIXTREE_H
 #define SPARSEMATRIXTREE_H
-#include "Tree/SparseTreeStructuredObject.h"
+#include "Tree/SparseNodeAttribute.h"
 
 template <typename T>
-class SparseMatrixTree : public SparseTreeStructuredObject<Matrix<T>>{
+class SparseMatrixTree : public SparseNodeAttribute<Matrix<T>>{
 /**
  * \class MatrixTree
  *
@@ -18,22 +18,22 @@ class SparseMatrixTree : public SparseTreeStructuredObject<Matrix<T>>{
  * In a physical context, the hole-matrices are representation of
  * mean-field operators when working with tensor tree wavefunctions.
  * */
-	using SparseTreeStructuredObject<Matrix<T>>::attributes_;
+	using SparseNodeAttribute<Matrix<T>>::attributes_;
 public:
-	using SparseTreeStructuredObject<Matrix<T>>::Active;
-	using SparseTreeStructuredObject<Matrix<T>>::operator[];
-	using SparseTreeStructuredObject<Matrix<T>>::Initialize;
-	using SparseTreeStructuredObject<Matrix<T>>::Size;
+	using SparseNodeAttribute<Matrix<T>>::Active;
+	using SparseNodeAttribute<Matrix<T>>::operator[];
+	using SparseNodeAttribute<Matrix<T>>::Initialize;
+	using SparseNodeAttribute<Matrix<T>>::Size;
 
 	/// Create HoleMatrixTree for a given tree-marker
-	SparseMatrixTree(shared_ptr<SubTree>& active_, const Tree& tree)
-	: SparseTreeStructuredObject<Matrix<T>>(active_, tree) {
+	SparseMatrixTree(shared_ptr<SparseTree>& active_, const Tree& tree)
+	: SparseNodeAttribute<Matrix<T>>(active_, tree) {
 		Initialize(tree);
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseMatrixTree(const MLO<T>& M, const Tree& tree)
-		: SparseTreeStructuredObject<Matrix<T>>(M.Modes(), tree) {
+		: SparseNodeAttribute<Matrix<T>>(M.Modes(), tree) {
 		Initialize(tree);
 	}
 

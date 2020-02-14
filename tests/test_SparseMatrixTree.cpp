@@ -40,13 +40,13 @@ SUITE (SparseMatrixTree) {
 	TEST (TreeMarker) {
 		Tree tree(7, 4, 2);
 		vector<size_t> modes({3, 4});
-		SubTree active(modes, tree);
+		SparseTree active(modes, tree);
 			CHECK_EQUAL(7, active.size());
 	}
 
 	TEST_FIXTURE (HelperFactory, TreeMarker_NoTail) {
 		/// Create TreeMarker omitting higher nodes in the tree after last branch
-		SubTree active(M_.Modes(), tree_, false);
+		SparseTree active(M_.Modes(), tree_, false);
 			CHECK_EQUAL(5, active.size());
 	}
 
@@ -74,7 +74,7 @@ SUITE (SparseMatrixTree) {
 		hmat.Write("SparseMatrixTree.dat");
 		SparseMatrixTreecd gmat(M_, tree_);
 		gmat.Read("SparseMatrixTree.dat");
-		const SubTree& marker = gmat.Active();
+		const SparseTree& marker = gmat.Active();
 			CHECK_EQUAL(hmat.Size(), gmat.Size());
 		for (size_t i = 0; i < marker.size(); ++i) {
 			const Node& node = marker.MCTDHNode(i);

@@ -14,9 +14,9 @@
  */
 
 template<class A>
-class TreeStructuredObject
+class NodeAttribute
 /**
- * \class TreeStructuredObject
+ * \class NodeAttribute
  * \ingroup Tree
  * \brief Base class for creating objects at every node in a tree.
  *

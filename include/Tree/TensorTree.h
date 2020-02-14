@@ -4,12 +4,13 @@
 
 #ifndef TENSORTREE_H
 #define TENSORTREE_H
-#include "TreeStructuredObject.h"
+#include "NodeAttribute.h"
 #include "TreeHandling/Tree.h"
 #include "Core/Tensor_Implementation.h"
 
 template<typename T>
-class TensorTree: public TreeStructuredObject<Tensor<T>>
+class TensorTree:
+	public NodeAttribute<Tensor<T>>
 	/**
 	 * \class TensorTree
 	 * \ingroup Tree
@@ -24,7 +25,7 @@ class TensorTree: public TreeStructuredObject<Tensor<T>>
 	 */
 {
 public:
-	using TreeStructuredObject<Tensor<T>>::attributes_;
+	using NodeAttribute<Tensor<T>>::attributes_;
 
 	/// Default constructor without memory allocation
 	TensorTree() = default;

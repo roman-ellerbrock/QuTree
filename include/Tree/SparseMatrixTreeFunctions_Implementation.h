@@ -48,7 +48,7 @@ namespace SparseMatrixTreeFunctions {
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const Tree& tree) {
 		assert(Bra.size() == Ket.size());
-		const SubTree& active = hmat.Active();
+		const SparseTree& active = hmat.Active();
 		for (size_t n = 0; n < active.size(); ++n) {
 			const Node& node = active.MCTDHNode(n);
 			RepresentLayer(hmat, Bra[node], Ket[node], M, node);
@@ -136,7 +136,7 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const SparseMatrixTree<T>& mats,const SubTree& marker, const Tree& tree) {
+		const SparseMatrixTree<T>& mats,const SparseTree& marker, const Tree& tree) {
 
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = marker.size() - 1;

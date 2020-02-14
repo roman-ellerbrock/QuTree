@@ -4,7 +4,7 @@
 
 #ifndef MCTDH_TREEMARKER_H
 #define MCTDH_TREEMARKER_H
-#include "TreeStructuredObject.h"
+#include "NodeAttribute.h"
 #include "TreeHandling/Tree.h"
 #include "MultiLeafOperator.h"
 #include "SumOfProductsOperator.h"
@@ -12,7 +12,7 @@
 #include <chrono>
 
 
-class SubTree
+class SparseTree
 /**
  * \class TreeMarker
  * \brief This class marks a subset of active Nodes in a tree.
@@ -28,7 +28,7 @@ class SubTree
 {
 public:
 
-	SubTree(const vector<size_t>& modes,
+	SparseTree(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true) {
 		SparseInitialize(modes, tree, tail);
 	}

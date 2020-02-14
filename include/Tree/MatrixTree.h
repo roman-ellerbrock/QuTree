@@ -4,12 +4,12 @@
 
 #ifndef MATRIXTREE_H
 #define MATRIXTREE_H
-#include "TreeStructuredObject.h"
+#include "NodeAttribute.h"
 #include "TreeHandling/Tree.h"
 
 template <typename T>
-class MatrixTree: public TreeStructuredObject<Matrix<T>>{
-	using TreeStructuredObject<Matrix<T>>::attributes_;
+class MatrixTree: public NodeAttribute<Matrix<T>>{
+	using NodeAttribute<Matrix<T>>::attributes_;
 public:
 
 	MatrixTree() = default;

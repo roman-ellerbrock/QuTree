@@ -1,9 +1,9 @@
 //
 // Created by Roman Ellerbrock on 2/2/20.
 //
-#include "SubTree.h"
+#include "SparseTree.h"
 
-void SubTree::SparseInitialize(const vector<size_t>& modes,
+void SparseTree::SparseInitialize(const vector<size_t>& modes,
 	const Tree& tree, bool tail) {
 
 	/// Fill co_address with addresses in original TTBasis for every occuring node
@@ -54,7 +54,7 @@ void SubTree::SparseInitialize(const vector<size_t>& modes,
 	}
 }
 
-void SubTree::print(const Tree& tree, ostream& os) const {
+void SparseTree::print(const Tree& tree, ostream& os) const {
 	for (const Node *node : *this) {
 		node->info();
 	}

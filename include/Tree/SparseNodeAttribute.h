@@ -2,14 +2,14 @@
 // Created by Roman Ellerbrock on 2019-04-26.
 //
 
-#ifndef SPARSETREESTRUCTUREDOBJECT_H
-#define SPARSETREESTRUCTUREDOBJECT_H
-#include "SubTree.h"
-#include "TreeStructuredObject.h"
+#ifndef SPARSENODEATTRIBUTE_H
+#define SPARSENODEATTRIBUTE_H
+#include "SparseTree.h"
+#include "NodeAttribute.h"
 
 
 template<class A>
-class SparseTreeStructuredObject
+class SparseNodeAttribute
 /**
  * \class SparseTreeStructuredObject
  * \ingroup Tree
@@ -22,17 +22,17 @@ class SparseTreeStructuredObject
 public:
 	/// Construct object by providing a list of leaf-modes that are active_.
 	/// Will find path connecting the nodes.
-	SparseTreeStructuredObject(const vector<size_t>& modes,
+	SparseNodeAttribute(const vector<size_t>& modes,
 		const Tree& tree)
-		: active_(make_shared<SubTree>(modes, tree)) {
-		SparseTreeStructuredObject::Initialize(tree);
+		: active_(make_shared<SparseTree>(modes, tree)) {
+		SparseNodeAttribute::Initialize(tree);
 	}
 
 	/// Construct obejct for previously marked active_ nodes
-	SparseTreeStructuredObject(shared_ptr<SubTree>& active_,
+	SparseNodeAttribute(shared_ptr<SparseTree>& active_,
 		const Tree& tree)
 		: active_(active_) {
-		SparseTreeStructuredObject::Initialize(tree);
+		SparseNodeAttribute::Initialize(tree);
 	}
 
 	/// Allocate memory. Call only after initializing TreeMarker. Requires default constructor.
@@ -70,7 +70,7 @@ public:
 	size_t Size() const { return attributes_.size(); }
 
 	/// Getter to TreeMarker
-	const SubTree& Active() const { return *active_.get(); }
+	const SparseTree& Active() const { return *active_.get(); }
 
 	/// Check whether node is active_
 	size_t Active(const Node& node) const {
@@ -79,9 +79,9 @@ public:
 
 protected:
 	/// TreeMarker which marks whether a node is active_ or not
-	shared_ptr<SubTree> active_;
+	shared_ptr<SparseTree> active_;
 	/// Attributes only at every active_ node
 	vector<A> attributes_;
 };
 
-#endif //SPARSETREESTRUCTUREDOBJECT_H
+#endif //SPARSENODEATTRIBUTE_H
