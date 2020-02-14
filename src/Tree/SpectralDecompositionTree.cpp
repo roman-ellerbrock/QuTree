@@ -49,8 +49,8 @@ MatrixTree<T> SpectralDecompositionTree<T>::Invert(const Tree& tree, double eps)
 
 template<typename T>
 void SpectralDecompositionTree<T>::print(const Tree& tree) const {
-	for (int i = tree.nNodes() - 1; i > 0; --i) {
-		const Node& node = tree.GetNode(i);
+	for (auto it = tree.rbegin(); it != tree.rend(); it++) {
+		const Node& node = *it;
 		if (!node.IsToplayer()) {
 			node.info();
 			const SpectralDecomposition<T>& x = this->operator[](node);
