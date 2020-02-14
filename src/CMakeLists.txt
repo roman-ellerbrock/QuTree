@@ -31,7 +31,7 @@ set(QDlib_SOURCE_FILES
         Tree/SparseMatrixTreeFunctions.cpp
         Tree/SpectralDecompositionTree.cpp
         Tree/TensorTree_Instantiation.cpp
-        Tree/TreeMarker.cpp
+        Tree/SubTree.cpp
         )
 
 set(LEAF_TYPE_CPP_FILES

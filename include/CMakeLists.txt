@@ -41,7 +41,7 @@ set(TENSOR_TREE_FILES
         Tree/TensorTree.h
         Tree/TensorTree_Implementation.h
         Tree/TreeStructuredObject.h
-        Tree/TreeMarker.h
+        Tree/SubTree.h
         Tree/SpectralDecompositionTree.h
         Tree/IOTree.h
         Tree/MatrixTree.h

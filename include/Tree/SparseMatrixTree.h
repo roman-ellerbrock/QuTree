@@ -26,7 +26,7 @@ public:
 	using SparseTreeStructuredObject<Matrix<T>>::Size;
 
 	/// Create HoleMatrixTree for a given tree-marker
-	SparseMatrixTree(shared_ptr<TreeMarker>& active_, const TTBasis& basis)
+	SparseMatrixTree(shared_ptr<SubTree>& active_, const TTBasis& basis)
 	: SparseTreeStructuredObject<Matrix<T>>(active_, basis) {
 		Initialize(basis);
 	}

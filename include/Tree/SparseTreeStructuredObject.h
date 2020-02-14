@@ -4,7 +4,7 @@
 
 #ifndef SPARSETREESTRUCTUREDOBJECT_H
 #define SPARSETREESTRUCTUREDOBJECT_H
-#include "TreeMarker.h"
+#include "SubTree.h"
 #include "TreeStructuredObject.h"
 
 
@@ -24,12 +24,12 @@ public:
 	/// Will find path connecting the nodes.
 	SparseTreeStructuredObject(const vector<size_t>& modes,
 		const TTBasis& basis)
-		: active_(make_shared<TreeMarker>(modes, basis)) {
+		: active_(make_shared<SubTree>(modes, basis)) {
 		SparseTreeStructuredObject::Initialize(basis);
 	}
 
 	/// Construct obejct for previously marked active_ nodes
-	SparseTreeStructuredObject(shared_ptr<TreeMarker>& active_,
+	SparseTreeStructuredObject(shared_ptr<SubTree>& active_,
 		const TTBasis& basis)
 		: active_(active_) {
 		SparseTreeStructuredObject::Initialize(basis);
@@ -70,7 +70,7 @@ public:
 	size_t Size() const { return attributes_.size(); }
 
 	/// Getter to TreeMarker
-	const TreeMarker& Active() const { return *active_.get(); }
+	const SubTree& Active() const { return *active_.get(); }
 
 	/// Check whether node is active_
 	size_t Active(const Node& node) const {
@@ -79,7 +79,7 @@ public:
 
 protected:
 	/// TreeMarker which marks whether a node is active_ or not
-	shared_ptr<TreeMarker> active_;
+	shared_ptr<SubTree> active_;
 	/// Attributes only at every active_ node
 	vector<A> attributes_;
 };

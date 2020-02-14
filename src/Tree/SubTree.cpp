@@ -1,9 +1,9 @@
 //
 // Created by Roman Ellerbrock on 2/2/20.
 //
-#include "TreeMarker.h"
+#include "SubTree.h"
 
-void TreeMarker::SparseInitialize(const vector<size_t>& modes,
+void SubTree::SparseInitialize(const vector<size_t>& modes,
 	const TTBasis& basis, bool tail) {
 
 	/// Fill co_address with addresses in original TTBasis for every occuring node
@@ -54,7 +54,7 @@ void TreeMarker::SparseInitialize(const vector<size_t>& modes,
 	}
 }
 
-void TreeMarker::print(const TTBasis& basis, ostream& os) const {
+void SubTree::print(const TTBasis& basis, ostream& os) const {
 	for (const Node *node : *this) {
 		node->info();
 	}

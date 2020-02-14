@@ -12,7 +12,7 @@
 #include <chrono>
 
 
-class TreeMarker
+class SubTree
 /**
  * \class TreeMarker
  * \brief This class marks a subset of active Nodes in a tree.
@@ -28,7 +28,7 @@ class TreeMarker
 {
 public:
 
-	TreeMarker(const vector<size_t>& modes,
+	SubTree(const vector<size_t>& modes,
 		const TTBasis& basis, bool tail = true) {
 		SparseInitialize(modes, basis, tail);
 	}
