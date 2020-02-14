@@ -6,6 +6,7 @@
 
 #include "Tree/TensorTree.h"
 #include "Tree/MatrixTreeFunctions.h"
+#include "Tree/SparseMatrixTreeFunctions.h"
 
 // Demonstrate various ways to create a TensorTree object
 TensorTreecd create_tensor_tree() {
@@ -73,8 +74,6 @@ void hole_product_tree() {
 
 }
 
-#include "SparseMatrixTreeFunctions.h"
-#include "SparseFactorMatrixTree.h"
 int main() {
 
     TensorTreecd T = create_tensor_tree();
@@ -92,9 +91,6 @@ int main() {
 
 	mt19937 gen(2020);
 	TensorTreecd Psi(basis, gen);
-
-	SparseFactorMatrixTreecd hmat(Psi, M, basis);
-	hmat.print(basis);
 
 	SparseMatrixTreecd hmats(M, basis);
 	SparseMatrixTreeFunctions::Represent(hmats, M, Psi, Psi, basis);

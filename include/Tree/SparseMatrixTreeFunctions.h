@@ -26,6 +26,10 @@ namespace SparseMatrixTreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
+	void RepresentLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
+		const Tensor<T>& Ket, const MLO<T>& M, const Node& node);
+
+	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat,
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const TTBasis& basis);
@@ -42,16 +46,16 @@ namespace SparseMatrixTreeFunctions {
 	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Psi,
 		const TTBasis& basis);
 
-	template<typename T>
-	void RepresentLayer(const SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
-		const Tensor<T>& Ket, const MLO<T>& M, const Node& node);
-
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-Down (Backward)
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const TTBasis& basis);
+
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const TTBasis& basis);
 }
 

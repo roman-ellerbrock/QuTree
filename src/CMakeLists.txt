@@ -27,8 +27,6 @@ set(QDlib_SOURCE_FILES
         Tree/IOTree.cpp
         Tree/MatrixTree.cpp
         Tree/MatrixTreeFunctions.cpp
-        Tree/SparseFactorMatrixTree.cpp
-        Tree/SparseHoleMatrixTree.cpp
         Tree/SparseMatrixTree.cpp
         Tree/SparseMatrixTreeFunctions.cpp
         Tree/SpectralDecompositionTree.cpp

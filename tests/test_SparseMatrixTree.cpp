@@ -59,8 +59,9 @@ SUITE (SparseMatrixTree) {
 		SparseMatrixTreecd mats = SparseMatrixTreeFunctions::Represent(M_, Psi_, basis_);
 		SparseMatrixTreecd holes(M_, basis_);
 		SparseMatrixTreeFunctions::Contraction(holes, Psi_, Psi_, mats, basis_);
-		mats.print();
-		holes.print();
+		for (const Node& node : basis_) {
+
+		}
 	}
 
 	TEST_FIXTURE (HelperFactory, Constructor) {

@@ -16,7 +16,6 @@ set(QDlib_tests
         tests.cpp
         test_TensorTree.cpp
         test_Operators.cpp
-        test_SparseFactorMatrixTree.cpp
         test_TensorTreeBasis.cpp
         test_MatrixTree.cpp
         test_SparseMatrixTree.cpp)

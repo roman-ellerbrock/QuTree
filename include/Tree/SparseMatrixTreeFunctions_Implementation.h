@@ -166,6 +166,12 @@ namespace SparseMatrixTreeFunctions {
 		const SparseMatrixTree<T>& mats, const TTBasis& basis) {
 		Contraction(holes, Bra, Ket, mats, holes.Active(), basis);
 	}
+
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
+		const SparseMatrixTree<T>& mats, const TTBasis& basis) {
+		Contraction(holes, Psi, Psi, mats, basis);
+	}
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

@@ -5,7 +5,7 @@
 #include "TensorTreeBasis/TensorTreeBasis.h"
 #include "Tree/MatrixTreeFunctions.h"
 #include "benchmark_helper.h"
-#include "Tree/SparseHoleMatrixTree.h"
+#include "SparseMatrixTreeFunctions.h"
 
 
 namespace benchmark {
@@ -59,14 +59,14 @@ pair<double, double> factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	return factormatrixtree_sample(fmat, Psi, basis, nsample);
 }
 
-auto sparse_factormatrixtree_sample(SparseFactorMatrixTreecd& fmat, const MLOcd& M,
+auto sparse_factormatrixtree_sample(SparseMatrixTreecd& fmat, const MLOcd& M,
 	const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
 
 	vector<chrono::microseconds> duration_vec;
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		fmat.Calculate(Psi, M, basis);
+		SparseMatrixTreeFunctions::Represent(fmat, M, Psi, basis);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -84,19 +84,19 @@ pair<double, double> sparse_factormatrixtree(mt19937& gen, size_t dim, size_t nl
 	LeafMatrixcd x(X);
 	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
-	SparseFactorMatrixTreecd fmat(M, basis);
+	SparseMatrixTreecd fmat(M, basis);
 	return sparse_factormatrixtree_sample(fmat, M, Psi, basis, nsample);
 }
 
-auto sparse_holematrixtree_sample(SparseHoleMatrixTreecd& hole,
-	const SparseFactorMatrixTreecd& fmat, const MLOcd& M,
+auto sparse_holematrixtree_sample(SparseMatrixTreecd& hole,
+	const SparseMatrixTreecd& fmat, const MLOcd& M,
 	const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
 
 	vector<chrono::microseconds> duration_vec;
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		hole.Calculate(Psi, fmat, basis);
+		SparseMatrixTreeFunctions::Contraction(hole, Psi, fmat, basis);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -114,8 +114,9 @@ pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nlea
 	LeafMatrixcd x(X);
 	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
-	SparseFactorMatrixTreecd fmat(Psi, M, basis);
-	SparseHoleMatrixTreecd hole(M, basis);
+	SparseMatrixTreecd fmat(M, basis);
+	SparseMatrixTreeFunctions::Represent(fmat, M, Psi, basis);
+	SparseMatrixTreecd hole(M, basis);
 	return sparse_holematrixtree_sample(hole, fmat, M, Psi, basis, nsample);
 }
 
