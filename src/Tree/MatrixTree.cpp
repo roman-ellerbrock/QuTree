@@ -24,7 +24,8 @@ void MatrixTree<T>::Initialize(const TTBasis& basis) {
 	attributes_.clear();
 	for (const Node& node : basis) {
 		const TensorDim& tdim = node.TDim();
-		attributes_.emplace_back(Matrix<T>(tdim.GetNumTensor(), tdim.GetNumTensor()));
+		size_t dim = tdim.GetNumTensor();
+		attributes_.emplace_back(Matrix<T>(dim, dim));
 	}
 }
 
@@ -75,8 +76,8 @@ void MatrixTree<T>::Read(const string& filename) {
 }
 
 template<typename T>
-void MatrixTree<T>::print(const TTBasis& basis, ostream& os) const {
-	for (const Node& node : basis) {
+void MatrixTree<T>::print(const TTBasis& tree, ostream& os) const {
+	for (const Node& node : tree) {
 		node.info();
 		this->operator[](node).print();
 	}
