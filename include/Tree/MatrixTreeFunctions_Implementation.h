@@ -25,16 +25,16 @@ namespace MatrixTreeFunctions {
 	}
 
 	template<typename T>
-	void DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& basis) {
-		for (const Node& node : basis) {
+	void DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& tree) {
+		for (const Node& node : tree) {
 			DotProductLocal(S, Psi[node], Chi[node], node);
 		}
 	}
 
 	template<typename T>
-	MatrixTree<T> DotProduct(const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& basis) {
-		MatrixTree<T> S(basis);
-		DotProduct(S, Psi, Chi, basis);
+	MatrixTree<T> DotProduct(const TensorTree<T>& Psi, const TensorTree<T>& Chi, const TTBasis& tree) {
+		MatrixTree<T> S(tree);
+		DotProduct(S, Psi, Chi, tree);
 		return S;
 	}
 
@@ -70,16 +70,16 @@ namespace MatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const TTBasis& basis, const MatrixTree<T> *S_opt = nullptr) {
+		const TTBasis& tree, const MatrixTree<T> *S_opt = nullptr) {
 		if (S_opt != nullptr) {
-			assert(S_opt->size() == basis.nNodes());
+			assert(S_opt->size() == tree.nNodes());
 		}
-		assert(Rho.size() == basis.nNodes());
-		assert(Psi.size() == basis.nNodes());
-		assert(Chi.size() == basis.nNodes());
+		assert(Rho.size() == tree.nNodes());
+		assert(Psi.size() == tree.nNodes());
+		assert(Chi.size() == tree.nNodes());
 
-		for (int n = (int) basis.nNodes() - 2; n >= 0; --n) {
-			const Node& node = basis.GetNode(n);
+		for (int n = (int) tree.nNodes() - 2; n >= 0; --n) {
+			const Node& node = tree.GetNode(n);
 			const Node& parent = node.Up();
 			ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
 		}
@@ -87,32 +87,32 @@ namespace MatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const MatrixTree<T>& S, const TTBasis& basis) {
-		Contraction(Rho, Psi, Chi, basis, &S);
+		const MatrixTree<T>& S, const TTBasis& tree) {
+		Contraction(Rho, Psi, Chi, tree, &S);
 	}
 
 	template<typename T>
 	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
-		const MatrixTree<T>& S, const TTBasis& basis) {
-		MatrixTree<T> Rho(basis);
-		Contraction(Rho, Psi, Chi, S, basis);
+		const MatrixTree<T>& S, const TTBasis& tree) {
+		MatrixTree<T> Rho(tree);
+		Contraction(Rho, Psi, Chi, S, tree);
 		return Rho;
 	}
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TTBasis& basis, bool orthogonal) {
+	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TTBasis& tree, bool orthogonal) {
 		if (orthogonal) {
-			Contraction(Rho, Psi, Psi, basis);
+			Contraction(Rho, Psi, Psi, tree);
 		} else {
-			MatrixTree<T> S = DotProduct(Psi, Psi, basis);
-			Contraction(Rho, Psi, Psi, S, basis);
+			MatrixTree<T> S = DotProduct(Psi, Psi, tree);
+			Contraction(Rho, Psi, Psi, S, tree);
 		}
 	}
 
 	template<typename T>
-	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TTBasis& basis, bool orthogonal) {
-		MatrixTree<T> Rho(basis);
-		Contraction(Rho, Psi, basis, orthogonal);
+	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TTBasis& tree, bool orthogonal) {
+		MatrixTree<T> Rho(tree);
+		Contraction(Rho, Psi, tree, orthogonal);
 		return Rho;
 	}
 }

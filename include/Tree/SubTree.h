@@ -29,12 +29,12 @@ class SubTree
 public:
 
 	SubTree(const vector<size_t>& modes,
-		const TTBasis& basis, bool tail = true) {
-		SparseInitialize(modes, basis, tail);
+		const TTBasis& tree, bool tail = true) {
+		SparseInitialize(modes, tree, tail);
 	}
 
 	void SparseInitialize(const vector<size_t>& modes,
-		const TTBasis& basis, bool tail = true);
+		const TTBasis& tree, bool tail = true);
 
 	size_t Active(const Node& node) const {
 		size_t count = co_address.count(node.Address());
@@ -61,7 +61,7 @@ public:
 		return co_address.at(addr);
 	}
 
-	void print(const TTBasis& basis, ostream& os = cout) const;
+	void print(const TTBasis& tree, ostream& os = cout) const;
 
 protected:
 	vector<const Node *> nodes;
@@ -70,15 +70,15 @@ protected:
 
 /*
 TreeMarker(const MultiLeafOperator<T>& M,
-	const TTBasis& basis) {
+	const TTBasis& tree) {
 	vector<size_t> modes;
 	for (size_t k = 0; k < M.size(); ++k) {
 		modes.push_back(M.Mode(k));
 	}
-	SparseInitialize(modes, basis);
+	SparseInitialize(modes, tree);
 }
 
-TreeMarker(const SOP& sop, const TTBasis& basis) {
+TreeMarker(const SOP& sop, const TTBasis& tree) {
 	vector<size_t> actives;
 	for (const MultiLeafOperator<T>& M : sop) {
 		for (size_t i = 0; i < M.size(); ++i) {
@@ -88,7 +88,7 @@ TreeMarker(const SOP& sop, const TTBasis& basis) {
 			}
 		}
 	}
-	SparseInitialize(actives, basis);
+	SparseInitialize(actives, tree);
 }
 */
 

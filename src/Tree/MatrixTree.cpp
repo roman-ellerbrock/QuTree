@@ -15,14 +15,14 @@ MatrixTree<T>::MatrixTree(const string& filename) {
 }
 
 template<typename T>
-MatrixTree<T>::MatrixTree(const TTBasis& basis) {
-	Initialize(basis);
+MatrixTree<T>::MatrixTree(const TTBasis& tree) {
+	Initialize(tree);
 }
 
 template <typename T>
-void MatrixTree<T>::Initialize(const TTBasis& basis) {
+void MatrixTree<T>::Initialize(const TTBasis& tree) {
 	attributes_.clear();
-	for (const Node& node : basis) {
+	for (const Node& node : tree) {
 		const TensorDim& tdim = node.TDim();
 		size_t dim = tdim.GetNumTensor();
 		attributes_.emplace_back(Matrix<T>(dim, dim));

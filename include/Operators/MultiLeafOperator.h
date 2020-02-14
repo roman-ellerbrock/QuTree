@@ -103,7 +103,7 @@ public:
 	}
 
 	/// Apply a MLO to a wavefunction. This routine is not optimized for performance.
-	TensorTree<T> Apply(TensorTree<T> Psi, const TTBasis& basis) const;
+	TensorTree<T> Apply(TensorTree<T> Psi, const TTBasis& tree) const;
 
 	/// On which mode does the "part"-th SPO act?
 	size_t Mode(size_t part) const {

@@ -14,7 +14,7 @@ public:
 
 	MatrixTree() = default;
 
-	explicit MatrixTree(const TTBasis& basis);
+	explicit MatrixTree(const TTBasis& tree);
 
 	explicit MatrixTree(istream& is);
 
@@ -22,11 +22,11 @@ public:
 
 	~MatrixTree() = default;
 
-	void Initialize(const TTBasis& basis);
+	void Initialize(const TTBasis& tree);
 
 	/// I/O
 	/// Print human readable
-	void print(const TTBasis& basis, ostream& os = cout) const;
+	void print(const TTBasis& tree, ostream& os = cout) const;
 	void print(ostream& os = cout) const;
 
 	/// Read in binary format

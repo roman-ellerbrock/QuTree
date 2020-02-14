@@ -4,12 +4,12 @@
 #include "SubTree.h"
 
 void SubTree::SparseInitialize(const vector<size_t>& modes,
-	const TTBasis& basis, bool tail) {
+	const TTBasis& tree, bool tail) {
 
 	/// Fill co_address with addresses in original TTBasis for every occuring node
 	co_address.clear();
 	for (size_t k : modes) {
-		const Leaf& phy = basis.GetLeaf(k);
+		const Leaf& phy = tree.GetLeaf(k);
 		auto node = (const Node *) &phy.Up();
 		const auto& beg = co_address.begin();
 		while (true) {
@@ -34,7 +34,7 @@ void SubTree::SparseInitialize(const vector<size_t>& modes,
 	nodes.clear();
 	for (auto& entry : co_address) {
 		entry.second = n++;
-		const Node *node = &basis.GetNode(entry.first);
+		const Node *node = &tree.GetNode(entry.first);
 		nodes.push_back(node);
 	}
 
@@ -54,7 +54,7 @@ void SubTree::SparseInitialize(const vector<size_t>& modes,
 	}
 }
 
-void SubTree::print(const TTBasis& basis, ostream& os) const {
+void SubTree::print(const TTBasis& tree, ostream& os) const {
 	for (const Node *node : *this) {
 		node->info();
 	}

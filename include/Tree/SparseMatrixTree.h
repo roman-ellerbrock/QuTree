@@ -26,21 +26,21 @@ public:
 	using SparseTreeStructuredObject<Matrix<T>>::Size;
 
 	/// Create HoleMatrixTree for a given tree-marker
-	SparseMatrixTree(shared_ptr<SubTree>& active_, const TTBasis& basis)
-	: SparseTreeStructuredObject<Matrix<T>>(active_, basis) {
-		Initialize(basis);
+	SparseMatrixTree(shared_ptr<SubTree>& active_, const TTBasis& tree)
+	: SparseTreeStructuredObject<Matrix<T>>(active_, tree) {
+		Initialize(tree);
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
-	SparseMatrixTree(const MLO<T>& M, const TTBasis& basis)
-		: SparseTreeStructuredObject<Matrix<T>>(M.Modes(), basis) {
-		Initialize(basis);
+	SparseMatrixTree(const MLO<T>& M, const TTBasis& tree)
+		: SparseTreeStructuredObject<Matrix<T>>(M.Modes(), tree) {
+		Initialize(tree);
 	}
 
 	~SparseMatrixTree() = default;
 
 	/// Create Matrices for active_ nodes in the tree
-	void Initialize(const TTBasis& basis) override;
+	void Initialize(const TTBasis& tree) override;
 
 	/// I/O
 	void print(ostream& os = cout);

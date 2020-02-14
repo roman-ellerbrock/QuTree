@@ -16,20 +16,20 @@ public:
 
 	SpectralDecompositionTree() = default;
 
-	explicit SpectralDecompositionTree(const TTBasis& basis);
+	explicit SpectralDecompositionTree(const TTBasis& tree);
 
-	SpectralDecompositionTree(const MatrixTree<T>& H, const TTBasis& basis);
+	SpectralDecompositionTree(const MatrixTree<T>& H, const TTBasis& tree);
 
 	~SpectralDecompositionTree() = default;
 
-	void Initialize(const TTBasis& basis);
+	void Initialize(const TTBasis& tree);
 
-	void Calculate(const MatrixTree<T>& H, const TTBasis& basis);
+	void Calculate(const MatrixTree<T>& H, const TTBasis& tree);
 
-	MatrixTree<T> Invert(const TTBasis& basis, double eps = 1e-7);
+	MatrixTree<T> Invert(const TTBasis& tree, double eps = 1e-7);
 
 	/// I/O
-	void print(const TTBasis& basis) const;
+	void print(const TTBasis& tree) const;
 };
 
 typedef SpectralDecompositionTree<complex<double>> SpectralDecompositionTreecd;

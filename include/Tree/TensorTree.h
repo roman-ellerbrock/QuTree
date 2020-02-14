@@ -16,9 +16,9 @@ class TensorTree: public TreeStructuredObject<Tensor<T>>
 	 * \brief This class represents tensor trees.
 	 *
 	 * Usage:
-	 * TRBasis basis(12, 2, 2)
+	 * TRBasis tree(12, 2, 2)
 	 * // Create Tensor with Zero-entry tensors at every node
-	 * TensorTreecd Psi(basis);
+	 * TensorTreecd Psi(tree);
 	 * Psi.Write("filename.dat");
 	 * TensorTreecd Chi("filename.dat");
 	 */
@@ -29,7 +29,7 @@ public:
 	/// Default constructor without memory allocation
 	TensorTree() = default;
 	/// Constructor with allocation of memory
-	explicit TensorTree(const TTBasis& basis);
+	explicit TensorTree(const TTBasis& tree);
 
 	/// Construct TensorTree from stream
 	explicit TensorTree(istream& is);
@@ -38,17 +38,17 @@ public:
 	explicit TensorTree(const string& filename);
 
 	/// Create tensor tree and occupy the coefficients
-	TensorTree(const TTBasis& basis,
+	TensorTree(const TTBasis& tree,
 		mt19937& gen, bool delta_lowest = true);
 
 	/// Default destructor
 	~TensorTree() = default;
 
 	/// Create Tensors for all nodes
-	virtual void Initialize(const TTBasis& basis);
+	virtual void Initialize(const TTBasis& tree);
 
 	/// Generate TTs
-	void Generate(const TTBasis& basis,
+	void Generate(const TTBasis& tree,
 		mt19937& gen, bool delta_lowest = true);
 
 	/// (File) I/O
@@ -62,7 +62,7 @@ public:
 	void Write(const string& filename) const;
 
 	/// Print info in human readable format
-	void print(const TTBasis& basis, ostream& os = cout) const;
+	void print(const TTBasis& tree, ostream& os = cout) const;
 
 protected:
 	void FillBottom(Tensor<T>& Phi, const Node& node);

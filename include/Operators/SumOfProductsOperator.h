@@ -20,16 +20,16 @@ public:
 	// Destructor
 	~SumOfProductsOperator() = default;
 
-	explicit SumOfProductsOperator(const TTBasis& basis) {
-		Initialize(basis);
+	explicit SumOfProductsOperator(const TTBasis& tree) {
+		Initialize(tree);
 	}
 
 	explicit SumOfProductsOperator(const MLO<T>& M, T c = 1.);
 
-	void Initialize(const TTBasis& basis) {
+	void Initialize(const TTBasis& tree) {
 		coeff_.clear();
 		mpos_.clear();
-		SpecialInitialize(basis);
+		SpecialInitialize(tree);
 	}
 
 	// Get the number of MPOs in the Hamiltonian
@@ -103,7 +103,7 @@ protected:
 	vector<complex<double> > coeff_;
 
 private:
-	virtual void SpecialInitialize(const TTBasis& basis) {
+	virtual void SpecialInitialize(const TTBasis& tree) {
 		cerr << "Called SpecialInitialize of SOP-base class." << endl;
 	}
 };

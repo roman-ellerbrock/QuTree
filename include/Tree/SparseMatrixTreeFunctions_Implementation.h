@@ -14,12 +14,11 @@ namespace SparseMatrixTreeFunctions {
 	template<typename T>
 	Matrix<T> RepresentUpper(const SparseMatrixTree<T>& hmat,
 		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node) {
-		// @TODO: Optimize with switchbool trick
 		Tensor<T> hKet(Ket);
 		for (size_t l = 0; l < node.nChildren(); l++) {
 			const Node& child = node.Down(l);
 			if (!hmat.Active(child)) { continue; }
-			hKet = multAB(hmat[child], hKet, node.ChildIdx()); // @TODO: CHECK THIS; product and getter
+			hKet = multAB(hmat[child], hKet, node.ChildIdx());
 		}
 
 		return Bra.DotProduct(hKet);
@@ -47,38 +46,34 @@ namespace SparseMatrixTreeFunctions {
 	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat,
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const TTBasis& basis) {
+		const TTBasis& tree) {
 		assert(Bra.size() == Ket.size());
 		const SubTree& active = hmat.Active();
 		for (size_t n = 0; n < active.size(); ++n) {
 			const Node& node = active.MCTDHNode(n);
 			RepresentLayer(hmat, Bra[node], Ket[node], M, node);
 		}
-
-		for (auto it = basis.end(); it >= basis.begin(); it--) {
-			const Node& node = *it;
-		}
 	}
 
 	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
-		const TensorTree<T>& Psi, const TTBasis& basis) {
-		Represent(hmat, M, Psi, Psi, basis);
+		const TensorTree<T>& Psi, const TTBasis& tree) {
+		Represent(hmat, M, Psi, Psi, tree);
 	}
 
 	template<typename T>
 	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Bra,
-		const TensorTree<T>& Ket, const TTBasis& basis) {
-		SparseMatrixTree<T> hmat(M, basis);
-		Represent(hmat, M, Bra, Ket, basis);
+		const TensorTree<T>& Ket, const TTBasis& tree) {
+		SparseMatrixTree<T> hmat(M, tree);
+		Represent(hmat, M, Bra, Ket, tree);
 		return hmat;
 	}
 
 	template<typename T>
 	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Psi,
-		const TTBasis& basis) {
-		SparseMatrixTree<T> hmat(M, basis);
-		Represent(hmat, M, Psi, basis);
+		const TTBasis& tree) {
+		SparseMatrixTree<T> hmat(M, tree);
+		Represent(hmat, M, Psi, tree);
 		return hmat;
 	}
 
@@ -141,7 +136,7 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const SparseMatrixTree<T>& mats,const SubTree& marker, const TTBasis& basis) {
+		const SparseMatrixTree<T>& mats,const SubTree& marker, const TTBasis& tree) {
 
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = marker.size() - 1;
@@ -163,14 +158,14 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const SparseMatrixTree<T>& mats, const TTBasis& basis) {
-		Contraction(holes, Bra, Ket, mats, holes.Active(), basis);
+		const SparseMatrixTree<T>& mats, const TTBasis& tree) {
+		Contraction(holes, Bra, Ket, mats, holes.Active(), tree);
 	}
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
-		const SparseMatrixTree<T>& mats, const TTBasis& basis) {
-		Contraction(holes, Psi, Psi, mats, basis);
+		const SparseMatrixTree<T>& mats, const TTBasis& tree) {
+		Contraction(holes, Psi, Psi, mats, tree);
 	}
 }
 

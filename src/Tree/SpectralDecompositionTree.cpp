@@ -4,21 +4,21 @@
 #include "SpectralDecompositionTree.h"
 
 template<typename T>
-SpectralDecompositionTree<T>::SpectralDecompositionTree(const TTBasis& basis) {
-	Initialize(basis);
+SpectralDecompositionTree<T>::SpectralDecompositionTree(const TTBasis& tree) {
+	Initialize(tree);
 }
 
 template<typename T>
 SpectralDecompositionTree<T>::SpectralDecompositionTree(const MatrixTree<T>& H,
-	const TTBasis& basis) {
-	Initialize(basis);
-	Calculate(H, basis);
+	const TTBasis& tree) {
+	Initialize(tree);
+	Calculate(H, tree);
 }
 
 template<typename T>
-void SpectralDecompositionTree<T>::Initialize(const TTBasis& basis) {
+void SpectralDecompositionTree<T>::Initialize(const TTBasis& tree) {
 	attributes_.clear();
-	for (const Node& node : basis) {
+	for (const Node& node : tree) {
 		const TensorDim& tdim = node.TDim();
 		size_t dim = tdim.GetNumTensor();
 		auto x = SpectralDecomposition<T>(Matrix<T>(dim, dim), Vectord(dim));
@@ -28,8 +28,8 @@ void SpectralDecompositionTree<T>::Initialize(const TTBasis& basis) {
 
 template<typename T>
 void SpectralDecompositionTree<T>::Calculate(const MatrixTree<T>& H,
-	const TTBasis& basis) {
-	for (const Node& node : basis) {
+	const TTBasis& tree) {
+	for (const Node& node : tree) {
 		const Matrix<T>& mat = H[node];
 		auto y = Diagonalize(mat);
 		this->operator[](node) = y;
@@ -37,10 +37,10 @@ void SpectralDecompositionTree<T>::Calculate(const MatrixTree<T>& H,
 }
 
 template<typename T>
-MatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, double eps) {
-	assert(attributes_.size() == basis.nNodes());
-	MatrixTree<T> Inv_Hole(basis);
-	for (const Node& node : basis) {
+MatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& tree, double eps) {
+	assert(attributes_.size() == tree.nNodes());
+	MatrixTree<T> Inv_Hole(tree);
+	for (const Node& node : tree) {
 		const auto& x = this->operator[](node);
 		Inv_Hole[node] = BuildInverse(x, eps);
 	}
@@ -48,12 +48,14 @@ MatrixTree<T> SpectralDecompositionTree<T>::Invert(const TTBasis& basis, double 
 }
 
 template<typename T>
-void SpectralDecompositionTree<T>::print(const TTBasis& basis) const {
-	for (int i = basis.nNodes() - 2; i > 0; --i) {
-		const Node& node = basis.GetNode(i);
-		node.info();
-		const SpectralDecomposition<T>& x = this->operator[](node);
-		x.second.print();
+void SpectralDecompositionTree<T>::print(const TTBasis& tree) const {
+	for (int i = tree.nNodes() - 1; i > 0; --i) {
+		const Node& node = tree.GetNode(i);
+		if (!node.IsToplayer()) {
+			node.info();
+			const SpectralDecomposition<T>& x = this->operator[](node);
+			x.second.print();
+		}
 	}
 }
 
