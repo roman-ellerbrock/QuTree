@@ -4,7 +4,7 @@
 
 #ifndef TTBASISFACTORY_H
 #define TTBASISFACTORY_H
-#include "TreeHandling/Tree.h"
+#include "TreeShape/Tree.h"
 
 namespace TTBasisFactory {
 	Tree TensorTrain(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType);

@@ -4,8 +4,8 @@
 
 #ifndef IOTREE_H
 #define IOTREE_H
-#include "Tree/MatrixTreeFunctions.h"
-#include "Tree/TensorTree.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
+#include "TreeClasses/TensorTree.h"
 
 namespace IOTree {
 

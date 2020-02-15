@@ -5,7 +5,7 @@
 #ifndef MCTDH_TREEMARKER_H
 #define MCTDH_TREEMARKER_H
 #include "NodeAttribute.h"
-#include "TreeHandling/Tree.h"
+#include "TreeShape/Tree.h"
 #include "MultiLeafOperator.h"
 #include "SumOfProductsOperator.h"
 #include <map>

@@ -6,7 +6,7 @@
 #define SPECTRALDECOMPOSITIONTREE_H
 #include "NodeAttribute.h"
 #include "Core/Matrix.h"
-#include "Tree/MatrixTreeFunctions.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
 #include "Core/Vector.h"
 
 template <typename T>

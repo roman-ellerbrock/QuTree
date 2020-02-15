@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/11/20.
 //
 
-#include "Tree/MatrixTree.h"
+#include "TreeClasses/MatrixTree.h"
 
 template<typename T>
 MatrixTree<T>::MatrixTree(istream& is) {

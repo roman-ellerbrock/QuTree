@@ -5,7 +5,7 @@
 #ifndef MATRIXTREE_H
 #define MATRIXTREE_H
 #include "NodeAttribute.h"
-#include "TreeHandling/Tree.h"
+#include "TreeShape/Tree.h"
 
 template <typename T>
 class MatrixTree: public NodeAttribute<Matrix<T>>{

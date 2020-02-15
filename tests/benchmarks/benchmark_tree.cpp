@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/4/20.
 //
 #include "benchmark_tree.h"
-#include "TreeHandling/Tree.h"
-#include "Tree/MatrixTreeFunctions.h"
+#include "TreeShape/Tree.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
 #include "benchmark_helper.h"
 #include "SparseMatrixTreeFunctions.h"
 

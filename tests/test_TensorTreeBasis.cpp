@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/3/20.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TreeHandling/Tree.h"
-#include "TreeHandling/TTBasisFactory.h"
+#include "TreeShape/Tree.h"
+#include "TreeShape/TTBasisFactory.h"
 
 SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_Generator) {

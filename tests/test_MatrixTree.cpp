@@ -3,9 +3,9 @@
 //
 
 #include "UnitTest++/UnitTest++.h"
-#include "Tree/MatrixTree.h"
-#include "Tree/SpectralDecompositionTree.h"
-#include "Tree/MatrixTreeFunctions.h"
+#include "TreeClasses/MatrixTree.h"
+#include "TreeClasses/SpectralDecompositionTree.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
 
 SUITE (MatrixTree) {

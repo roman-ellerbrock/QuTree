@@ -1,4 +1,4 @@
-#include "TreeHandling/Node.h"
+#include "TreeShape/Node.h"
 
 Node::Node()
 	: nTotalNodes_(1), nLeaves_(0),

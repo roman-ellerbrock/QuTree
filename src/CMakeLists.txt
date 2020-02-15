@@ -14,36 +14,36 @@ set(QDlib_SOURCE_FILES
         Util/SimultaneousDiagonalization.cpp
         Util/long_integer.cpp
         Util/WeightedSimultaneousDiagonalization.cpp
-        Operators/MultiLeafOperator.cpp
-        Operators/LeafFunction.cpp
-        Operators/LeafMatrix.cpp
-        Operators/SumOfProductsOperator.cpp
-        TensorTreeBasis/Leaf.cpp
-        TensorTreeBasis/LinearizedLeaves.cpp
-        TensorTreeBasis/Node.cpp
-        TensorTreeBasis/NodePosition.cpp
-        TensorTreeBasis/Tree.cpp
-        TensorTreeBasis/TTBasisFactory.cpp
-        Tree/IOTree.cpp
-        Tree/MatrixTree.cpp
-        Tree/MatrixTreeFunctions.cpp
-        Tree/SparseMatrixTree.cpp
-        Tree/SparseMatrixTreeFunctions.cpp
-        Tree/SpectralDecompositionTree.cpp
-        Tree/TensorTree_Instantiation.cpp
-        Tree/SparseTree.cpp
+        TreeOperators/MultiLeafOperator.cpp
+        TreeOperators/LeafFunction.cpp
+        TreeOperators/LeafMatrix.cpp
+        TreeOperators/SumOfProductsOperator.cpp
+        TreeShape/Leaf.cpp
+        TreeShape/LinearizedLeaves.cpp
+        TreeShape/Node.cpp
+        TreeShape/NodePosition.cpp
+        TreeShape/Tree.cpp
+        TreeShape/TTBasisFactory.cpp
+        TreeClasses/IOTree.cpp
+        TreeClasses/MatrixTree.cpp
+        TreeClasses/MatrixTreeFunctions.cpp
+        TreeClasses/SparseMatrixTree.cpp
+        TreeClasses/SparseMatrixTreeFunctions.cpp
+        TreeClasses/SpectralDecompositionTree.cpp
+        TreeClasses/TensorTree_Instantiation.cpp
+        TreeClasses/SparseTree.cpp
         )
 
 set(LEAF_TYPE_CPP_FILES
-        TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
-        TensorTreeBasis/LeafTypes/DVRBasis.cpp
-        TensorTreeBasis/LeafTypes/FermionNumberBasis.cpp
-        TensorTreeBasis/LeafTypes/FFTGrid.cpp
-        TensorTreeBasis/LeafTypes/HO_Basis.cpp
-        TensorTreeBasis/LeafTypes/LegendrePolynomials.cpp
-        TensorTreeBasis/LeafTypes/LogicalBasis.cpp
-        TensorTreeBasis/LeafTypes/NumberBasis.cpp
-        TensorTreeBasis/LeafTypes/SpinGroup.cpp
+        TreeShape/LeafTypes/BosonNumberBasis.cpp
+        TreeShape/LeafTypes/DVRBasis.cpp
+        TreeShape/LeafTypes/FermionNumberBasis.cpp
+        TreeShape/LeafTypes/FFTGrid.cpp
+        TreeShape/LeafTypes/HO_Basis.cpp
+        TreeShape/LeafTypes/LegendrePolynomials.cpp
+        TreeShape/LeafTypes/LogicalBasis.cpp
+        TreeShape/LeafTypes/NumberBasis.cpp
+        TreeShape/LeafTypes/SpinGroup.cpp
         )
 
 # Compile objects only once for both static and shared libraries

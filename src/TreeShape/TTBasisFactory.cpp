@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/2/20.
 //
 
-#include "TreeHandling/TTBasisFactory.h"
+#include "TreeShape/TTBasisFactory.h"
 
 namespace TTBasisFactory {
 

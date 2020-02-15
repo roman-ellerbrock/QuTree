@@ -1,4 +1,4 @@
-#include "TreeHandling/LinearizedLeaves.h"
+#include "TreeShape/LinearizedLeaves.h"
 
 void LinearizedLeaves::push_back(Leaf& phys) {
 	// Check wether this node is a physical node

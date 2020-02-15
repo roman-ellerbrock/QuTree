@@ -6,7 +6,7 @@
 #include "LeafMatrix.h"
 #include "MultiLeafOperator.h"
 #include "HO_Basis.h"
-#include "TreeHandling/Tree.h"
+#include "TreeShape/Tree.h"
 
 SUITE (Operators) {
 	class HelperFactory {

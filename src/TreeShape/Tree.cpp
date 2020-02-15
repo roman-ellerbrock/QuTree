@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2020-01-21.
 //
-#include "TreeHandling/Tree.h"
+#include "TreeShape/Tree.h"
 
 Tree::Tree(const Tree& T)
 	: root_(T.root_) {

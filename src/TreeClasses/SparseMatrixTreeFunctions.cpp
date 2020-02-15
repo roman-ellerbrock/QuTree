@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2/12/20.
 //
-#include "Tree/SparseMatrixTreeFunctions_Implementation.h"
+#include "TreeClasses/SparseMatrixTreeFunctions_Implementation.h"
 
 namespace SparseMatrixTreeFunctions {
 	typedef complex<double> cd;

@@ -3,7 +3,7 @@
 //
 #ifndef SPARSEMATRIXTREE_H
 #define SPARSEMATRIXTREE_H
-#include "Tree/SparseNodeAttribute.h"
+#include "TreeClasses/SparseNodeAttribute.h"
 
 template <typename T>
 class SparseMatrixTree : public SparseNodeAttribute<Matrix<T>>{

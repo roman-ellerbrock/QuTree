@@ -4,9 +4,9 @@
 // TensorTree creation, population, basic operations, dot products, hole products
 //
 
-#include "Tree/TensorTree.h"
-#include "Tree/MatrixTreeFunctions.h"
-#include "Tree/SparseMatrixTreeFunctions.h"
+#include "TreeClasses/TensorTree.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
+#include "TreeClasses/SparseMatrixTreeFunctions.h"
 
 // Demonstrate various ways to create a TensorTree object
 TensorTreecd create_tensor_tree() {

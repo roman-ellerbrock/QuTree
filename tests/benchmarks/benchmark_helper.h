@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_HELPER_H
 #define BENCHMARK_HELPER_H
 #include <chrono>
-#include "TreeHandling/Tree.h"
+#include "TreeShape/Tree.h"
 
 namespace benchmark {
 	pair<double, double> statistic_helper(const vector<chrono::microseconds>& dur);

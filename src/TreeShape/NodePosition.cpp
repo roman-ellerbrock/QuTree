@@ -1,4 +1,4 @@
-#include "TreeHandling/NodePosition.h"
+#include "TreeShape/NodePosition.h"
 
 void NodePosition::info(ostream& os) const {
 	os << "{ " << layer_ << " ; ";

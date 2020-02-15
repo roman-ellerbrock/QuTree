@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/12/20.
 //
 
-#include "Tree/SparseMatrixTree.h"
+#include "TreeClasses/SparseMatrixTree.h"
 
 template<typename T>
 void SparseMatrixTree<T>::Initialize(const Tree& tree) {

@@ -4,7 +4,7 @@
 
 #ifndef SPARSEMATRIXTREEFUNCTIONS_H
 #define SPARSEMATRIXTREEFUNCTIONS_H
-#include "Tree/SparseMatrixTree.h"
+#include "TreeClasses/SparseMatrixTree.h"
 
 namespace SparseMatrixTreeFunctions {
 /**

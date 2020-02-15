@@ -1,5 +1,5 @@
 #pragma once
-#include "TreeHandling/Node.h"
+#include "TreeShape/Node.h"
 
 /**
  * \defgroup Tree

@@ -4,8 +4,8 @@
 #include "UnitTest++/UnitTest++.h"
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
-#include "TreeHandling/Tree.h"
-#include "TreeHandling/TTBasisFactory.h"
+#include "TreeShape/Tree.h"
+#include "TreeShape/TTBasisFactory.h"
 
 SUITE (TensorTree) {
 

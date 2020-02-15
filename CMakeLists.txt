@@ -133,9 +133,9 @@ endif ()
 # @TODO: Remove include_directories, instead use target_include_directories
 
 include_directories("include")
-include_directories("include/Tree")
-include_directories("include/TreeHandling/LeafTypes")
-include_directories("include/Operators")
+include_directories("include/TreeClasses")
+include_directories("include/TreeShape/LeafTypes")
+include_directories("include/TreeOperators")
 include_directories("tests/benchmarks")
 add_subdirectory("src")
 add_subdirectory("include")
