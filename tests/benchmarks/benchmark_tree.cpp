@@ -78,7 +78,7 @@ pair<double, double> sparse_factormatrixtree(mt19937& gen, size_t dim, size_t nl
 	/// Initialize memory
 	Tree tree(nleaves, dim, dim);
 	TensorTreecd Psi(tree, gen);
-	FactorMatrixcd X(2, 1);
+	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
 	LeafMatrixcd x(X);
@@ -108,7 +108,7 @@ pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nlea
 	/// Initialize memory
 	Tree tree(nleaves, dim, dim);
 	TensorTreecd Psi(tree, gen);
-	FactorMatrixcd X(2, 1);
+	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
 	LeafMatrixcd x(X);

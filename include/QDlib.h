@@ -9,7 +9,6 @@
 #include"Util/MultiIndex.h"
 #include"Util/QMConstants.h"
 #include"Util/SimultaneousDiagonalization.h"
-#include"Core/FactorMatrix.h"
 #include"Core/Tensor.h"
 #include"Core/TensorDim.h"
 #include"Core/TensorDim_Extension.h"

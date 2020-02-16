@@ -13,7 +13,6 @@ set(QDlib_INCLUDE_FILES
         QDlib.h
         Util/QMConstants.h
         Util/SimultaneousDiagonalization.h
-        Core/FactorMatrix.h
         Util/RandomMatrices.h
         Core/Tensor.h
         Core/TensorDim.h
