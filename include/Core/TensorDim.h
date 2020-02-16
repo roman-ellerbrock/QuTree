@@ -81,7 +81,6 @@ public:
 	const TensorABC& getabc(size_t k);
 	size_t Before(size_t k) const;
 	size_t Active(size_t k) const;
-	size_t After(size_t k) const;
 	size_t TotAfter(size_t k) const;
 
 protected:

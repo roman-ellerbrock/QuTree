@@ -123,15 +123,6 @@ size_t TensorDim::Active(size_t k) const {
 	}
 }
 
-size_t TensorDim::After(size_t k) const {
-	assert(k <= GetOrder());
-	if (k < GetOrder()) {
-		return abc_[k].GetAfter();
-	} else {
-		return 1;
-	}
-}
-
 size_t TensorDim::Before(size_t k) const {
 	assert(k <= GetOrder());
 	if  (k < GetOrder()) {

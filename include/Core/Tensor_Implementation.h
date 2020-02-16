@@ -118,7 +118,6 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, 
 	assert(j < b);
 	assert(n < dim.GetNumTensor());
 	assert(f < dim.GetOrder());
-	assert(k < dim.After(f));
 	return coeffs[idx];
 }
 
@@ -132,7 +131,6 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, 
 	assert(j < b);
 	assert(n < dim.GetNumTensor());
 	assert(f < dim.GetOrder());
-	assert(k < dim.After(f));
 	return coeffs[idx];
 }
 
@@ -154,7 +152,6 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 	assert(bef < before);
 	assert(i < active1);
 	assert(j < active2);
-	assert(beh < dim.After(mode2));
 	assert(n < dim.GetNumTensor());
 	return coeffs[idx];
 }
@@ -319,7 +316,7 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 
 	// Copy the coefficients
 	size_t before = dim.Before(mode);
-	size_t after = dim.After(mode);
+	size_t after = dim.TotAfter(mode)/ntensor;
 	size_t minactive = min(active, dim.Active(mode));
 	for (size_t n = 0; n < ntensor; n++) {
 		for (size_t l = 0; l < after; l++) {

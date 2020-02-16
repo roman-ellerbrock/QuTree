@@ -198,7 +198,7 @@ namespace Tensor_Extension {
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.GetNumTensor(); n++)
-			for (size_t k = 0; k < tdim.After(mode); k++)
+			for (size_t k = 0; k < tdim.TotAfter(mode)/tdim.GetNumTensor(); k++)
 				for (size_t l = 0; l < tdim.Active(mode); l++)
 					for (size_t j = 0; j < tdim.Active(mode); j++)
 						for (size_t i = 0; i < tdim.Before(mode); i++) {
@@ -216,7 +216,7 @@ namespace Tensor_Extension {
 		size_t nstates = tdim.GetNumTensor();
 		size_t active = tdim.Active(k);
 		size_t before = tdim.Before(k);
-		size_t behind = tdim.After(k);
+		size_t behind = tdim.TotAfter(k)/nstates;
 		Matrix<T> S(active, active);
 
 		for (size_t n = 0; n < nstates; n++) {
