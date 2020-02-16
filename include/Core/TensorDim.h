@@ -45,7 +45,7 @@ class TensorDim
 {
 public:
 	TensorDim()
-		: nTensor_(0), dimPart_(0), dimTot_(0), order_(0) {}
+		: nTensor_(0), dimPart_(0), dimTot_(0) {}
 
 	explicit TensorDim(const vector<size_t>& dim, size_t ntensor_);
 
@@ -63,7 +63,7 @@ public:
 
 	void ReadDim(istream& is);
 
-	inline size_t GetOrder() const { return order_; }
+	inline size_t GetOrder() const { return abc_.size(); }
 
 	inline size_t GetDimTot() const { return dimTot_; }
 
@@ -85,7 +85,6 @@ public:
 	size_t TotAfter(size_t k) const;
 
 protected:
-	size_t order_;
 	size_t dimTot_;
 	size_t dimPart_;
 	size_t nTensor_;

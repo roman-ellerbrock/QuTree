@@ -38,7 +38,6 @@ TensorDim::TensorDim(const string& file)
 void TensorDim::Initialize(const vector<size_t>& dim, size_t ntensor) {
 	assert(!dim.empty());
 	assert(ntensor > 0);
-    order_ = dim.size();
 	abc_.clear();
 	for (size_t i = 0; i < dim.size(); i++) {
 		abc_.emplace_back(TensorABC(i, dim));
@@ -57,11 +56,11 @@ void TensorDim::Write(ostream& os) const {
 	os.write((char *) &n_write, sizeof(int32_t));
 
 	// Write dof
-	int32_t f_write = order_;
+	int32_t f_write = GetOrder();
 	os.write((char *) &f_write, sizeof(int32_t));
 
 	// Write active_-dims
-	for (size_t k = 0; k < order_; k++) {
+	for (size_t k = 0; k < GetOrder(); k++) {
 		int32_t act = Active(k);
 		os.write((char *) &act, sizeof(int32_t));
 	}
@@ -90,12 +89,12 @@ void TensorDim::ReadDim(istream& is) {
 	is.read((char *) &f_read, sizeof(f_read));
 
 	// Read vector with dimensions of Tensor
-	vector<size_t> dim_read;
+	size_t order = f_read;
+	vector<size_t> dim_read(order);
 	int32_t dim_now;
-    order_ = f_read;
-	for (size_t k = 0; k < order_; k++) {
+	for (size_t k = 0; k < order; k++) {
 		is.read((char *) &dim_now, sizeof(int32_t));
-		dim_read.push_back(dim_now);
+		dim_read[k]=dim_now;
 	}
 
 	// Create this Tensor
@@ -104,20 +103,20 @@ void TensorDim::ReadDim(istream& is) {
 
 vector<size_t> TensorDim::GetDimList() const {
 	vector<size_t> dimlist;
-	for (size_t i = 0; i < order_; i++) {
+	for (size_t i = 0; i < GetOrder(); i++) {
 		dimlist.push_back(Active(i));
 	}
 	return dimlist;
 }
 
 const TensorABC& TensorDim::getabc(size_t k) {
-	assert(k < order_);
+	assert(k < GetOrder());
 	return abc_[k];
 }
 
 size_t TensorDim::Active(size_t k) const {
-	assert(k <= order_);
-	if (k <order_) {
+	assert(k <= GetOrder());
+	if (k <GetOrder()) {
 		return abc_[k].GetActive();
 	} else {
 		return nTensor_;
@@ -125,8 +124,8 @@ size_t TensorDim::Active(size_t k) const {
 }
 
 size_t TensorDim::After(size_t k) const {
-	assert(k <= order_);
-	if (k < order_) {
+	assert(k <= GetOrder());
+	if (k < GetOrder()) {
 		return abc_[k].GetAfter();
 	} else {
 		return 1;
@@ -134,8 +133,8 @@ size_t TensorDim::After(size_t k) const {
 }
 
 size_t TensorDim::Before(size_t k) const {
-	assert(k <= order_);
-	if  (k < order_) {
+	assert(k <= GetOrder());
+	if  (k < GetOrder()) {
 		return abc_[k].GetBefore();
 	} else {
 		return dimPart_;
@@ -143,8 +142,8 @@ size_t TensorDim::Before(size_t k) const {
 }
 
 size_t TensorDim::TotAfter(size_t k) const {
-	assert(k <= order_);
-	if (k < order_) {
+	assert(k <= GetOrder());
+	if (k < GetOrder()) {
 		return abc_[k].GetAfter()*GetNumTensor();
 	} else {
 		return 1;
@@ -158,7 +157,7 @@ void TensorDim::SetNumTensor(size_t newntensor) {
 }
 
 void TensorDim::SetActive(size_t act, size_t k) {
-	assert(k < order_);
+	assert(k < GetOrder());
 
 	vector<size_t> dim(GetOrder());
 	for (int l = 0; l < GetOrder(); l++) {
@@ -170,12 +169,12 @@ void TensorDim::SetActive(size_t act, size_t k) {
 }
 
 void TensorDim::print(ostream& os) const {
-	if (order_ > 0) {
+	if (GetOrder() > 0) {
 		os << "(";
-		for (size_t k = 0; k < order_ - 1; ++k) {
+		for (size_t k = 0; k < GetOrder() - 1; ++k) {
 			os << Active(k) << ", ";
 		}
-		os << Active(order_ - 1) << "); ";
+		os << Active(GetOrder() - 1) << "); ";
 		os << nTensor_ << endl;
 	} else {
 		os << "( ); " << nTensor_ << endl;
