@@ -33,7 +33,7 @@ public:
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseMatrixTree(const MLO<T>& M, const Tree& tree)
-		: SparseNodeAttribute<Matrix<T>>(M.Modes(), tree) {
+		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree) {
 		Initialize(tree);
 	}
 

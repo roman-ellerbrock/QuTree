@@ -151,7 +151,7 @@ namespace SparseMatrixTreeFunctions {
 				if (!parent.IsToplayer()) {
 					hKet = multStateAB(holes[parent], hKet);
 				}
-				holes[node] = HoleProduct(Bra[parent], hKet, node.ChildIdx());
+				holes[node] = mHoleProduct(Bra[parent], hKet, node.ChildIdx());
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/FactorMatrix.h"
+#include "Core/Matrix.h"
 #include "Core/Vector.h"
 #include "JacobiRotationFramework.h"
 
@@ -18,8 +18,8 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W Weight matrix
 	 * @return Measure of diagonality
 	 */
-	double MeasureWeightedDiagonality(const vector<FactorMatrixcd>& A,
-			const FactorMatrixcd& W);
+	double MeasureWeightedDiagonality(const vector<Matrixcd>& A,
+			const Matrixcd& W);
 
 	/** \brief Calculate the weighted Simultaneous Diagonalization for the Matrices A with the weight W
 	 *
@@ -31,8 +31,8 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param trafo Output transformation
 	 * @param eps Target accuracy
 	 */
-	void Calculate(vector<FactorMatrixcd>& Xs, vector<FactorMatrixcd> XXs, FactorMatrixcd& W,
-		FactorMatrixcd& trafo, double eps);
+	void Calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs, Matrixcd& W,
+		Matrixcd& trafo, double eps);
 
 	/// Quasi-Protected functions
 
@@ -43,8 +43,8 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W Weight matrix
 	 * @param trafo Transformation matrix
 	 */
-	double MeasureWeightedOffDiagonality(const vector<FactorMatrixcd>& Xws,
-			const vector<FactorMatrixcd>& Xs, const FactorMatrixcd& W, const FactorMatrixcd& trafo);
+	double MeasureWeightedOffDiagonality(const vector<Matrixcd>& Xws,
+			const vector<Matrixcd>& Xs, const Matrixcd& W, const Matrixcd& trafo);
 
 	/**
 	 * \brief Sweep over the whole matrix to optimize localization measure
@@ -53,8 +53,8 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W
 	 * @param trafo
 	 */
-	void WeightedJacobiRotations(vector<FactorMatrixcd>& Xs,
-			vector<FactorMatrixcd>& XXs, FactorMatrixcd& W, FactorMatrixcd& trafo);
+	void WeightedJacobiRotations(vector<Matrixcd>& Xs,
+			vector<Matrixcd>& XXs, Matrixcd& W, Matrixcd& trafo);
 
 	/**
 	 * \brief Calculate the optimal angles for WSD using Rational function optimizer
@@ -69,8 +69,8 @@ namespace WeightedSimultaneousDiagonalization
 	 */
 	int CalculateWeightedAngles(complex<double>& c,
 			complex<double>& s, size_t i, size_t j,
-			const vector<FactorMatrixcd>& X, const vector<FactorMatrixcd>& XXs,
-			const FactorMatrixcd& W);
+			const vector<Matrixcd>& X, const vector<Matrixcd>& XXs,
+			const Matrixcd& W);
 
 	/**
 	 * \brief Calculate the change of the weighted-localization measure under givens rotation
@@ -83,8 +83,8 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param s element in Jacobi matrix
 	 * @return change of diagonality measure
 	 */
-	double WeightedJacobiLoc(const vector<FactorMatrixcd>& Xs,
-			const vector<FactorMatrixcd>& XXs, const FactorMatrixcd& W,
+	double WeightedJacobiLoc(const vector<Matrixcd>& Xs,
+			const vector<Matrixcd>& XXs, const Matrixcd& W,
 			size_t p, size_t q, complex<double> c, complex<double> s);
 
 	/**
@@ -100,8 +100,8 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param delta step length for numerical gradient
 	 */
 	void WeightedJacobiDerivatives(Vectord& grad, Matrixd& preHessian,
-			complex<double> s_in, const vector<FactorMatrixcd>& Xs,
-			const vector<FactorMatrixcd>& XXs, const FactorMatrixcd& W,
+			complex<double> s_in, const vector<Matrixcd>& Xs,
+			const vector<Matrixcd>& XXs, const Matrixcd& W,
 			size_t p, size_t q, double delta);
 }
 

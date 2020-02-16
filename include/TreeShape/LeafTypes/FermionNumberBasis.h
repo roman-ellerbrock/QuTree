@@ -8,7 +8,7 @@ public NumberBasis
 {
  public:
 	FermionNumberBasis(int dim);
-	~FermionNumberBasis();
+	~FermionNumberBasis() = default;
 
 	Tensorcd ApplyX2(const Tensorcd & phi)const;
         

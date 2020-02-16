@@ -4,7 +4,7 @@
 template <typename T>
 MultiLeafOperator<T>::MultiLeafOperator()
 	: hasV_(false) {
-	mode_.clear();
+	targetLeaves_.clear();
 }
 
 template <typename T>
@@ -16,8 +16,8 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	bool switchbool = true;
 
 	// Applying the MLO uses switching of the result Tensor to increase performance.
-	for (size_t l = 0; l < SingParOp.size(); ++l) {
-		if (mode_x != mode_[l]) { continue; }
+	for (size_t l = 0; l < leafOperators_.size(); ++l) {
+		if (mode_x != targetLeaves_[l]) { continue; }
 
 		shared_ptr<LeafOperator<T>> spo = operator[](l);
 		// apply it
@@ -75,8 +75,8 @@ TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 
 			// build list with active_ parts
 			vector<int> activelayerparts;
-			for (size_t l = 0; l < SingParOp.size(); l++) {
-				if (mode_[l] == coord) {
+			for (size_t l = 0; l < leafOperators_.size(); l++) {
+				if (targetLeaves_[l] == coord) {
 					activelayerparts.push_back(l);
 				}
 			}

@@ -1,8 +1,8 @@
 #include "DVRBasis.h"
 
-DVRBasis::DVRBasis(int dim_)
-	: dim_(dim_), trafo_(dim_, 0), x_(dim_), kin_(dim_, 0), p_(dim_, 0),
-      omega_(0), r0_(0), wfr0_(0), wfomega_(0) {
+DVRBasis::DVRBasis(int dim)
+	: dim_(dim), trafo_(dim, dim), x_(dim), kin_(dim, dim), p_(dim, dim),
+	  omega_(0), r0_(0), wfr0_(0), wfomega_(0) {
 }
 
 Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
@@ -52,7 +52,7 @@ Tensorcd DVRBasis::ApplyP(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	assert(tdim.GetOrder() == 1);
 
-	return p_ * phi;
+	return multAB(p_, phi, 0);
 }
 
 Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
@@ -60,7 +60,7 @@ Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	assert(tdim.GetOrder() == 1);
 
-	return kin_ * phi;
+	return multAB(kin_, phi, 0);
 }
 
 Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
@@ -68,7 +68,7 @@ Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	assert(tdim.GetOrder() == 1);
 
-	return multATB(trafo_, phi);
+	return multATB(trafo_, phi, 0);
 }
 
 Tensorcd DVRBasis::FromGrid(const Tensorcd& phi) const {
@@ -76,5 +76,5 @@ Tensorcd DVRBasis::FromGrid(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	assert(tdim.GetOrder() == 1);
 
-	return trafo_ * phi;
+	return multAB(trafo_, phi, 0);
 }

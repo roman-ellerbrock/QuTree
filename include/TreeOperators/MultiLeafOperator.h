@@ -55,51 +55,50 @@ public:
 
 	/// Push back a SPO to the MLO
 	void push_back(shared_ptr<LeafOperator<T>> h, size_t mode_x) {
-		SingParOp.push_back(h);
-		mode_.push_back(mode_x);
+		leafOperators_.push_back(h);
+		targetLeaves_.push_back(mode_x);
 	}
 
 	void push_back(const LeafMatrix<T>& h, size_t mode) {
 		auto* h_ptr = new LeafMatrix<T>(h);
-		h_ptr->Mode() = 0;
-		SingParOp.push_back(shared_ptr<LeafOperator<T>>(h_ptr));
-		mode_.emplace_back(mode);
+		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(h_ptr));
+		targetLeaves_.emplace_back(mode);
 	}
 
 	/// Push back a RefSPO to the MLO
 	void push_back(const LeafFunction<T>& h, size_t mode_x) {
 		auto *spo = new LeafFunction<T>(h);
-		SingParOp.push_back(shared_ptr<LeafOperator<T>>(spo));
-		mode_.push_back(mode_x);
+		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
+		targetLeaves_.push_back(mode_x);
 	}
 
 	/// Access the i-th SPO in the MLO
 	shared_ptr<LeafOperator<T>> operator()(size_t i) {
 		assert(i >= 0);
-		assert(i < SingParOp.size());
-		return SingParOp[i];
+		assert(i < leafOperators_.size());
+		return leafOperators_[i];
 	}
 
 	/// The number of SPOs in the MLO
-	size_t size() const { return mode_.size(); }
+	size_t size() const { return targetLeaves_.size(); }
 
 	/// Access the i-th SPO in the MLO
 	shared_ptr<LeafOperator<T>> operator[](size_t i) const {
-		assert(i < mode_.size());
-		return SingParOp[i];
+		assert(i < targetLeaves_.size());
+		return leafOperators_[i];
 	}
 
 	/// Check whether a SPO acts on mode "mode_x"
 	bool ModeIsActive(size_t mode_x) const {
-		for (size_t i = 0; i < mode_.size(); i++) {
-			if (mode_[i] == mode_x) { return true; }
+		for (size_t i = 0; i < targetLeaves_.size(); i++) {
+			if (targetLeaves_[i] == mode_x) { return true; }
 		}
 		return false;
 	}
 
 	/// Check whether the "part"-th SPO acts on mode "mode_x"
 	bool ModeIsActive(size_t part, size_t mode_x) const {
-		return (mode_[part] == mode_x);
+		return (targetLeaves_[part] == mode_x);
 	}
 
 	/// Apply a MLO to a wavefunction. This routine is not optimized for performance.
@@ -108,7 +107,7 @@ public:
 	/// On which mode does the "part"-th SPO act?
 	size_t Mode(size_t part) const {
 		assert(part < size());
-		return mode_[part];
+		return targetLeaves_[part];
 	}
 
 	/// Multiply two MPOs.
@@ -140,13 +139,13 @@ public:
 	void SetV(const PotentialOperator& V);
 
 	/// Return vector of all active_ modes in this operator
-	const vector<size_t>& Modes()const { return mode_; }
+	const vector<size_t>& targetLeaves()const { return targetLeaves_; }
 
 protected:
 	/// These are the SPOs
-	vector<shared_ptr<LeafOperator<T>>> SingParOp;
+	vector<shared_ptr<LeafOperator<T>>> leafOperators_;
 	/// These are the modes the SPOs act on
-	vector<size_t> mode_;
+	vector<size_t> targetLeaves_;
 	/// The potential operator
 	PotentialOperator v_;
 	/// Is there a PotentialOperator?

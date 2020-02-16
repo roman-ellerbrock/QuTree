@@ -3,7 +3,6 @@
 #include "LeafInterface.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
-#include "Core/FactorMatrix.h"
 
 class DVRBasis
 	: public LeafInterface {
@@ -35,11 +34,11 @@ protected:
 
 	// location operators
 	Vectord x_;
-	FactorMatrixd trafo_;
+	Matrixd trafo_;
 
 	// derivative operators
-	FactorMatrixd kin_;
-	FactorMatrixcd p_;
+	Matrixd kin_;
+	Matrixcd p_;
 
 	// parameters that define the basis
 	double omega_, r0_, wfr0_, wfomega_;

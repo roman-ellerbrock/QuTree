@@ -63,12 +63,10 @@ public:
 		return coeff_[i];
 	}
 
-//	vector<MLO<T>>::const_iterator begin() const {
 	auto begin() const {
 		return mpos_.begin();
 	}
 
-//	vector<MLO<T>>::const_iterator end() const {
 	auto end() const {
 		return mpos_.end();
 	}
@@ -100,7 +98,7 @@ public:
 
 protected:
 	vector<MLO<T>> mpos_;
-	vector<complex<double> > coeff_;
+	vector<complex<double>> coeff_;
 
 private:
 	virtual void SpecialInitialize(const Tree& tree) {

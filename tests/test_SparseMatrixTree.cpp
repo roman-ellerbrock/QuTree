@@ -28,7 +28,7 @@ SUITE (SparseMatrixTree) {
 			Psi_ = TensorTreecd(tree_, rng_);
 
 			// Generate an bit-flip operator and Fmatrix
-			FactorMatrixcd X(2, 1);
+			Matrixcd X(2, 2);
 			X(0, 0) = 0.5;
 			X(1, 1) = 0.5;
 			LeafMatrixcd x(X);
@@ -46,7 +46,7 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE (HelperFactory, TreeMarker_NoTail) {
 		/// Create TreeMarker omitting higher nodes in the tree after last branch
-		SparseTree active(M_.Modes(), tree_, false);
+		SparseTree active(M_.targetLeaves(), tree_, false);
 			CHECK_EQUAL(5, active.size());
 	}
 

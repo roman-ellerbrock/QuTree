@@ -17,7 +17,7 @@ public:
 
 
 protected:
-	FactorMatrixd InitXmat();
-	FactorMatrixcd InitPmat();
-	FactorMatrixd InitKin();
+	Matrixd InitXmat();
+	Matrixcd InitPmat();
+	Matrixd InitKin();
 };

@@ -1,13 +1,11 @@
 #include "FermionNumberBasis.h"
 
-FermionNumberBasis::FermionNumberBasis(int dim_):NumberBasis(dim_,true){
-	assert(dim_<=2);
+FermionNumberBasis::FermionNumberBasis(int dim_)
+	: NumberBasis(dim_, true) {
+	assert(dim_ <= 2);
 }
 
-FermionNumberBasis::~FermionNumberBasis(){}
-
-Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi)const
-{
+Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.GetOrder() == 1);
@@ -17,15 +15,14 @@ Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi)const
 	int active = tdim.GetDimPart();
 	assert(active == dim_);
 
-	for (int n = 0; n < tdim.GetNumTensor(); n++){
-		psi(0, n) =  1.0;
+	for (int n = 0; n < tdim.GetNumTensor(); n++) {
+		psi(0, n) = 1.0;
 		psi(1, n) = -1.0;
 	}
 	return psi;
 }
 
-Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi)const
-{
+Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.GetOrder() == 1);
@@ -35,15 +32,14 @@ Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi)const
 	int active = tdim.GetDimPart();
 	assert(active == dim_);
 
-	for (int n = 0; n < tdim.GetNumTensor(); n++){
-		psi(1, n) =phi(0, n);
-		psi(0, n) =phi(1, n);
+	for (int n = 0; n < tdim.GetNumTensor(); n++) {
+		psi(1, n) = phi(0, n);
+		psi(0, n) = phi(1, n);
 	}
 	return psi;
 }
 
-Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi)const
-{
+Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.GetOrder() == 1);
@@ -53,16 +49,15 @@ Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi)const
 	int active = tdim.GetDimPart();
 	assert(active == dim_);
 
-	complex<double> im(0.0,1.0);
-	for (int n = 0; n < tdim.GetNumTensor(); n++){
-		psi(1, n) = im*phi(0, n);
-		psi(0, n) =-im*phi(1, n);
+	complex<double> im(0.0, 1.0);
+	for (int n = 0; n < tdim.GetNumTensor(); n++) {
+		psi(1, n) = im * phi(0, n);
+		psi(0, n) = -im * phi(1, n);
 	}
 	return psi;
 }
 
-Tensorcd FermionNumberBasis::pauliZ(const Tensorcd& phi)const
-{
+Tensorcd FermionNumberBasis::pauliZ(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.GetOrder() == 1);
@@ -72,9 +67,9 @@ Tensorcd FermionNumberBasis::pauliZ(const Tensorcd& phi)const
 	int active = tdim.GetDimPart();
 	assert(active == dim_);
 
-	for (int n = 0; n < tdim.GetNumTensor(); n++){
+	for (int n = 0; n < tdim.GetNumTensor(); n++) {
 		psi(1, n) = phi(1, n);
-		psi(0, n) =-phi(0, n);
+		psi(0, n) = -phi(0, n);
 	}
 	return psi;
 }

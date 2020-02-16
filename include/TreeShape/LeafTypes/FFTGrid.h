@@ -2,7 +2,6 @@
 #include "LeafInterface.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
-#include "Core/FactorMatrix.h"
 #include "Core/Tensor.h"
 
 class FFTGrid :
@@ -32,7 +31,7 @@ protected:
 	
 	Vectord x_;
 	Vectord p_;
-	FactorMatrixcd trafo_;
+	Matrixcd trafo_;
 
 	double x0_, x1_, wfr0_, wfomega_;
 

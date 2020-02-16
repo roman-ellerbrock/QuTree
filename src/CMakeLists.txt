@@ -2,7 +2,6 @@
 set(QDlib_SOURCE_FILES
         Core/TensorDim.cpp
         Core/TensorDim_Extension.cpp
-        Core/FactorMatrix_Instantiations.cpp
         Core/JacobiRotationFramework.cpp
         Core/Vector_Instantiations.cpp
         Core/Matrix_Instantiations.cpp

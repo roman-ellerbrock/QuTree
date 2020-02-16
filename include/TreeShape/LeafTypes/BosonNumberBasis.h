@@ -8,7 +8,6 @@ public NumberBasis
 {
  public:
 	BosonNumberBasis(int dim);
-	~BosonNumberBasis();
 
 	Tensorcd ApplyX2(const Tensorcd & phi)const;
 };

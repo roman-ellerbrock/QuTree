@@ -107,8 +107,7 @@ SUITE (MatrixTreeFunctions) {
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
 			const TensorDim& dim = node.TDim();
-			Matrixcd mat = RandomMatrices::GUE(dim.GetNumTensor(), gen);
-			H[node] = FactorMatrixcd(mat, node.ChildIdx());
+			H[node] = RandomMatrices::GUE(dim.GetNumTensor(), gen);
 		}
 
 		SpectralDecompositionTreecd X(H, tree);

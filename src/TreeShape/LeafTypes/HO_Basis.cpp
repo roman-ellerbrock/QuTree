@@ -8,7 +8,7 @@ void HO_Basis::Initialize(double omega, double r0, double wfr0, double wfomega) 
 	wfomega_ = wfomega;
 
 	// Initialize location matrix
-	FactorMatrixd xmat = InitXmat();
+	Matrixd xmat = InitXmat();
 
 	Matrixcd x2(dim_, dim_);
 	for (int i = 0; i < dim_; i++)
@@ -21,21 +21,21 @@ void HO_Basis::Initialize(double omega, double r0, double wfr0, double wfomega) 
 
 	// Init kinetic Energy in FBR and transform operator to DVR
 	kin_ = InitKin();
-	kin_ = SPOUnitarySimilarityTrafo(kin_, trafo_);
+	kin_ = UnitarySimilarityTrafo(kin_, trafo_);
 
 	// Init momentum
 	p_ = InitPmat();
-	FactorMatrixcd trafocd(trafo_.Dim(), trafo_.Mode());
+	Matrixcd trafocd(dim_, dim_);
 	for (int i = 0; i < trafocd.Dim1(); i++)
 		for (int j = 0; j < trafocd.Dim2(); j++)
 			trafocd(j, i) = trafo_(j, i);
 
-	p_ = SPOUnitarySimilarityTrafo(p_, trafocd);
+	p_ = UnitarySimilarityTrafo(p_, trafocd);
 }
 
 void HO_Basis::InitSPF(Tensorcd& phi) const {
 	TensorDim tdim(phi.Dim());
-	int nstates = tdim.GetNumTensor();
+	size_t nstates = tdim.GetNumTensor();
 	// soft check for bottom layer_
 	assert(tdim.GetOrder() == 1);
 	assert(tdim.GetDimPart() == dim_);
@@ -57,8 +57,8 @@ void HO_Basis::InitSPF(Tensorcd& phi) const {
 	GramSchmidt(phi);
 }
 
-FactorMatrixd HO_Basis::InitXmat() {
-	FactorMatrixd x(dim_, 0);
+Matrixd HO_Basis::InitXmat() {
+	Matrixd x(dim_, dim_);
 	for (int n = 0; n < dim_; n++) {
 		for (int m = 0; m < dim_; m++) {
 			if (m == n + 1) {
@@ -73,8 +73,8 @@ FactorMatrixd HO_Basis::InitXmat() {
 	return x;
 }
 
-FactorMatrixcd HO_Basis::InitPmat() {
-	FactorMatrixcd p(dim_, 0);
+Matrixcd HO_Basis::InitPmat() {
+	Matrixcd p(dim_, dim_);
 	complex<double> imag(0., 1.);
 	for (int n = 0; n < dim_; n++) {
 		for (int m = 0; m < dim_; m++) {
@@ -90,8 +90,8 @@ FactorMatrixcd HO_Basis::InitPmat() {
 	return p;
 }
 
-FactorMatrixd HO_Basis::InitKin() {
-	FactorMatrixd Kin(dim_, 0);
+Matrixd HO_Basis::InitKin() {
+	Matrixd Kin(dim_, dim_);
 
 	for (int i = 0; i < dim_; i++) {
 		for (int j = 0; j < dim_; j++) {

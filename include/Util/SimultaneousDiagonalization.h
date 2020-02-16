@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/FactorMatrix.h"
+#include "Core/Matrix.h"
 #include "Core/Vector.h"
 #include "Core/stdafx.h"
 #include <random>
@@ -21,23 +21,23 @@ public:
 	~SimultaneousDiagonalization() = default;
 
 	// Initialize Simultaneous Diagonalization
-	void Initialization(vector<FactorMatrixcd>& A, double eps);
+	void Initialization(vector<Matrixcd>& A, double eps);
 
 	// Perform the Simultaneous Diagonalization
-	void Calculate(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
+	void Calculate(vector<Matrixcd>& A, Matrixcd& trafo);
 
 protected:
 	// Perform a cycle of rotations over all matrices in A
-	void JacobiRotations(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
+	void JacobiRotations(vector<Matrixcd>& A, Matrixcd& trafo);
 
 	// Measure off-Diagonality
-	double MeasureOffDiagonals(const vector<FactorMatrixcd>& A);
+	double MeasureOffDiagonals(const vector<Matrixcd>& A);
 
 	// Measure Diagonality
-	double MeasureDiagonality(vector<FactorMatrixcd>& A);
+	double MeasureDiagonality(vector<Matrixcd>& A);
 
 	// Preconditioning of SD
-	void InitialTransformation(vector<FactorMatrixcd>& A, FactorMatrixcd& trafo);
+	void InitialTransformation(vector<Matrixcd>& A, Matrixcd& trafo);
 
 	int dim_;
 	int nmat_;

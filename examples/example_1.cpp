@@ -5,7 +5,7 @@
 //
 
 #include "Core/Tensor.h"
-#include "Core/FactorMatrix.h"
+#include "Core/Matrix.h"
 
 // Demonstrate various ways to create a Tensor object
 Tensorcd create_tensor() {
@@ -72,12 +72,12 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
 void hole_product(Tensorcd A, const Tensorcd& B) {
     cout << "\nhole_product:\n" << endl;
     for (size_t k = 0; k < A.Dim().GetOrder(); k++) {
-        FactorMatrixcd h = HoleProduct(A, B, k);
+        Matrixcd h = mHoleProduct(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
         cout << "Trace: " << h.Trace() << endl;
         // Multiply
-		Tensorcd C = h * A;
+		Tensorcd C = multAB(h, A, k);
 	}
 }
 

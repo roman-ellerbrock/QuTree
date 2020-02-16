@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/FactorMatrix.h"
+#include "Core/Matrix.h"
 
 namespace JacobiRotationFramework
 /**
@@ -15,7 +15,7 @@ namespace JacobiRotationFramework
 	 * @param i target index in B
 	 * @param j target index in B
 	 */
-	void GivensRotation(FactorMatrixcd& B, complex<double> c, complex<double> s,
+	void GivensRotation(Matrixcd& B, complex<double> c, complex<double> s,
 		int i, int j);
 
 	/**
@@ -26,7 +26,7 @@ namespace JacobiRotationFramework
 	 * @param i Target index in A
 	 * @param j Target index in A
 	 */
-	void RotateMatrices(vector<FactorMatrixcd>& A, complex<double> c,
+	void RotateMatrices(vector<Matrixcd>& A, complex<double> c,
 		complex<double> s, int i, int j);
 
 	/**
@@ -37,7 +37,7 @@ namespace JacobiRotationFramework
 	 * @param i Target index in A
 	 * @param j Target index in A
 	 */
-	void GivensTrafoRotation(FactorMatrixcd& trafo, complex<double> c,
+	void GivensTrafoRotation(Matrixcd& trafo, complex<double> c,
 		complex<double> s, int i, int j);
 
 	/**
@@ -49,7 +49,7 @@ namespace JacobiRotationFramework
 	 * @param A Set of matrices
 	 */
 	void CalculateAngles(complex<double>& c, complex<double>& s,
-		int i, int j, const vector<FactorMatrixcd>& A);
+		int i, int j, const vector<Matrixcd>& A);
 
 	/**
 	 * \brief Build the Matrix G, that is required to Calculate Jacobi-angles
@@ -58,14 +58,14 @@ namespace JacobiRotationFramework
 	 * @param A Matrices for which G is built
 	 * @return G-matrix
 	 */
-	FactorMatrixcd BuildGMatrix(int i, int j, const vector<FactorMatrixcd>& A);
+	Matrixcd BuildGMatrix(int i, int j, const vector<Matrixcd>& A);
 
 	/**
 	 * \brief Weight matrices, i.e. x_w = 0.5 (AX + XA)
 	 * @param A Matrices to be weighted
 	 * @param W Weighting matrix
 	 */
-	void WeightMatrices(vector<FactorMatrixcd>& A, const FactorMatrixcd& W);
+	void WeightMatrices(vector<Matrixcd>& A, const Matrixcd& W);
 
 	/**
 	 * \brief Build hessian from precalculated objects
@@ -89,11 +89,11 @@ namespace JacobiRotationFramework
 	 * @param s sin of alpha_ in givens matrix
 	 * @return Change of diagonality-measure
 	 */
-	Vectord RotatedDiagonals(const FactorMatrixcd& A, int p, int q,
+	Vectord RotatedDiagonals(const Matrixcd& A, int p, int q,
 		complex<double> c, complex<double> s);
 
 	/**
-	 * \brief Rotate a FactorMatrix
+	 * \brief Rotate a Matrix
 	 * @param A Matrix that is rotated
 	 * @param p target index
 	 * @param q target index
@@ -101,7 +101,7 @@ namespace JacobiRotationFramework
 	 * @param s sin(alpha_) in Givens matrix
 	 * @return Rotated matrix A
 	 */
-	Matrixcd Rotate(const FactorMatrixcd& A,
+	Matrixcd Rotate(const Matrixcd& A,
 		int p, int q, complex<double> c, complex<double> s);
 };
 

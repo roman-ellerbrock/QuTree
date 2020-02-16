@@ -15,13 +15,13 @@ SUITE (Operators) {
 			Initialize();
 		}
 		~HelperFactory() = default;
-		FactorMatrixcd X;
+		Matrixcd X;
 		LeafMatrixcd x;
 		HO_Basis ho;
 
 		void Initialize() {
 			// Generate an bit-flip operator and Fmatrix
-			X = FactorMatrixcd(2, 1);
+			X = Matrixcd(2, 2);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;
 			x = LeafMatrixcd(X);
@@ -46,10 +46,10 @@ SUITE (Operators) {
 		// Check that applying a Matrix to a tensor
 		// or the corresponding SPOM does the same
 
-		TensorDim tdim({3, 2, 4}, 1);
+		TensorDim tdim({2}, 1);
 		Tensorcd A(tdim);
 		A(0) = 1.;
-		Tensorcd XA = X * A;
+		Tensorcd XA = multAB(X, A, 0);
 		Tensorcd xA(tdim);
 		x.Apply(ho, xA, A);
 			CHECK_EQUAL(XA, xA);

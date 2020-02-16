@@ -5,19 +5,14 @@
 #include "LeafMatrix.h"
 
 template<typename T>
-LeafMatrix<T>::LeafMatrix(FactorMatrix<T> h)
-	: h_(h) {
-}
-
-template<typename T>
 void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	const Tensor<T>& Acoeff) const {
-	multAB(hAcoeff, h_, Acoeff);
+	multAB(hAcoeff, h_, Acoeff, 0);
 }
 
 template<typename T>
 LeafMatrix<T>::LeafMatrix(Matrix<T> h)
-: h_(h, 0) {
+: h_(h) {
 }
 
 template
