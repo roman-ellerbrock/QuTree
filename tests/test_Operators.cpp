@@ -60,7 +60,7 @@ SUITE (Operators) {
 		mt19937 gen(time(nullptr));
 		Tree tree(4, 2, 2);
 		TensorTreecd Chi(tree);
-		Chi.Generate(tree, gen, false);
+		Chi.FillRandom(gen, tree, false);
 		auto Psi = M.Apply(Chi, tree);
 
 		/// Checking

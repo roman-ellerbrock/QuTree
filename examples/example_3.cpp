@@ -29,7 +29,7 @@ TensorTreecd create_tensor_tree() {
     // Populate coefficients using a random number generator
     mt19937 gen(2468);
     TensorTreecd T_rand(tree);
-    T_rand.Generate(tree, gen, false);
+	T_rand.FillRandom(gen, tree, false);
     cout << "\nT with random coefficients :\n" << endl;
     T_rand.print(tree);
 
@@ -46,7 +46,7 @@ void dot_product_tree() {
     // A dot product between two tensor trees results in a factor matrix tree
     Tree tree(4, 3, 2);
     mt19937 gen(2468);
-    TensorTreecd Psi(tree, gen, false);
+    TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
 
     /// Construct, allocate and calculate a factor matrix tree
@@ -62,7 +62,7 @@ void hole_product_tree() {
     // A hole product between two tensor trees results in a hole matrix tree
     Tree tree(4, 3, 2);
     mt19937 gen(2468);
-    TensorTreecd Psi(tree, gen, false);
+    TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
 //    FactorMatrixTreecd w(Psi, Chi, tree);
     MatrixTreecd w = MatrixTreeFunctions::DotProduct(Psi, Chi, tree);
@@ -74,9 +74,38 @@ void hole_product_tree() {
 
 }
 
-int main() {
+void tree_examples() {
+	Tree tree(3, 3, 2);
+	TensorTreecd Psi(tree);
+	Psi.print(tree);
 
-    TensorTreecd T = create_tensor_tree();
+	mt19937 gen(1995);
+	Psi.FillRandom(gen, tree);
+	Psi.print(tree);
+
+	cout << "A MatrixTree from an overlap:\n";
+	using namespace MatrixTreeFunctions;
+	MatrixTreecd W = DotProduct( Psi, Psi, tree);
+	W.print(tree);
+
+	cout << "Density Matrix:\n";
+	MatrixTreecd Rho = Contraction(Psi, tree, true);
+	Rho.print(tree);
+
+	cout << "<Psi|Chi> MatrixTree:\n";
+	TensorTreecd Chi(gen, tree, false);
+	MatrixTreecd S = DotProduct(Psi, Chi, tree);
+	S.print(tree);
+
+	cout << "Contractions of Psi and Chi:\n";
+	MatrixTree C = Contraction(Psi, Chi, S, tree);
+	C.print(tree);
+}
+
+int main() {
+	tree_examples();
+
+/*    TensorTreecd T = create_tensor_tree();
     TensorTreecd T2(T);
     dot_product_tree();
     hole_product_tree();
@@ -96,6 +125,6 @@ int main() {
 	SparseMatrixTreeFunctions::Represent(hmats, M, Psi, Psi, tree);
 	hmats.print();
 	// TODO: sparse versions of dot product and hole product (initialized with operators)
-
+*/
 
 }

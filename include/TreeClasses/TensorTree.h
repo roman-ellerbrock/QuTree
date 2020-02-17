@@ -39,8 +39,7 @@ public:
 	explicit TensorTree(const string& filename);
 
 	/// Create tensor tree and occupy the coefficients
-	TensorTree(const Tree& tree,
-		std::mt19937& gen, bool delta_lowest = true);
+	TensorTree(std::mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// Default destructor
 	~TensorTree() = default;
@@ -49,8 +48,7 @@ public:
 	virtual void Initialize(const Tree& tree);
 
 	/// Generate TTs
-	void Generate(const Tree& tree,
-		std::mt19937& gen, bool delta_lowest = true);
+	void FillRandom(std::mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// (File) I/O
 	/// Read TensorTree from stream (binary format)

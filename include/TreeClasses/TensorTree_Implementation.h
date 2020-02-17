@@ -22,10 +22,9 @@ TensorTree<T>::TensorTree(const string& filename) {
 
 /// Create tensor tree and occupy the coefficients
 template<typename T>
-TensorTree<T>::TensorTree(const Tree& tree,
-	mt19937& gen, bool delta_lowest)
+TensorTree<T>::TensorTree(std::mt19937& gen, const Tree& tree, bool delta_lowest)
 	: TensorTree(tree) {
-	Generate(tree, gen, delta_lowest);
+	FillRandom(gen, tree, delta_lowest);
 }
 
 template<typename T>
@@ -37,7 +36,7 @@ void TensorTree<T>::Initialize(const Tree& tree) {
 }
 
 template<typename T>
-void TensorTree<T>::Generate(const Tree& tree, mt19937& gen, bool delta_lowest) {
+void TensorTree<T>::FillRandom(std::mt19937& gen, const Tree& tree, bool delta_lowest) {
 	assert(tree.nNodes() == attributes_.size());
 	for (const Node& node : tree) {
 		Tensor<T>& Phi = this->operator[](node);

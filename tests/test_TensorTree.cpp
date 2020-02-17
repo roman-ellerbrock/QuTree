@@ -26,7 +26,7 @@ SUITE (TensorTree) {
 		Tree tree(12, 2, 2);
 		TensorTreecd T(tree);
 		mt19937 gen(2468);
-		T.Generate(tree, gen, false);
+		T.FillRandom(gen, tree, false);
 		string filename("TT.RNG.dat");
 		T.Write(filename);
 		TensorTreecd Q(filename);
