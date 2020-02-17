@@ -30,7 +30,7 @@ namespace benchmark {
 
 		/// Initialize memory
 		Tree tree(nleaves, dim, dim);
-		TensorTreecd Psi(tree, gen);
+		TensorTreecd Psi(gen, tree);
 		MatrixTreecd Rho(tree);
 
 		return holematrixtree_sample(Rho, Psi, tree, nsample);
@@ -54,7 +54,7 @@ pair<double, double> factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
 	Tree tree(nleaves, dim, dim);
-	TensorTreecd Psi(tree, gen);
+	TensorTreecd Psi(gen, tree);
 	MatrixTreecd fmat(tree);
 	return factormatrixtree_sample(fmat, Psi, tree, nsample);
 }
@@ -77,7 +77,7 @@ pair<double, double> sparse_factormatrixtree(mt19937& gen, size_t dim, size_t nl
 	size_t nsample, ostream& os) {
 	/// Initialize memory
 	Tree tree(nleaves, dim, dim);
-	TensorTreecd Psi(tree, gen);
+	TensorTreecd Psi(gen, tree);
 	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
@@ -107,7 +107,7 @@ pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nlea
 	size_t nsample, ostream& os) {
 	/// Initialize memory
 	Tree tree(nleaves, dim, dim);
-	TensorTreecd Psi(tree, gen);
+	TensorTreecd Psi(gen, tree);
 	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
