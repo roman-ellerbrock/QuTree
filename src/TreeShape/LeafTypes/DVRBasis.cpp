@@ -12,7 +12,7 @@ Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 	assert(active == dim_);
 
 	//	psi = kin_*phi;
@@ -33,7 +33,7 @@ Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 	assert(active == dim_);
 
 	//	psi = kin_*phi;

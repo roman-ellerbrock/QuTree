@@ -65,9 +65,11 @@ public:
 
 	inline size_t GetOrder() const { return abc_.size(); }
 
+	inline size_t GetLastIdx() const { return abc_.size(); } // @TODO: Make this size-1
+
 	inline size_t GetDimTot() const { return dimTot_; }
 
-	inline size_t GetDimPart() const { return dimPart_; }
+	inline size_t LastBefore() const { return abc_.back().GetBefore() * abc_.back().GetActive(); } // @TODO: Remove Active
 
 	inline size_t GetNumTensor() const { return nTensor_; }
 
@@ -81,7 +83,7 @@ public:
 	const TensorABC& getabc(size_t k);
 	size_t Before(size_t k) const;
 	size_t Active(size_t k) const;
-	size_t TotAfter(size_t k) const;
+	size_t After(size_t k) const;
 
 protected:
 	size_t dimTot_;

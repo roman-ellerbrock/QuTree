@@ -45,7 +45,7 @@ Tensorcd fill_tensor(Tensorcd A){
     // Loop through ntensor, then lower-index list
     Tensorcd B(A.Dim());
     for (size_t n = 0; n < A.Dim().GetNumTensor(); n++) {
-        for (size_t j = 0; j < A.Dim().GetDimPart(); j++) {
+        for (size_t j = 0; j < A.Dim().LastBefore(); j++) {
             B(j, n) = (n * j + j * 2) * 0.002;
         }
     }
@@ -88,8 +88,8 @@ void reshape (Tensorcd A) {
     vector<size_t> dims = {2, 3, 2, 2}; // fourth order order tensor
     size_t ntensor = 2; // group of two tensors
     TensorDim tdim(dims, ntensor);
-    assert(tdim.GetDimPart() == A.Dim().GetDimPart());
-    cout << "d = " << tdim.GetDimPart() << endl;
+    assert(tdim.LastBefore() == A.Dim().LastBefore());
+    cout << "d = " << tdim.LastBefore() << endl;
     A.Reshape(tdim);
     cout << "A.Dim() = " << endl;
     A.Dim().print();

@@ -61,7 +61,7 @@ SUITE (Tensor) {
 		bool success = true;
 		TensorDim tdim({3, 4, 5}, 2);
 		if (tdim.GetDimTot() != 3 * 4 * 5 * 2) { success = false; }
-		if (tdim.GetDimPart() != 3 * 4 * 5) { success = false; }
+		if (tdim.LastBefore() != 3 * 4 * 5) { success = false; }
 		if (tdim.GetNumTensor() != 2) { success = false; }
 			CHECK_EQUAL(success, true);
 	}

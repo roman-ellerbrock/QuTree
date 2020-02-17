@@ -57,7 +57,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	Tensor_Extension::Generate(Phi, gen);
 	// Set ground-state to "Hartree-Product" if flag is set
 	if (delta_lowest) {
-		for (size_t i = 0; i < Phi.Dim().GetDimPart(); ++i) {
+		for (size_t i = 0; i < Phi.Dim().LastBefore(); ++i) {
 			Phi(i, 0) = 0.;
 		}
 		Phi(0, 0) = 1.;

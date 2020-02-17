@@ -132,7 +132,7 @@ size_t TensorDim::Before(size_t k) const {
 	}
 }
 
-size_t TensorDim::TotAfter(size_t k) const {
+size_t TensorDim::After(size_t k) const {
 	assert(k <= GetOrder());
 	if (k < GetOrder()) {
 		return abc_[k].GetAfter()*GetNumTensor();

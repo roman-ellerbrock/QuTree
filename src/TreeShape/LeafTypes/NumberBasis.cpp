@@ -43,7 +43,7 @@ void NumberBasis::InitSPF(Tensorcd& phi) const {
 
 	// soft check for bottom layer_
 	assert(tdim.GetOrder() == 1);
-	assert(tdim.GetDimPart() == dim_);
+	assert(tdim.LastBefore() == dim_);
 	assert(startOcc_ - minOcc_ < dim_);
 
 	// set ground state_ wf
@@ -90,7 +90,7 @@ Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi) const {
 	Tensorcd psi(phi.Dim());
 
 	int nstates = tdim.GetNumTensor();
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 
 	assert(active == dim_);
 
@@ -106,7 +106,7 @@ Tensorcd NumberBasis::ApplyP(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	Tensorcd psi(tdim, false);
 
-	size_t prim = tdim.GetDimPart();
+	size_t prim = tdim.LastBefore();
 	size_t states = tdim.GetNumTensor();
 
 	for (size_t n = 0; n < states; n++) {
@@ -123,7 +123,7 @@ Tensorcd NumberBasis::applyX(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	Tensorcd psi(tdim, false);
 
-	size_t prim = tdim.GetDimPart();
+	size_t prim = tdim.LastBefore();
 	size_t states = tdim.GetNumTensor();
 
 	for (int n = 0; n < states; n++) {

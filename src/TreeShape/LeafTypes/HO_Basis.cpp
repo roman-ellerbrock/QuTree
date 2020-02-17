@@ -38,7 +38,7 @@ void HO_Basis::InitSPF(Tensorcd& phi) const {
 	size_t nstates = tdim.GetNumTensor();
 	// soft check for bottom layer_
 	assert(tdim.GetOrder() == 1);
-	assert(tdim.GetDimPart() == dim_);
+	assert(tdim.LastBefore() == dim_);
 
 	// set ground state_ wf
 	for (int i = 0; i < dim_; i++) {

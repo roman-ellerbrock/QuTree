@@ -4,7 +4,7 @@ namespace Tensor_Extension {
 
 	tuple<Tensorcd, Matrixcd, Vectord> SVD(const Tensorcd& A) {
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.GetDimPart();
+		size_t dimpart = tdim.LastBefore();
 		size_t ntensor = tdim.GetNumTensor();
 
 		using namespace Eigen;
@@ -78,7 +78,7 @@ namespace Tensor_Extension {
 	Matrix<T> Map(const Tensor<T>& A) {
 		const TensorDim& tdim = A.Dim();
 		size_t ntensor = tdim.GetNumTensor();
-		size_t dimpart = tdim.GetDimPart();
+		size_t dimpart = tdim.LastBefore();
 		Matrix<T> M(dimpart, ntensor);
 		for (size_t n = 0; n < ntensor; ++n) {
 			for (size_t i = 0; i < dimpart; ++i) {
@@ -130,7 +130,7 @@ namespace Tensor_Extension {
 		size_t ntens2 = tdim2.GetNumTensor();
 		A = A.AdjustStateDim(ntens1 + ntens2);
 		for (size_t n = 0; n < ntens2; ++n) {
-			for (size_t i = 0; i < tdim1.GetDimPart(); ++i) {
+			for (size_t i = 0; i < tdim1.LastBefore(); ++i) {
 				A(i, ntens1 + n) = B(i, n);
 			}
 		}
@@ -141,7 +141,7 @@ namespace Tensor_Extension {
 	void OuterProductAdd(Matrix<T>& M,
 		const Tensor<T>& A, const Tensor<T>& B) {
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.GetDimPart();
+		size_t dimpart = tdim.LastBefore();
 		size_t ntensor = tdim.GetNumTensor();
 
 #pragma omp parallel for
@@ -158,7 +158,7 @@ namespace Tensor_Extension {
 	Matrix<T> OuterProduct(const Tensor<T>& A, const Tensor<T>& B) {
 
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.GetDimPart();
+		size_t dimpart = tdim.LastBefore();
 		Matrix<T> M(dimpart, dimpart);
 		OuterProductAdd(M, A, B);
 		return M;
@@ -198,7 +198,7 @@ namespace Tensor_Extension {
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.GetNumTensor(); n++)
-			for (size_t k = 0; k < tdim.TotAfter(mode)/tdim.GetNumTensor(); k++)
+			for (size_t k = 0; k < tdim.After(mode)/tdim.GetNumTensor(); k++)
 				for (size_t l = 0; l < tdim.Active(mode); l++)
 					for (size_t j = 0; j < tdim.Active(mode); j++)
 						for (size_t i = 0; i < tdim.Before(mode); i++) {
@@ -216,7 +216,7 @@ namespace Tensor_Extension {
 		size_t nstates = tdim.GetNumTensor();
 		size_t active = tdim.Active(k);
 		size_t before = tdim.Before(k);
-		size_t behind = tdim.TotAfter(k)/nstates;
+		size_t behind = tdim.After(k)/nstates;
 		Matrix<T> S(active, active);
 
 		for (size_t n = 0; n < nstates; n++) {
@@ -248,7 +248,7 @@ namespace Tensor_Extension {
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.GetNumTensor(); n++)
 			for (size_t m = 0; m < tdim.GetNumTensor(); m++)
-				for (size_t i = 0; i < tdim.GetDimPart(); i++)
+				for (size_t i = 0; i < tdim.LastBefore(); i++)
 					C(i, m) += A(m, n) * B(i, n);
 
 		return C;

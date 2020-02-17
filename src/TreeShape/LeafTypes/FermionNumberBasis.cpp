@@ -12,7 +12,7 @@ Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 	assert(active == dim_);
 
 	for (int n = 0; n < tdim.GetNumTensor(); n++) {
@@ -29,7 +29,7 @@ Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 	assert(active == dim_);
 
 	for (int n = 0; n < tdim.GetNumTensor(); n++) {
@@ -46,7 +46,7 @@ Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 	assert(active == dim_);
 
 	complex<double> im(0.0, 1.0);
@@ -64,7 +64,7 @@ Tensorcd FermionNumberBasis::pauliZ(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int active = tdim.GetDimPart();
+	int active = tdim.LastBefore();
 	assert(active == dim_);
 
 	for (int n = 0; n < tdim.GetNumTensor(); n++) {
