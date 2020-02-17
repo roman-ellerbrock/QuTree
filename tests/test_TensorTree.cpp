@@ -41,7 +41,7 @@ SUITE (TensorTree) {
 		auto tree = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
 			CHECK_EQUAL(2 * nLeaves - 1, tree.nNodes());
 		mt19937 gen(2468);
-		TensorTreecd Psi(tree, gen);
+		TensorTreecd Psi(gen, tree);
 			CHECK_EQUAL(tree.nNodes(), Psi.size());
 	}
 

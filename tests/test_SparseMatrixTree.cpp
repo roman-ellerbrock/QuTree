@@ -25,7 +25,7 @@ SUITE (SparseMatrixTree) {
 			rng_ = mt19937(1993);
 			tree_ = Tree(8, 2, 2);
 
-			Psi_ = TensorTreecd(tree_, rng_);
+			Psi_ = TensorTreecd(rng_, tree_);
 
 			// Generate an bit-flip operator and Fmatrix
 			Matrixcd X(2, 2);

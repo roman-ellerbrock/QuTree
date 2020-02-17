@@ -44,7 +44,7 @@ SUITE (MatrixTreeFunctions) {
 	TEST (DotProduct) {
 		mt19937 gen(1923);
 		Tree tree(7, 5, 4);
-		TensorTreecd Psi(tree, gen);
+		TensorTreecd Psi(gen, tree);
 		MatrixTreecd S = DotProduct(Psi, Psi, tree);
 		for (const Node& node : tree) {
 			const Matrixcd& s = S[node];
@@ -57,8 +57,8 @@ SUITE (MatrixTreeFunctions) {
 	TEST (Contraction) {
 		mt19937 gen(1923);
 		Tree tree(7, 5, 4);
-		TensorTreecd Psi(tree, gen, false);
-		TensorTreecd Chi(tree, gen, false);
+		TensorTreecd Psi(gen, tree, false);
+		TensorTreecd Chi(gen, tree, false);
 		MatrixTreecd S = DotProduct(Psi, Chi, tree);
 		MatrixTreecd Rho = Contraction(Psi, Chi, S, tree);
 			CHECK_EQUAL(tree.nNodes(), Rho.size());
@@ -68,7 +68,7 @@ SUITE (MatrixTreeFunctions) {
 	TEST (Density) {
 		mt19937 gen(1923);
 		Tree tree(7, 5, 4);
-		TensorTreecd Psi(tree, gen, true);
+		TensorTreecd Psi(gen, tree, true);
 		MatrixTreecd Rho = Contraction(Psi, tree, true);
 		for (const Node& node : tree) {
 			if (!node.IsToplayer()) {
@@ -90,7 +90,7 @@ SUITE (MatrixTreeFunctions) {
 	TEST (SpectralDecompositionTree_Calc) {
 		mt19937 gen(1993);
 		Tree tree(12, 2, 2);
-		TensorTreecd Psi(tree, gen);
+		TensorTreecd Psi(gen, tree);
 		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
