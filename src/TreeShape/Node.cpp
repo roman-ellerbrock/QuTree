@@ -174,7 +174,7 @@ void Node::info(ostream& os) const {
 void Node::Write(ostream& os) const {
 	const TensorDim& tdim = TDim();
 	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
-	os << tdim.GetNumTensor() << "\t-" << nChildren() << "\n";
+	os << tdim.LastActive() << "\t-" << nChildren() << "\n";
 	for (size_t i = 0; i < nChildren(); i++) {
 		down_[i]->Write(os);
 	}
@@ -334,7 +334,7 @@ void Node::UpdateTDim() {
 		// active_ size
 		Node& parent = Up();
 		// @TODO: This looks wrong - check again. Doesnt it have to be active_(k)?
-		ntensor = parent.TDim().GetNumTensor();
+		ntensor = parent.TDim().LastActive();
 	}*/
 
 	// Get the dimensions of the children by requesting their ntensors
@@ -346,12 +346,12 @@ void Node::UpdateTDim() {
 		for (int i = 0; i < nChildren(); i++) {
 			const Node& child = Down(i);
 			const TensorDim& tdimchild = child.TDim();
-			dim_new.push_back(tdimchild.GetNumTensor());
+			dim_new.push_back(tdimchild.LastActive());
 		}
 	}
 
 	// Create a new TensorDim from the dim_-vector and ntensor
-	tensorDim_ = TensorDim(dim_new, tensorDim_.GetNumTensor());
+	tensorDim_ = TensorDim(dim_new, tensorDim_.LastActive());
 }
 
 void Node::UpdatePosition(const NodePosition& p) {

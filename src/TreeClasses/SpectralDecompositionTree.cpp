@@ -20,7 +20,7 @@ void SpectralDecompositionTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		const TensorDim& tdim = node.TDim();
-		size_t dim = tdim.GetNumTensor();
+		size_t dim = tdim.LastActive();
 		auto x = SpectralDecomposition<T>(Matrix<T>(dim, dim), Vectord(dim));
 		attributes_.emplace_back(x);
 	}

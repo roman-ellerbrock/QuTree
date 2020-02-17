@@ -70,7 +70,7 @@ public:
 
 	inline size_t LastBefore() const { return abc_.back().GetBefore(); }
 
-	inline size_t GetNumTensor() const { return abc_.back().GetActive(); }
+	inline size_t LastActive() const { return abc_.back().GetActive(); }
 
 	void SetActive(size_t act, size_t k);
 
@@ -92,5 +92,4 @@ ostream& operator<<(ostream& os, const TensorDim& tdim);
 istream& operator>>(istream& is, TensorDim& tdim);
 bool operator==(const TensorDim& tdima, const TensorDim& tdimb);
 bool operator!=(const TensorDim& tdima, const TensorDim& tdimb);
-
 

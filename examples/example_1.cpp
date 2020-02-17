@@ -44,7 +44,7 @@ Tensorcd fill_tensor(Tensorcd A){
 
     // Loop through ntensor, then lower-index list
     Tensorcd B(A.Dim());
-    for (size_t n = 0; n < A.Dim().GetNumTensor(); n++) {
+    for (size_t n = 0; n < A.Dim().LastActive(); n++) {
         for (size_t j = 0; j < A.Dim().LastBefore(); j++) {
             B(j, n) = (n * j + j * 2) * 0.002;
         }

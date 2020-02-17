@@ -18,7 +18,7 @@ Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
 	//	psi = kin_*phi;
 	// @TODO: rewrite this code as a matrix*Tensor routine
 //  	#pragma omp for
-	for (int n = 0; n < tdim.GetNumTensor(); n++) {
+	for (int n = 0; n < tdim.LastActive(); n++) {
 		for (int i = 0; i < active; i++) {
 			psi(i, n) = x_(i) * phi(i, n);
 		}
@@ -39,7 +39,7 @@ Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
 	//	psi = kin_*phi;
 	// @TODO: rewrite this code as a matrix*Tensor routine
 //    #pragma omp for
-	for (int n = 0; n < tdim.GetNumTensor(); n++) {
+	for (int n = 0; n < tdim.LastActive(); n++) {
 		for (int i = 0; i < active; i++) {
 			psi(i, n) = x_(i) * x_(i) * phi(i, n);
 		}

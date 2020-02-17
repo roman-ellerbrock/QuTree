@@ -62,7 +62,7 @@ SUITE (Tensor) {
 		TensorDim tdim({3, 4, 5}, 2);
 			CHECK_EQUAL(3 * 4 * 5 * 2, tdim.GetDimTot());
 			CHECK_EQUAL(3 * 4 * 5, tdim.LastBefore());
-			CHECK_EQUAL(2, tdim.GetNumTensor());
+			CHECK_EQUAL(2, tdim.LastActive());
 	}
 
 	TEST (Tensor_Constructor) {

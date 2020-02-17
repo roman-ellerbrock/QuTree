@@ -28,7 +28,7 @@ void NumberBasis::Initialize(double occ,
 
 void NumberBasis::InitSPF(Tensorcd& phi) const {
 	TensorDim tdim(phi.Dim());
-	int nstates = tdim.GetNumTensor();
+	int nstates = tdim.LastActive();
 
 	if (fermion_ && nstates > 2) {
 		cout << "Error: there can be only two fermionic states\n"
@@ -89,7 +89,7 @@ Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi) const {
 
 	Tensorcd psi(phi.Dim());
 
-	int nstates = tdim.GetNumTensor();
+	int nstates = tdim.LastActive();
 	int active = tdim.LastBefore();
 
 	assert(active == dim_);
@@ -107,7 +107,7 @@ Tensorcd NumberBasis::ApplyP(const Tensorcd& phi) const {
 	Tensorcd psi(tdim, false);
 
 	size_t prim = tdim.LastBefore();
-	size_t states = tdim.GetNumTensor();
+	size_t states = tdim.LastActive();
 
 	for (size_t n = 0; n < states; n++) {
 		psi[n * prim] = 0.0;
@@ -124,7 +124,7 @@ Tensorcd NumberBasis::applyX(const Tensorcd& phi) const {
 	Tensorcd psi(tdim, false);
 
 	size_t prim = tdim.LastBefore();
-	size_t states = tdim.GetNumTensor();
+	size_t states = tdim.LastActive();
 
 	for (int n = 0; n < states; n++) {
 		psi[n * prim + prim - 1] = 0.0;

@@ -38,7 +38,7 @@ void FFTGrid::Initialize(double x0, double x1, double wfr0, double wfomega) {
 Tensorcd FFTGrid::applyX(const Tensorcd& Acoeffs) const {
 	Tensorcd xA(Acoeffs);
 //	#pragma omp for
-	for (int n = 0; n < Acoeffs.Dim().GetNumTensor(); n++)
+	for (int n = 0; n < Acoeffs.Dim().LastActive(); n++)
 		for (int i = 0; i < dim_; i++)
 			xA(i, n) *= x_(i);
 	return xA;
@@ -47,7 +47,7 @@ Tensorcd FFTGrid::applyX(const Tensorcd& Acoeffs) const {
 Tensorcd FFTGrid::ApplyX2(const Tensorcd& Acoeffs) const {
 	Tensorcd xA(Acoeffs);
 //	#pragma omp for
-	for (int n = 0; n < Acoeffs.Dim().GetNumTensor(); n++)
+	for (int n = 0; n < Acoeffs.Dim().LastActive(); n++)
 		for (int i = 0; i < dim_; i++)
 			xA(i, n) *= x_(i) * x_(i);
 	return xA;
@@ -56,7 +56,7 @@ Tensorcd FFTGrid::ApplyX2(const Tensorcd& Acoeffs) const {
 Tensorcd FFTGrid::ApplyP(const Tensorcd& Acoeffs) const {
 	Tensorcd pA = FromGrid(Acoeffs);
 //	#pragma omp for
-	for (int n = 0; n < Acoeffs.Dim().GetNumTensor(); n++)
+	for (int n = 0; n < Acoeffs.Dim().LastActive(); n++)
 		for (int i = 0; i < dim_; i++)
 			pA(i, n) *= -p_(i);
 	pA = ToGrid(pA);
@@ -73,7 +73,7 @@ Tensorcd FFTGrid::FromGrid(const Tensorcd& Acoeffs) const {
 
 Tensorcd FFTGrid::ApplyKin(const Tensorcd& Acoeffs) const {
 	Tensorcd pA = FromGrid(Acoeffs);
-	for (int n = 0; n < Acoeffs.Dim().GetNumTensor(); n++)
+	for (int n = 0; n < Acoeffs.Dim().LastActive(); n++)
 		for (int i = 0; i < dim_; i++)
 			pA(i, n) *= 0.5 * p_(i) * p_(i);
 	return ToGrid(pA);
@@ -85,7 +85,7 @@ void FFTGrid::InitSPF(Tensorcd& phi) const {
 	}
 
 	// excitations
-	int nstates = phi.Dim().GetNumTensor();
+	int nstates = phi.Dim().LastActive();
 	for (int n = 1; n < nstates; n++) {
 		for (int i = 0; i < dim_; i++) {
 			phi(i, n) = x_(i) * phi(i, n - 1);
