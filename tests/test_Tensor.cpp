@@ -15,7 +15,7 @@ SUITE (Tensor) {
 		Tensorcd B;
 
 		void CreateTensorA() {
-			TensorDim tdim({2, 3, 4}, 2);
+			TensorDim tdim(vector<size_t>({2, 3, 4, 2}));
 			A = Tensorcd(tdim);
 			for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
 				A(i) = i;
@@ -23,7 +23,7 @@ SUITE (Tensor) {
 		}
 
 		void CreateTensorB() {
-			TensorDim tdim({2, 3, 4}, 2);
+			TensorDim tdim(vector<size_t>({2, 3, 4, 2}));
 			B = Tensorcd(tdim);
 			for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
 				B(i) = i % 3;
@@ -37,7 +37,7 @@ SUITE (Tensor) {
 	};
 
 	Tensorcd NewTensor() {
-		TensorDim tdim({2, 3, 4}, 2);
+		TensorDim tdim(vector<size_t>({2, 3, 4, 2}));
 		Tensorcd tmp(tdim);
 		for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
 			tmp(i) = i;
@@ -49,7 +49,7 @@ SUITE (Tensor) {
 
 	TEST (TensorDim_FileIO) {
 		/// Create a TensorDim, write to file, read in again
-		TensorDim tdim({3, 4, 5}, 2);
+		TensorDim tdim(vector<size_t>({3, 4, 5, 2}));
 		tdim.Write("tdim.dat");
 		TensorDim odim("tdim.dat");
 		bool same = odim == tdim;
@@ -59,14 +59,14 @@ SUITE (Tensor) {
 	TEST (TensorDim_Getters) {
 		/// Check Getters and Initialization
 		bool success = true;
-		TensorDim tdim({3, 4, 5}, 2);
+		TensorDim tdim(vector<size_t>({3, 4, 5, 2}));
 			CHECK_EQUAL(3 * 4 * 5 * 2, tdim.GetDimTot());
 			CHECK_EQUAL(3 * 4 * 5, tdim.LastBefore());
 			CHECK_EQUAL(2, tdim.LastActive());
 	}
 
 	TEST (Tensor_Constructor) {
-		TensorDim tdim({3, 4, 5}, 3);
+		TensorDim tdim(vector<size_t>({3, 4, 5, 2}));
 		Tensorcd A(tdim);
 		Tensorcd B(tdim);
 		auto same = A - B;

@@ -309,15 +309,15 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	// Create a new Tensor with the adjusted dim_
 	vector<size_t> dimlist = dim.GetDimList();
 	dimlist[mode] = active;
-	size_t ntensor = dim.LastActive();
-	TensorDim newTDim(dimlist, ntensor);
+	TensorDim newTDim(dimlist);
 	Tensor<T> newT(newTDim);
 
 	// Copy the coefficients
 	size_t before = dim.Before(mode);
-	size_t after = dim.After(mode)/ntensor;
+	size_t after = dim.After(mode) / dim.LastActive();
+	size_t nstates = dim.LastActive();
 	size_t minactive = min(active, dim.Active(mode));
-	for (size_t n = 0; n < ntensor; n++) {
+	for (size_t n = 0; n < nstates; n++) {
 		for (size_t l = 0; l < after; l++) {
 			for (size_t j = 0; j < minactive; j++) {
 				for (size_t i = 0; i < before; i++) {
@@ -332,24 +332,7 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 // Adjust the size of Tensor 
 template<typename T>
 Tensor<T> Tensor<T>::AdjustStateDim(size_t n) const {
-	// Returns a new tensor with n (>=ntensor) tensors
-	// The new tensors are all set to Zero
-
-	// Create a new TensorDim with the new size
-	vector<size_t> dimlist = dim.GetDimList();
-	TensorDim newTDim(dimlist, n);
-	Tensor<T> newTensor(newTDim);
-
-	// Copy the coefficients
-	size_t ntensor = dim.LastActive();
-	size_t dimpart = dim.LastBefore();
-	size_t ntensmax = min(n, ntensor);
-	for (size_t m = 0; m < ntensmax; m++) {
-		for (size_t i = 0; i < dimpart; i++) {
-			newTensor(i, m) = operator()(i, m);
-		}
-	}
-	return newTensor;
+	return AdjustActiveDim(n, Dim().GetLastIdx());
 }
 
 template<typename T>
@@ -450,26 +433,26 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	    }
 	}
 	*/
-    #pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
-    for (size_t n = 0; n < after; n++) {
-        npreidx1 = n * actbef1;
-        npreidx2 = n * actbef2;
-        for (size_t j = 0; j < active2; j++) {
-            jpreidx = npreidx2 + j * before;
-            for (size_t i = 0; i < active1; i++) {
-                // S(i, j)
-                Sidx = j * active1 + i;
-                ipreidx = npreidx1 + i * before;
-                for (size_t l = 0; l < before; l++) {
-                    // A(l, i, n)
-                    Aidx = ipreidx + l;
-                    // B(l, j, n)
-                    Bidx = jpreidx + l;
-                    S[Sidx] += conj(A[Aidx]) * B[Bidx];
-                }
-            }
-        }
-    }
+#pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
+	for (size_t n = 0; n < after; n++) {
+		npreidx1 = n * actbef1;
+		npreidx2 = n * actbef2;
+		for (size_t j = 0; j < active2; j++) {
+			jpreidx = npreidx2 + j * before;
+			for (size_t i = 0; i < active1; i++) {
+				// S(i, j)
+				Sidx = j * active1 + i;
+				ipreidx = npreidx1 + i * before;
+				for (size_t l = 0; l < before; l++) {
+					// A(l, i, n)
+					Aidx = ipreidx + l;
+					// B(l, j, n)
+					Bidx = jpreidx + l;
+					S[Sidx] += conj(A[Aidx]) * B[Bidx];
+				}
+			}
+		}
+	}
 }
 
 template<typename T>
@@ -517,37 +500,37 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t jpreidx = 0;
 	size_t lactive = 0;
 
-    // Avoid unnecessary thread launches
-    // TODO: this requires #inclue <omp.h>
-    /*
-    const char* threads = getenv("OMP_NUM_THREADS");
-    if (threads) {
-        if (after < atoi(threads)) {
-            omp_set_num_threads(after);
-        }
-    }
-     */
+	// Avoid unnecessary thread launches
+	// TODO: this requires #inclue <omp.h>
+	/*
+	const char* threads = getenv("OMP_NUM_THREADS");
+	if (threads) {
+		if (after < atoi(threads)) {
+			omp_set_num_threads(after);
+		}
+	}
+	 */
 	if (before == 1) {
-		#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
+#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
 		for (size_t k = 0; k < after; ++k) {
-            kpreidxB = k * actbefB;
-            kpreidxC = k * actbefC;
-            for (size_t l = 0; l < activeB; ++l) {
-                Bidx = l + kpreidxB;
-                for (size_t j = 0; j < activeC; ++j) {
-                    Cidx = j + kpreidxC;
-                    Aidx = l * activeB + j; //TODO: why is this declared twice?
-                    Aidx = l * activeC + j;
+			kpreidxB = k * actbefB;
+			kpreidxC = k * actbefC;
+			for (size_t l = 0; l < activeB; ++l) {
+				Bidx = l + kpreidxB;
+				for (size_t j = 0; j < activeC; ++j) {
+					Cidx = j + kpreidxC;
+					Aidx = l * activeB + j; //TODO: why is this declared twice?
+					Aidx = l * activeC + j;
 //					assert(Cidx < C.Dim().GetDimTot());
 //					assert(Bidx < B.Dim().GetDimTot());
 //					assert(Aidx < A.Dim1()*A.Dim2());
-                    /// C(1, j, k) += A(j, l) * B(1, l, k)
-                    C[Cidx] += A[Aidx] * B[Bidx];
-                }
-            }
-        }
+					/// C(1, j, k) += A(j, l) * B(1, l, k)
+					C[Cidx] += A[Aidx] * B[Bidx];
+				}
+			}
+		}
 	} else {
-        #pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
+#pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
 		for (size_t k = 0; k < after; ++k) {
 			kpreidxB = k * actbefB;
 			kpreidxC = k * actbefC;
@@ -725,7 +708,7 @@ Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 	assert(A.Dim2() == ntensor);
 
 	TensorDim tdim_c(tdim_b);
-    tdim_c.SetActive(A.Dim1(), tdim_c.GetLastIdx());
+	tdim_c.SetActive(A.Dim1(), tdim_c.GetLastIdx());
 	Tensor<T> C(tdim_c);
 	multStateAB(C, A, B);
 	return C;
@@ -888,7 +871,6 @@ double Residual(Tensor<T> D, const Tensor<T>& B) {
 	auto S = D.DotProduct(D);
 	return S.FrobeniusNorm();
 }
-
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A) {

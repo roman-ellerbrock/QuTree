@@ -32,9 +32,9 @@ SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_FileIO) {
 		size_t n_leaf = 4;
 		size_t n_node = 2;
-		TensorDim tdim_top({n_node, n_node}, 1);
-		TensorDim tdim_upper({n_node, n_node}, n_node);
-		TensorDim tdim_bottom({n_leaf}, n_node);
+		TensorDim tdim_top(vector<size_t>{n_node, n_node, 1});
+		TensorDim tdim_upper(vector<size_t>({n_node, n_node, n_node}));
+		TensorDim tdim_bottom(vector<size_t>({n_leaf, n_node}));
 		size_t n_modes = 13;
 
 		Tree tree(n_modes, n_leaf, n_node);

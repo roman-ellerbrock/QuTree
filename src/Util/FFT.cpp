@@ -27,7 +27,8 @@ Tensorcd FFT::reverseOrder(const Tensorcd& in)
 	//build the output tensor withe the new sizes
 	vector<size_t> d;
 	d.push_back(N);
-	TensorDim newdim(d, dim.LastActive());
+	d.push_back(dim.LastActive());
+	TensorDim newdim(d);
 	Tensorcd out(newdim);
 	
 	for(size_t n = 0; n < states; n++)
@@ -91,7 +92,8 @@ Tensorcd FFT::dft(const Tensorcd& in, const int sign)
 	//otherwise perform dft
 	vector<size_t> d;
 	d.push_back(size);
-	TensorDim newdim(d, states);
+	d.push_back(states);
+	TensorDim newdim(d);
 	Tensorcd out(newdim);
 	for(size_t k = 0; k < states; k++)
 	{

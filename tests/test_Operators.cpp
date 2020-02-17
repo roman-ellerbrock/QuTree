@@ -32,7 +32,7 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, SPO_HO) {
 		HO_Basis ho(10);
 		ho.Initialize(1., 0., 0., 1.);
-		TensorDim tdim({10}, 1);
+		TensorDim tdim(vector<size_t>({10, 1}));
 		Tensorcd A(tdim);
 		ho.InitSPF(A);
 		auto xA = ho.applyX(A);
@@ -46,7 +46,7 @@ SUITE (Operators) {
 		// Check that applying a Matrix to a tensor
 		// or the corresponding SPOM does the same
 
-		TensorDim tdim({2}, 1);
+		TensorDim tdim(vector<size_t>({2, 1}));
 		Tensorcd A(tdim);
 		A(0) = 1.;
 		Tensorcd XA = multAB(X, A, 0);
