@@ -11,10 +11,10 @@ namespace benchmark {
 		assert(order > 1);
 		assert(dim > 0);
 		vector<size_t> dims;
-		for (size_t i = 0; i < order - 1; ++i) {
+		for (size_t i = 0; i < order; ++i) {
 			dims.emplace_back(dim);
 		}
-		return TensorDim(dims, dim);
+		return TensorDim(dims);
 	}
 
 	auto vector_hole_product_sample(Matrixcd& S, const vector<Tensorcd>& A,

@@ -44,9 +44,9 @@ public:
 	TensorDim()
 		: dimTot_(0) {}
 
-	explicit TensorDim(const vector<size_t>& dim);
+	explicit TensorDim(const initializer_list<size_t>& dims);
 
-	explicit TensorDim(const vector<size_t>& dim, size_t ntensor);
+	explicit TensorDim(const vector<size_t>& dim);
 
 	explicit TensorDim(istream& is);
 

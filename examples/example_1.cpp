@@ -11,8 +11,7 @@
 Tensorcd create_tensor() {
     cout << "\ncreate_tensor:\n" << endl;
     // 1. Create from a TensorDim object
-    vector<size_t> dims = {2, 3, 4, 2}; // third order tensor
-    TensorDim tdim(dims);
+    TensorDim tdim({2, 3, 4, 2});
     Tensorcd A(tdim); // create tensor, all entries set to Zero
     cout << "A=" << endl;
     A.print();
@@ -84,8 +83,7 @@ void reshape (Tensorcd A) {
     cout << "\nreshape:\n" << endl;
     cout << "A.Dim() = " << endl;
     A.Dim().print();
-    vector<size_t> dims = {2, 3, 2, 2}; // fourth order order tensor
-    TensorDim tdim(dims);
+    TensorDim tdim({2, 3, 2, 2});
     assert(tdim.LastBefore() == A.Dim().LastBefore());
     cout << "d = " << tdim.LastBefore() << endl;
     A.Reshape(tdim);

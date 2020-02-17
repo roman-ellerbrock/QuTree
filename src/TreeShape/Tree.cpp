@@ -45,7 +45,8 @@ vector<Node> Partition(const vector<Node>& nodes,
 			p.push_back(nodes[k * n_partition + l]);
 			dims.push_back(dim_node);
 		}
-		TensorDim tensordim(dims, dim_node);
+		dims.push_back(dim_node);
+		TensorDim tensordim(dims);
 		p.TDim() = tensordim;
 		groups.emplace_back(p);
 	}

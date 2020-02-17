@@ -13,7 +13,8 @@ namespace TTBasisFactory {
 		dims.push_back(dimNodes);
 		train.push_back(bottom);
 		dims.push_back(dimNodes);
-		TensorDim tdim(dims, dimNodes);
+		dims.push_back(dimNodes);
+		TensorDim tdim(dims);
 		train.TDim() = tdim;
 		return train;
 	}
@@ -22,7 +23,7 @@ namespace TTBasisFactory {
 		Node train;
 		train.push_back(bottom);
 		train.push_back(old_train);
-		TensorDim tdim({dimNodes, dimNodes}, dimNodes);
+		TensorDim tdim({dimNodes, dimNodes, dimNodes});
 		train.TDim() = tdim;
 		return train;
 	}

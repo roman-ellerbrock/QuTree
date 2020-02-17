@@ -16,17 +16,13 @@ TensorABC::TensorABC(size_t k, vector<size_t> dim)
 	}
 }
 
-TensorDim::TensorDim(const vector<size_t>& dim, size_t ntensor)
-	: TensorDim() {
-	auto dim2 = dim;
-	dim2.push_back(ntensor);
-	Initialize(dim2);
-}
-
 TensorDim::TensorDim(const vector<size_t>& dim)
 	: TensorDim() {
 	Initialize(dim);
 }
+
+TensorDim::TensorDim(const initializer_list<size_t>& dims)
+	: TensorDim(vector<size_t>(dims)){ }
 
 TensorDim::TensorDim(istream& is)
 	: TensorDim() {

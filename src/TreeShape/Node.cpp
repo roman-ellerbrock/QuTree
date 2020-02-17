@@ -96,8 +96,7 @@ Node::Node(const Leaf& phys, size_t ntensor)
 	phy.SetUp(this);
 
 	// Build the TensorDim
-	vector<size_t> dims = {phys.Dim()};
-	tensorDim_ = TensorDim(dims, ntensor);
+	tensorDim_ = TensorDim({phys.Dim(), ntensor});
 }
 
 void Node::Initialize(istream& file, Node *up,
@@ -151,7 +150,8 @@ void Node::Initialize(istream& file, Node *up,
 	}
 
 	// create a TensorDim after dimensions were read
-	tensorDim_ = TensorDim(dim, nstates);
+	dim.push_back(nstates);
+	tensorDim_ = TensorDim(dim);
 
 	nextNodeNum_ = down_.size() - 1;
 }
@@ -351,7 +351,8 @@ void Node::UpdateTDim() {
 	}
 
 	// Create a new TensorDim from the dim_-vector and ntensor
-	tensorDim_ = TensorDim(dim_new, tensorDim_.LastActive());
+	dim_new.push_back(tensorDim_.LastActive());
+	tensorDim_ = TensorDim(dim_new);
 }
 
 void Node::UpdatePosition(const NodePosition& p) {
