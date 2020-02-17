@@ -28,10 +28,12 @@ public:
 	//////////////////////////////////////////////////////////
 
 	// Standard Constructor
-	Tensor() :coeffs(new T[1]) {}
+	Tensor() : coeffs_(new T[1]) {}
+
+	Tensor(const initializer_list<size_t>& dim, bool InitZero = true);
 
 	// Constructor with TensorDim
-	explicit Tensor(const TensorDim& dim_, bool InitZero = true);
+	explicit Tensor(const TensorDim& dim, bool InitZero = true);
 
 	explicit Tensor(istream& is);
 
@@ -90,13 +92,13 @@ public:
 	inline T& operator[](const size_t idx)const
 	{
 		// Fast bracket operator
-		return coeffs[idx];
+		return coeffs_[idx];
 	}
 
 	inline T& operator[](const size_t idx)
 	{
 		// Fast bracket operator
-		return coeffs[idx];
+		return coeffs_[idx];
 	}
 
 	//////////////////////////////////////////////////////////
@@ -171,8 +173,8 @@ public:
 	void Zero();
 
 	// Getter for Dim
-	const TensorDim& Dim()const { return dim; }
-	TensorDim& Dim() { return dim; }
+	const TensorDim& Dim()const { return dim_; }
+	TensorDim& Dim() { return dim_; }
 
 protected:
 	double conjugate(const double d) const {
@@ -183,8 +185,8 @@ protected:
 		return conj(c);
 	}
 
-	TensorDim dim;
-	T* coeffs;
+	TensorDim dim_;
+	T* coeffs_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;
