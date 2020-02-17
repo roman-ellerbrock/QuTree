@@ -8,7 +8,7 @@ FermionNumberBasis::FermionNumberBasis(int dim_)
 Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	Tensorcd psi(phi.Dim());
 
@@ -25,7 +25,7 @@ Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi) const {
 Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	Tensorcd psi(phi.Dim());
 
@@ -42,7 +42,7 @@ Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi) const {
 Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	Tensorcd psi(phi.Dim());
 
@@ -60,7 +60,7 @@ Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi) const {
 Tensorcd FermionNumberBasis::pauliZ(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	Tensorcd psi(phi.Dim());
 

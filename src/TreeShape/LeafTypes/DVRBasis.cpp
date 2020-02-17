@@ -8,7 +8,7 @@ DVRBasis::DVRBasis(int dim)
 Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	Tensorcd psi(phi.Dim());
 
@@ -29,7 +29,7 @@ Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
 Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	Tensorcd psi(phi.Dim());
 
@@ -50,7 +50,7 @@ Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
 Tensorcd DVRBasis::ApplyP(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorDim& tdim = phi.Dim();
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	return multAB(p_, phi, 0);
 }
@@ -58,7 +58,7 @@ Tensorcd DVRBasis::ApplyP(const Tensorcd& phi) const {
 Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorDim& tdim = phi.Dim();
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	return multAB(kin_, phi, 0);
 }
@@ -66,7 +66,7 @@ Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
 Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorDim& tdim = phi.Dim();
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	return multATB(trafo_, phi, 0);
 }
@@ -74,7 +74,7 @@ Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
 Tensorcd DVRBasis::FromGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorDim& tdim = phi.Dim();
-	assert(tdim.GetOrder() == 1);
+	assert(tdim.GetOrder() == 2);
 
 	return multAB(trafo_, phi, 0);
 }

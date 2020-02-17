@@ -305,7 +305,6 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	// not conserved.
 
 	assert(mode < dim.GetOrder());
-	assert(active > 0);
 
 	// Create a new Tensor with the adjusted dim_
 	vector<size_t> dimlist = dim.GetDimList();
@@ -475,22 +474,14 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 
 template<typename T>
 Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
-	//
 	const TensorDim& tdim_a(A.Dim());
 	const TensorDim& tdim_b(A.Dim());
-
-	size_t nstates = tdim_a.GetNumTensor();
+	assert(k < tdim_a.GetOrder());
+	assert(k < tdim_b.GetOrder());
 	size_t active1 = tdim_a.Active(k);
-	size_t before = tdim_a.Before(k);
-//	size_t after = tdim_a.After(k) * nstates;
-	size_t after = tdim_a.After(k);
 	size_t active2 = tdim_b.Active(k);
-	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
-
 	Matrix<T> S(active1, active2);
-
-	TensorHoleProduct(S, A, B, before, active1, active2, after);
-
+	mHoleProduct(S, A, B, k);
 	return S;
 }
 
@@ -498,9 +489,11 @@ template<typename T>
 void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorDim& tdim_a(A.Dim());
 	const TensorDim& tdim_b(A.Dim());
-	size_t active1 = tdim_a.Active(k);
+	assert(k < tdim_a.GetOrder());
+	assert(k < tdim_b.GetOrder());
 	size_t before = tdim_a.Before(k);
 	size_t after = tdim_a.After(k);
+	size_t active1 = tdim_a.Active(k);
 	size_t active2 = tdim_b.Active(k);
 	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
 	TensorHoleProduct(S, A, B, before, active1, active2, after);
@@ -637,13 +630,12 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 	TensorDim tdim(B.Dim());
 	TensorDim tdimC(C.Dim());
 
-//	size_t after = tdim.After(mode) * tdim.GetNumTensor();
 	size_t after = tdim.After(mode);
 	size_t before = tdim.Before(mode);
 	size_t active1 = A.Dim1();
 	size_t active2 = A.Dim2();
 
-	assert(mode <= tdim.GetOrder());
+	assert(mode < tdim.GetOrder());
 	assert(A.Dim2() == tdim.Active(mode));
 	assert(A.Dim1() == tdimC.Active(mode));
 
@@ -653,13 +645,10 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 template<typename T, typename U>
 Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorDim& tdim(B.Dim());
-	assert(mode <= tdim.GetOrder());
-	assert(mode >= 0);
-//	assert(A.Dim1() == B.Dim().Active(mode));
+	assert(mode < tdim.GetOrder());
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
 		size_t after = tdim.After(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
@@ -671,7 +660,6 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t active2 = A.Dim2();
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, active1);
 		Tensor<T> C(tdim);
-//		size_t after = tdim.After(mode) * tdim.GetNumTensor();
 		size_t after = tdim.After(mode);
 		size_t before = tdim.Before(mode);
 		assert(active1 == C.Dim().Active(mode));
@@ -737,7 +725,7 @@ Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 	assert(A.Dim2() == ntensor);
 
 	TensorDim tdim_c(tdim_b);
-    tdim_c.SetNumTensor(A.Dim1());
+    tdim_c.SetActive(A.Dim1(), tdim_c.GetLastIdx());
 	Tensor<T> C(tdim_c);
 	multStateAB(C, A, B);
 	return C;

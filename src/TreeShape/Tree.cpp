@@ -104,7 +104,7 @@ Tree::Tree(size_t order,
 	root_ = move(nodes.front());
 	root_.SetUp(nullptr);
 	auto& tdim = root_.TDim();
-    tdim.SetNumTensor(1);
+    tdim.SetActive(1, tdim.GetLastIdx());
 	root_.UpdatePosition(NodePosition());
 	Update();
 	ResetLeafModes(*this);

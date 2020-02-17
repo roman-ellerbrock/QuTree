@@ -41,7 +41,7 @@ namespace TTBasisFactory {
 
 		train.SetUp(nullptr);
 		auto& tdim_ = train.TDim();
-		tdim_.SetNumTensor(1);
+		tdim_.SetActive(1, tdim_.GetLastIdx());
 		Tree basis;
 		basis.SetRoot(train);
 		basis.Update();

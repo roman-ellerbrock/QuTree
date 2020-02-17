@@ -192,7 +192,6 @@ namespace Tensor_Extension {
 	Tensor<T> OldmultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorDim tdim(B.Dim());
 		assert(mode < tdim.GetOrder());
-		assert(mode >= 0);
 		assert(A.Dim1() == A.Dim2());
 		assert(A.Dim1() == B.Dim().Active(mode));
 

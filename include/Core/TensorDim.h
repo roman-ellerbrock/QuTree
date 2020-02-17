@@ -9,7 +9,7 @@ class TensorABC {
  */
 public:
 	TensorABC()
-		: before_(0), after_(0), active_(0), total_(0) {}
+		: before_(0), after_(0), active_(0) {}
 
 	TensorABC(size_t k, vector<size_t> dim);
 
@@ -19,13 +19,10 @@ public:
 
 	inline size_t GetAfter() const { return after_; }
 
-	inline size_t GetTotal() const { return total_; }
-
 private:
 	size_t before_;
 	size_t after_;
 	size_t active_;
-	size_t total_;
 };
 
 class TensorDim
@@ -45,9 +42,11 @@ class TensorDim
 {
 public:
 	TensorDim()
-		: nTensor_(0), dimPart_(0), dimTot_(0) {}
+		: dimTot_(0) {}
 
-	explicit TensorDim(const vector<size_t>& dim, size_t ntensor_);
+	explicit TensorDim(const vector<size_t>& dim);
+
+	explicit TensorDim(const vector<size_t>& dim, size_t ntensor);
 
 	explicit TensorDim(istream& is);
 
@@ -55,7 +54,7 @@ public:
 
 	~TensorDim() = default;
 
-	void Initialize(const vector<size_t>& dim, size_t ntensor);
+	void Initialize(const vector<size_t>& dim);
 
 	void Write(ostream& os) const;
 
@@ -65,15 +64,14 @@ public:
 
 	inline size_t GetOrder() const { return abc_.size(); }
 
-	inline size_t GetLastIdx() const { return abc_.size(); } // @TODO: Make this size-1
+	inline size_t GetLastIdx() const { return abc_.size() - 1; }
 
 	inline size_t GetDimTot() const { return dimTot_; }
 
-	inline size_t LastBefore() const { return abc_.back().GetBefore() * abc_.back().GetActive(); } // @TODO: Remove Active
+	inline size_t LastBefore() const { return abc_.back().GetBefore(); }
 
-	inline size_t GetNumTensor() const { return nTensor_; }
+	inline size_t GetNumTensor() const { return abc_.back().GetActive(); }
 
-	void SetNumTensor(size_t newntensor);
 	void SetActive(size_t act, size_t k);
 
 	vector<size_t> GetDimList() const;
@@ -87,8 +85,6 @@ public:
 
 protected:
 	size_t dimTot_;
-	size_t dimPart_;
-	size_t nTensor_;
 	vector<TensorABC> abc_;
 };
 

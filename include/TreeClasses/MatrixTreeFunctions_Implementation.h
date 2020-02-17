@@ -16,12 +16,11 @@ namespace MatrixTreeFunctions {
 		if (!node.IsBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.Down(k);
-				const Matrix<T>& s = S[child];
-				Ket = multAB(s, Ket, k);
+				Ket = multAB(S[child], Ket, k);
 			}
 		}
-		size_t order = node.TDim().GetOrder();
-		mHoleProduct(S[node], Bra, Ket, order);
+		size_t last = node.TDim().GetLastIdx();
+		mHoleProduct(S[node], Bra, Ket, last);
 	}
 
 	template<typename T>
@@ -78,6 +77,7 @@ namespace MatrixTreeFunctions {
 		assert(Psi.size() == tree.nNodes());
 		assert(Chi.size() == tree.nNodes());
 
+		// @TODO: Use reverse iterator
 		for (int n = (int) tree.nNodes() - 2; n >= 0; --n) {
 			const Node& node = tree.GetNode(n);
 			const Node& parent = node.Up();

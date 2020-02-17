@@ -60,10 +60,9 @@ SUITE (Tensor) {
 		/// Check Getters and Initialization
 		bool success = true;
 		TensorDim tdim({3, 4, 5}, 2);
-		if (tdim.GetDimTot() != 3 * 4 * 5 * 2) { success = false; }
-		if (tdim.LastBefore() != 3 * 4 * 5) { success = false; }
-		if (tdim.GetNumTensor() != 2) { success = false; }
-			CHECK_EQUAL(success, true);
+			CHECK_EQUAL(3 * 4 * 5 * 2, tdim.GetDimTot());
+			CHECK_EQUAL(3 * 4 * 5, tdim.LastBefore());
+			CHECK_EQUAL(2, tdim.GetNumTensor());
 	}
 
 	TEST (Tensor_Constructor) {
