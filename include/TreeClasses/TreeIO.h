@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/10/20.
 //
 
-#ifndef IOTREE_H
-#define IOTREE_H
+#ifndef TREEIO_H
+#define TREEIO_H
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "TreeClasses/TensorTree.h"
 
@@ -17,4 +17,4 @@ namespace IOTree {
 
 }
 
-#endif //IOTREE_H
+#endif //TREEIO_H

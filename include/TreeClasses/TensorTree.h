@@ -63,6 +63,57 @@ public:
 	/// Print info in human readable format
 	void print(const Tree& tree, ostream& os = cout) const;
 
+	////////////////////////////////////////////////////////////////////////
+	/// Arithmetic operators
+	////////////////////////////////////////////////////////////////////////
+	void operator+=(const TensorTree<T>& R) {
+		for (size_t n = 0; n < attributes_.size(); ++n) {
+			attributes_[n] += R.attributes_[n];
+		}
+	}
+
+	void operator-=(const TensorTree<T>& R) {
+		for (size_t n = 0; n < attributes_.size(); ++n) {
+			attributes_[n] -= R.attributes_[n];
+		}
+	}
+
+	TensorTree operator+(const TensorTree<T>& R) {
+		TensorTree<T> S(*this);
+		S += R;
+		return S;
+	}
+
+	TensorTree operator-(const TensorTree<T>& R) {
+		TensorTree<T> S(*this);
+		S -= R;
+		return S;
+	}
+
+	void operator*=(T c) {
+		for (size_t n = 0; n < attributes_.size(); ++n) {
+			attributes_[n] *= c;
+		}
+	}
+
+	void operator/=(T c) {
+		for (size_t n = 0; n < attributes_.size(); ++n) {
+			attributes_[n] /= c;
+		}
+	}
+
+	TensorTree operator*(T c) {
+		TensorTree<T> S(*this);
+		S *= c;
+		return S;
+	}
+
+	TensorTree operator/(T c) {
+		TensorTree<T> S(*this);
+		S /= c;
+		return S;
+	}
+
 protected:
 	void FillBottom(Tensor<T>& Phi, const Node& node);
 	void FillUpper(Tensor<T>& Phi, std::mt19937& gen,
@@ -78,5 +129,16 @@ ostream& operator<<(ostream& os, const TensorTree<T>& t);
 template<typename T>
 istream& operator>>(istream& is, TensorTree<T>& t);
 
+template <typename T>
+TensorTree<T> operator*(T c, TensorTree<T> R) {
+	R *= c;
+	return R;
+}
+
+template <typename T>
+TensorTree<T> operator/(T c, TensorTree<T> R) {
+	R /= c;
+	return R;
+}
 
 #endif //TENSORTREE_H

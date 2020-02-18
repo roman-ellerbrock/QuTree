@@ -42,7 +42,7 @@ set(TENSOR_TREE_FILES
         TreeClasses/NodeAttribute.h
         TreeClasses/SparseTree.h
         TreeClasses/SpectralDecompositionTree.h
-        TreeClasses/IOTree.h
+        TreeClasses/TreeIO.h
         TreeClasses/MatrixTree.h
         TreeClasses/MatrixTreeFunctions.h
         TreeClasses/MatrixTreeFunctions_Implementation.h

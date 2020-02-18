@@ -74,4 +74,3 @@ protected:
 	vector<A> attributes_;
 };
 
-

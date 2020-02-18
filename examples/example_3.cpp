@@ -75,8 +75,6 @@ void hole_product_tree() {
 
 void tree_examples() {
 	Tree tree = TreeFactory::BalancedTree(3, 3, 2);
-	tree.print();
-	getchar();
 	TensorTreecd Psi(tree);
 	Psi.print(tree);
 
@@ -101,6 +99,19 @@ void tree_examples() {
 	cout << "Contractions of Psi and Chi:\n";
 	MatrixTree C = Contraction(Psi, Chi, S, tree);
 	C.print(tree);
+
+	cout << "Add two tensor trees:\n";
+	auto Eta = Psi + Chi;
+	Eta.print(tree);
+
+	cout << "Substract two tensor trees:\n";
+	auto Beta = Psi - Chi;
+	Beta.print(tree);
+
+	cout << "Substract two tensor trees:\n";
+	complex<double> coeff = 2.;
+	auto Gamma = coeff * Beta;
+	Beta.print(tree);
 }
 
 int main() {

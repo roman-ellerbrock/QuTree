@@ -560,7 +560,7 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 }
 
 template<typename T, typename U>
-void Tmattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
 	if (zero) { C.Zero(); }
@@ -670,7 +670,7 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t after = tdim.After(mode);
 		size_t active = tdim.Active(mode);
 		size_t before = tdim.Before(mode);
-		Tmattensor(C, A, B, before, active, active, after, false);
+		TMatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
 		size_t activeC = A.Dim2();
@@ -682,7 +682,7 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t before = tdim.Before(mode);
 		Tensor<T> C(tdim);
 		cout << "non-quadratic mattensor implemented but not tested, yet.\n";
-		Tmattensor(C, A, B, before, activeC, activeB, after, false);
+		TMatrixTensor(C, A, B, before, activeC, activeB, after, false);
 		getchar();
 		return C;
 	}

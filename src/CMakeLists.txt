@@ -23,7 +23,7 @@ set(QDlib_SOURCE_FILES
         TreeShape/NodePosition.cpp
         TreeShape/Tree.cpp
         TreeShape/TreeFactory.cpp
-        TreeClasses/IOTree.cpp
+        TreeClasses/TreeIO.cpp
         TreeClasses/MatrixTree.cpp
         TreeClasses/MatrixTreeFunctions.cpp
         TreeClasses/SparseMatrixTree.cpp
