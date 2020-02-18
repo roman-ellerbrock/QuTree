@@ -53,8 +53,6 @@ void dot_product_tree() {
     /// Construct, allocate and calculate a factor matrix tree
     MatrixTreecd w = MatrixTreeFunctions::DotProduct(Psi, Chi, tree);
     w.print();
-
-    return;
 }
 
 void hole_product_tree() {
@@ -75,10 +73,10 @@ void hole_product_tree() {
 
 }
 
-#include "TreeShape/TreeFactory.h"
-
 void tree_examples() {
 	Tree tree = TreeFactory::BalancedTree(3, 3, 2);
+	tree.print();
+	getchar();
 	TensorTreecd Psi(tree);
 	Psi.print(tree);
 

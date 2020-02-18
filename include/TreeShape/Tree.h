@@ -153,7 +153,7 @@ public:
 	bool IsWorking();
 
 	/// Human readable output of the tree shape
-	void print() const;
+	void print(ostream& os = cout) const;
 
 protected:
 	void LinearizeNodes();

@@ -128,9 +128,10 @@ void TensorDim::SetActive(size_t act, size_t k) {
 void TensorDim::print(ostream& os) const {
 	if (GetOrder() > 0) {
 		os << "(";
-		for (size_t k = 0; k < GetOrder(); ++k) {
+		for (size_t k = 0; k < GetOrder() - 1; ++k) {
 			os << Active(k) << ", ";
 		}
+		os << Active(GetOrder() - 1);
 		os <<  ")" << endl;
 	}
 }

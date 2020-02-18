@@ -266,11 +266,12 @@ const Node& Tree::GetNode(size_t i) const {
 	return linearizedNodes_[i];
 }
 
-void Tree::print() const {
+void Tree::print(ostream& os) const {
 	for (auto it = this->rbegin(); it !=  this->rend(); it++) {
 		const Node& node = *it;
-		node.info();
-		node.TDim().print();
+		node.info(os);
+		node.TDim().print(os);
+		os << endl;
 	}
 }
 

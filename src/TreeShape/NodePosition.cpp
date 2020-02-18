@@ -1,16 +1,20 @@
 #include "TreeShape/NodePosition.h"
 
-void NodePosition::info(ostream& os) const {
+void NodePosition::info(ostream& os, bool print_layer) const {
+	if (print_layer) {
 	os << "{ " << layer_ << " ; ";
-	for (int i = 0; i < path_.size(); i++) {
+	} else {
+		os << "{ ";
+	}
+	for (size_t i = 0; i < path_.size(); i++) {
 		if (i > 0) { os << ", "; }
 		os << path_[i];
 	}
 	os << " }" << endl;
 }
 
-int NodePosition::ChildIdx() const {
-	int size = path_.size();
+size_t NodePosition::ChildIdx() const {
+	size_t size = path_.size();
 	if (size > 0) {
 		return path_[size - 1];
 	} else {
@@ -18,7 +22,7 @@ int NodePosition::ChildIdx() const {
 	}
 }
 
-NodePosition operator*(NodePosition p, int k) {
+NodePosition operator*(NodePosition p, size_t k) {
 	// contruct p_+k by going from p_ to direction k
 	NodePosition pnew(p);
 	pnew.layer_++;
@@ -30,7 +34,7 @@ NodePosition operator*(NodePosition p, NodePosition q) {
 	// contruct p_+q by going from root to p_ and then to q
 	NodePosition pnew(p);
 	pnew.layer_ = p.layer_ + q.layer_;
-	for (int i = 0; i < q.path_.size(); i++) {
+	for (size_t i = 0; i < q.path_.size(); i++) {
 		pnew.push_back(q.path_[i]);
 	}
 	return pnew;

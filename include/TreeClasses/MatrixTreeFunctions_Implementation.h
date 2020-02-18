@@ -21,6 +21,7 @@ namespace MatrixTreeFunctions {
 		}
 		size_t last = node.TDim().GetLastIdx();
 		mHoleProduct(S[node], Bra, Ket, last);
+
 	}
 
 	template<typename T>
@@ -78,10 +79,15 @@ namespace MatrixTreeFunctions {
 		assert(Chi.size() == tree.nNodes());
 
 		// @TODO: Use reverse iterator
-		for (int n = (int) tree.nNodes() - 2; n >= 0; --n) {
-			const Node& node = tree.GetNode(n);
-			const Node& parent = node.Up();
-			ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
+//		for (int n = (int) tree.nNodes() - 2; n >= 0; --n) {
+		for (auto it = tree.rbegin(); it != tree.rend(); it++) {
+			const Node& node = *it;
+			if (!node.IsToplayer()) {
+				const Node& parent = node.Up();
+				ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
+			} else {
+				Rho[node] = IdentityMatrix<T>(node.TDim().LastActive());
+			}
 		}
 	}
 
