@@ -32,42 +32,17 @@ Tree::Tree(istream& is) {
 	Read(is);
 }
 
-vector<Node> Partition(const vector<Node>& nodes,
-	size_t n_partition, size_t dim_node) {
-	/// This is a helper function to create close-to balanced trees.
-	/// It adds a layer to a vector of nodes
-	vector<Node> groups;
-	size_t n_loop = nodes.size() / n_partition;
-	for (size_t k = 0; k < n_loop; ++k) {
-		Node p;
-		vector<size_t> dims;
-		for (size_t l = 0; l < n_partition; ++l) {
-			p.push_back(nodes[k * n_partition + l]);
-			dims.push_back(dim_node);
-		}
-		dims.push_back(dim_node);
-		TensorDim tensordim(dims);
-		p.TDim() = tensordim;
-		groups.emplace_back(p);
-	}
-	size_t n_rest = nodes.size() % n_partition;
-	for (size_t r = 0; r < n_rest; ++r) {
-		groups.push_back(nodes[n_loop * n_partition + r]);
-	}
-	return groups;
-}
-
-void ResetLeafModes(Tree& basis) {
-	size_t n_modes = basis.nLeaves();
+void Tree::ResetLeafModes() {
+	size_t n_modes = this->nLeaves();
 	assert(n_modes > 0);
 	int mode = n_modes - 1;
-	for (Node& node : basis) {
+	for (Node& node : *this) {
 		if (node.IsBottomlayer()) {
 			Leaf& leaf = node.PhysCoord();
 			leaf.Mode() = mode--;
 		}
 	}
-	basis.Update();
+	this->Update();
 }
 
 void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
@@ -77,54 +52,6 @@ void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
 			leaf.Mode() = Map[leaf.Mode()];
 		}
 	}
-}
-
-Tree::Tree(size_t order,
-	size_t dim_leaves, size_t dim_nodes) {
-	/// Create close-to-balanced Tree
-	size_t leaf_type = 6;
-	size_t mode = 0;
-	size_t leaf_subtype = 0;
-	PhysPar par;
-	Leaf leaf(dim_leaves, mode, leaf_type, leaf_subtype, par);
-
-	Node bottom(leaf, dim_nodes);
-	vector<Node> nodes;
-	for (size_t k = 0; k < order; ++k) {
-		nodes.push_back(bottom);
-	}
-	size_t count = 0;
-	while (nodes.size() > 1) {
-		nodes = Partition(nodes, 2, dim_nodes);
-		count++;
-		if (count > 100) {
-			cerr << "Error while partitioning TensorTreeBasis in constructor.\n";
-			exit(1);
-		}
-	}
-	root_ = move(nodes.front());
-	root_.SetUp(nullptr);
-	auto& tdim = root_.TDim();
-    tdim.SetActive(1, tdim.GetLastIdx());
-	root_.UpdatePosition(NodePosition());
-	Update();
-	ResetLeafModes(*this);
-}
-
-Leaf& Tree::GetLeaf(size_t i) {
-	return linearizedLeaves_[i];
-}
-
-const Leaf& Tree::GetLeaf(size_t i) const {
-	return linearizedLeaves_[i];
-}
-
-Node& Tree::GetNode(size_t i) {
-	return linearizedNodes_[i];
-}
-
-const Node& Tree::GetNode(size_t i) const {
-	return linearizedNodes_[i];
 }
 
 void Tree::ExpandNode(Node& node) {
@@ -321,6 +248,22 @@ bool Tree::IsWorking() {
 	}
 
 	return true;
+}
+
+Leaf& Tree::GetLeaf(size_t i) {
+	return linearizedLeaves_[i];
+}
+
+const Leaf& Tree::GetLeaf(size_t i) const {
+	return linearizedLeaves_[i];
+}
+
+Node& Tree::GetNode(size_t i) {
+	return linearizedNodes_[i];
+}
+
+const Node& Tree::GetNode(size_t i) const {
+	return linearizedNodes_[i];
 }
 
 void Tree::print() const {

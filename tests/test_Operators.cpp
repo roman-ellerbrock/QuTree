@@ -7,6 +7,7 @@
 #include "MultiLeafOperator.h"
 #include "HO_Basis.h"
 #include "TreeShape/Tree.h"
+#include "TreeShape/TreeFactory.h"
 
 SUITE (Operators) {
 	class HelperFactory {
@@ -58,7 +59,7 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, MPO_1) {
 		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
-		Tree tree(4, 2, 2);
+		Tree tree = TreeFactory::BalancedTree(4, 2, 2);
 		TensorTreecd Chi(tree);
 		Chi.FillRandom(gen, tree, false);
 		auto Psi = M.Apply(Chi, tree);

@@ -7,6 +7,7 @@
 #include "TreeClasses/TensorTree.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
+#include "TreeShape/TreeFactory.h"
 
 // Demonstrate various ways to create a TensorTree object
 TensorTreecd create_tensor_tree() {
@@ -15,7 +16,7 @@ TensorTreecd create_tensor_tree() {
     size_t num_leaves = 4;
     size_t dim_leaves = 3;
     size_t dim_nodes = 2;
-    Tree tree(num_leaves, dim_leaves, dim_nodes); // Creates a balanced tree by default
+	Tree tree = TreeFactory::BalancedTree(num_leaves, dim_leaves, dim_nodes);
     tree.info();
     cout << "\nNo. total nodes: " << tree.nTotalNodes() << endl;
     cout << "No. logical nodes: " << tree.nNodes() << endl;
@@ -44,7 +45,7 @@ void dot_product_tree() {
     cout << "\nTensor tree dot product:\n" << endl;
 
     // A dot product between two tensor trees results in a factor matrix tree
-    Tree tree(4, 3, 2);
+	Tree tree = TreeFactory::BalancedTree(4, 3, 2);
     mt19937 gen(2468);
     TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
@@ -60,7 +61,7 @@ void hole_product_tree() {
     cout << "\nTensor tree hole product:\n" << endl;
 
     // A hole product between two tensor trees results in a hole matrix tree
-    Tree tree(4, 3, 2);
+	Tree tree = TreeFactory::BalancedTree(4, 3, 2);
     mt19937 gen(2468);
     TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
@@ -74,8 +75,10 @@ void hole_product_tree() {
 
 }
 
+#include "TreeShape/TreeFactory.h"
+
 void tree_examples() {
-	Tree tree(3, 3, 2);
+	Tree tree = TreeFactory::BalancedTree(3, 3, 2);
 	TensorTreecd Psi(tree);
 	Psi.print(tree);
 

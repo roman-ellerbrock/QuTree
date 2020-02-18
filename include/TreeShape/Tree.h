@@ -55,9 +55,6 @@ public:
 	/// Stream constructor
 	explicit Tree(const string& filename);
 
-	/// Create Balanced Tree
-	Tree(size_t order, size_t dim_leaves, size_t dim_nodes);
-
 	/// Copy constructor
 	Tree(const Tree& T);
 
@@ -113,14 +110,23 @@ public:
 
 	const Node& TopNode() const { return linearizedNodes_.back(); }
 
+	/// Assign new indices to leaves
 	void ReindexLeafModes(map<size_t, size_t> Map);
+
+	/// Reset indices of leaves
+	void ResetLeafModes();
 
 	/// Expand a node in the Basis
 	void ExpandNode(Node& node);
 
+	/// Replace a node in the tree with a new node
 	void ReplaceNode(Node& old_node, Node& new_node);
 
-	void SetRoot(Node& root) { root_ = root; }
+	/// Set the root of the tree and update the TreeShape
+	void SetRoot(Node& root) { root_ = root;
+		root_.UpdatePosition(NodePosition());
+		Update();
+	}
 
 	/// Bottom-up iterator over all nodes in the mctdh-tree
 	/// For top-up iteration examples refer to e.g. the density-matrix class.
@@ -146,6 +152,7 @@ public:
 	/// Check whether TensorTreeBasis is working correctly
 	bool IsWorking();
 
+	/// Human readable output of the tree shape
 	void print() const;
 
 protected:
@@ -165,7 +172,5 @@ protected:
 
 ostream& operator<<(ostream& os, const Tree& tree);
 istream& operator>>(istream& is, Tree& tree);
-
-void ResetLeafModes(Tree& tree);
 
 #endif //TREE_H

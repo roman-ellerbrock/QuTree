@@ -5,12 +5,12 @@
 #include "TensorTree.h"
 #include "TensorTree_Implementation.h"
 #include "TreeShape/Tree.h"
-#include "TreeShape/TTBasisFactory.h"
+#include "TreeShape/TreeFactory.h"
 
 SUITE (TensorTree) {
 
 	TEST (TensorTree_FILE_IO) {
-		Tree tree(12, 2, 4);
+		Tree tree = TreeFactory::BalancedTree(12, 2, 4);
 		TensorTreecd T(tree);
 		T.Write("TT.tmp.dat");
 		TensorTreecd Q(tree);
@@ -23,7 +23,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST (TensorTree_RandomGenerate) {
-		Tree tree(12, 2, 2);
+		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		TensorTreecd T(tree);
 		mt19937 gen(2468);
 		T.FillRandom(gen, tree, false);
@@ -38,7 +38,7 @@ SUITE (TensorTree) {
 
 	TEST (TensorTree_Train) {
 		size_t nLeaves = 12;
-		auto tree = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
+		auto tree = TreeFactory::UnbalancedTree(nLeaves, 4, 2, 6);
 			CHECK_EQUAL(2 * nLeaves - 1, tree.nNodes());
 		mt19937 gen(2468);
 		TensorTreecd Psi(gen, tree);

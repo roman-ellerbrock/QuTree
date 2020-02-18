@@ -4,6 +4,7 @@
 #include "UnitTest++/UnitTest++.h"
 #include "SparseMatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
+#include "TreeShape/TreeFactory.h"
 
 SUITE (SparseMatrixTree) {
 
@@ -23,7 +24,7 @@ SUITE (SparseMatrixTree) {
 		void Initialize() {
 
 			rng_ = mt19937(1993);
-			tree_ = Tree(8, 2, 2);
+			tree_ = TreeFactory::BalancedTree(8, 2, 2);
 
 			Psi_ = TensorTreecd(rng_, tree_);
 
@@ -38,7 +39,7 @@ SUITE (SparseMatrixTree) {
 	};
 
 	TEST (TreeMarker) {
-		Tree tree(7, 4, 2);
+		Tree tree = TreeFactory::BalancedTree(7, 4, 2);
 		vector<size_t> modes({3, 4});
 		SparseTree active(modes, tree);
 			CHECK_EQUAL(7, active.size());

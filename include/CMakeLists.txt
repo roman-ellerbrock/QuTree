@@ -1,7 +1,6 @@
 
 set(QDlib_INCLUDE_FILES
         Util/BS_integrator.h
-        Util/DoubleParticleOperator.h
         Util/FFT.h
         Util/FFTCooleyTukey.h
         Util/JacobiRotationFramework.h
@@ -26,6 +25,7 @@ set(QDlib_INCLUDE_FILES
         Core/Vector_Implementation.h
         Util/WeightedSimultaneousDiagonalization.h
         Core/stdafx.h
+        QDlib.h
         )
 
 set(TENSOR_TREE_FILES
@@ -35,7 +35,7 @@ set(TENSOR_TREE_FILES
         TreeShape/Node.h
         TreeShape/NodePosition.h
         TreeShape/Tree.h
-        TreeShape/TTBasisFactory.h
+        TreeShape/TreeFactory.h
         TreeClasses/NodeAttribute.h
         TreeClasses/TensorTree.h
         TreeClasses/TensorTree_Implementation.h

@@ -3,7 +3,7 @@
 //
 #include "UnitTest++/UnitTest++.h"
 #include "TreeShape/Tree.h"
-#include "TreeShape/TTBasisFactory.h"
+#include "TreeShape/TreeFactory.h"
 
 SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_Generator) {
@@ -14,7 +14,7 @@ SUITE (TensorTreeBasis) {
 		TensorDim tdim_bottom({n_leaf, n_node});
 
 		for (size_t n_modes = 2; n_modes < 18; ++n_modes) {
-			Tree tree(n_modes, n_leaf, n_node);
+			Tree tree = TreeFactory::BalancedTree(n_modes, n_leaf, n_node);
 
 			for (const Node& node : tree) {
 				const TensorDim& tdim = node.TDim();
@@ -37,7 +37,7 @@ SUITE (TensorTreeBasis) {
 		TensorDim tdim_bottom({n_leaf, n_node});
 		size_t n_modes = 13;
 
-		Tree tree(n_modes, n_leaf, n_node);
+		Tree tree = TreeFactory::BalancedTree(n_modes, n_leaf, n_node);
 		{
 			ofstream os("TTBasis.IO.tmp.dat");
 			tree.Write(os);
@@ -49,7 +49,7 @@ SUITE (TensorTreeBasis) {
 
 	TEST (TensorTreeBasis_Reindexing) {
 		size_t n_modes = 9;
-		Tree tree(n_modes, 2, 4);
+		Tree tree = TreeFactory::BalancedTree(n_modes, 2, 4);
 
 		map<size_t, size_t> Map;
 		for (size_t k = 0; k < n_modes; ++k) {
@@ -68,13 +68,13 @@ SUITE (TensorTreeBasis) {
 
 	TEST (TensorTreeBasis_Train) {
 		size_t nLeaves = 12;
-		auto tree = TTBasisFactory::TensorTrain(nLeaves, 4, 2, 6);
+		auto tree = TreeFactory::UnbalancedTree(nLeaves, 4, 2, 6);
 			CHECK_EQUAL(2 * nLeaves - 1, tree.nNodes());
 	}
 
 	TEST (TensorTreeBasis_Copy) {
 		/// Construct a tree and check that it works
-		Tree tree(12, 4, 3);
+		Tree tree = TreeFactory::BalancedTree(12, 4, 3);
 			CHECK_EQUAL(true, tree.IsWorking());
 
 		{
