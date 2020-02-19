@@ -62,25 +62,25 @@ public:
 
 	void ReadDim(istream& is);
 
-	inline size_t GetOrder() const { return abc_.size(); }
+	inline size_t order() const { return abc_.size(); }
 
-	inline size_t GetLastIdx() const { return abc_.size() - 1; }
+	inline size_t lastIdx() const { return abc_.size() - 1; }
 
-	inline size_t GetDimTot() const { return dimTot_; }
+	inline size_t totalDimension() const { return dimTot_; }
 
-	inline size_t LastBefore() const { return abc_.back().GetBefore(); }
+	inline size_t lastBefore() const { return abc_.back().GetBefore(); }
 
-	inline size_t LastActive() const { return abc_.back().GetActive(); }
+	inline size_t lastDimension() const { return abc_.back().GetActive(); }
 
-	void SetActive(size_t act, size_t k);
+	void setDimension(size_t act, size_t k);
 
-	vector<size_t> GetDimList() const;
+	vector<size_t> dimensions() const;
 
 	void print(ostream& os = cout) const;
 
 	const TensorABC& getabc(size_t k);
 	size_t Before(size_t k) const;
-	size_t Active(size_t k) const;
+	size_t dimension(size_t k) const;
 	size_t After(size_t k) const;
 
 protected:

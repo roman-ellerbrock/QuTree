@@ -18,7 +18,7 @@ namespace SparseMatrixTreeFunctions {
 		for (size_t l = 0; l < node.nChildren(); l++) {
 			const Node& child = node.Down(l);
 			if (!hmat.Active(child)) { continue; }
-			hKet = multAB(hmat[child], hKet, node.ChildIdx());
+			hKet = MatrixTensor(hmat[child], hKet, node.ChildIdx());
 		}
 
 		return Bra.DotProduct(hKet);
@@ -89,9 +89,9 @@ namespace SparseMatrixTreeFunctions {
 			const Node& child = node.Down(k);
 			if (!mats.Active(child)) { continue; }
 			if (switchbool) {
-				multAB(hPhi, mats[child], Phi, true);
+				MatrixTensor(hPhi, mats[child], Phi, true);
 			} else {
-				multAB(Phi, mats[child], hPhi, true);
+				MatrixTensor(Phi, mats[child], hPhi, true);
 			}
 			switchbool = !switchbool;
 		}
@@ -125,7 +125,7 @@ namespace SparseMatrixTreeFunctions {
 			const Node& child = parent.Down(k);
 			size_t childidx = child.ChildIdx();
 			if ((childidx == drop) || (!mats.Active(child))) { continue; }
-			Phi = multAB(mats[child], Phi, childidx);
+			Phi = MatrixTensor(mats[child], Phi, childidx);
 		}
 		return Phi;
 	}

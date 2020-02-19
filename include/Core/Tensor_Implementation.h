@@ -10,7 +10,7 @@ Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
 
 template<typename T>
 Tensor<T>::Tensor(const TensorDim& dim, const bool InitZero)
-	:dim_(dim), coeffs_(new T[dim.GetDimTot()]) {
+	:dim_(dim), coeffs_(new T[dim.totalDimension()]) {
 	if (InitZero) { Zero(); }
 }
 
@@ -31,7 +31,7 @@ Tensor<T>::Tensor(const string& filename)
 template<typename T>
 Tensor<T>::Tensor(const Tensor& old)
 	:Tensor(old.dim_, false) {
-	for (size_t i = 0; i < dim_.GetDimTot(); i++) {
+	for (size_t i = 0; i < dim_.totalDimension(); i++) {
 		coeffs_[i] = old.coeffs_[i];
 	}
 }
@@ -40,7 +40,7 @@ Tensor<T>::Tensor(const Tensor& old)
 template<typename T>
 Tensor<T>::Tensor(const Tensor& old, T factor)
 	:Tensor(old.dim_, false) {
-	for (size_t i = 0; i < dim_.GetDimTot(); i++) {
+	for (size_t i = 0; i < dim_.totalDimension(); i++) {
 		coeffs_[i] = old.coeffs_[i] * factor;
 	}
 }
@@ -81,14 +81,14 @@ Tensor<T>::~Tensor() {
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) const {
-	size_t dimtot = dim_.GetDimTot();
+	size_t dimtot = dim_.totalDimension();
 	assert(i < dimtot);
 	return coeffs_[i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) {
-	size_t dimtot = dim_.GetDimTot();
+	size_t dimtot = dim_.totalDimension();
 	assert(i < dimtot);
 	return coeffs_[i];
 }
@@ -98,43 +98,43 @@ inline T& Tensor<T>::operator()(const size_t i) {
 //////////////////////////////////////////////////////////
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t n) const {
-	size_t dimpart = dim_.LastBefore();
+	size_t dimpart = dim_.lastBefore();
 	assert(i < dimpart);
-	assert(n < dim_.LastActive());
+	assert(n < dim_.lastDimension());
 	return coeffs_[n * dimpart + i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
-	size_t dimpart = dim_.LastBefore();
+	size_t dimpart = dim_.lastBefore();
 	assert(i < dimpart);
-	assert(n < dim_.LastActive());
+	assert(n < dim_.lastDimension());
 	return coeffs_[n * dimpart + i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) {
 	size_t a = dim_.Before(f);
-	size_t b = dim_.Active(f);
-	size_t dimpart = dim_.LastBefore();
+	size_t b = dim_.dimension(f);
+	size_t dimpart = dim_.lastBefore();
 	size_t idx = n * dimpart + k * a * b + j * a + i;
 	assert(i < a);
 	assert(j < b);
-	assert(n < dim_.LastActive());
-	assert(f < dim_.GetOrder());
+	assert(n < dim_.lastDimension());
+	assert(f < dim_.order());
 	return coeffs_[idx];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) const {
 	size_t a = dim_.Before(f);
-	size_t b = dim_.Active(f);
-	size_t dimpart = dim_.LastBefore();
+	size_t b = dim_.dimension(f);
+	size_t dimpart = dim_.lastBefore();
 	size_t idx = n * dimpart + k * a * b + j * a + i;
 	assert(i < a);
 	assert(j < b);
-	assert(n < dim_.LastActive());
-	assert(f < dim_.GetOrder());
+	assert(n < dim_.lastDimension());
+	assert(f < dim_.order());
 	return coeffs_[idx];
 }
 
@@ -144,11 +144,11 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 	const size_t j, const size_t beh, const size_t mode1, const size_t mode2,
 	const size_t n) const {
 	assert(mode1 < mode2);
-	assert(mode2 < dim_.GetOrder());
-	size_t dimpart = dim_.LastBefore();
+	assert(mode2 < dim_.order());
+	size_t dimpart = dim_.lastBefore();
 	size_t before = dim_.Before(mode1);
-	size_t active1 = dim_.Active(mode1);
-	size_t active2 = dim_.Active(mode2);
+	size_t active1 = dim_.dimension(mode1);
+	size_t active2 = dim_.dimension(mode2);
 	size_t before2 = dim_.Before(mode2);
 	size_t idx = n * dimpart + before2 * active2 * beh + before2 * j +
 		mid * before * active1 + before * i + bef;
@@ -156,7 +156,7 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 	assert(bef < before);
 	assert(i < active1);
 	assert(j < active2);
-	assert(n < dim_.LastActive());
+	assert(n < dim_.lastDimension());
 	return coeffs_[idx];
 }
 
@@ -165,8 +165,8 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 //////////////////////////////////////////////////////////
 template<typename T>
 void Tensor<T>::print(ostream& os) const {
-	for (size_t n = 0; n < dim_.LastActive(); n++) {
-		for (size_t i = 0; i < dim_.LastBefore(); i++)
+	for (size_t n = 0; n < dim_.lastDimension(); n++) {
+		for (size_t i = 0; i < dim_.lastBefore(); i++)
 			os << (*this)(i, n) << " ";
 		os << endl;
 	}
@@ -186,7 +186,7 @@ void Tensor<T>::Write(ostream& os) const {
 	os.write((char *) &size, sizeof(size));
 
 	// Write the Coefficients
-	for (size_t i = 0; i < dim_.GetDimTot(); i++) {
+	for (size_t i = 0; i < dim_.totalDimension(); i++) {
 		T Coeff_now = operator()(i);
 		os.write((char *) &Coeff_now, size);
 	}
@@ -222,7 +222,7 @@ void Tensor<T>::Read(istream& is) {
 
 	// Read the coefficients
 
-	for (size_t i = 0; i < dim_.GetDimTot(); i++) {
+	for (size_t i = 0; i < dim_.totalDimension(); i++) {
 		T Coeff_now;
 		is.read((char *) &Coeff_now, size);
 		operator()(i) = Coeff_now;
@@ -241,39 +241,39 @@ void Tensor<T>::Read(const string& filename) {
 
 template<typename T>
 void Tensor<T>::operator+=(const Tensor& A) {
-	assert(A.Dim().GetDimTot() == Dim().GetDimTot());
-	for (size_t i = 0; i < A.Dim().GetDimTot(); i++) {
+	assert(A.Dim().totalDimension() == Dim().totalDimension());
+	for (size_t i = 0; i < A.Dim().totalDimension(); i++) {
 		(*this)(i) += A(i);
 	}
 }
 
 template<typename T>
 void Tensor<T>::operator-=(const Tensor& A) {
-	assert(A.Dim().GetDimTot() == Dim().GetDimTot());
-	for (size_t i = 0; i < A.Dim().GetDimTot(); i++) {
+	assert(A.Dim().totalDimension() == Dim().totalDimension());
+	for (size_t i = 0; i < A.Dim().totalDimension(); i++) {
 		(*this)(i) -= A(i);
 	}
 }
 
 template<typename T>
 void Tensor<T>::operator*=(T a) {
-	for (size_t i = 0; i < Dim().GetDimTot(); i++) {
+	for (size_t i = 0; i < Dim().totalDimension(); i++) {
 		operator()(i) = a * operator()(i);
 	}
 }
 
 template<typename T>
 void Tensor<T>::operator/=(T a) {
-	for (size_t i = 0; i < Dim().GetDimTot(); i++) {
+	for (size_t i = 0; i < Dim().totalDimension(); i++) {
 		operator()(i) = operator()(i) / a;
 	}
 }
 
 template<typename T>
 Tensor<T> Tensor<T>::coeffprod(const Tensor<T>& A, const Tensor<T>& B) {
-	assert(A.Dim().GetDimTot() == B.Dim().GetDimTot());
+	assert(A.Dim().totalDimension() == B.Dim().totalDimension());
 	Tensor C(A.Dim());
-	for (size_t i = 0; i < A.Dim().GetDimTot(); i++) {
+	for (size_t i = 0; i < A.Dim().totalDimension(); i++) {
 		C(i) = A(i) * B(i);
 	}
 	return C;
@@ -287,16 +287,16 @@ Tensor<T> Tensor<T>::AdjustDimensions(const TensorDim& newTDim) const {
 	// Increase the dimensions of the Tensor from old TensorDim
 	// to new TensorDim 
 
-	assert(newTDim.GetOrder() == dim_.GetOrder());
+	assert(newTDim.order() == dim_.order());
 	// Increase the active_ modes
 	Tensor<T> Acoeff(*this);
-	for (size_t k = 0; k < dim_.GetOrder(); k++) {
-		size_t act = newTDim.Active(k);
+	for (size_t k = 0; k < dim_.order(); k++) {
+		size_t act = newTDim.dimension(k);
 		Acoeff = Acoeff.AdjustActiveDim(act, k);
 	}
 
 	// Increase the number of Tensors
-	size_t ntens = newTDim.LastActive();
+	size_t ntens = newTDim.lastDimension();
 	Acoeff = Acoeff.AdjustStateDim(ntens);
 
 	return Acoeff;
@@ -308,19 +308,19 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	// If the new active_ is smaller, the norm of the tensors is
 	// not conserved.
 
-	assert(mode < dim_.GetOrder());
+	assert(mode < dim_.order());
 
 	// Create a new Tensor with the adjusted dim_
-	vector<size_t> dimlist = dim_.GetDimList();
+	vector<size_t> dimlist = dim_.dimensions();
 	dimlist[mode] = active;
 	TensorDim newTDim(dimlist);
 	Tensor<T> newT(newTDim);
 
 	// Copy the coefficients
 	size_t before = dim_.Before(mode);
-	size_t after = dim_.After(mode) / dim_.LastActive();
-	size_t nstates = dim_.LastActive();
-	size_t minactive = min(active, dim_.Active(mode));
+	size_t after = dim_.After(mode) / dim_.lastDimension();
+	size_t nstates = dim_.lastDimension();
+	size_t minactive = min(active, dim_.dimension(mode));
 	for (size_t n = 0; n < nstates; n++) {
 		for (size_t l = 0; l < after; l++) {
 			for (size_t j = 0; j < minactive; j++) {
@@ -336,13 +336,13 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 // Adjust the size of Tensor 
 template<typename T>
 Tensor<T> Tensor<T>::AdjustStateDim(size_t n) const {
-	return AdjustActiveDim(n, Dim().GetLastIdx());
+	return AdjustActiveDim(n, Dim().lastIdx());
 }
 
 template<typename T>
 void Tensor<T>::Reshape(const TensorDim& new_dim) {
 	/// Check that total size is the same
-	assert(dim_.GetDimTot() == new_dim.GetDimTot());
+	assert(dim_.totalDimension() == new_dim.totalDimension());
 	dim_ = new_dim;
 }
 
@@ -353,7 +353,7 @@ template<typename T>
 T Tensor<T>::singleDotProduct(const Tensor& A, size_t n, size_t m) const {
 	T result = 0;
 #pragma omp parallel for reduction(+: result)
-	for (size_t i = 0; i < A.Dim().LastBefore(); i++) {
+	for (size_t i = 0; i < A.Dim().lastBefore(); i++) {
 		result += conjugate(operator()(i, n)) * A(i, m);
 	}
 	return result;
@@ -364,10 +364,10 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 	TensorDim tdima(A.Dim());
 	// Every tensor can have different amount of states but same dimpart
 
-	size_t nmax = tdima.LastActive();
-	size_t mmax = dim_.LastActive();
-	size_t npart = dim_.LastBefore();
-	assert(tdima.LastBefore() == npart);
+	size_t nmax = tdima.lastDimension();
+	size_t mmax = dim_.lastDimension();
+	size_t npart = dim_.lastBefore();
+	assert(tdima.lastBefore() == npart);
 
 	Matrix<T> S(mmax, nmax);
 #pragma omp parallel for
@@ -385,7 +385,7 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 
 template<typename T>
 void Tensor<T>::Zero() {
-	for (size_t i = 0; i < dim_.GetDimTot(); i++)
+	for (size_t i = 0; i < dim_.totalDimension(); i++)
 		coeffs_[i] = 0;
 }
 
@@ -397,12 +397,12 @@ T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 	TensorDim tdima(A.Dim());
 	TensorDim tdimb(B.Dim());
 
-	size_t nmax = tdima.LastActive();
-	size_t mmax = tdimb.LastActive();
-	size_t npart = tdima.LastBefore();
+	size_t nmax = tdima.lastDimension();
+	size_t mmax = tdimb.lastDimension();
+	size_t npart = tdima.lastBefore();
 
 	// Every tensor can have different amount of states but same dimpart
-	assert(npart == tdimb.LastBefore());
+	assert(npart == tdimb.lastBefore());
 	assert(n < nmax);
 	assert(m < mmax);
 
@@ -463,10 +463,10 @@ template<typename T>
 Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorDim& tdim_a(A.Dim());
 	const TensorDim& tdim_b(A.Dim());
-	assert(k < tdim_a.GetOrder());
-	assert(k < tdim_b.GetOrder());
-	size_t active1 = tdim_a.Active(k);
-	size_t active2 = tdim_b.Active(k);
+	assert(k < tdim_a.order());
+	assert(k < tdim_b.order());
+	size_t active1 = tdim_a.dimension(k);
+	size_t active2 = tdim_b.dimension(k);
 	Matrix<T> S(active1, active2);
 	mHoleProduct(S, A, B, k);
 	return S;
@@ -476,13 +476,13 @@ template<typename T>
 void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorDim& tdim_a(A.Dim());
 	const TensorDim& tdim_b(A.Dim());
-	assert(k < tdim_a.GetOrder());
-	assert(k < tdim_b.GetOrder());
+	assert(k < tdim_a.order());
+	assert(k < tdim_b.order());
 	size_t before = tdim_a.Before(k);
 	size_t after = tdim_a.After(k);
-	size_t active1 = tdim_a.Active(k);
-	size_t active2 = tdim_b.Active(k);
-	assert(tdim_a.GetDimTot() / active1 == tdim_b.GetDimTot() / active2);
+	size_t active1 = tdim_a.dimension(k);
+	size_t active2 = tdim_b.dimension(k);
+	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
 	TensorHoleProduct(S, A, B, before, active1, active2, after);
 }
 
@@ -525,8 +525,8 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 					Cidx = j + kpreidxC;
 					Aidx = l * activeB + j; //TODO: why is this declared twice?
 					Aidx = l * activeC + j;
-//					assert(Cidx < C.Dim().GetDimTot());
-//					assert(Bidx < B.Dim().GetDimTot());
+//					assert(Cidx < C.Dim().totalDimension());
+//					assert(Bidx < B.Dim().totalDimension());
 //					assert(Aidx < A.Dim1()*A.Dim2());
 					/// C(1, j, k) += A(j, l) * B(1, l, k)
 					C[Cidx] += A[Aidx] * B[Bidx];
@@ -547,8 +547,8 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 					for (size_t i = 0; i < before; ++i) {
 						Cidx = jpreidx + i;
 						Bidx = lpreidx + i;
-//						assert(Cidx < C.Dim().GetDimTot());
-//						assert(Bidx < B.Dim().GetDimTot());
+//						assert(Cidx < C.Dim().totalDimension());
+//						assert(Bidx < B.Dim().totalDimension());
 //						assert(Aidx < A.Dim1()*A.Dim2());
 						/// C(i, j, k) += A(j, l) * B(i, l, k)
 						C[Cidx] += A[Aidx] * B[Bidx];
@@ -613,7 +613,7 @@ void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 }
 
 template<typename T, typename U>
-void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
+void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
 	TensorDim tdim(B.Dim());
 	TensorDim tdimC(C.Dim());
 
@@ -622,22 +622,22 @@ void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, b
 	size_t active1 = A.Dim1();
 	size_t active2 = A.Dim2();
 
-	assert(mode < tdim.GetOrder());
-	assert(A.Dim2() == tdim.Active(mode));
-	assert(A.Dim1() == tdimC.Active(mode));
+	assert(mode < tdim.order());
+	assert(A.Dim2() == tdim.dimension(mode));
+	assert(A.Dim1() == tdimC.dimension(mode));
 
 	MatrixTensor(C, A, B, before, active1, active2, after, zero);
 }
 
 template<typename T, typename U>
-Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
+Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorDim& tdim(B.Dim());
-	assert(mode < tdim.GetOrder());
+	assert(mode < tdim.order());
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
 		size_t after = tdim.After(mode);
-		size_t active = tdim.Active(mode);
+		size_t active = tdim.dimension(mode);
 		size_t before = tdim.Before(mode);
 		MatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
@@ -649,8 +649,8 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		Tensor<T> C(tdim);
 		size_t after = tdim.After(mode);
 		size_t before = tdim.Before(mode);
-		assert(active1 == C.Dim().Active(mode));
-		assert(active2 == B.Dim().Active(mode));
+		assert(active1 == C.Dim().dimension(mode));
+		assert(active2 == B.Dim().dimension(mode));
 		cout << "non-quadratic mattensor implemented but tested only once so far.\n";
 		MatrixTensor(C, A, B, before, active1, active2, after, false);
 		return C;
@@ -660,15 +660,14 @@ Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 template<typename T, typename U>
 Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorDim& tdim(B.Dim());
-	assert(mode < tdim.GetOrder());
+	assert(mode < tdim.order());
 	assert(mode >= 0);
-	assert(A.Dim1() == B.Dim().Active(mode));
+	assert(A.Dim1() == B.Dim().dimension(mode));
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-//		size_t after = tdim.After(mode) * tdim.LastActive();
 		size_t after = tdim.After(mode);
-		size_t active = tdim.Active(mode);
+		size_t active = tdim.dimension(mode);
 		size_t before = tdim.Before(mode);
 		TMatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
@@ -677,7 +676,6 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t activeB = A.Dim1();
 		TensorDim tdim(B.Dim());
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, A.Dim2());
-//		size_t after = tdim.After(mode) * tdim.LastActive();
 		size_t after = tdim.After(mode);
 		size_t before = tdim.Before(mode);
 		Tensor<T> C(tdim);
@@ -693,14 +691,14 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 	const TensorDim& tdimB(B.Dim());
 	const TensorDim& tdimC(C.Dim());
 
-	const size_t before = tdimB.LastBefore();
-	const size_t active1 = tdimB.LastActive();
-	const size_t active2 = tdimC.LastActive();
+	const size_t before = tdimB.lastBefore();
+	const size_t active1 = tdimB.lastDimension();
+	const size_t active2 = tdimC.lastDimension();
 	const size_t after = 1;
 
 	assert(A.Dim2() == active1);
 	assert(A.Dim1() == active2);
-	assert(before == tdimC.LastBefore());
+	assert(before == tdimC.lastBefore());
 
 	MatrixTensor(C, A, B, before, active1, active2, after, zero);
 }
@@ -708,11 +706,11 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 template<typename T, typename U>
 Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 	const TensorDim& tdim_b(B.Dim());
-	size_t ntensor = tdim_b.LastActive();
+	size_t ntensor = tdim_b.lastDimension();
 	assert(A.Dim2() == ntensor);
 
 	TensorDim tdim_c(tdim_b);
-	tdim_c.SetActive(A.Dim1(), tdim_c.GetLastIdx());
+	tdim_c.setDimension(A.Dim1(), tdim_c.lastIdx());
 	Tensor<T> C(tdim_c);
 	multStateAB(C, A, B);
 	return C;
@@ -721,8 +719,8 @@ Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 template<typename T, typename U>
 void multStateArTB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B) {
 	const TensorDim& tdim(B.Dim());
-	size_t dimpart = tdim.LastBefore();
-	size_t ntensor = tdim.LastActive();
+	size_t dimpart = tdim.lastBefore();
+	size_t ntensor = tdim.lastDimension();
 	for (size_t n = 0; n < ntensor; n++) {
 		size_t B_idx = n * dimpart;
 		for (size_t m = 0; m < ntensor; m++) {
@@ -739,8 +737,8 @@ void multStateArTB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B) {
 template<typename T, typename U>
 Tensor<T> multStateArTB(const Matrix<U>& A, const Tensor<T>& B) {
 	const TensorDim& tdim(B.Dim());
-	size_t dimpart = tdim.LastBefore();
-	size_t ntensor = tdim.LastActive();
+	size_t dimpart = tdim.lastBefore();
+	size_t ntensor = tdim.lastDimension();
 	assert(A.Dim1() == A.Dim2());
 	assert(A.Dim2() == ntensor);
 
@@ -754,8 +752,8 @@ template<typename T, typename U>
 void multAdd(Tensor<T>& A, const Tensor<T>& B, U coeff) {
 	const TensorDim& tdim = A.Dim();
 	const TensorDim& tdim_2 = A.Dim();
-	size_t dimtot = tdim.GetDimTot();
-	assert(dimtot == tdim_2.GetDimTot());
+	size_t dimtot = tdim.totalDimension();
+	assert(dimtot == tdim_2.totalDimension());
 	for (size_t i = 0; i < dimtot; ++i) {
 		A(i) += coeff * B(i);
 	}
@@ -771,8 +769,8 @@ void GramSchmidt(Tensor<T>& A) {
 	double errorconver = 1e-9;
 
 	TensorDim tdim(A.Dim());
-	size_t ntensor = tdim.LastActive();
-	size_t dimpart = tdim.LastBefore();
+	size_t ntensor = tdim.lastDimension();
+	size_t dimpart = tdim.lastBefore();
 
 	for (size_t n = 0; n < ntensor; n++) {
 		size_t iter = 0;
@@ -845,7 +843,7 @@ Tensor<T> ProjectOut(const Tensor<T>& A,
 	Tensorcd projector = Project(B, A);
 	Tensorcd perp_A(A);
 	const TensorDim& tdim = A.Dim();
-	for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
+	for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 		perp_A(i) -= projector(i);
 	}
 	return perp_A;
@@ -863,7 +861,7 @@ Tensor<complex<double> > ProjectOrthogonal(const Tensor<complex<double> >& A,
 
 template<typename T>
 Tensor<T> conj(Tensor<T> A) {
-	for (size_t i = 0; i < A.Dim().GetDimTot(); ++i) {
+	for (size_t i = 0; i < A.Dim().totalDimension(); ++i) {
 		A[i] = conj(A[i]);
 	}
 	return A;
@@ -891,7 +889,7 @@ istream& operator>>(istream& is, Tensor<T>& A) {
 template<typename T>
 bool operator==(const Tensor<T>& A, const Tensor<T>& B) {
 	if (A.Dim() != B.Dim()) { return false; }
-	for (size_t k = 0; k < A.Dim().GetDimTot(); ++k) {
+	for (size_t k = 0; k < A.Dim().totalDimension(); ++k) {
 		if (A[k] != B[k]) { return false; }
 	}
 	return true;

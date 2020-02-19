@@ -42,7 +42,7 @@ namespace TreeFactory {
 
 		train.SetUp(nullptr);
 		auto& tdim_ = train.TDim();
-		tdim_.SetActive(1, tdim_.GetLastIdx());
+		tdim_.setDimension(1, tdim_.lastIdx());
 		Tree tree;
 		tree.SetRoot(train);
 		tree.ResetLeafModes();
@@ -98,7 +98,7 @@ namespace TreeFactory {
 			}
 		}
 		auto& tdim = nodes.front().TDim();
-		tdim.SetActive(1, tdim.GetLastIdx());
+		tdim.setDimension(1, tdim.lastIdx());
 		Tree tree;
 		tree.SetRoot(nodes.front());
 		tree.ResetLeafModes();

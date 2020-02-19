@@ -50,7 +50,7 @@ SUITE (Operators) {
 		TensorDim tdim(vector<size_t>({2, 1}));
 		Tensorcd A(tdim);
 		A(0) = 1.;
-		Tensorcd XA = multAB(X, A, 0);
+		Tensorcd XA = MatrixTensor(X, A, 0);
 		Tensorcd xA(tdim);
 		x.Apply(ho, xA, A);
 			CHECK_EQUAL(XA, xA);

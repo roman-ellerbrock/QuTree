@@ -118,7 +118,7 @@ public:
 	friend Tensor operator-(const Tensor& A, const Tensor& B)
 	{
 		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().GetDimTot(); i++)
+		for (int i = 0; i < A.Dim().totalDimension(); i++)
 		{
 			C(i) = A(i) - B(i);
 		}
@@ -217,10 +217,10 @@ void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero = true);
 
 template <typename T, typename U>
-void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
 
 template <typename T, typename U>
-Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
+Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
 
 template <typename T, typename U>
 Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);

@@ -4,8 +4,8 @@ namespace Tensor_Extension {
 
 	tuple<Tensorcd, Matrixcd, Vectord> SVD(const Tensorcd& A) {
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.LastBefore();
-		size_t ntensor = tdim.LastActive();
+		size_t dimpart = tdim.lastBefore();
+		size_t ntensor = tdim.lastDimension();
 
 		using namespace Eigen;
 		MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0), dimpart, ntensor);
@@ -77,8 +77,8 @@ namespace Tensor_Extension {
 	template<typename T>
 	Matrix<T> Map(const Tensor<T>& A) {
 		const TensorDim& tdim = A.Dim();
-		size_t ntensor = tdim.LastActive();
-		size_t dimpart = tdim.LastBefore();
+		size_t ntensor = tdim.lastDimension();
+		size_t dimpart = tdim.lastBefore();
 		Matrix<T> M(dimpart, ntensor);
 		for (size_t n = 0; n < ntensor; ++n) {
 			for (size_t i = 0; i < dimpart; ++i) {
@@ -101,7 +101,7 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	void Generate(Tensor<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.Dim().GetDimTot(), gen);
+		Generate_normal(&A[0], A.Dim().totalDimension(), gen);
 	}
 
 	template<typename T>
@@ -126,11 +126,11 @@ namespace Tensor_Extension {
 		// Merge two Tensors into one.
 		const TensorDim& tdim1 = A.Dim();
 		const TensorDim& tdim2 = B.Dim();
-		size_t ntens1 = tdim1.LastActive();
-		size_t ntens2 = tdim2.LastActive();
+		size_t ntens1 = tdim1.lastDimension();
+		size_t ntens2 = tdim2.lastDimension();
 		A = A.AdjustStateDim(ntens1 + ntens2);
 		for (size_t n = 0; n < ntens2; ++n) {
-			for (size_t i = 0; i < tdim1.LastBefore(); ++i) {
+			for (size_t i = 0; i < tdim1.lastBefore(); ++i) {
 				A(i, ntens1 + n) = B(i, n);
 			}
 		}
@@ -141,8 +141,8 @@ namespace Tensor_Extension {
 	void OuterProductAdd(Matrix<T>& M,
 		const Tensor<T>& A, const Tensor<T>& B) {
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.LastBefore();
-		size_t ntensor = tdim.LastActive();
+		size_t dimpart = tdim.lastBefore();
+		size_t ntensor = tdim.lastDimension();
 
 #pragma omp parallel for
 		for (size_t i = 0; i < dimpart; i++) {
@@ -158,7 +158,7 @@ namespace Tensor_Extension {
 	Matrix<T> OuterProduct(const Tensor<T>& A, const Tensor<T>& B) {
 
 		const TensorDim& tdim = A.Dim();
-		size_t dimpart = tdim.LastBefore();
+		size_t dimpart = tdim.lastBefore();
 		Matrix<T> M(dimpart, dimpart);
 		OuterProductAdd(M, A, B);
 		return M;
@@ -191,15 +191,15 @@ namespace Tensor_Extension {
 	template<typename T, typename U>
 	Tensor<T> OldmultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorDim tdim(B.Dim());
-		assert(mode < tdim.GetOrder());
+		assert(mode < tdim.order());
 		assert(A.Dim1() == A.Dim2());
 		assert(A.Dim1() == B.Dim().Active(mode));
 
 		Tensor<T> C(tdim);
-		for (size_t n = 0; n < tdim.LastActive(); n++)
-			for (size_t k = 0; k < tdim.After(mode)/ tdim.LastActive(); k++)
-				for (size_t l = 0; l < tdim.Active(mode); l++)
-					for (size_t j = 0; j < tdim.Active(mode); j++)
+		for (size_t n = 0; n < tdim.lastDimension(); n++)
+			for (size_t k = 0; k < tdim.After(mode)/ tdim.lastDimension(); k++)
+				for (size_t l = 0; l < tdim.dimension(mode); l++)
+					for (size_t j = 0; j < tdim.dimension(mode); j++)
 						for (size_t i = 0; i < tdim.Before(mode); i++) {
 							C(i, j, k, mode, n) += A(j, l) * B(i, l, k, mode, n);
 						}
@@ -212,8 +212,8 @@ namespace Tensor_Extension {
 		// check wether tensordims are equal
 		assert(tdim == B.Dim());
 
-		size_t nstates = tdim.LastActive();
-		size_t active = tdim.Active(k);
+		size_t nstates = tdim.lastDimension();
+		size_t active = tdim.dimension(k);
 		size_t before = tdim.Before(k);
 		size_t behind = tdim.After(k)/nstates;
 		Matrix<T> S(active, active);
@@ -245,9 +245,9 @@ namespace Tensor_Extension {
 		assert(A.Dim2() == B.Dim().getntensor());
 
 		Tensor<T> C(tdim);
-		for (size_t n = 0; n < tdim.LastActive(); n++)
-			for (size_t m = 0; m < tdim.LastActive(); m++)
-				for (size_t i = 0; i < tdim.LastBefore(); i++)
+		for (size_t n = 0; n < tdim.lastDimension(); n++)
+			for (size_t m = 0; m < tdim.lastDimension(); m++)
+				for (size_t i = 0; i < tdim.lastBefore(); i++)
 					C(i, m) += A(m, n) * B(i, n);
 
 		return C;

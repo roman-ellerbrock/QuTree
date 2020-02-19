@@ -90,7 +90,7 @@ public:
 	size_t nLeaves() const { return root_.nLeaves(); }
 
 	/// Number of states
-	size_t nStates() const { return TopNode().TDim().LastActive(); }
+	size_t nStates() const { return TopNode().TDim().lastDimension(); }
 
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.

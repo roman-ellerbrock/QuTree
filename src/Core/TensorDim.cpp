@@ -50,12 +50,12 @@ void TensorDim::Write(ostream& os) const {
 	os.write("TDIM", 4);
 
 	// Write dof
-	int32_t f_write = GetOrder();
+	int32_t f_write = order();
 	os.write((char *) &f_write, sizeof(int32_t));
 
 	// Write active_-dims
-	for (size_t k = 0; k < GetOrder(); k++) {
-		int32_t act = Active(k);
+	for (size_t k = 0; k < order(); k++) {
+		int32_t act = dimension(k);
 		os.write((char *) &act, sizeof(int32_t));
 	}
 }
@@ -90,48 +90,48 @@ void TensorDim::ReadDim(istream& is) {
 	(*this) = TensorDim(dim_read);
 }
 
-vector<size_t> TensorDim::GetDimList() const {
+vector<size_t> TensorDim::dimensions() const {
 	vector<size_t> dimlist;
-	for (size_t i = 0; i < GetOrder(); i++) {
-		dimlist.push_back(Active(i));
+	for (size_t i = 0; i < order(); i++) {
+		dimlist.push_back(dimension(i));
 	}
 	return dimlist;
 }
 
 const TensorABC& TensorDim::getabc(size_t k) {
-	assert(k < GetOrder());
+	assert(k < order());
 	return abc_[k];
 }
 
-size_t TensorDim::Active(size_t k) const {
-	assert(k < GetOrder());
+size_t TensorDim::dimension(size_t k) const {
+	assert(k < order());
 	return abc_[k].GetActive();
 }
 
 size_t TensorDim::Before(size_t k) const {
-	assert(k < GetOrder());
+	assert(k < order());
 	return abc_[k].GetBefore();
 }
 
 size_t TensorDim::After(size_t k) const {
-	assert(k < GetOrder());
+	assert(k < order());
 	return abc_[k].GetAfter();
 }
 
-void TensorDim::SetActive(size_t act, size_t k) {
-	vector<size_t> dim = GetDimList();
+void TensorDim::setDimension(size_t act, size_t k) {
+	vector<size_t> dim = dimensions();
 	assert(k < dim.size());
 	dim[k] = act;
 	Initialize(dim);
 }
 
 void TensorDim::print(ostream& os) const {
-	if (GetOrder() > 0) {
+	if (order() > 0) {
 		os << "(";
-		for (size_t k = 0; k < GetOrder() - 1; ++k) {
-			os << Active(k) << ", ";
+		for (size_t k = 0; k < order() - 1; ++k) {
+			os << dimension(k) << ", ";
 		}
-		os << Active(GetOrder() - 1);
+		os << dimension(order() - 1);
 		os <<  ")" << endl;
 	}
 }
@@ -147,9 +147,9 @@ istream& operator>>(istream& is, TensorDim& tdim) {
 }
 
 bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
-	if (tdima.GetOrder() != tdimb.GetOrder()) { return false; }
-	for (size_t k = 0; k < tdima.GetOrder(); k++) {
-		if (tdima.Active(k) != tdimb.Active(k)) { return false; }
+	if (tdima.order() != tdimb.order()) { return false; }
+	for (size_t k = 0; k < tdima.order(); k++) {
+		if (tdima.dimension(k) != tdimb.dimension(k)) { return false; }
 	}
 	return true;
 }

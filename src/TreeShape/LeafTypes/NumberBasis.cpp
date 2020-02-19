@@ -28,7 +28,7 @@ void NumberBasis::Initialize(double occ,
 
 void NumberBasis::InitSPF(Tensorcd& phi) const {
 	TensorDim tdim(phi.Dim());
-	int nstates = tdim.LastActive();
+	int nstates = tdim.lastDimension();
 
 	if (fermion_ && nstates > 2) {
 		cout << "Error: there can be only two fermionic states\n"
@@ -42,8 +42,8 @@ void NumberBasis::InitSPF(Tensorcd& phi) const {
 	}
 
 	// soft check for bottom layer_
-	assert(tdim.GetOrder() == 2);
-	assert(tdim.LastBefore() == dim_);
+	assert(tdim.order() == 2);
+	assert(tdim.lastBefore() == dim_);
 	assert(startOcc_ - minOcc_ < dim_);
 
 	// set ground state_ wf
@@ -69,7 +69,7 @@ void NumberBasis::InitSPF(Tensorcd& phi) const {
 Tensorcd NumberBasis::ToGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	TensorDim tdim = phi.Dim();
-	assert(tdim.GetOrder() == 2);
+	assert(tdim.order() == 2);
 
 	return phi;
 }
@@ -77,7 +77,7 @@ Tensorcd NumberBasis::ToGrid(const Tensorcd& phi) const {
 Tensorcd NumberBasis::FromGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	TensorDim tdim = phi.Dim();
-	assert(tdim.GetOrder() == 2);
+	assert(tdim.order() == 2);
 
 	return phi;
 }
@@ -85,12 +85,12 @@ Tensorcd NumberBasis::FromGrid(const Tensorcd& phi) const {
 Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi) const {
 	TensorDim tdim = phi.Dim();
 	// check that its really a bottom-layer_ tensor
-	assert(tdim.GetOrder() == 2);
+	assert(tdim.order() == 2);
 
 	Tensorcd psi(phi.Dim());
 
-	int nstates = tdim.LastActive();
-	int active = tdim.LastBefore();
+	int nstates = tdim.lastDimension();
+	int active = tdim.lastBefore();
 
 	assert(active == dim_);
 
@@ -106,8 +106,8 @@ Tensorcd NumberBasis::ApplyP(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	Tensorcd psi(tdim, false);
 
-	size_t prim = tdim.LastBefore();
-	size_t states = tdim.LastActive();
+	size_t prim = tdim.lastBefore();
+	size_t states = tdim.lastDimension();
 
 	for (size_t n = 0; n < states; n++) {
 		psi[n * prim] = 0.0;
@@ -123,8 +123,8 @@ Tensorcd NumberBasis::applyX(const Tensorcd& phi) const {
 	const TensorDim& tdim = phi.Dim();
 	Tensorcd psi(tdim, false);
 
-	size_t prim = tdim.LastBefore();
-	size_t states = tdim.LastActive();
+	size_t prim = tdim.lastBefore();
+	size_t states = tdim.lastDimension();
 
 	for (int n = 0; n < states; n++) {
 		psi[n * prim + prim - 1] = 0.0;

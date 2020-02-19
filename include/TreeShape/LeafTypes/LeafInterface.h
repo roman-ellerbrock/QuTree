@@ -14,7 +14,7 @@ public:
 		const TensorDim& dim = A.Dim();
 		Tensorcd B(dim);
 		InitSPF(B);
-		for (size_t i = 0; i < dim.GetDimTot(); ++i) {
+		for (size_t i = 0; i < dim.totalDimension(); ++i) {
 			A(i) = abs(B(i));
 		}
 	}

@@ -33,8 +33,8 @@ Tensorcd create_tensor() {
 Tensorcd fill_tensor(Tensorcd A){
     cout << "\nfill_tensor:\n" << endl;
     // Loop through complete super-index list
-    cout << A.Dim().GetDimTot() << endl;
-    for (size_t i = 0; i < A.Dim().GetDimTot(); i++) {
+    cout << A.Dim().totalDimension() << endl;
+    for (size_t i = 0; i < A.Dim().totalDimension(); i++) {
         A(i) = i * 0.01;
     }
     cout << "A=" << endl;
@@ -42,8 +42,8 @@ Tensorcd fill_tensor(Tensorcd A){
 
     // Loop through ntensor, then lower-index list
     Tensorcd B(A.Dim());
-    for (size_t n = 0; n < A.Dim().LastActive(); n++) {
-        for (size_t j = 0; j < A.Dim().LastBefore(); j++) {
+    for (size_t n = 0; n < A.Dim().lastDimension(); n++) {
+        for (size_t j = 0; j < A.Dim().lastBefore(); j++) {
             B(j, n) = (n * j + j * 2) * 0.002;
         }
     }
@@ -69,13 +69,13 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
 
 void hole_product(Tensorcd A, const Tensorcd& B) {
     cout << "\nhole_product:\n" << endl;
-    for (size_t k = 0; k < A.Dim().GetOrder(); k++) {
+    for (size_t k = 0; k < A.Dim().order(); k++) {
         Matrixcd h = mHoleProduct(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
         cout << "Trace: " << h.Trace() << endl;
         // Multiply
-		Tensorcd C = multAB(h, A, k);
+		Tensorcd C = MatrixTensor(h, A, k);
 	}
 }
 
@@ -84,8 +84,8 @@ void reshape (Tensorcd A) {
     cout << "A.Dim() = " << endl;
     A.Dim().print();
     TensorDim tdim({2, 3, 2, 2});
-    assert(tdim.LastBefore() == A.Dim().LastBefore());
-    cout << "d = " << tdim.LastBefore() << endl;
+    assert(tdim.lastBefore() == A.Dim().lastBefore());
+    cout << "d = " << tdim.lastBefore() << endl;
     A.Reshape(tdim);
     cout << "A.Dim() = " << endl;
     A.Dim().print();

@@ -174,7 +174,7 @@ void Node::info(ostream& os) const {
 void Node::Write(ostream& os) const {
 	const TensorDim& tdim = TDim();
 	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
-	os << tdim.LastActive() << "\t-" << nChildren() << "\n";
+	os << tdim.lastDimension() << "\t-" << nChildren() << "\n";
 	for (size_t i = 0; i < nChildren(); i++) {
 		down_[i]->Write(os);
 	}
@@ -346,12 +346,12 @@ void Node::UpdateTDim() {
 		for (int i = 0; i < nChildren(); i++) {
 			const Node& child = Down(i);
 			const TensorDim& tdimchild = child.TDim();
-			dim_new.push_back(tdimchild.LastActive());
+			dim_new.push_back(tdimchild.lastDimension());
 		}
 	}
 
 	// Create a new TensorDim from the dim_-vector and ntensor
-	dim_new.push_back(tensorDim_.LastActive());
+	dim_new.push_back(tensorDim_.lastDimension());
 	tensorDim_ = TensorDim(dim_new);
 }
 

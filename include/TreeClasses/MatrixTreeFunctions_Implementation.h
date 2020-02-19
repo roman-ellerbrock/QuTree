@@ -16,10 +16,10 @@ namespace MatrixTreeFunctions {
 		if (!node.IsBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.Down(k);
-				Ket = multAB(S[child], Ket, k);
+				Ket = MatrixTensor(S[child], Ket, k);
 			}
 		}
-		size_t last = node.TDim().GetLastIdx();
+		size_t last = node.TDim().lastIdx();
 		mHoleProduct(S[node], Bra, Ket, last);
 
 	}
@@ -56,14 +56,12 @@ namespace MatrixTreeFunctions {
 			for (size_t k = 0; k < parent.nChildren(); ++k) {
 				if (k != child_idx) {
 					const Node& child = parent.Down(k);
-					Ket = multAB(S[child], Ket, k);
+					Ket = MatrixTensor(S[child], Ket, k);
 				}
 			}
 		}
 
-		if (!parent.IsToplayer()) {
-			Ket = multStateAB(Rho[parent], Ket);
-		}
+		Ket = multStateAB(Rho[parent], Ket);
 
 		mHoleProduct(Rho[node], Bra, Ket, child_idx);
 	}
@@ -73,20 +71,20 @@ namespace MatrixTreeFunctions {
 		const Tree& tree, const MatrixTree<T> *S_opt = nullptr) {
 		if (S_opt != nullptr) {
 			assert(S_opt->size() == tree.nNodes());
+
 		}
 		assert(Rho.size() == tree.nNodes());
 		assert(Psi.size() == tree.nNodes());
 		assert(Chi.size() == tree.nNodes());
 
 		// @TODO: Use reverse iterator
-//		for (int n = (int) tree.nNodes() - 2; n >= 0; --n) {
 		for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 			const Node& node = *it;
 			if (!node.IsToplayer()) {
 				const Node& parent = node.Up();
 				ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
 			} else {
-				Rho[node] = IdentityMatrix<T>(node.TDim().LastActive());
+				Rho[node] = IdentityMatrix<T>(node.TDim().lastDimension());
 			}
 		}
 	}

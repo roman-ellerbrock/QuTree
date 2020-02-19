@@ -25,8 +25,8 @@ Tensorcd SpinGroup::ApplyKin(const Tensorcd& A) const {
 
 void SpinGroup::InitSPF(Tensorcd& A) const {
 	const TensorDim& tdim = A.Dim();
-	size_t ntensor = tdim.LastActive();
-	size_t dimpart = tdim.LastBefore();
+	size_t ntensor = tdim.lastDimension();
+	size_t dimpart = tdim.lastBefore();
 
 	using namespace std::chrono;
 	auto seed = system_clock::now().time_since_epoch().count();
