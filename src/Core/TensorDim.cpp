@@ -1,19 +1,35 @@
 #include"Core/TensorDim.h"
 
-TensorABC::TensorABC(size_t k, vector<size_t> dim)
-	: before_(1), active_(1), after_(1) {
-	assert(k < dim.size());
-
-	before_ = 1;
-	active_ = dim[k];
-	after_ = 1;
-
+size_t ContractDimensionsBefore(const vector<size_t>& dim, size_t k) {
+	size_t bef = 1;
 	for (size_t i = 0; i < k; i++) {
-		before_ *= dim[i];
+		bef *= dim[i];
 	}
+	return bef;
+}
+
+vector<size_t> ContractDimensionsBefore(const vector<size_t>& dim) {
+	vector<size_t> befores(dim.size());
+	for (size_t k = 0; k < dim.size(); ++k) {
+		befores[k] = ContractDimensionsBefore(dim, k);
+	}
+	return befores;
+}
+
+size_t ContractDimensionsAfter(const vector<size_t>& dim, size_t k) {
+	size_t aft = 1;
 	for (size_t i = k + 1; i < dim.size(); i++) {
-		after_ *= dim[i];
+		 aft *= dim[i];
 	}
+	return aft;
+}
+
+vector<size_t> ContractDimensionsAfter(const vector<size_t>& dim) {
+	vector<size_t> afters(dim.size());
+	for (size_t k = 0; k < dim.size(); ++k) {
+		afters[k] = ContractDimensionsAfter(dim, k);
+	}
+	return afters;
 }
 
 TensorDim::TensorDim(const vector<size_t>& dim)
@@ -37,12 +53,13 @@ TensorDim::TensorDim(const string& file)
 
 void TensorDim::Initialize(const vector<size_t>& dim) {
 	assert(!dim.empty());
-	abc_.clear();
-	for (size_t i = 0; i < dim.size(); i++) {
-		abc_.emplace_back(TensorABC(i, dim));
+	resize(dim.size());
+	for (size_t k = 0; k < dim.size(); ++k) {
+		this->operator[](k) = dim[k];
 	}
-	const TensorABC& cdim = abc_.back();
-	dimTot_ = cdim.GetActive() * cdim.GetBefore();
+	after_ = ContractDimensionsAfter(dim);
+	before_ = ContractDimensionsBefore(dim);
+	totalDimension_ = after_.front() * front();
 }
 
 void TensorDim::Write(ostream& os) const {
@@ -98,24 +115,18 @@ vector<size_t> TensorDim::dimensions() const {
 	return dimlist;
 }
 
-const TensorABC& TensorDim::getabc(size_t k) {
-	assert(k < order());
-	return abc_[k];
-}
-
 size_t TensorDim::dimension(size_t k) const {
-	assert(k < order());
-	return abc_[k].GetActive();
+	return operator[](k);
 }
 
 size_t TensorDim::before(size_t k) const {
 	assert(k < order());
-	return abc_[k].GetBefore();
+	return before_[k];
 }
 
 size_t TensorDim::after(size_t k) const {
 	assert(k < order());
-	return abc_[k].GetAfter();
+	return after_[k];
 }
 
 void TensorDim::setDimension(size_t act, size_t k) {
