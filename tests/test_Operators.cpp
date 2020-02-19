@@ -2,29 +2,30 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "Operators/SingleParticleOperator.h"
-#include "Operators/SingleParticleOperatorFunction.h"
-#include "Operators/SingleParticleOperatorMatrix.h"
-#include "Operators/MultiParticleOperator.h"
-#include "Operators/SumOfProductsOperator.h"
-#include "TensorTreeBasis/LeafTypes/HO_Basis.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
+#include "LeafOperator.h"
+#include "LeafMatrix.h"
+#include "MultiLeafOperator.h"
+#include "HO_Basis.h"
+#include "TreeShape/Tree.h"
+#include "TreeShape/TreeFactory.h"
 
 SUITE (Operators) {
 	class HelperFactory {
 	public:
-		HelperFactory() = default;
+		HelperFactory() {
+			Initialize();
+		}
 		~HelperFactory() = default;
-		FactorMatrixcd X;
-		SPOMcd x;
+		Matrixcd X;
+		LeafMatrixcd x;
 		HO_Basis ho;
 
 		void Initialize() {
 			// Generate an bit-flip operator and Fmatrix
-			X = FactorMatrixcd(2, 1);
+			X = Matrixcd(2, 2);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;
-			x = SPOMcd(X);
+			x = LeafMatrixcd(X);
 			ho = HO_Basis(10);
 		}
 	};
@@ -32,7 +33,7 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, SPO_HO) {
 		HO_Basis ho(10);
 		ho.Initialize(1., 0., 0., 1.);
-		TensorDim tdim({10}, 1);
+		TensorShape tdim(vector<size_t>({10, 1}));
 		Tensorcd A(tdim);
 		ho.InitSPF(A);
 		auto xA = ho.applyX(A);
@@ -45,32 +46,30 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, SPO_SPOM) {
 		// Check that applying a Matrix to a tensor
 		// or the corresponding SPOM does the same
-		Initialize();
 
-		TensorDim tdim({3, 2, 4}, 1);
+		TensorShape tdim(vector<size_t>({2, 1}));
 		Tensorcd A(tdim);
 		A(0) = 1.;
-		Tensorcd XA = X * A;
+		Tensorcd XA = MatrixTensor(X, A, 0);
 		Tensorcd xA(tdim);
 		x.Apply(ho, xA, A);
 			CHECK_EQUAL(XA, xA);
 	}
 
 	TEST_FIXTURE (HelperFactory, MPO_1) {
-		Initialize();
-		MPOcd M(x, 1);
+		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
-		TTBasis basis(4, 2, 2);
-		TensorTreecd Chi(basis);
-		Chi.Generate(basis, gen, false);
-		auto Psi = M.Apply(Chi, basis);
+		Tree tree = TreeFactory::BalancedTree(4, 2, 2);
+		TensorTreecd Chi(tree);
+		Chi.FillRandom(gen, tree, false);
+		auto Psi = M.Apply(Chi, tree);
 
 		/// Checking
-		string filename("MPO.Apply.dat");
+		string filename("MLO.Apply.dat");
 		Psi.Write(filename);
 		TensorTreecd Xi(filename);
 			CHECK_EQUAL(Xi.size(), Psi.size());
-		for (const Node& node : basis) {
+		for (const Node& node : tree) {
 				CHECK_EQUAL(Xi[node], Psi[node]);
 		}
 	}

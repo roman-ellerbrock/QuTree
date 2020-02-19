@@ -9,14 +9,14 @@ endif()
 include_directories(${UTPP_INCLUDE_DIRS})
 
 set(QDlib_tests
-    test_Matrix.cpp
-    test_Tensor.cpp
-    tests.cpp
-    test_TensorTree.cpp
-    test_Operators.cpp
-    test_FactorMatrixTree.cpp
-    test_SparseFactorMatrixTree.cpp
-    test_TensorTreeBasis.cpp)
+        test_Matrix.cpp
+        test_Tensor.cpp
+        tests.cpp
+        test_TensorTree.cpp
+        test_Operators.cpp
+        test_TensorTreeBasis.cpp
+        test_MatrixTree.cpp
+        test_SparseMatrixTree.cpp)
 
 add_executable(TestQDlib ${QDlib_tests})
 target_link_libraries(TestQDlib QDlib)

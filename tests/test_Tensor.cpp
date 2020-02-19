@@ -7,21 +7,25 @@ using namespace std;
 SUITE (Tensor) {
 	class TensorFactory {
 	public:
+		TensorFactory() {
+			CreateTensors();
+		}
+
 		Tensorcd A;
 		Tensorcd B;
 
 		void CreateTensorA() {
-			TensorDim tdim({2, 3, 4}, 2);
+			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 			A = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
+			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 				A(i) = i;
 			}
 		}
 
 		void CreateTensorB() {
-			TensorDim tdim({2, 3, 4}, 2);
+			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 			B = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
+			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 				B(i) = i % 3;
 			}
 		}
@@ -33,9 +37,9 @@ SUITE (Tensor) {
 	};
 
 	Tensorcd NewTensor() {
-		TensorDim tdim({2, 3, 4}, 2);
+		TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 		Tensorcd tmp(tdim);
-		for (size_t i = 0; i < tdim.GetDimTot(); ++i) {
+		for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 			tmp(i) = i;
 		}
 		return tmp;
@@ -45,9 +49,9 @@ SUITE (Tensor) {
 
 	TEST (TensorDim_FileIO) {
 		/// Create a TensorDim, write to file, read in again
-		TensorDim tdim({3, 4, 5}, 2);
+		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 		tdim.Write("tdim.dat");
-		TensorDim odim("tdim.dat");
+		TensorShape odim("tdim.dat");
 		bool same = odim == tdim;
 			CHECK_EQUAL(same, true);
 	}
@@ -55,15 +59,14 @@ SUITE (Tensor) {
 	TEST (TensorDim_Getters) {
 		/// Check Getters and Initialization
 		bool success = true;
-		TensorDim tdim({3, 4, 5}, 2);
-		if (tdim.GetDimTot() != 3 * 4 * 5 * 2) { success = false; }
-		if (tdim.GetDimPart() != 3 * 4 * 5) { success = false; }
-		if (tdim.GetNumTensor() != 2) { success = false; }
-			CHECK_EQUAL(success, true);
+		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
+			CHECK_EQUAL(3 * 4 * 5 * 2, tdim.totalDimension());
+			CHECK_EQUAL(3 * 4 * 5, tdim.lastBefore());
+			CHECK_EQUAL(2, tdim.lastDimension());
 	}
 
 	TEST (Tensor_Constructor) {
-		TensorDim tdim({3, 4, 5}, 3);
+		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 		Tensorcd A(tdim);
 		Tensorcd B(tdim);
 		auto same = A - B;
@@ -74,7 +77,6 @@ SUITE (Tensor) {
 
 	TEST_FIXTURE (TensorFactory, Tensor_FileIO) {
 		/// Test Tensor I/O
-		CreateTensors();
 		A.Write("tensor1.dat");
 		Tensorcd B("tensor1.dat");
 		Tensorcd C = A - B;
@@ -84,27 +86,22 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Product) {
-		CreateTensors();
-		auto x = HoleProduct(A, B, 0);
+		Matrixcd x = mHoleProduct(A, B, 0);
 		x.Write("Tensor_Product.dat");
 		Matrixcd s("Tensor_Product.dat");
-		auto d = x - s;
-		double residual = d.FrobeniusNorm();
-			CHECK_CLOSE(residual, 0., eps);
+		auto r = Residual(s, x);
+			CHECK_CLOSE(0., r, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Matrix_Product) {
-		CreateTensors();
-		auto x = HoleProduct(A, B, 1);
+		Matrixcd x = mHoleProduct(A, B, 1);
 		x.Write("Tensor_Product_0.dat");
 		Matrixcd s("Tensor_Product_0.dat");
-		auto d = x - s;
-		double residual = d.FrobeniusNorm();
-			CHECK_CLOSE(residual, 0., eps);
+		auto r = Residual(x, s);
+			CHECK_CLOSE(0., r, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_RoF) {
-		CreateTensors();
 		{
 			// Copy asignment operator
 			auto Aca = A;

@@ -2,7 +2,6 @@
 // Created by Roman Ellerbrock on 2020-01-17.
 //
 #include "Core/Matrix_Implementation.h"
-#include "Core/FactorMatrix.h"
 
 typedef complex<double> cd;
 
@@ -17,6 +16,7 @@ template Matrix<cd> multAB(const Matrix<cd>& A, const Matrix<cd>& B);
 template Matrix<cd> addAB(const Matrix<cd>& A, const Matrix<cd>& B);
 template Matrix<cd> multscalar<cd, cd>(const cd sca, const Matrix<cd>& B);
 template Matrix<cd> substAB<cd>(const Matrix<cd>& A, const Matrix<cd>& B);
+template Matrix<cd> IdentityMatrix(size_t dim);
 template Matrix<cd> UnitarySimilarityTrafo<cd>(const Matrix<cd>& A,
 	const Matrix<cd>& B);
 template Matrix<cd> Merge(const Matrix<cd>& A, const Matrix<cd>& B,
@@ -30,8 +30,12 @@ template istream& operator>> <cd> (istream& is, Matrixcd& A);
 typedef double doub;
 template Vector<double> multAB<doub>(const Matrix<double>& A,
 	const Vector<double>& B);
+template Matrix<doub> addAB(const Matrix<doub>& A, const Matrix<doub>& B);
 template Matrix<cd> multscalar<cd, doub>(const double sca,
 	const Matrix<cd>& B);
+template Matrix<doub> multscalar<doub, doub>(const double sca,
+	const Matrix<doub>& B);
+template Matrix<doub> IdentityMatrix(size_t dim);
 template Matrix<double> UnitarySimilarityTrafo<doub>(const Matrix<double>& A,
 	const Matrix<double>& B);
 template ostream& operator<< <doub> (ostream& os, const Matrix<doub>& A);

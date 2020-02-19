@@ -1,5 +1,5 @@
 #pragma once
-#include "TensorDim.h"
+#include "TensorShape.h"
 #include "Core/Matrix.h"
 
 
@@ -28,10 +28,12 @@ public:
 	//////////////////////////////////////////////////////////
 
 	// Standard Constructor
-	Tensor() :coeffs(new T[1]) {}
+	Tensor() : coeffs_(new T[1]) {}
+
+	Tensor(const initializer_list<size_t>& dim, bool InitZero = true);
 
 	// Constructor with TensorDim
-	explicit Tensor(const TensorDim& dim_, bool InitZero = true);
+	explicit Tensor(const TensorShape& dim, bool InitZero = true);
 
 	explicit Tensor(istream& is);
 
@@ -90,13 +92,13 @@ public:
 	inline T& operator[](const size_t idx)const
 	{
 		// Fast bracket operator
-		return coeffs[idx];
+		return coeffs_[idx];
 	}
 
 	inline T& operator[](const size_t idx)
 	{
 		// Fast bracket operator
-		return coeffs[idx];
+		return coeffs_[idx];
 	}
 
 	//////////////////////////////////////////////////////////
@@ -104,9 +106,9 @@ public:
 	//////////////////////////////////////////////////////////
 	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B)
 	{
-		assert(A.Dim().GetDimTot() == B.Dim().GetDimTot());
-		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().GetDimTot(); i++)
+		assert(A.shape().GetDimTot() == B.shape().GetDimTot());
+		Tensor C(A.shape());
+		for (int i = 0; i < A.shape().GetDimTot(); i++)
 		{
 			C(i) = A(i) + B(i);
 		}
@@ -115,8 +117,8 @@ public:
 
 	friend Tensor operator-(const Tensor& A, const Tensor& B)
 	{
-		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().GetDimTot(); i++)
+		Tensor C(A.shape());
+		for (int i = 0; i < A.shape().totalDimension(); i++)
 		{
 			C(i) = A(i) - B(i);
 		}
@@ -142,7 +144,7 @@ public:
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
-	Tensor<T> AdjustDimensions(const TensorDim& newTDim)const;
+	Tensor<T> AdjustDimensions(const TensorShape& newTDim)const;
 
 	// Adjust the number of the active_ mode
 	Tensor<T> AdjustActiveDim(size_t active, size_t mode)const;
@@ -151,7 +153,7 @@ public:
 	Tensor<T> AdjustStateDim(size_t n)const;
 
 	// Reshape the tensor but keep the total size
-	void Reshape(const TensorDim& tdim);
+	void Reshape(const TensorShape& tdim);
 
 	//////////////////////////////////////////////////////////
 	// Operations on Tensors
@@ -170,9 +172,9 @@ public:
 	/// This function will fill the Tensor with Zero-entries
 	void Zero();
 
-	// Getter for Dim
-	const TensorDim& Dim()const { return dim; }
-	TensorDim& Dim() { return dim; }
+	// Getter for shape
+	const TensorShape& shape()const { return shape_; }
+	TensorShape& shape() { return shape_; }
 
 protected:
 	double conjugate(const double d) const {
@@ -183,8 +185,8 @@ protected:
 		return conj(c);
 	}
 
-	TensorDim dim;
-	T* coeffs;
+	TensorShape shape_;
+	T* coeffs_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;
@@ -201,21 +203,24 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind);
 
 template<typename T>
-Matrix<T> HoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
+void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k);
+
+template<typename T>
+Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
 
 template <typename T, typename U>
-void mattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t behind, bool zero = true);
+void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+	size_t before, size_t activeC, size_t activeB, size_t after, bool zero = true);
 
 template <typename T, typename U>
-void Tmattensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t behind, bool zero = true);
+void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+	size_t before, size_t activeC, size_t activeB, size_t after, bool zero = true);
 
 template <typename T, typename U>
-void multAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
 
 template <typename T, typename U>
-Tensor<T> multAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
+Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
 
 template <typename T, typename U>
 Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
@@ -225,6 +230,9 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 
 template <typename T, typename U>
 Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B);
+
+template<typename T, typename U>
+void multStateArTB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B);
 
 template <typename T, typename U>
 Tensor<T> multStateArTB(const Matrix<U>& A, const Tensor<T>& B);

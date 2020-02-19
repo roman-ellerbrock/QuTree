@@ -10,7 +10,7 @@ template<typename T>
 Vector<T>::Vector(size_t dim)
 	:dim_(dim), coeffs_(new T[dim]) {
 	assert(dim > 0);
-    Zero();
+	Zero();
 }
 
 template<typename T>
@@ -202,5 +202,13 @@ double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
 template<typename T>
 double Residual(const Vector<T>& A, const Vector<T>& B) {
 	return euclidean_distance(A, B);
+}
+
+template<typename T>
+Vector<T> Inverse(Vector<T> A, double eps) {
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		A(i) = 1. / (A(i) + eps * exp(-A(i) / (A(i) + eps)));
+	}
+	return A;
 }
 

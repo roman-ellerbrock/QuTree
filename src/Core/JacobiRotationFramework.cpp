@@ -1,12 +1,12 @@
-#include "Core/JacobiRotationFramework.h"
+#include "Util/JacobiRotationFramework.h"
 
 
-void JacobiRotationFramework::GivensRotation(FactorMatrixcd& B,
+void JacobiRotationFramework::GivensRotation(Matrixcd& B,
 	complex<double> c, complex<double> s, int i, int j) {
 
 	// Perform a Givens-Rotation: R*A*R^H with R= {{c, s}, {-s*, c}}
-	int dim = B.Dim();
-	FactorMatrixcd Ccopy(dim, 2);
+	int dim = B.Dim1();
+	Matrixcd Ccopy(dim, 2);
 
 	for (int n = 0; n < dim; n++) {
 		Ccopy(n, 0) = c * B(n, i) + s * B(n, j);
@@ -29,24 +29,24 @@ void JacobiRotationFramework::GivensRotation(FactorMatrixcd& B,
 	}
 }
 
-void JacobiRotationFramework::RotateMatrices(vector<FactorMatrixcd>& A,
+void JacobiRotationFramework::RotateMatrices(vector<Matrixcd>& A,
 	complex<double> c, complex<double> s, int i, int j) {
 	// Perform a Givens-Rotation: R*A*R^H with R= {{c, s}, {-s*, c}}
-	int dim = A[0].Dim();
-	FactorMatrixcd Ccopy(dim, 2);
+	int dim = A[0].Dim1();
+	Matrixcd Ccopy(dim, 2);
 
 	int nmat = A.size();
 	for (int k = 0; k < nmat; k++) {
-		FactorMatrixcd& B = A[k];
+		Matrixcd& B = A[k];
 
 		GivensRotation(B, c, s, i, j);
 	}
 }
 
-void JacobiRotationFramework::GivensTrafoRotation(FactorMatrixcd& trafo,
+void JacobiRotationFramework::GivensTrafoRotation(Matrixcd& trafo,
 	complex<double> c, complex<double> s, int i, int j) {
-	int dim = trafo.Dim();
-	FactorMatrixcd copy(dim, 2);
+	int dim = trafo.Dim1();
+	Matrixcd copy(dim, 2);
 
 	for (int n = 0; n < dim; n++) {
 		copy(n, 0) = trafo(n, i);
@@ -60,12 +60,12 @@ void JacobiRotationFramework::GivensTrafoRotation(FactorMatrixcd& trafo,
 }
 
 void JacobiRotationFramework::CalculateAngles(complex<double>& c,
-	complex<double>& s, int i, int j, const vector<FactorMatrixcd>& A) {
+	complex<double>& s, int i, int j, const vector<Matrixcd>& A) {
 	// Build the G-Matrix
-	FactorMatrixcd G = BuildGMatrix(i, j, A);
+	Matrixcd G = BuildGMatrix(i, j, A);
 
 	// Diagonalize it (phase convention is important here (x_>0)!)
-	FactorMatrixcd trafo(3, 3);
+	Matrixcd trafo(3, 3);
 	Vectord ev(3);
 	G.cDiag(trafo, ev);
 
@@ -83,13 +83,13 @@ void JacobiRotationFramework::CalculateAngles(complex<double>& c,
 	s = (y - imag * z) / t;
 }
 
-FactorMatrixcd JacobiRotationFramework::BuildGMatrix(int i, int j, const vector<FactorMatrixcd>& A) {
-	FactorMatrixcd G(3, 3);
+Matrixcd JacobiRotationFramework::BuildGMatrix(int i, int j, const vector<Matrixcd>& A) {
+	Matrixcd G(3, 3);
 	Vectorcd h(3);
 	complex<double> imag(0, 1);
 
 	for (int k = 0; k < A.size(); k++) {
-		const FactorMatrixcd& B = A[k];
+		const Matrixcd& B = A[k];
 
 		// Build h-Vector for this Matrix
 		h(0) = B(i, i) - B(j, j);
@@ -107,14 +107,13 @@ FactorMatrixcd JacobiRotationFramework::BuildGMatrix(int i, int j, const vector<
 	return G;
 }
 
-void JacobiRotationFramework::WeightMatrices(vector<FactorMatrixcd>& A, const FactorMatrixcd& W) {
+void JacobiRotationFramework::WeightMatrices(vector<Matrixcd>& A, const Matrixcd& W) {
 	// Weight every Matrix in vector A with the weight matrix W
 	// A = 0.5 * (W*X + X*W)
 	for (int k = 0; k < A.size(); k++) {
-		FactorMatrixcd& X = A[k];
-		int mode = X.Mode();
-		FactorMatrixcd Xw = 0.5 * (X * W + W * X);
-		A[k] = FactorMatrixcd(Xw, mode);
+		Matrixcd& X = A[k];
+		Matrixcd Xw = 0.5 * (X * W + W * X);
+		A[k] = Xw;
 	}
 }
 
@@ -133,7 +132,7 @@ Matrixd JacobiRotationFramework::RFO_BuildHessian(const Matrixd& preHessian,
 	return Hessian;
 }
 
-Vectord JacobiRotationFramework::RotatedDiagonals(const FactorMatrixcd& A,
+Vectord JacobiRotationFramework::RotatedDiagonals(const Matrixcd& A,
 	int p, int q, complex<double> c, complex<double> s) {
 	// First rotation W*J^H
 	Matrixcd copy(2, 2);
@@ -149,7 +148,7 @@ Vectord JacobiRotationFramework::RotatedDiagonals(const FactorMatrixcd& A,
 	return A_new;
 }
 
-Matrixcd JacobiRotationFramework::Rotate(const FactorMatrixcd& A,
+Matrixcd JacobiRotationFramework::Rotate(const Matrixcd& A,
 	int p, int q, complex<double> c, complex<double> s) {
 	// First rotation W*J^H
 	Matrixcd copy(2, 2);

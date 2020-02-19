@@ -8,7 +8,7 @@
 
 int main() {
 
-    TensorDim tdim({2, 3, 4}, 2);
+    TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
     Tensorcd A(tdim);
     Tensorcd B(A);
 

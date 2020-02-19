@@ -7,8 +7,8 @@
 # The main intended use of the library are tensor tree applications.
 #
 # Main author: Roman Ellerbrock
-# Contributing authors: Thomas Weike, Tim Lenzen, Stefan Seritan,
-#                       K. Grace Johnson
+# Contributing authors: Stefan Seritan, K. Grace Johnson,
+#                       Thomas Weike, Tim Lenzen
 ###########################################################################
 
 cmake_minimum_required(VERSION 2.8)
@@ -56,6 +56,49 @@ install(EXPORT QDlib-export
     DESTINATION ${QDlib_INSTALL_CMAKE_DIR}
     )
 
+set(openmp OFF)
+if (openmp)
+    if (APPLE)
+        # Assumes you've installed llvm openmp using homebrew (brew install llvm)
+        message("On MAC OS - Setting Clan-compiler & OpenMP lib")
+        set(CMAKE_C_COMPILER "/usr/local/opt/llvm/bin/clang")
+        set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
+        set(OPENMP_LIBRARIES "/usr/local/opt/llvm/lib")
+        set(OPENMP_INCLUDES "/usr/local/opt/llvm/include")
+
+        OPTION(USE_OpenMP "Use OpenMP to enable <omp.h>" ON)
+
+        # Find OpenMP
+        if (USE_OpenMP)
+            if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+                set(OpenMP_C "${CMAKE_C_COMPILER}")
+                set(OpenMP_C_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
+                set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
+                set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+                set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+                set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
+            endif ()
+            if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+                set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
+                set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
+                set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
+                set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+                set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+                set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+            endif ()
+        endif ()
+    endif ()
+    find_package(OPENMP REQUIRED)
+    if (OPENMP_FOUND)
+        include_directories("${OPENMP_INCLUDES}")
+        link_directories("${OPENMP_LIBRARIES}")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        # set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    endif (OPENMP_FOUND)
+endif ()
+
+
 #####################################################################
 # Set Compiler Flags
 #####################################################################
@@ -65,10 +108,10 @@ install(EXPORT QDlib-export
 # Ensure C++14 standard
 target_compile_features(QDlib PRIVATE cxx_std_14)
 
-# TODO: Figure out how to automatically get flags per compiler?
 set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
 set(QDlib_DEBUG_FLAGS "-g ${FLAGS_VECTORIZE}")
 set(QDlib_RELEASE_FLAGS "-O3 -ffast-math ${FLAGS_VECTORIZE}")
+
 if (APPLE)
     message("On OSX")
     set(QDlib_DEBUG_FLAGS "-mmacosx-version-min=10.14 ${QDlib_DEBUG_FLAGS}")

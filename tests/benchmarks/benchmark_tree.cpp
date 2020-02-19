@@ -2,21 +2,23 @@
 // Created by Roman Ellerbrock on 2/4/20.
 //
 #include "benchmark_tree.h"
-#include "TensorTreeBasis/TensorTreeBasis.h"
-#include "Tree/HoleMatrixTree.h"
+#include "TreeShape/Tree.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
 #include "benchmark_helper.h"
-#include "Tree/SparseHoleMatrixTree.h"
-
+#include "SparseMatrixTreeFunctions.h"
+#include "TreeShape/TreeFactory.h"
 
 namespace benchmark {
-	auto holematrixtree_sample(HoleMatrixTreecd& Rho, const TensorTreecd& Psi,
-		const TTBasis& basis, size_t nsample) {
+	using namespace MatrixTreeFunctions;
+	auto holematrixtree_sample(MatrixTreecd& Rho, const TensorTreecd& Psi,
+		const Tree& tree, size_t nsample) {
 
 		vector<chrono::microseconds> duration_vec;
 		for (size_t n = 0; n < nsample; ++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			Rho.Calculate(Psi, basis);
+			Contraction(Rho, Psi, tree, true);
+//			Rho.Calculate(Psi, tree);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 		}
@@ -27,20 +29,21 @@ namespace benchmark {
 		size_t nsample, ostream& os) {
 
 		/// Initialize memory
-		TTBasis basis(nleaves, dim, dim);
-		TensorTreecd Psi(basis, gen);
-		HoleMatrixTreecd Rho(basis);
+		Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+		TensorTreecd Psi(gen, tree);
+		MatrixTreecd Rho(tree);
 
-		return holematrixtree_sample(Rho, Psi, basis, nsample);
+		return holematrixtree_sample(Rho, Psi, tree, nsample);
 	}
 
-	pair<double, double> factormatrixtree_sample(FactorMatrixTreecd & fmat,
-		const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
+	pair<double, double> factormatrixtree_sample(MatrixTreecd & fmat,
+		const TensorTreecd& Psi, const Tree& tree, size_t nsample) {
 		vector<chrono::microseconds> duration_vec;
 		for (size_t n = 0;n<nsample;++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			fmat.Calculate(Psi, Psi, basis);
+			DotProduct(fmat, Psi, Psi, tree);
+//			fmat.Calculate(Psi, Psi, tree);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 		}
@@ -50,20 +53,20 @@ namespace benchmark {
 pair<double, double> factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
-	TTBasis basis(nleaves, dim, dim);
-	TensorTreecd Psi(basis, gen);
-	FactorMatrixTreecd fmat(basis);
-	return factormatrixtree_sample(fmat, Psi, basis, nsample);
+	Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+	TensorTreecd Psi(gen, tree);
+	MatrixTreecd fmat(tree);
+	return factormatrixtree_sample(fmat, Psi, tree, nsample);
 }
 
-auto sparse_factormatrixtree_sample(SparseFactorMatrixTreecd& fmat, const MPOcd& M,
-	const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
+auto sparse_factormatrixtree_sample(SparseMatrixTreecd& fmat, const MLOcd& M,
+	const TensorTreecd& Psi, const Tree& tree, size_t nsample) {
 
 	vector<chrono::microseconds> duration_vec;
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		fmat.Calculate(Psi, M, basis);
+		SparseMatrixTreeFunctions::Represent(fmat, M, Psi, tree);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -73,27 +76,27 @@ auto sparse_factormatrixtree_sample(SparseFactorMatrixTreecd& fmat, const MPOcd&
 pair<double, double> sparse_factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
-	TTBasis basis(nleaves, dim, dim);
-	TensorTreecd Psi(basis, gen);
-	FactorMatrixcd X(2, 1);
+	Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+	TensorTreecd Psi(gen, tree);
+	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
-	SPOMcd x(X);
-	MPOcd M(x, 0);
+	LeafMatrixcd x(X);
+	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
-	SparseFactorMatrixTreecd fmat(M, basis);
-	return sparse_factormatrixtree_sample(fmat, M, Psi, basis, nsample);
+	SparseMatrixTreecd fmat(M, tree);
+	return sparse_factormatrixtree_sample(fmat, M, Psi, tree, nsample);
 }
 
-auto sparse_holematrixtree_sample(SparseHoleMatrixTreecd& hole,
-	const SparseFactorMatrixTreecd& fmat, const MPOcd& M,
-	const TensorTreecd& Psi, const TTBasis& basis, size_t nsample) {
+auto sparse_holematrixtree_sample(SparseMatrixTreecd& hole,
+	const SparseMatrixTreecd& fmat, const MLOcd& M,
+	const TensorTreecd& Psi, const Tree& tree, size_t nsample) {
 
 	vector<chrono::microseconds> duration_vec;
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		hole.Calculate(Psi, fmat, basis);
+		SparseMatrixTreeFunctions::Contraction(hole, Psi, fmat, tree);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -103,17 +106,18 @@ auto sparse_holematrixtree_sample(SparseHoleMatrixTreecd& hole,
 pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
-	TTBasis basis(nleaves, dim, dim);
-	TensorTreecd Psi(basis, gen);
-	FactorMatrixcd X(2, 1);
+	Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+	TensorTreecd Psi(gen, tree);
+	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
 	X(1, 1) = 0.5;
-	SPOMcd x(X);
-	MPOcd M(x, 0);
+	LeafMatrixcd x(X);
+	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
-	SparseFactorMatrixTreecd fmat(Psi, M, basis);
-	SparseHoleMatrixTreecd hole(M, basis);
-	return sparse_holematrixtree_sample(hole, fmat, M, Psi, basis, nsample);
+	SparseMatrixTreecd fmat(M, tree);
+	SparseMatrixTreeFunctions::Represent(fmat, M, Psi, tree);
+	SparseMatrixTreecd hole(M, tree);
+	return sparse_holematrixtree_sample(hole, fmat, M, Psi, tree, nsample);
 }
 
 }

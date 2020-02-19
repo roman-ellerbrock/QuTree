@@ -49,7 +49,7 @@ public:
 	~Matrix();
 
 	//////////////////////////////////////////////////////////////////////
-	// Fundamental Management
+	/// Backet Operators
 	//////////////////////////////////////////////////////////////////////
 
     T& operator()(const size_t i, const size_t j)const;
@@ -65,7 +65,7 @@ public:
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	// Fundamental Math operators
+	/// Arithmetic
 	//////////////////////////////////////////////////////////////////////
 
 	template<typename U>
@@ -99,7 +99,7 @@ public:
 	bool operator!=(const Matrix<T>& A)const;
 
 	//////////////////////////////////////////////////////////////////////
-	// More Math operators
+	/// More Math operators
 	//////////////////////////////////////////////////////////////////////
 
 	// Calculate Frobenius Norm of Matrix
@@ -115,7 +115,9 @@ public:
 	Matrix<complex<double> > cInv() const;
 
 	// Diagonalization
-	void rDiag(Matrix<double>& Transformation, Vector<double>& ev);
+	void rDiag(Matrix<double>& Transformation, Vector<double>& ev) const;
+
+	pair<Matrix<double>, Vectord> rDiag()const;
 
 	void cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const;
 
@@ -165,6 +167,16 @@ protected:
 	size_t dim2_;
 };
 
+typedef Matrix<complex<double>> Matrixcd;
+typedef Matrix<double> Matrixd;
+
+template <typename T>
+using SpectralDecomposition = pair<Matrix<T>, Vectord>;
+
+typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
+
+typedef SpectralDecomposition<double> SpectralDecompositiond;
+
 //////////////////////////////////////////////////////////////////////
 // Non-Member functions
 //////////////////////////////////////////////////////////////////////
@@ -197,6 +209,80 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B);
 template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 
+/**
+ * \brief Diagonalize a complex double matrix
+ * @param A Matrix to be diagonalized
+ * @return Decomposed matrix
+ */
+SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A);
+
+/**
+ * \brief Diagonalize a complex double martrix
+ * @param S Decomposed matrix (call-by-reference)
+ * @param A Matrix to be diagonalized
+ */
+void Diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A);
+
+/**
+ * \brief Diagonalize a double matrix
+ * @param A Matrix to be diagonalized
+ * @return Decomposed matrix
+ */
+SpectralDecompositiond Diagonalize(const Matrix<double>& A);
+
+/**
+ * \brief Diagonalize a double martrix
+ * @param S Decomposed matrix (call-by-reference)
+ * @param A Matrix to be diagonalized
+ */
+void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A);
+
+/**
+ * \brief Diagonalization routine for remaining types (Eigenvector always double; not generally applicable)
+ * @tparam T
+ * @param B
+ * @return
+ */
+template<typename T>
+pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
+
+/**
+ * \brief Construct matrix from its decomposition
+ * @param X Decomposed matrix
+ * @return Re-constructed matrix
+ */
+Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
+
+/**
+ * \brief Construct matrix from its decomposition
+ * @param X Decomposed matrix
+ * @return Re-constructed matrix
+ */
+Matrixd BuildMatrix(const SpectralDecompositiond& X);
+
+/**
+ * \brief Construct inverse matrix from SpectralDecomposition
+ * @param X Decomposed matrix
+ * @return Inverse matrix
+ */
+Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps = 1e-7);
+
+/**
+ * \brief Construct inverse matrix from SpectralDecomposition
+ * @param X Decomposed matrix
+ * @return Inverse matrix
+ */
+Matrixd BuildInverse(const SpectralDecompositiond& X, double eps = 1e-7);
+
+/**
+ * \brief Create an identity matrix
+ * @tparam T Type of identity matrix
+ * @param dim dimension
+ * @return Identity-matrix
+ */
+template<typename T>
+Matrix<T> IdentityMatrix(size_t dim);
+
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 		const Matrix<T>& B);
@@ -217,8 +303,4 @@ template<typename T>
 ostream& operator<<(ostream& os, const Matrix<T>& A);
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A);
-
-typedef Matrix<complex<double>> Matrixcd;
-typedef Matrix<double> Matrixd;
-typedef pair<Matrixcd, Vectord> SpectralDecomposition;
 
