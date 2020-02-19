@@ -72,7 +72,7 @@ void TensorDim::Write(ostream& os) const {
 
 	// Write active_-dims
 	for (size_t k = 0; k < order(); k++) {
-		int32_t act = dimension(k);
+		int32_t act = this->operator[](k);
 		os.write((char *) &act, sizeof(int32_t));
 	}
 }
@@ -110,13 +110,9 @@ void TensorDim::ReadDim(istream& is) {
 vector<size_t> TensorDim::dimensions() const {
 	vector<size_t> dimlist;
 	for (size_t i = 0; i < order(); i++) {
-		dimlist.push_back(dimension(i));
+		dimlist.push_back(this->operator[](i));
 	}
 	return dimlist;
-}
-
-size_t TensorDim::dimension(size_t k) const {
-	return operator[](k);
 }
 
 size_t TensorDim::before(size_t k) const {
@@ -140,9 +136,9 @@ void TensorDim::print(ostream& os) const {
 	if (order() > 0) {
 		os << "(";
 		for (size_t k = 0; k < order() - 1; ++k) {
-			os << dimension(k) << ", ";
+			os << this->operator[](k) << ", ";
 		}
-		os << dimension(order() - 1);
+		os << this->operator[](order() - 1);
 		os <<  ")" << endl;
 	}
 }
@@ -160,7 +156,7 @@ istream& operator>>(istream& is, TensorDim& tdim) {
 bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
 	if (tdima.order() != tdimb.order()) { return false; }
 	for (size_t k = 0; k < tdima.order(); k++) {
-		if (tdima.dimension(k) != tdimb.dimension(k)) { return false; }
+		if (tdima[k] != tdimb[k]) { return false; }
 	}
 	return true;
 }

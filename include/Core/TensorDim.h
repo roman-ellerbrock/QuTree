@@ -58,7 +58,6 @@ public:
 	void print(ostream& os = cout) const;
 
 	size_t before(size_t k) const;
-	size_t dimension(size_t k) const;
 	size_t after(size_t k) const;
 
 protected:

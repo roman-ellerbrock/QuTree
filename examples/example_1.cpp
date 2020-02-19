@@ -83,12 +83,12 @@ void reshape (Tensorcd A) {
     cout << "\nreshape:\n" << endl;
     cout << "A.Dim() = " << endl;
     A.Dim().print();
-    TensorDim tdim({2, 3, 2, 2});
-    assert(tdim.lastBefore() == A.Dim().lastBefore());
+    TensorDim tdim({4, 3, 2, 2});
     cout << "d = " << tdim.lastBefore() << endl;
     A.Reshape(tdim);
     cout << "A.Dim() = " << endl;
     A.Dim().print();
+	assert(tdim == A.Dim());
 }
 
 int main() {

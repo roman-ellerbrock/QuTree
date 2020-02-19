@@ -198,8 +198,8 @@ namespace Tensor_Extension {
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.lastDimension(); n++)
 			for (size_t k = 0; k < tdim.after(mode)/ tdim.lastDimension(); k++)
-				for (size_t l = 0; l < tdim.dimension(mode); l++)
-					for (size_t j = 0; j < tdim.dimension(mode); j++)
+				for (size_t l = 0; l < tdim[mode]; l++)
+					for (size_t j = 0; j < tdim[mode]; j++)
 						for (size_t i = 0; i < tdim.before(mode); i++) {
 							C(i, j, k, mode, n) += A(j, l) * B(i, l, k, mode, n);
 						}
@@ -213,7 +213,7 @@ namespace Tensor_Extension {
 		assert(tdim == B.Dim());
 
 		size_t nstates = tdim.lastDimension();
-		size_t active = tdim.dimension(k);
+		size_t active = tdim[k];
 		size_t before = tdim.before(k);
 		size_t behind = tdim.after(k)/nstates;
 		Matrix<T> S(active, active);
