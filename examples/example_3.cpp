@@ -97,7 +97,7 @@ void tree_examples() {
 	S.print(tree);
 
 	cout << "Contractions of Psi and Chi:\n";
-	MatrixTree C = Contraction(Psi, Chi, S, tree);
+	MatrixTreecd C = Contraction(Psi, Chi, S, tree);
 	C.print(tree);
 
 	cout << "Add two tensor trees:\n";

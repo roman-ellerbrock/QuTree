@@ -5,7 +5,7 @@
 #include "TreeShape/Tree.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "benchmark_helper.h"
-#include "SparseMatrixTreeFunctions.h"
+#include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "TreeShape/TreeFactory.h"
 
 namespace benchmark {
