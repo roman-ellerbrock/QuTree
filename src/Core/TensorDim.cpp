@@ -108,12 +108,12 @@ size_t TensorDim::dimension(size_t k) const {
 	return abc_[k].GetActive();
 }
 
-size_t TensorDim::Before(size_t k) const {
+size_t TensorDim::before(size_t k) const {
 	assert(k < order());
 	return abc_[k].GetBefore();
 }
 
-size_t TensorDim::After(size_t k) const {
+size_t TensorDim::after(size_t k) const {
 	assert(k < order());
 	return abc_[k].GetAfter();
 }

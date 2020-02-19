@@ -62,7 +62,7 @@ public:
 	 * \brief Erase the data assigned to x_.
 	 * \param x Object which's attributes_ get deleted
 	 *
-	 * After erasing the attributes_, the old structure needs to
+	 * after erasing the attributes_, the old structure needs to
 	 * be updated (addresses become invalid).
 	 */
 	void erase(const Node& x) {

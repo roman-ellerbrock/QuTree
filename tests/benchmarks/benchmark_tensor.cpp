@@ -59,9 +59,9 @@ namespace benchmark {
 			Sus.emplace_back(Su);
 		}
 		Matrixcd S(dim, dim);
-		size_t aft = tdim.After(mode);
+		size_t aft = tdim.after(mode);
 		size_t act = tdim.dimension(mode);
-		size_t bef = tdim.Before(mode);
+		size_t bef = tdim.before(mode);
 
 		/// Run hole-product
 		return vector_hole_product_sample(S, As, Bs, Sus, nsample, bef, act, aft);
@@ -92,9 +92,9 @@ namespace benchmark {
 		Tensor_Extension::Generate(A, gen);
 		Tensor_Extension::Generate(B, gen);
 		Matrixcd S(dim, dim);
-		size_t aft = tdim.After(mode);
+		size_t aft = tdim.after(mode);
 		size_t act = tdim.dimension(mode);
-		size_t bef = tdim.Before(mode);
+		size_t bef = tdim.before(mode);
 
 		/// Run hole-product
 		return hole_product_sample(S, A, B, nsample, bef, act, aft);
@@ -123,9 +123,9 @@ namespace benchmark {
 		Tensor_Extension::Generate(A, gen);
 		Tensor_Extension::Generate(S, gen);
 		Tensorcd B(tdim, true);
-		size_t aft = tdim.After(mode);
+		size_t aft = tdim.after(mode);
 		size_t act = tdim.dimension(mode);
-		size_t bef = tdim.Before(mode);
+		size_t bef = tdim.before(mode);
 
 		return matrix_tensor_sample(B, S, A, nsample, bef, act, aft);
 	}

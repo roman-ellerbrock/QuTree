@@ -79,9 +79,9 @@ public:
 	void print(ostream& os = cout) const;
 
 	const TensorABC& getabc(size_t k);
-	size_t Before(size_t k) const;
+	size_t before(size_t k) const;
 	size_t dimension(size_t k) const;
-	size_t After(size_t k) const;
+	size_t after(size_t k) const;
 
 protected:
 	size_t dimTot_;

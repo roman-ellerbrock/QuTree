@@ -114,7 +114,7 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) {
-	size_t a = dim_.Before(f);
+	size_t a = dim_.before(f);
 	size_t b = dim_.dimension(f);
 	size_t dimpart = dim_.lastBefore();
 	size_t idx = n * dimpart + k * a * b + j * a + i;
@@ -127,7 +127,7 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, 
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) const {
-	size_t a = dim_.Before(f);
+	size_t a = dim_.before(f);
 	size_t b = dim_.dimension(f);
 	size_t dimpart = dim_.lastBefore();
 	size_t idx = n * dimpart + k * a * b + j * a + i;
@@ -146,10 +146,10 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 	assert(mode1 < mode2);
 	assert(mode2 < dim_.order());
 	size_t dimpart = dim_.lastBefore();
-	size_t before = dim_.Before(mode1);
+	size_t before = dim_.before(mode1);
 	size_t active1 = dim_.dimension(mode1);
 	size_t active2 = dim_.dimension(mode2);
-	size_t before2 = dim_.Before(mode2);
+	size_t before2 = dim_.before(mode2);
 	size_t idx = n * dimpart + before2 * active2 * beh + before2 * j +
 		mid * before * active1 + before * i + bef;
 	// mostly checking
@@ -317,8 +317,8 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	Tensor<T> newT(newTDim);
 
 	// Copy the coefficients
-	size_t before = dim_.Before(mode);
-	size_t after = dim_.After(mode) / dim_.lastDimension();
+	size_t before = dim_.before(mode);
+	size_t after = dim_.after(mode) / dim_.lastDimension();
 	size_t nstates = dim_.lastDimension();
 	size_t minactive = min(active, dim_.dimension(mode));
 	for (size_t n = 0; n < nstates; n++) {
@@ -478,8 +478,8 @@ void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k
 	const TensorDim& tdim_b(A.Dim());
 	assert(k < tdim_a.order());
 	assert(k < tdim_b.order());
-	size_t before = tdim_a.Before(k);
-	size_t after = tdim_a.After(k);
+	size_t before = tdim_a.before(k);
+	size_t after = tdim_a.after(k);
 	size_t active1 = tdim_a.dimension(k);
 	size_t active2 = tdim_b.dimension(k);
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
@@ -617,8 +617,8 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t m
 	TensorDim tdim(B.Dim());
 	TensorDim tdimC(C.Dim());
 
-	size_t after = tdim.After(mode);
-	size_t before = tdim.Before(mode);
+	size_t after = tdim.after(mode);
+	size_t before = tdim.before(mode);
 	size_t active1 = A.Dim1();
 	size_t active2 = A.Dim2();
 
@@ -636,9 +636,9 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode);
+		size_t after = tdim.after(mode);
 		size_t active = tdim.dimension(mode);
-		size_t before = tdim.Before(mode);
+		size_t before = tdim.before(mode);
 		MatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
@@ -647,8 +647,8 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t active2 = A.Dim2();
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, active1);
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode);
-		size_t before = tdim.Before(mode);
+		size_t after = tdim.after(mode);
+		size_t before = tdim.before(mode);
 		assert(active1 == C.Dim().dimension(mode));
 		assert(active2 == B.Dim().dimension(mode));
 		cout << "non-quadratic mattensor implemented but tested only once so far.\n";
@@ -666,9 +666,9 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 	if (A.Dim1() == A.Dim2()) {
 		Tensor<T> C(tdim);
-		size_t after = tdim.After(mode);
+		size_t after = tdim.after(mode);
 		size_t active = tdim.dimension(mode);
-		size_t before = tdim.Before(mode);
+		size_t before = tdim.before(mode);
 		TMatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
@@ -676,8 +676,8 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t activeB = A.Dim1();
 		TensorDim tdim(B.Dim());
 		tdim = TensorDim_Extension::ReplaceActive(tdim, mode, A.Dim2());
-		size_t after = tdim.After(mode);
-		size_t before = tdim.Before(mode);
+		size_t after = tdim.after(mode);
+		size_t before = tdim.before(mode);
 		Tensor<T> C(tdim);
 		cout << "non-quadratic mattensor implemented but not tested, yet.\n";
 		TMatrixTensor(C, A, B, before, activeC, activeB, after, false);
