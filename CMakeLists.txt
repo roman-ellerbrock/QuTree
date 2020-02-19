@@ -108,9 +108,9 @@ endif ()
 # Ensure C++14 standard
 target_compile_features(QDlib PRIVATE cxx_std_14)
 
-set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
-set(QDlib_DEBUG_FLAGS "-g ${FLAGS_VECTORIZE}")
-set(QDlib_RELEASE_FLAGS "-O3 -ffast-math ${FLAGS_VECTORIZE}")
+#set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
+set(QDlib_DEBUG_FLAGS "-g")
+set(QDlib_RELEASE_FLAGS "-O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")
