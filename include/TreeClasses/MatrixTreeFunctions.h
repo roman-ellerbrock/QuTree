@@ -20,7 +20,7 @@ namespace MatrixTreeFunctions {
 
 	template<typename T>
 	void ContractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
-		const MatrixTree<T>& S, const Node& node);
+		const Node& node, const MatrixTree<T> *S_opt);
 
 	template<typename T>
 	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi,
