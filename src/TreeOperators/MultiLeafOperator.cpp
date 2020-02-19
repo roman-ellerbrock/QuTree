@@ -10,7 +10,7 @@ MultiLeafOperator<T>::MultiLeafOperator()
 template <typename T>
 Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 	const Leaf& Phy) const {
-	Tensor<T> hPhi(Phi.Dim());
+	Tensor<T> hPhi(Phi.shape());
 	size_t mode_x = Phy.Mode();
 	const LeafInterface& grid = Phy.PrimitiveGrid();
 	bool switchbool = true;
@@ -39,7 +39,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 template <typename T>
 Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	const vector<int>& list, const LeafInterface& grid) const {
-	Tensor<T> hAcoeff(Acoeffs.Dim());
+	Tensor<T> hAcoeff(Acoeffs.shape());
 	bool switchbool = true;
 	// Applying the MLO uses switching of the result Tensor to increase performance.
 	for (size_t l = 0; l < list.size(); l++) {
@@ -68,8 +68,8 @@ TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 	const Tree& basis) const {
 	for (size_t i = 0; i < basis.nNodes(); i++) {
 		const Node& node = basis.GetNode(i);
-		if (node.IsBottomlayer()) {
-			const Leaf& phy = node.PhysCoord();
+		if (node.isBottomlayer()) {
+			const Leaf& phy = node.getLeaf();
 			const LeafInterface& grid = phy.PrimitiveGrid();
 			int coord = phy.Mode();
 

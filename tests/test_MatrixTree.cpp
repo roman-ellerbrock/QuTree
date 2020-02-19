@@ -72,7 +72,7 @@ SUITE (MatrixTreeFunctions) {
 		TensorTreecd Psi(gen, tree, true);
 		MatrixTreecd Rho = Contraction(Psi, tree, true);
 		for (const Node& node : tree) {
-			if (!node.IsToplayer()) {
+			if (!node.isToplayer()) {
 				Matrixcd& rho = Rho[node];
 					CHECK_EQUAL(rho.Dim2(), rho.Dim1());
 				for (size_t j = 0; j < rho.Dim2(); ++j) {
@@ -96,7 +96,7 @@ SUITE (MatrixTreeFunctions) {
 		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
 		for (const Node& node : tree) {
-			if (!node.IsToplayer()) {
+			if (!node.isToplayer()) {
 					CHECK_CLOSE(1., X[node].second(1), eps);
 			}
 		}
@@ -107,7 +107,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
-			const TensorDim& dim = node.TDim();
+			const TensorShape& dim = node.shape();
 			H[node] = RandomMatrices::GUE(dim.lastDimension(), gen);
 		}
 

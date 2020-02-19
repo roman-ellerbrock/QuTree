@@ -21,10 +21,10 @@ void SparseTree::SparseInitialize(const vector<size_t>& modes,
 			} else {
 				co_address[addr] += 1;
 			}
-			if (node->IsToplayer()) {
+			if (node->isToplayer()) {
 				break;
 			} else {
-				node = &(node->Up());
+				node = &(node->parent());
 			}
 		}
 	}
@@ -44,7 +44,7 @@ void SparseTree::SparseInitialize(const vector<size_t>& modes,
 			const Node& node = MCTDHNode(n);
 			size_t NumActiveChildren = 0;
 			for (size_t k = 0; k < node.nChildren(); ++k) {
-				if (Active(node.Down(k))) { NumActiveChildren++; }
+				if (Active(node.child(k))) { NumActiveChildren++; }
 			}
 			if (NumActiveChildren > 1) { break; }
 		}

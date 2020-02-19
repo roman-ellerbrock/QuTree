@@ -30,7 +30,7 @@ class Tree {
 	 *
 	 * for (int i = tree.nNodes() - 1; i > 0; --i) {
 	 * 		const Node& node = tree.GetNode(i);
-	 * 		// Do something - Top-Down swipe
+	 * 		// Do something - Top-child swipe
 	 * }
 	 * or
 	 * for (auto it = tree.rbegin(); it != tree.rend(); it++) {
@@ -90,7 +90,7 @@ public:
 	size_t nLeaves() const { return root_.nLeaves(); }
 
 	/// Number of states
-	size_t nStates() const { return TopNode().TDim().lastDimension(); }
+	size_t nStates() const { return TopNode().shape().lastDimension(); }
 
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.

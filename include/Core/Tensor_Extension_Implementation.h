@@ -3,7 +3,7 @@
 namespace Tensor_Extension {
 
 	tuple<Tensorcd, Matrixcd, Vectord> SVD(const Tensorcd& A) {
-		const TensorDim& tdim = A.Dim();
+		const TensorShape& tdim = A.shape();
 		size_t dimpart = tdim.lastBefore();
 		size_t ntensor = tdim.lastDimension();
 
@@ -76,7 +76,7 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	Matrix<T> Map(const Tensor<T>& A) {
-		const TensorDim& tdim = A.Dim();
+		const TensorShape& tdim = A.shape();
 		size_t ntensor = tdim.lastDimension();
 		size_t dimpart = tdim.lastBefore();
 		Matrix<T> M(dimpart, ntensor);
@@ -101,7 +101,7 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	void Generate(Tensor<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.Dim().totalDimension(), gen);
+		Generate_normal(&A[0], A.shape().totalDimension(), gen);
 	}
 
 	template<typename T>
@@ -124,8 +124,8 @@ namespace Tensor_Extension {
 	template<typename T>
 	Tensor<T> Merge(Tensor<T> A, const Tensor<T>& B) {
 		// Merge two Tensors into one.
-		const TensorDim& tdim1 = A.Dim();
-		const TensorDim& tdim2 = B.Dim();
+		const TensorShape& tdim1 = A.shape();
+		const TensorShape& tdim2 = B.shape();
 		size_t ntens1 = tdim1.lastDimension();
 		size_t ntens2 = tdim2.lastDimension();
 		A = A.AdjustStateDim(ntens1 + ntens2);
@@ -140,7 +140,7 @@ namespace Tensor_Extension {
 	template<typename T>
 	void OuterProductAdd(Matrix<T>& M,
 		const Tensor<T>& A, const Tensor<T>& B) {
-		const TensorDim& tdim = A.Dim();
+		const TensorShape& tdim = A.shape();
 		size_t dimpart = tdim.lastBefore();
 		size_t ntensor = tdim.lastDimension();
 
@@ -157,7 +157,7 @@ namespace Tensor_Extension {
 	template<typename T>
 	Matrix<T> OuterProduct(const Tensor<T>& A, const Tensor<T>& B) {
 
-		const TensorDim& tdim = A.Dim();
+		const TensorShape& tdim = A.shape();
 		size_t dimpart = tdim.lastBefore();
 		Matrix<T> M(dimpart, dimpart);
 		OuterProductAdd(M, A, B);
@@ -190,10 +190,10 @@ namespace Tensor_Extension {
  */
 	template<typename T, typename U>
 	Tensor<T> OldmultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
-		TensorDim tdim(B.Dim());
+		TensorShape tdim(B.shape());
 		assert(mode < tdim.order());
 		assert(A.Dim1() == A.Dim2());
-		assert(A.Dim1() == B.Dim().Active(mode));
+		assert(A.Dim1() == B.shape().Active(mode));
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.lastDimension(); n++)
@@ -208,9 +208,9 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	Matrix<T> OldStateAveragedHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
-		TensorDim tdim(A.Dim());
+		TensorShape tdim(A.shape());
 		// check wether tensordims are equal
-		assert(tdim == B.Dim());
+		assert(tdim == B.shape());
 
 		size_t nstates = tdim.lastDimension();
 		size_t active = tdim[k];
@@ -240,9 +240,9 @@ namespace Tensor_Extension {
 
 	template<typename T, typename U>
 	Tensor<T> OldmultStateAB(const Matrix<U>& A, const Tensor<T>& B) {
-		TensorDim tdim(B.Dim());
+		TensorShape tdim(B.shape());
 		assert(A.Dim1() == A.Dim2());
-		assert(A.Dim2() == B.Dim().getntensor());
+		assert(A.Dim2() == B.shape().getntensor());
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.lastDimension(); n++)

@@ -20,7 +20,7 @@ namespace IOTree {
 		const Leaf& leaf, const Tree& tree) {
 		const auto& node = (const Node&) leaf.Up();
 		const auto& Phi = Psi[node];
-		if (!node.IsToplayer()) {
+		if (!node.isToplayer()) {
 			const auto& rho = Rho[node];
 			auto rhoPhi = multStateAB<T>(rho, Phi);
 			return mHoleProduct(Phi, rhoPhi, 0);

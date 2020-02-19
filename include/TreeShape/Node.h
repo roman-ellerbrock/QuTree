@@ -13,11 +13,11 @@ class Node
  * \brief This class manages a node in the tree-structured TTBasis representation.
  *
  * The class holds the tensor-dimensions (TensorDim) at the current node and holds the
- * connectivity to the parent & all child nodes (Up and Down(s)). The node also
+ * connectivity to the parent & all child nodes (parent and child(s)). The node also
  * knows wether it is a toplayer or bottomlayer-node.
  * If the Node is a bottomlayer node, it holds a Leaf. Accessing Leaf or sublying
  * Nodes (non-leaves) for incorrect nodes will stop the program.
- * Please use the TTBasis iterator to swipe over all nodes in a TTBasis. The Up and Down
+ * Please use the TTBasis iterator to swipe over all nodes in a TTBasis. The parent and child
  * getters should only be used to access local connectivity.
  * */
 {
@@ -50,40 +50,40 @@ public:
 	size_t nLeaves() const override { return nLeaves_; }
 
 	// Type of node
-	int NodeType() const override { return nodeType_; }
+	int type() const override { return nodeType_; }
 
 	// True if this node is a bottomLayer_-node, otherwise false
-	bool IsBottomlayer() const { return bottomLayer_; }
+	bool isBottomlayer() const { return bottomLayer_; }
 
 	// True if this node is a toplayer-node, otherwise false
-	bool IsToplayer() const;
+	bool isToplayer() const;
 	// Getter for the Physical Coordinate (only if this is a bottomLayer_ node)
-	Leaf& PhysCoord();
-	const Leaf& PhysCoord() const;
+	Leaf& getLeaf();
+	const Leaf& getLeaf() const;
 	// Getter for Parent-AbstractNode
-	const Node& Up() const;
-	Node& Up();
+	const Node& parent() const;
+	Node& parent();
 	// Return reference to the i-th child
-	const Node& Down(size_t i) const;
-	Node& Down(size_t i);
+	const Node& child(size_t i) const;
+	Node& child(size_t i);
 
 	// Returns the index in the vector of children of the parent
 	// (e.g. this is the 2nd child: this getter returns "1")
-	int ChildIdx() const { return position_.ChildIdx(); }
+	int childIdx() const { return position_.ChildIdx(); }
 
 	// Getter for the number of children of this node
 	int nChildren() const { return down_.size(); }
 
 	// Getter for the TensorDim
-	TensorDim& TDim() { return tensorDim_; }
+	TensorShape& shape() { return tensorDim_; }
 
-	const TensorDim& TDim() const { return tensorDim_; }
+	const TensorShape& shape() const { return tensorDim_; }
 
 	// Expand one of the children node in the multilayer representation
-	void ExpandChild(size_t i);
+	void expandChild(size_t i);
 
 	// Get position_ index
-	NodePosition Position() const { return position_; }
+	NodePosition position() const { return position_; }
 
 	void push_back(const Node& node);
 
@@ -113,12 +113,12 @@ public:
 	unique_ptr<AbstractNode> DownUnique(size_t i);
 
 	// Set the upwards pointer
-	void SetUp(AbstractNode *up) override { up_ = up; }
+	void setParent(AbstractNode *up) override { up_ = up; }
 
 	// Replace a Child
 	void Replace(Node& new_child, size_t idx);
 	// Update counters, position indices
-	void Update(const NodePosition& p) override;
+	void update(const NodePosition& p) override;
 	// Update position_ index
 	void UpdatePosition(const NodePosition& p);
 	// Update nTotalNodes_, nNodes_ and nLeaves_
@@ -138,7 +138,7 @@ protected:
 	size_t nLeaves_;
 
 	// TensorDim that belongs to this node
-	TensorDim tensorDim_;
+	TensorShape tensorDim_;
 
 	// pointer to the upwards node
 	AbstractNode *up_;
@@ -149,7 +149,7 @@ protected:
 	int nextNodeNum_;
 	size_t nextNodeNumFortran_;
 
-	// Position object
+	// position object
 	NodePosition position_;
 	int address_;
 

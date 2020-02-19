@@ -31,7 +31,7 @@ template<typename T>
 void TensorTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
-		attributes_.emplace_back(Tensor<T>(node.TDim()));
+		attributes_.emplace_back(Tensor<T>(node.shape()));
 	}
 }
 
@@ -40,7 +40,7 @@ void TensorTree<T>::FillRandom(std::mt19937& gen, const Tree& tree, bool delta_l
 	assert(tree.nNodes() == attributes_.size());
 	for (const Node& node : tree) {
 		Tensor<T>& Phi = this->operator[](node);
-		if (node.IsBottomlayer()) {
+		if (node.isBottomlayer()) {
 			FillBottom(Phi, node);
 		} else {
 			FillUpper(Phi, gen, node, delta_lowest);
@@ -52,11 +52,11 @@ template<typename T>
 void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	mt19937& gen, const Node& node, bool delta_lowest) {
 
-	assert(Phi.Dim().totalDimension() > 0);
+	assert(Phi.shape().totalDimension() > 0);
 	Tensor_Extension::Generate(Phi, gen);
 	// Set ground-state to "Hartree-Product" if flag is set
 	if (delta_lowest) {
-		for (size_t i = 0; i < Phi.Dim().lastBefore(); ++i) {
+		for (size_t i = 0; i < Phi.shape().lastBefore(); ++i) {
 			Phi(i, 0) = 0.;
 		}
 		Phi(0, 0) = 1.;
@@ -69,7 +69,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 template<typename T>
 void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 	const Node& node) {
-	const Leaf& coord = node.PhysCoord();
+	const Leaf& coord = node.getLeaf();
 	const LeafInterface& grid = coord.PrimitiveGrid();
 	grid.InitSPF(Phi);
 }

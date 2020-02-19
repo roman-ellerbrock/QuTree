@@ -6,11 +6,11 @@ FermionNumberBasis::FermionNumberBasis(int dim_)
 }
 
 Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi) const {
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -23,11 +23,11 @@ Tensorcd FermionNumberBasis::ApplyX2(const Tensorcd& phi) const {
 }
 
 Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi) const {
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -40,11 +40,11 @@ Tensorcd FermionNumberBasis::pauliX(const Tensorcd& phi) const {
 }
 
 Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi) const {
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -58,11 +58,11 @@ Tensorcd FermionNumberBasis::pauliY(const Tensorcd& phi) const {
 }
 
 Tensorcd FermionNumberBasis::pauliZ(const Tensorcd& phi) const {
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);

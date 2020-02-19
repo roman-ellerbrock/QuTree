@@ -11,11 +11,11 @@
 Tensorcd create_tensor() {
     cout << "\ncreate_tensor:\n" << endl;
     // 1. Create from a TensorDim object
-    TensorDim tdim({2, 3, 4, 2});
+    TensorShape tdim({2, 3, 4, 2});
     Tensorcd A(tdim); // create tensor, all entries set to Zero
     cout << "A=" << endl;
     A.print();
-    A.Dim().print();
+	A.shape().print();
 
     // 2. Create from another Tensor
     Tensorcd B(A);
@@ -33,17 +33,17 @@ Tensorcd create_tensor() {
 Tensorcd fill_tensor(Tensorcd A){
     cout << "\nfill_tensor:\n" << endl;
     // Loop through complete super-index list
-    cout << A.Dim().totalDimension() << endl;
-    for (size_t i = 0; i < A.Dim().totalDimension(); i++) {
+    cout << A.shape().totalDimension() << endl;
+    for (size_t i = 0; i < A.shape().totalDimension(); i++) {
         A(i) = i * 0.01;
     }
     cout << "A=" << endl;
     A.print();
 
     // Loop through ntensor, then lower-index list
-    Tensorcd B(A.Dim());
-    for (size_t n = 0; n < A.Dim().lastDimension(); n++) {
-        for (size_t j = 0; j < A.Dim().lastBefore(); j++) {
+    Tensorcd B(A.shape());
+    for (size_t n = 0; n < A.shape().lastDimension(); n++) {
+        for (size_t j = 0; j < A.shape().lastBefore(); j++) {
             B(j, n) = (n * j + j * 2) * 0.002;
         }
     }
@@ -69,7 +69,7 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
 
 void hole_product(Tensorcd A, const Tensorcd& B) {
     cout << "\nhole_product:\n" << endl;
-    for (size_t k = 0; k < A.Dim().order(); k++) {
+    for (size_t k = 0; k < A.shape().order(); k++) {
         Matrixcd h = mHoleProduct(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
@@ -81,14 +81,14 @@ void hole_product(Tensorcd A, const Tensorcd& B) {
 
 void reshape (Tensorcd A) {
     cout << "\nreshape:\n" << endl;
-    cout << "A.Dim() = " << endl;
-    A.Dim().print();
-    TensorDim tdim({4, 3, 2, 2});
+    cout << "A.shape() = " << endl;
+	A.shape().print();
+    TensorShape tdim({4, 3, 2, 2});
     cout << "d = " << tdim.lastBefore() << endl;
     A.Reshape(tdim);
-    cout << "A.Dim() = " << endl;
-    A.Dim().print();
-	assert(tdim == A.Dim());
+    cout << "A.shape() = " << endl;
+	A.shape().print();
+	assert(tdim == A.shape());
 }
 
 int main() {

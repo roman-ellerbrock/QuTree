@@ -19,7 +19,7 @@ template<typename T>
 void SpectralDecompositionTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
-		const TensorDim& tdim = node.TDim();
+		const TensorShape& tdim = node.shape();
 		size_t dim = tdim.lastDimension();
 		auto x = SpectralDecomposition<T>(Matrix<T>(dim, dim), Vectord(dim));
 		attributes_.emplace_back(x);
@@ -51,7 +51,7 @@ template<typename T>
 void SpectralDecompositionTree<T>::print(const Tree& tree) const {
 	for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 		const Node& node = *it;
-		if (!node.IsToplayer()) {
+		if (!node.isToplayer()) {
 			node.info();
 			const SpectralDecomposition<T>& x = this->operator[](node);
 			x.second.print();

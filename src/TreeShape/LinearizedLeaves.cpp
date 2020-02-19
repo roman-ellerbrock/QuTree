@@ -2,7 +2,7 @@
 
 void LinearizedLeaves::push_back(Leaf& phys) {
 	// Check wether this node is a physical node
-	assert(phys.NodeType() == 0);
+	assert(phys.type() == 0);
 	coordinates_.emplace_back(reference_wrapper<Leaf>(phys));
 
 	// Save address_ of this physical mode

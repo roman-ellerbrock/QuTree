@@ -7,14 +7,14 @@
 #include "benchmark_tree.h"
 
 namespace benchmark {
-	TensorDim make_TensorDim(size_t order, size_t dim) {
+	TensorShape make_TensorDim(size_t order, size_t dim) {
 		assert(order > 1);
 		assert(dim > 0);
 		vector<size_t> dims;
 		for (size_t i = 0; i < order; ++i) {
 			dims.emplace_back(dim);
 		}
-		return TensorDim(dims);
+		return TensorShape(dims);
 	}
 
 	auto vector_hole_product_sample(Matrixcd& S, const vector<Tensorcd>& A,

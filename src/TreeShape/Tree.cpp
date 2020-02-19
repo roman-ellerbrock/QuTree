@@ -37,8 +37,8 @@ void Tree::ResetLeafModes() {
 	assert(n_modes > 0);
 	int mode = n_modes - 1;
 	for (Node& node : *this) {
-		if (node.IsBottomlayer()) {
-			Leaf& leaf = node.PhysCoord();
+		if (node.isBottomlayer()) {
+			Leaf& leaf = node.getLeaf();
 			leaf.Mode() = mode--;
 		}
 	}
@@ -47,27 +47,27 @@ void Tree::ResetLeafModes() {
 
 void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
 	for (Node& node : *this) {
-		if (node.IsBottomlayer()) {
-			Leaf& leaf = node.PhysCoord();
+		if (node.isBottomlayer()) {
+			Leaf& leaf = node.getLeaf();
 			leaf.Mode() = Map[leaf.Mode()];
 		}
 	}
 }
 
 void Tree::ExpandNode(Node& node) {
-	assert(!node.IsToplayer());
-	assert(!node.IsBottomlayer());
+	assert(!node.isToplayer());
+	assert(!node.isBottomlayer());
 
-	Node& parent = node.Up();
-	size_t childIdx = node.ChildIdx();
-	parent.ExpandChild(childIdx);
+	Node& parent = node.parent();
+	size_t childIdx = node.childIdx();
+	parent.expandChild(childIdx);
 	LinearizeNodes();
 }
 
 void Tree::Update() {
 	// Tree is assumed to be updated, but the rest not:
 	// Update everything
-	root_.Update(NodePosition());
+	root_.update(NodePosition());
 	LinearizeLeaves();
 	LinearizeNodes();
 }
@@ -75,11 +75,11 @@ void Tree::Update() {
 void Tree::ReplaceNode(Node& old_node, Node& new_node) {
 	// The old node must not be the toplayer node, otherwise change the
 	// whole tree
-	assert(!old_node.IsToplayer());
+	assert(!old_node.isToplayer());
 
 	// Replace the node
-	Node& parent = old_node.Up();
-	parent.Replace(new_node, old_node.ChildIdx());
+	Node& parent = old_node.parent();
+	parent.Replace(new_node, old_node.childIdx());
 
 	Node& topnode = TopNode();
 	topnode.UpdatePosition(NodePosition());
@@ -96,7 +96,7 @@ void Tree::LinearizeNodes() {
 	int counter = 0;
 	for (int i = 0; i < nTotalNodes(); i++) {
 		AbstractNode& abstract_node = nextNode();
-		if (abstract_node.NodeType() == 1) {
+		if (abstract_node.type() == 1) {
 			auto& node = (Node&) (abstract_node);
 			node.SetAddress(counter);
 			counter++;
@@ -113,7 +113,7 @@ void Tree::LinearizeLeaves() {
 	for (int i = 0; i < nTotalNodes(); i++) {
 		AbstractNode& abstract_node = nextNode();
 		// If this node is a physical mode push it back
-		if (abstract_node.NodeType() == 0) {
+		if (abstract_node.type() == 0) {
 			auto& leaf = (Leaf&) (abstract_node);
 			linearizedLeaves_.push_back(leaf);
 			// @TODO: Check leaf-index mapping
@@ -175,7 +175,7 @@ void Tree::info(ostream& os) const {
 	for (int i = nNodes() - 1; i >= 0; i--){
 		const Node& node = GetNode(i);
 		node.info();
-		node.TDim().print(os);
+		node.shape().print(os);
 		os << endl;
 	}
 	os << "Number of Nodes = " << nNodes() << endl;
@@ -187,17 +187,17 @@ bool Tree::IsWorking() {
 	int counter = 0;
 	for (int i = 0; i < nTotalNodes(); i++) {
 		const AbstractNode& abstract_node = nextNode();
-		if (abstract_node.NodeType() == 1) {
+		if (abstract_node.type() == 1) {
 			auto& node = (Node&) (abstract_node);
 			// 1.) Check global address
 			// Do not break here to leave nodes in a valid state
 			if (counter != node.Address()) { works = false; }
 			counter++;
 
-			if (!node.IsBottomlayer()) {
+			if (!node.isBottomlayer()) {
 				for (size_t k = 0; k < node.nChildren(); ++k) {
-					const Node& child = node.Down(k);
-					if (&node != &child.Up()) {
+					const Node& child = node.child(k);
+					if (&node != &child.parent()) {
 						cerr << "Connectivity between child and parent is broken." << endl;
 						return false;
 					}
@@ -218,7 +218,7 @@ bool Tree::IsWorking() {
 	counter = 0;
 	for (int i = 0; i < nTotalNodes(); i++) {
 		const AbstractNode& abstract_node = nextNode();
-		if (abstract_node.NodeType() == 1) {
+		if (abstract_node.type() == 1) {
 			auto& node = (Node&) (abstract_node);
 			// Do not break here to leave nodes in a valid state
 			if (&node != &linearizedNodes_[counter].get()) { works = false; }
@@ -229,7 +229,7 @@ bool Tree::IsWorking() {
 		cerr << "Corrupted linearizedNodes_. Missing Update()?" << endl;
 		return false;
 	}
-	if (!linearizedNodes_.back().get().IsToplayer()) {
+	if (!linearizedNodes_.back().get().isToplayer()) {
 		cerr << "Last node does not fulfill top-criterium." << endl;
 		return false;
 	}
@@ -237,7 +237,7 @@ bool Tree::IsWorking() {
 	for (int i = 0; i < nTotalNodes(); i++) {
 		AbstractNode& abstract_node = nextNode();
 		// If this node is a physical mode push it back
-		if (abstract_node.NodeType() == 0) {
+		if (abstract_node.type() == 0) {
 			auto& leaf = (Leaf&) (abstract_node);
 			if (&leaf != &linearizedLeaves_[leaf.Mode()]) { works = false; }
 		}
@@ -270,7 +270,7 @@ void Tree::print(ostream& os) const {
 	for (auto it = this->rbegin(); it !=  this->rend(); it++) {
 		const Node& node = *it;
 		node.info(os);
-		node.TDim().print(os);
+		node.shape().print(os);
 		os << endl;
 	}
 }

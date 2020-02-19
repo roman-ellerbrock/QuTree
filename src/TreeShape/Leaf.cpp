@@ -78,7 +78,7 @@ void Leaf::Write(ostream& os) const {
 	os << dim_ << "\t" << type_ << "\t" << mode_ << "\n";
 }
 
-void Leaf::Update(const NodePosition& p) {
+void Leaf::update(const NodePosition& p) {
 	UpdatePosition(p);
 }
 

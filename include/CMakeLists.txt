@@ -14,8 +14,7 @@ set(QDlib_INCLUDE_FILES
         Util/SimultaneousDiagonalization.h
         Util/RandomMatrices.h
         Core/Tensor.h
-        Core/TensorDim.h
-        Core/TensorDim_Extension.h
+        Core/TensorShape.h
         Core/Tensor_Extension.h
         Core/Tensor_Extension_Implementation.h
         Core/Tensor_Implementation.h

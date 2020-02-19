@@ -7,7 +7,7 @@
 
 #include <glob.h>
 #pragma once
-#include "Core/TensorDim.h"
+#include "Core/TensorShape.h"
 #include "Core/Tensor.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"

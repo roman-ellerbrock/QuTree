@@ -1,4 +1,4 @@
-#include"Core/TensorDim.h"
+#include"Core/TensorShape.h"
 
 size_t ContractDimensionsBefore(const vector<size_t>& dim, size_t k) {
 	size_t bef = 1;
@@ -32,26 +32,26 @@ vector<size_t> ContractDimensionsAfter(const vector<size_t>& dim) {
 	return afters;
 }
 
-TensorDim::TensorDim(const vector<size_t>& dim)
-	: TensorDim() {
+TensorShape::TensorShape(const vector<size_t>& dim)
+	: TensorShape() {
 	Initialize(dim);
 }
 
-TensorDim::TensorDim(const initializer_list<size_t>& dims)
-	: TensorDim(vector<size_t>(dims)){ }
+TensorShape::TensorShape(const initializer_list<size_t>& dims)
+	: TensorShape(vector<size_t>(dims)){ }
 
-TensorDim::TensorDim(istream& is)
-	: TensorDim() {
+TensorShape::TensorShape(istream& is)
+	: TensorShape() {
 	ReadDim(is);
 }
 
-TensorDim::TensorDim(const string& file)
-	: TensorDim() {
+TensorShape::TensorShape(const string& file)
+	: TensorShape() {
 	ifstream is(file);
 	ReadDim(is);
 }
 
-void TensorDim::Initialize(const vector<size_t>& dim) {
+void TensorShape::Initialize(const vector<size_t>& dim) {
 	assert(!dim.empty());
 	resize(dim.size());
 	for (size_t k = 0; k < dim.size(); ++k) {
@@ -62,7 +62,7 @@ void TensorDim::Initialize(const vector<size_t>& dim) {
 	totalDimension_ = after_.front() * front();
 }
 
-void TensorDim::Write(ostream& os) const {
+void TensorShape::Write(ostream& os) const {
 	// Write marker
 	os.write("TDIM", 4);
 
@@ -77,13 +77,13 @@ void TensorDim::Write(ostream& os) const {
 	}
 }
 
-void TensorDim::Write(const string& filename) const {
+void TensorShape::Write(const string& filename) const {
 	ofstream os(filename);
 	Write(os);
 }
 
-void TensorDim::ReadDim(istream& is) {
-	// Check if binary string contains a TDim
+void TensorShape::ReadDim(istream& is) {
+	// Check if binary string contains a shape
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
@@ -104,10 +104,10 @@ void TensorDim::ReadDim(istream& is) {
 	}
 
 	// Create this Tensor
-	(*this) = TensorDim(dim_read);
+	(*this) = TensorShape(dim_read);
 }
 
-vector<size_t> TensorDim::dimensions() const {
+vector<size_t> TensorShape::dimensions() const {
 	vector<size_t> dimlist;
 	for (size_t i = 0; i < order(); i++) {
 		dimlist.push_back(this->operator[](i));
@@ -115,24 +115,24 @@ vector<size_t> TensorDim::dimensions() const {
 	return dimlist;
 }
 
-size_t TensorDim::before(size_t k) const {
+size_t TensorShape::before(size_t k) const {
 	assert(k < order());
 	return before_[k];
 }
 
-size_t TensorDim::after(size_t k) const {
+size_t TensorShape::after(size_t k) const {
 	assert(k < order());
 	return after_[k];
 }
 
-void TensorDim::setDimension(size_t act, size_t k) {
+void TensorShape::setDimension(size_t act, size_t k) {
 	vector<size_t> dim = dimensions();
 	assert(k < dim.size());
 	dim[k] = act;
 	Initialize(dim);
 }
 
-void TensorDim::print(ostream& os) const {
+void TensorShape::print(ostream& os) const {
 	if (order() > 0) {
 		os << "(";
 		for (size_t k = 0; k < order() - 1; ++k) {
@@ -143,17 +143,17 @@ void TensorDim::print(ostream& os) const {
 	}
 }
 
-ostream& operator<<(ostream& os, const TensorDim& tdim) {
+ostream& operator<<(ostream& os, const TensorShape& tdim) {
 	tdim.print(os);
 	return os;
 }
 
-istream& operator>>(istream& is, TensorDim& tdim) {
+istream& operator>>(istream& is, TensorShape& tdim) {
 	tdim.ReadDim(is);
 	return is;
 }
 
-bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
+bool operator==(const TensorShape& tdima, const TensorShape& tdimb) {
 	if (tdima.order() != tdimb.order()) { return false; }
 	for (size_t k = 0; k < tdima.order(); k++) {
 		if (tdima[k] != tdimb[k]) { return false; }
@@ -161,7 +161,14 @@ bool operator==(const TensorDim& tdima, const TensorDim& tdimb) {
 	return true;
 }
 
-bool operator!=(const TensorDim& tdima, const TensorDim& tdimb) {
+bool operator!=(const TensorShape& tdima, const TensorShape& tdimb) {
 	return !(tdima == tdimb);
+}
+
+TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimension) {
+	shape[target] = new_dimension;
+	auto dims = shape.dimensions();
+	shape.Initialize(dims);
+	return shape;
 }
 

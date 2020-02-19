@@ -11,7 +11,7 @@ public:
 	virtual void InitSPF(Tensorcd& A)const = 0;
 
 	virtual void InitSPF(Tensord& A)const {
-		const TensorDim& dim = A.Dim();
+		const TensorShape& dim = A.shape();
 		Tensorcd B(dim);
 		InitSPF(B);
 		for (size_t i = 0; i < dim.totalDimension(); ++i) {

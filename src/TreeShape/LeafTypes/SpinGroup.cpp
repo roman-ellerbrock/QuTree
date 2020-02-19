@@ -24,7 +24,7 @@ Tensorcd SpinGroup::ApplyKin(const Tensorcd& A) const {
 }
 
 void SpinGroup::InitSPF(Tensorcd& A) const {
-	const TensorDim& tdim = A.Dim();
+	const TensorShape& tdim = A.shape();
 	size_t ntensor = tdim.lastDimension();
 	size_t dimpart = tdim.lastBefore();
 

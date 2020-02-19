@@ -42,7 +42,7 @@ void LegendrePolynomials::InitSPF(Tensorcd& phi) const {
 	}
 
 	// excited state_ wavefunction
-	for (int n = 1; n < phi.Dim().lastDimension(); n++)
+	for (int n = 1; n < phi.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++) {
 			phi(i, n) = phi(i, n - 1) * x_(i);
 		}

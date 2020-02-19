@@ -1,5 +1,5 @@
 #pragma once
-#include "TensorDim.h"
+#include "TensorShape.h"
 #include "Core/Matrix.h"
 
 
@@ -33,7 +33,7 @@ public:
 	Tensor(const initializer_list<size_t>& dim, bool InitZero = true);
 
 	// Constructor with TensorDim
-	explicit Tensor(const TensorDim& dim, bool InitZero = true);
+	explicit Tensor(const TensorShape& dim, bool InitZero = true);
 
 	explicit Tensor(istream& is);
 
@@ -106,9 +106,9 @@ public:
 	//////////////////////////////////////////////////////////
 	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B)
 	{
-		assert(A.Dim().GetDimTot() == B.Dim().GetDimTot());
-		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().GetDimTot(); i++)
+		assert(A.shape().GetDimTot() == B.shape().GetDimTot());
+		Tensor C(A.shape());
+		for (int i = 0; i < A.shape().GetDimTot(); i++)
 		{
 			C(i) = A(i) + B(i);
 		}
@@ -117,8 +117,8 @@ public:
 
 	friend Tensor operator-(const Tensor& A, const Tensor& B)
 	{
-		Tensor C(A.Dim());
-		for (int i = 0; i < A.Dim().totalDimension(); i++)
+		Tensor C(A.shape());
+		for (int i = 0; i < A.shape().totalDimension(); i++)
 		{
 			C(i) = A(i) - B(i);
 		}
@@ -144,7 +144,7 @@ public:
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
-	Tensor<T> AdjustDimensions(const TensorDim& newTDim)const;
+	Tensor<T> AdjustDimensions(const TensorShape& newTDim)const;
 
 	// Adjust the number of the active_ mode
 	Tensor<T> AdjustActiveDim(size_t active, size_t mode)const;
@@ -153,7 +153,7 @@ public:
 	Tensor<T> AdjustStateDim(size_t n)const;
 
 	// Reshape the tensor but keep the total size
-	void Reshape(const TensorDim& tdim);
+	void Reshape(const TensorShape& tdim);
 
 	//////////////////////////////////////////////////////////
 	// Operations on Tensors
@@ -172,9 +172,9 @@ public:
 	/// This function will fill the Tensor with Zero-entries
 	void Zero();
 
-	// Getter for Dim
-	const TensorDim& Dim()const { return dim_; }
-	TensorDim& Dim() { return dim_; }
+	// Getter for shape
+	const TensorShape& shape()const { return shape_; }
+	TensorShape& shape() { return shape_; }
 
 protected:
 	double conjugate(const double d) const {
@@ -185,7 +185,7 @@ protected:
 		return conj(c);
 	}
 
-	TensorDim dim_;
+	TensorShape shape_;
 	T* coeffs_;
 };
 

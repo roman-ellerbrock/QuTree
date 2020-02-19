@@ -28,9 +28,9 @@ public:
 	virtual void info(ostream& os) const = 0;
 	virtual void Write(ostream& os) const = 0;
 
-	virtual int NodeType() const = 0;
-	virtual void SetUp(AbstractNode* Up) = 0;
-	virtual void Update(const NodePosition& p) = 0;
+	virtual int type() const = 0;
+	virtual void setParent(AbstractNode* Up) = 0;
+	virtual void update(const NodePosition& p) = 0;
 
 protected:
 };

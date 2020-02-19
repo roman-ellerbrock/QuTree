@@ -6,11 +6,11 @@ DVRBasis::DVRBasis(int dim)
 }
 
 Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -27,11 +27,11 @@ Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
 }
 
 Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -49,7 +49,7 @@ Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
 
 Tensorcd DVRBasis::ApplyP(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
 	return MatrixTensor(p_, phi, 0);
@@ -57,7 +57,7 @@ Tensorcd DVRBasis::ApplyP(const Tensorcd& phi) const {
 
 Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
 	return MatrixTensor(kin_, phi, 0);
@@ -65,7 +65,7 @@ Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
 
 Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
 	return multATB(trafo_, phi, 0);
@@ -73,7 +73,7 @@ Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
 
 Tensorcd DVRBasis::FromGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
 	return MatrixTensor(trafo_, phi, 0);

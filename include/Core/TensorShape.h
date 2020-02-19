@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 
-class TensorDim : public vector<size_t>
+class TensorShape : public vector<size_t>
 /**
  * \class TensorDim
  * \ingroup Core
@@ -20,18 +20,18 @@ class TensorDim : public vector<size_t>
  * */
 {
 public:
-	TensorDim()
+	TensorShape()
 		: totalDimension_(0) {}
 
-	TensorDim(const initializer_list<size_t>& dims);
+	TensorShape(const initializer_list<size_t>& dims);
 
-	explicit TensorDim(const vector<size_t>& dim);
+	explicit TensorShape(const vector<size_t>& dim);
 
-	explicit TensorDim(istream& is);
+	explicit TensorShape(istream& is);
 
-	explicit TensorDim(const string& file);
+	explicit TensorShape(const string& file);
 
-	~TensorDim() = default;
+	~TensorShape() = default;
 
 	void Initialize(const vector<size_t>& dim);
 
@@ -66,8 +66,10 @@ protected:
 	vector<size_t> after_;
 };
 
-ostream& operator<<(ostream& os, const TensorDim& tdim);
-istream& operator>>(istream& is, TensorDim& tdim);
-bool operator==(const TensorDim& tdima, const TensorDim& tdimb);
-bool operator!=(const TensorDim& tdima, const TensorDim& tdimb);
+TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimension);
+
+ostream& operator<<(ostream& os, const TensorShape& tdim);
+istream& operator>>(istream& is, TensorShape& tdim);
+bool operator==(const TensorShape& tdima, const TensorShape& tdimb);
+bool operator!=(const TensorShape& tdima, const TensorShape& tdimb);
 

@@ -121,7 +121,7 @@ public:
 
 	size_t Dim() const { return dim_; }
 
-	int NodeType() const override { return nodeType_; }
+	int type() const override { return nodeType_; }
 
 	LeafInterface& PrimitiveGrid() { return *primitiveBasis_; }
 
@@ -142,12 +142,12 @@ public:
 
 	double WFOmega() const { return par_.WFOmega(); }
 
-	void Update(const NodePosition& p) override;
+	void update(const NodePosition& p) override;
 
 	void UpdatePosition(const NodePosition& p);
 
 	// Danger zone
-	void SetUp(AbstractNode *node) override { up_ = node; }
+	void setParent(AbstractNode *node) override { up_ = node; }
 
 protected:
 	int dim_, type_, mode_;

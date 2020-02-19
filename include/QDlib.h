@@ -2,7 +2,7 @@
 #include"Core/Matrix.h"
 #include"Core/Matrix_Implementation.h"
 #include"Core/Tensor.h"
-#include"Core/TensorDim.h"
+#include"Core/TensorShape.h"
 #include"Core/TensorDim_Extension.h"
 #include"Core/Tensor_Extension.h"
 #include"Core/Tensor_Extension_Implementation.h"

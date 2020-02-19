@@ -15,7 +15,7 @@ SUITE (Tensor) {
 		Tensorcd B;
 
 		void CreateTensorA() {
-			TensorDim tdim(vector<size_t>({2, 3, 4, 2}));
+			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 			A = Tensorcd(tdim);
 			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 				A(i) = i;
@@ -23,7 +23,7 @@ SUITE (Tensor) {
 		}
 
 		void CreateTensorB() {
-			TensorDim tdim(vector<size_t>({2, 3, 4, 2}));
+			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 			B = Tensorcd(tdim);
 			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 				B(i) = i % 3;
@@ -37,7 +37,7 @@ SUITE (Tensor) {
 	};
 
 	Tensorcd NewTensor() {
-		TensorDim tdim(vector<size_t>({2, 3, 4, 2}));
+		TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 		Tensorcd tmp(tdim);
 		for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 			tmp(i) = i;
@@ -49,9 +49,9 @@ SUITE (Tensor) {
 
 	TEST (TensorDim_FileIO) {
 		/// Create a TensorDim, write to file, read in again
-		TensorDim tdim(vector<size_t>({3, 4, 5, 2}));
+		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 		tdim.Write("tdim.dat");
-		TensorDim odim("tdim.dat");
+		TensorShape odim("tdim.dat");
 		bool same = odim == tdim;
 			CHECK_EQUAL(same, true);
 	}
@@ -59,14 +59,14 @@ SUITE (Tensor) {
 	TEST (TensorDim_Getters) {
 		/// Check Getters and Initialization
 		bool success = true;
-		TensorDim tdim(vector<size_t>({3, 4, 5, 2}));
+		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 			CHECK_EQUAL(3 * 4 * 5 * 2, tdim.totalDimension());
 			CHECK_EQUAL(3 * 4 * 5, tdim.lastBefore());
 			CHECK_EQUAL(2, tdim.lastDimension());
 	}
 
 	TEST (Tensor_Constructor) {
-		TensorDim tdim(vector<size_t>({3, 4, 5, 2}));
+		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 		Tensorcd A(tdim);
 		Tensorcd B(tdim);
 		auto same = A - B;

@@ -27,7 +27,7 @@ void NumberBasis::Initialize(double occ,
 }
 
 void NumberBasis::InitSPF(Tensorcd& phi) const {
-	TensorDim tdim(phi.Dim());
+	TensorShape tdim(phi.shape());
 	int nstates = tdim.lastDimension();
 
 	if (fermion_ && nstates > 2) {
@@ -68,7 +68,7 @@ void NumberBasis::InitSPF(Tensorcd& phi) const {
 
 Tensorcd NumberBasis::ToGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
 	return phi;
@@ -76,18 +76,18 @@ Tensorcd NumberBasis::ToGrid(const Tensorcd& phi) const {
 
 Tensorcd NumberBasis::FromGrid(const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
 	return phi;
 }
 
 Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi) const {
-	TensorDim tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
 
-	Tensorcd psi(phi.Dim());
+	Tensorcd psi(phi.shape());
 
 	int nstates = tdim.lastDimension();
 	int active = tdim.lastBefore();
@@ -103,7 +103,7 @@ Tensorcd NumberBasis::ApplyKin(const Tensorcd& phi) const {
 }
 
 Tensorcd NumberBasis::ApplyP(const Tensorcd& phi) const {
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	Tensorcd psi(tdim, false);
 
 	size_t prim = tdim.lastBefore();
@@ -120,7 +120,7 @@ Tensorcd NumberBasis::ApplyP(const Tensorcd& phi) const {
 
 // Apply primitive x_ for several single particle functions
 Tensorcd NumberBasis::applyX(const Tensorcd& phi) const {
-	const TensorDim& tdim = phi.Dim();
+	const TensorShape& tdim = phi.shape();
 	Tensorcd psi(tdim, false);
 
 	size_t prim = tdim.lastBefore();
