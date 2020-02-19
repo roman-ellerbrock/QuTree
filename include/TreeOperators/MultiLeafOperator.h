@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Tensor.h"
 #include "TreeShape/Tree.h"
-#include "TensorTree.h"
+#include "TreeClasses/TensorTree.h"
 #include "LeafOperator.h"
 #include "LeafFunction.h"
 #include "LeafMatrix.h"

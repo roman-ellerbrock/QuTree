@@ -2,10 +2,10 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "LeafOperator.h"
-#include "LeafMatrix.h"
-#include "MultiLeafOperator.h"
-#include "HO_Basis.h"
+#include "TreeOperators/LeafOperator.h"
+#include "TreeOperators/LeafMatrix.h"
+#include "TreeOperators/MultiLeafOperator.h"
+#include "TreeShape/LeafTypes/HO_Basis.h"
 #include "TreeShape/Tree.h"
 #include "TreeShape/TreeFactory.h"
 

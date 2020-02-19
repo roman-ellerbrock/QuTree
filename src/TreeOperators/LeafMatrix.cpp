@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 
-#include "LeafMatrix.h"
+#include "TreeOperators/LeafMatrix.h"
 
 template<typename T>
 void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,

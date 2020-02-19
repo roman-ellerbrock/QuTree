@@ -1,4 +1,4 @@
-#include "LegendrePolynomials.h"
+#include "TreeShape/LeafTypes/LegendrePolynomials.h"
 
 void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, double wfomega) {
 	// save all parameters

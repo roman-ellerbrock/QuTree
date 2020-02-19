@@ -1,4 +1,4 @@
-#include "TensorTreeBasis/LeafTypes/HO_Basis.h"
+#include "TreeShape/LeafTypes/HO_Basis.h"
 
 void HO_Basis::Initialize(double omega, double r0, double wfr0, double wfomega) {
 	// save all parameters

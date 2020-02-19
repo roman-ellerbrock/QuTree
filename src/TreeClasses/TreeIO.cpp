@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/10/20.
 //
 
-#include "TreeIO.h"
-#include "SpectralDecompositionTree.h"
+#include "TreeClasses/TreeIO.h"
+#include "TreeClasses/SpectralDecompositionTree.h"
 
 namespace IOTree {
 

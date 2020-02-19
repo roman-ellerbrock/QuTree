@@ -1,4 +1,4 @@
-#include "FermionNumberBasis.h"
+#include "TreeShape/LeafTypes/FermionNumberBasis.h"
 
 FermionNumberBasis::FermionNumberBasis(int dim_)
 	: NumberBasis(dim_, true) {

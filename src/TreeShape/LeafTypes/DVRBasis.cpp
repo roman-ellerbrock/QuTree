@@ -1,4 +1,4 @@
-#include "TensorTreeBasis/LeafTypes/DVRBasis.h"
+#include "TreeShape/LeafTypes/DVRBasis.h"
 
 DVRBasis::DVRBasis(int dim)
 	: dim_(dim), trafo_(dim, dim), x_(dim), kin_(dim, dim), p_(dim, dim),

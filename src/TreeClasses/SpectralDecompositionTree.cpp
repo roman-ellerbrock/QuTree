@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2/1/20.
 //
-#include "SpectralDecompositionTree.h"
+#include "TreeClasses/SpectralDecompositionTree.h"
 
 template<typename T>
 SpectralDecompositionTree<T>::SpectralDecompositionTree(const Tree& tree) {

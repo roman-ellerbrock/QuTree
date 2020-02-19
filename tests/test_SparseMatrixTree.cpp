@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/13/20.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "SparseMatrixTreeFunctions.h"
+#include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
 #include "TreeShape/TreeFactory.h"
 

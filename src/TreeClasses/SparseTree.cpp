@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2/2/20.
 //
-#include "SparseTree.h"
+#include "TreeClasses/SparseTree.h"
 
 void SparseTree::SparseInitialize(const vector<size_t>& modes,
 	const Tree& tree, bool tail) {

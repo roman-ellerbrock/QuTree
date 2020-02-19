@@ -1,40 +1,42 @@
+# Easily regenerate with find src -name '*.cpp' | sort
 set(QDlib_SOURCE_FILES
-    src/Core/FFT.cpp
-    src/Core/FactorMatrix_Instantiations.cpp
     src/Core/JacobiRotationFramework.cpp
     src/Core/Matrix_Instantiations.cpp
-    src/Core/SimultaneousDiagonalization.cpp
-    src/Core/TensorDim.cpp
-    src/Core/TensorDim_Extension.cpp
+    src/Core/RandomMatrices.cpp
+    src/Core/TensorShape.cpp
     src/Core/Tensor_Extension_Instantiations.cpp
     src/Core/Tensor_Instantiations.cpp
     src/Core/Vector_Instantiations.cpp
-    src/Core/WeightedSimultaneousDiagonalization.cpp
-    src/Core/long_integer.cpp
     src/Core/stdafx.cpp
-    src/Operators/MultiParticleOperator.cpp
-    src/Operators/SingleParticleOperatorFunction.cpp
-    src/Operators/SingleParticleOperatorMatrix.cpp
-    src/Operators/SumOfProductsOperator.cpp
-    src/TensorTreeBasis/Leaf.cpp
-    src/TensorTreeBasis/LeafTypes/BosonNumberBasis.cpp
-    src/TensorTreeBasis/LeafTypes/DVRBasis.cpp
-    src/TensorTreeBasis/LeafTypes/FFTGrid.cpp
-    src/TensorTreeBasis/LeafTypes/FermionNumberBasis.cpp
-    src/TensorTreeBasis/LeafTypes/HO_Basis.cpp
-    src/TensorTreeBasis/LeafTypes/LegendrePolynomials.cpp
-    src/TensorTreeBasis/LeafTypes/LogicalBasis.cpp
-    src/TensorTreeBasis/LeafTypes/NumberBasis.cpp
-    src/TensorTreeBasis/LeafTypes/SpinGroup.cpp
-    src/TensorTreeBasis/LinearizedLeaves.cpp
-    src/TensorTreeBasis/Node.cpp
-    src/TensorTreeBasis/NodePosition.cpp
-    src/TensorTreeBasis/TTBasisFactory.cpp
-    src/TensorTreeBasis/TensorTreeBasis.cpp
-    src/Tree/FactorMatrixTree.cpp
-    src/Tree/HoleMatrixTree.cpp
-    src/Tree/SparseFactorMatrixTree.cpp
-    src/Tree/SparseHoleMatrixTree.cpp
-    src/Tree/TensorTree_Instantiation.cpp
-    src/Tree/TreeMarker.cpp
+    src/TreeClasses/MatrixTree.cpp
+    src/TreeClasses/MatrixTreeFunctions.cpp
+    src/TreeClasses/SparseMatrixTree.cpp
+    src/TreeClasses/SparseMatrixTreeFunctions.cpp
+    src/TreeClasses/SparseTree.cpp
+    src/TreeClasses/SpectralDecompositionTree.cpp
+    src/TreeClasses/TensorTree_Instantiation.cpp
+    src/TreeClasses/TreeIO.cpp
+    src/TreeOperators/LeafFunction.cpp
+    src/TreeOperators/LeafMatrix.cpp
+    src/TreeOperators/MultiLeafOperator.cpp
+    src/TreeOperators/SumOfProductsOperator.cpp
+    src/TreeShape/Leaf.cpp
+    src/TreeShape/LeafTypes/BosonNumberBasis.cpp
+    src/TreeShape/LeafTypes/DVRBasis.cpp
+    src/TreeShape/LeafTypes/FFTGrid.cpp
+    src/TreeShape/LeafTypes/FermionNumberBasis.cpp
+    src/TreeShape/LeafTypes/HO_Basis.cpp
+    src/TreeShape/LeafTypes/LegendrePolynomials.cpp
+    src/TreeShape/LeafTypes/LogicalBasis.cpp
+    src/TreeShape/LeafTypes/NumberBasis.cpp
+    src/TreeShape/LeafTypes/SpinGroup.cpp
+    src/TreeShape/LinearizedLeaves.cpp
+    src/TreeShape/Node.cpp
+    src/TreeShape/NodePosition.cpp
+    src/TreeShape/Tree.cpp
+    src/TreeShape/TreeFactory.cpp
+    src/Util/FFT.cpp
+    src/Util/SimultaneousDiagonalization.cpp
+    src/Util/WeightedSimultaneousDiagonalization.cpp
+    src/Util/long_integer.cpp
     )

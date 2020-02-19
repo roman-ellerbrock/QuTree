@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Tensor.h"
-#include "LeafInterface.h"
+#include "TreeShape/LeafTypes/LeafInterface.h"
 
 /**
  * \defgroup Operators

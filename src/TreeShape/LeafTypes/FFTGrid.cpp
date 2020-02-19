@@ -1,4 +1,4 @@
-#include "FFTGrid.h"
+#include "TreeShape/LeafTypes/FFTGrid.h"
 #include "Util/FFT.h"
 
 FFTGrid::FFTGrid(int dim)

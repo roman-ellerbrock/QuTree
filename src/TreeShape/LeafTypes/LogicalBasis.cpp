@@ -1,4 +1,4 @@
-#include "TensorTreeBasis/LeafTypes/LogicalBasis.h"
+#include "TreeShape/LeafTypes/LogicalBasis.h"
 
 // Logical Nodes do nothing
 void LogicalBasis::Initialize(double par1, double par2, double par3, double par4) {

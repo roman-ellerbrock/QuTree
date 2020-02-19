@@ -1,4 +1,4 @@
-#include "TensorTreeBasis/LeafTypes/BosonNumberBasis.h"
+#include "TreeShape/LeafTypes/BosonNumberBasis.h"
 
 BosonNumberBasis::BosonNumberBasis(int dim_)
 	: NumberBasis(dim_, false) {

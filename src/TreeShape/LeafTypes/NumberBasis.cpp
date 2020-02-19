@@ -1,4 +1,4 @@
-#include "NumberBasis.h"
+#include "TreeShape/LeafTypes/NumberBasis.h"
 
 
 NumberBasis::NumberBasis(int dim, bool fermion)

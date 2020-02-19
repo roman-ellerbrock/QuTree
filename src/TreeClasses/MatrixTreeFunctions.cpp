@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/11/20.
 //
 
-#include "MatrixTreeFunctions_Implementation.h"
+#include "TreeClasses/MatrixTreeFunctions_Implementation.h"
 
 namespace MatrixTreeFunctions {
 	typedef complex<double> cd;

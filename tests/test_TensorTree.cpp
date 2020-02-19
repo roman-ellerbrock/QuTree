@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2020-01-19.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TensorTree.h"
-#include "TensorTree_Implementation.h"
+#include "TreeClasses/TensorTree.h"
+#include "TreeClasses/TensorTree_Implementation.h"
 #include "TreeShape/Tree.h"
 #include "TreeShape/TreeFactory.h"
 
