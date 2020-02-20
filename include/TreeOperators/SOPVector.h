@@ -11,8 +11,10 @@ class SOPVector: public std::vector<SOP<T>>
  */
 {
 public:
+	using vector<SOP<T>>::push_back;
+	using vector<SOP<T>>::insert;
 	void append(const SOP<T>& A) {
-		push_back(A);
+		this->push_back(A);
 	}
 
 	void append(const SOPVector<T>& A) {

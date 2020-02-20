@@ -45,6 +45,12 @@ public:
 		push_back(h, mode_x);
 	}
 
+	/// Construct a MLO from a single RefSPO
+	MultiLeafOperator(const LeafFun<T>& h, size_t mode_x)
+		: MultiLeafOperator() {
+		push_back(h, mode_x);
+	}
+
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
 		const Leaf& leaf) const;
@@ -68,6 +74,12 @@ public:
 	/// Push back a RefSPO to the MLO
 	void push_back(const LeafFunction<T>& h, size_t mode_x) {
 		auto *spo = new LeafFunction<T>(h);
+		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
+		targetLeaves_.push_back(mode_x);
+	}
+
+	void push_back(const LeafFun<T>& h_f, size_t mode_x) {
+		auto *spo = new LeafFunction<T>(h_f);
 		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
 		targetLeaves_.push_back(mode_x);
 	}
