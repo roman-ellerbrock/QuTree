@@ -33,3 +33,4 @@ public:
 	}
 };
 
+typedef SOPVector<complex<double>> SOPVectorcd;

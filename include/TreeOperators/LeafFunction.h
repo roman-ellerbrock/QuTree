@@ -33,5 +33,5 @@ protected:
 template<typename T>
 using SPOf = LeafFunction<T>;
 
-typedef LeafFunction<complex<double>> SPOfcd;
+typedef LeafFunction<complex<double>> LeafFunctioncd;
 
