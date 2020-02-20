@@ -167,6 +167,57 @@ namespace SparseMatrixTreeFunctions {
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
 		Contraction(holes, Psi, Psi, mats, tree);
 	}
+
+////////////////////////////////////////////////////////////////////////
+/// Apply SparseMatrixTree to tensor tree
+////////////////////////////////////////////////////////////////////////
+
+	template<typename T>
+	Tensorcd Apply(SparseMatrixTree<T>& mat, const Tensorcd& Phi, const MLO<T>& M, const Node& node) {
+			if (!mat.Active(node)) { return Phi; }
+			if (node.isBottomlayer()) {
+				const Leaf& phys = node.getLeaf();
+				return M.ApplyBottomLayer(Phi, phys);
+			} else {
+				return ApplyUpper(mat, Phi, node);
+			}
+	}
+
+	template<typename T>
+	Tensorcd ApplyUpper(SparseMatrixTree<T>& mat, Tensorcd Phi, const Node& node) {
+		Tensorcd hPhi(Phi.shape());
+		bool switchbool = true;
+		for (size_t k = 0; k < node.nChildren(); ++k) {
+			const Node& child = node.child(k);
+			if (!mat.Active(child)) { continue; }
+			if (switchbool) {
+				multAB(hPhi, mat[child], Phi, true);
+			} else {
+				multAB(Phi, mat[child], hPhi, true);
+			}
+			switchbool = !switchbool;
+		}
+		if (switchbool) {
+			return Phi;
+		} else {
+			return hPhi;
+		}
+	}
+
+	template<typename T>
+	Tensorcd ApplyHole(SparseMatrixTree<T>& mat, Tensorcd Phi, const Node& hole_node) {
+		assert(!hole_node.isToplayer());
+		const Node& parent = hole_node.parent();
+		size_t drop = hole_node.childIdx();
+
+		for (size_t k = 0; k < parent.nChildren(); ++k) {
+			const Node& child = parent.child(k);
+			if ((child.childIdx() == drop) || (!mat.Active(child))) { continue; }
+			Phi = MatrixTensor(mat[child], Phi, child.childIdx());
+		}
+		return Phi;
+	}
+
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

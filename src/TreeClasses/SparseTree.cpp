@@ -3,6 +3,21 @@
 //
 #include "TreeClasses/SparseTree.h"
 
+
+SparseTree::SparseTree(const SOPcd& sop, const Tree& tree) {
+	vector<size_t> actives;
+	for (const MLOcd& M : sop) {
+		for (size_t i = 0; i < M.size(); ++i) {
+			size_t k = M.Mode(i);
+			if (!count(actives.begin(), actives.end(), k)) {
+				actives.push_back(k);
+			}
+		}
+	}
+	SparseInitialize(actives, tree);
+}
+
+
 void SparseTree::SparseInitialize(const vector<size_t>& modes,
 	const Tree& tree, bool tail) {
 

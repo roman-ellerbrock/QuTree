@@ -4,6 +4,7 @@
 #ifndef SPARSEMATRIXTREE_H
 #define SPARSEMATRIXTREE_H
 #include "TreeClasses/SparseNodeAttribute.h"
+#include "TreeClasses/TensorTree.h"
 
 template <typename T>
 class SparseMatrixTree : public SparseNodeAttribute<Matrix<T>>{

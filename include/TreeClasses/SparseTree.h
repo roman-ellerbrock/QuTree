@@ -33,6 +33,8 @@ public:
 		SparseInitialize(modes, tree, tail);
 	}
 
+	SparseTree(const SOPcd& sop, const Tree& tree);
+
 	void SparseInitialize(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true);
 

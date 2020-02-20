@@ -109,6 +109,9 @@ private:
 template <typename T>
 using SOP = SumOfProductsOperator<T>;
 
+typedef SOP<complex<double>> SOPcd;
+typedef SOP<double> SOPd;
+
 template <typename T>
 SOP<T> multAB(const SOP<T>& A, const SOP<T>& B);
 

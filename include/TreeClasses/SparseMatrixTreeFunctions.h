@@ -58,6 +58,20 @@ namespace SparseMatrixTreeFunctions {
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const Tree& tree);
+
+////////////////////////////////////////////////////////////////////////
+/// Apply MatrixTree
+////////////////////////////////////////////////////////////////////////
+
+	template<typename T>
+	Tensorcd Apply(SparseMatrixTree<T>& mat, const Tensorcd& Phi, const MLO<T>& M, const Node& node);
+
+	template<typename T>
+	Tensorcd ApplyUpper(SparseMatrixTree<T>& mat, Tensorcd Phi, const Node& node);
+
+	template<typename T>
+	Tensorcd ApplyHole(SparseMatrixTree<T>& holes, Tensorcd Phi, const Node& hole_node);
+
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_H
