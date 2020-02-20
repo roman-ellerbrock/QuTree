@@ -123,12 +123,11 @@ public:
 	}
 
 	/// Multiply two MPOs.
-	friend MultiLeafOperator operator*(const MultiLeafOperator& A,
-		const MultiLeafOperator& B) {
-		MultiLeafOperator M = B;
+	MultiLeafOperator operator*(const MultiLeafOperator& B)const {
+		MultiLeafOperator<T> M = B;
 
-		for (size_t i = 0; i < A.size(); i++) {
-			M.push_back(A[i], A.Mode(i));
+		for (size_t i = 0; i < leafOperators_.size(); i++) {
+			M.push_back(leafOperators_[i], Mode(i));
 		}
 
 		return M;

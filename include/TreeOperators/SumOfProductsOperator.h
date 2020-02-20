@@ -74,27 +74,32 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	// Operators
 	//////////////////////////////////////////////////////////////////////
-	// multiply with coefficient
-	friend SumOfProductsOperator<T> operator*(T c,
-		const SumOfProductsOperator<T>& A);
+	/// See https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
+	/// for more information
+	/// These are extroverts
 
-	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
-		T c);
+	template<typename U>
+	friend SumOfProductsOperator<U> operator*(U c, const SumOfProductsOperator<U>& A);
 
-	// multiply with Multiparticleoperator
-	friend SumOfProductsOperator<T> operator*(const MLO<T>& M,
-		const SumOfProductsOperator<T>& A);
+	template<typename U>
+	friend SumOfProductsOperator<U> operator*(const SumOfProductsOperator<U>& A,
+		U c);
 
-	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
-		const MLO<T>& M);
+	template<typename U>
+	friend SumOfProductsOperator<U> operator*(const MLO<U>& M,
+		const SumOfProductsOperator<U>& A);
 
-	// multiply with SoP-Operator
-	friend SumOfProductsOperator<T> operator*(const SumOfProductsOperator<T>& A,
-		const SumOfProductsOperator<T>& B);
+	template<typename U>
+	friend SumOfProductsOperator<U> operator*(const SumOfProductsOperator<U>& A,
+		const MLO<U>& M);
 
-	// add SoP-Operator
-	friend SumOfProductsOperator<T> operator+(const SumOfProductsOperator<T>& A,
-		const SumOfProductsOperator<T>& B);
+	template<typename U>
+	friend SumOfProductsOperator<U> operator*(const SumOfProductsOperator<U>& A,
+		const SumOfProductsOperator<U>& B);
+
+	template<typename U>
+	friend SumOfProductsOperator<U> operator+(const SumOfProductsOperator<U>& A,
+		const SumOfProductsOperator<U>& B);
 
 protected:
 	vector<MLO<T>> mpos_;

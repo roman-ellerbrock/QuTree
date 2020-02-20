@@ -31,6 +31,7 @@ set(QDlib_INCLUDE_FILES
     include/TreeOperators/PotentialOperator.h
     include/TreeOperators/SOPVector.h
     include/TreeOperators/SumOfProductsOperator.h
+    include/TreeOperators/SumOfProductsOperator_Implementation.h
     include/TreeShape/AbstractNode.h
     include/TreeShape/Leaf.h
     include/TreeShape/LeafTypes/BosonNumberBasis.h

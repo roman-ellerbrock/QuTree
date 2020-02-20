@@ -8,6 +8,7 @@
 #include "TreeShape/LeafTypes/HO_Basis.h"
 #include "TreeShape/Tree.h"
 #include "TreeShape/TreeFactory.h"
+#include "TreeOperators/SumOfProductsOperator_Implementation.h"
 
 SUITE (Operators) {
 	class HelperFactory {
@@ -72,5 +73,19 @@ SUITE (Operators) {
 		for (const Node& node : tree) {
 				CHECK_EQUAL(Xi[node], Psi[node]);
 		}
+	}
+
+	TEST_FIXTURE (HelperFactory, SOP_1) {
+		MLOcd M(x, 1);
+		MLOcd M2(x, 2);
+		SOPcd S(M, 1.);
+		S.push_back(M2, 0.5);
+		auto M_sq = M * M;
+			CHECK_EQUAL(2, M_sq.size());
+		complex<double> c (0.5);
+		SOPcd cS = c * S;
+			CHECK_EQUAL(2, cS.size());
+		SOPcd SS = S * S;
+			CHECK_EQUAL(4, SS.size());
 	}
 }

@@ -94,5 +94,21 @@ void MultiLeafOperator<T>::SetV(const PotentialOperator& V_) {
     hasV_ = true;
 }
 
+template <typename T>
+MultiLeafOperator<T> operator*(const MultiLeafOperator<T>& A,
+	const MultiLeafOperator<T>& B) {
+	MultiLeafOperator<T> M = B;
+
+	for (size_t i = 0; i < A.size(); i++) {
+		M.push_back(A[i], A.Mode(i));
+	}
+
+	return M;
+}
+
+
+typedef complex<double> cd;
 template class MultiLeafOperator<complex<double>>;
+template MultiLeafOperator<cd> operator*(const MultiLeafOperator<cd>& A, const MultiLeafOperator<cd>& B);
+
 template class MultiLeafOperator<double>;
