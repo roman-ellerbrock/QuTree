@@ -61,6 +61,8 @@ typedef SparseMatrixTree<complex<double>> SparseMatrixTreecd;
 
 typedef SparseMatrixTree<double> SparseMatrixTreed;
 
+template <typename T>
+using SparseMatrixTrees = vector<SparseMatrixTree<T>>;
 
 
 

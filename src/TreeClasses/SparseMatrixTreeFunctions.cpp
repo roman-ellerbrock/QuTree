@@ -19,6 +19,9 @@ namespace SparseMatrixTreeFunctions {
 	template SparseMatrixTree<cd> Represent(const MLO<cd>& M, const TensorTree<cd>& Psi,
 		const Tree& tree);
 
+	template void Represent<cd>(SparseMatrixTrees<cd>& Mats, const SOP<cd>& sop,
+		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
+
 	template Tensor<cd> Apply(const SparseMatrixTree<cd>& mats, const Tensor<cd>& Phi,
 		const MLO<cd>& M, const Node& node);
 
@@ -27,6 +30,15 @@ namespace SparseMatrixTreeFunctions {
 
 	template void Contraction(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Psi,
 		const SparseMatrixTree<cd>& mats, const Tree& tree);
+
+	template void Contraction(vector<SparseMatrixTree<cd>>& holes, const SparseMatrixTrees<cd>& Mats,
+		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
+
+	template Tensor<cd> Apply(SparseMatrixTree<cd>& mat, const Tensor<cd>& Phi, const MLO<cd>& M, const Node& node);
+
+	template Tensor<cd> ApplyUpper(SparseMatrixTree<cd>& mat, Tensor<cd> Phi, const Node& node);
+
+	template Tensor<cd> ApplyHole(SparseMatrixTree<cd>& holes, Tensor<cd> Phi, const Node& hole_node);
 
 
 	typedef double d;
@@ -43,6 +55,9 @@ namespace SparseMatrixTreeFunctions {
 	template SparseMatrixTree<d> Represent(const MLO<d>& M, const TensorTree<d>& Psi,
 		const Tree& tree);
 
+	template void Represent<d>(SparseMatrixTrees<d>& Mats, const SOP<d>& sop,
+		const TensorTree<d>& Bra, const TensorTree<d>& Ket, const Tree& tree);
+
 	template Tensor<d> Apply(const SparseMatrixTree<d>& mats, const Tensor<d>& Phi,
 		const MLO<d>& M, const Node& node);
 
@@ -51,4 +66,14 @@ namespace SparseMatrixTreeFunctions {
 
 	template void Contraction(SparseMatrixTree<d>& holes, const TensorTree<d>& Bra,
 		const SparseMatrixTree<d>& mats, const Tree& tree);
+
+	template void Contraction(vector<SparseMatrixTree<d>>& holes, const SparseMatrixTrees<d>& Mats,
+		const TensorTree<d>& Bra, const TensorTree<d>& Ket, const Tree& tree);
+
+	template Tensor<d> Apply(SparseMatrixTree<d>& mat, const Tensor<d>& Phi, const MLO<d>& M, const Node& node);
+
+	template Tensor<d> ApplyUpper(SparseMatrixTree<d>& mat, Tensor<d> Phi, const Node& node);
+
+	template Tensor<d> ApplyHole(SparseMatrixTree<d>& holes, Tensor<d> Phi, const Node& hole_node);
+
 }

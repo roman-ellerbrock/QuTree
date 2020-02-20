@@ -47,7 +47,7 @@ public:
 
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
-		const Leaf& phys) const;
+		const Leaf& leaf) const;
 
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,

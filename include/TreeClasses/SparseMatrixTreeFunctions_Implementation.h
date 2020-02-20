@@ -77,6 +77,15 @@ namespace SparseMatrixTreeFunctions {
 		return hmat;
 	}
 
+	template<typename T>
+	void Represent(SparseMatrixTrees<T>& Mats, const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
+		assert(Mats.size() == sop.size());
+		for (size_t l = 0; l < sop.size(); ++l) {
+			Represent(Mats[l], sop[l], Bra, Ket, tree);
+		}
+	}
+
 ////////////////////////////////////////////////////////////////////////
 /// Apply SparseMatrixTree to tensor tree
 ////////////////////////////////////////////////////////////////////////
@@ -168,32 +177,41 @@ namespace SparseMatrixTreeFunctions {
 		Contraction(holes, Psi, Psi, mats, tree);
 	}
 
+	template <typename T>
+	void Contraction(vector<SparseMatrixTree<T>>& holes, const SparseMatrixTrees<T>& Mats,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
+		assert(holes.size() == Mats.size());
+		for (size_t l = 0; l < holes.size(); ++l) {
+			Contraction(holes[l], Bra, Ket, Mats[l], tree);
+		}
+	}
+
 ////////////////////////////////////////////////////////////////////////
 /// Apply SparseMatrixTree to tensor tree
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	Tensorcd Apply(SparseMatrixTree<T>& mat, const Tensorcd& Phi, const MLO<T>& M, const Node& node) {
+	Tensor<T> Apply(SparseMatrixTree<T>& mat, const Tensor<T>& Phi, const MLO<T>& M, const Node& node) {
 			if (!mat.Active(node)) { return Phi; }
 			if (node.isBottomlayer()) {
-				const Leaf& phys = node.getLeaf();
-				return M.ApplyBottomLayer(Phi, phys);
+				const Leaf& leaf = node.getLeaf();
+				return M.ApplyBottomLayer(Phi, leaf);
 			} else {
 				return ApplyUpper(mat, Phi, node);
 			}
 	}
 
 	template<typename T>
-	Tensorcd ApplyUpper(SparseMatrixTree<T>& mat, Tensorcd Phi, const Node& node) {
-		Tensorcd hPhi(Phi.shape());
+	Tensor<T> ApplyUpper(SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
+		Tensor<T> hPhi(Phi.shape());
 		bool switchbool = true;
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
 			if (!mat.Active(child)) { continue; }
 			if (switchbool) {
-				multAB(hPhi, mat[child], Phi, true);
+				MatrixTensor(hPhi, mat[child], Phi, true);
 			} else {
-				multAB(Phi, mat[child], hPhi, true);
+				MatrixTensor(Phi, mat[child], hPhi, true);
 			}
 			switchbool = !switchbool;
 		}
@@ -205,7 +223,7 @@ namespace SparseMatrixTreeFunctions {
 	}
 
 	template<typename T>
-	Tensorcd ApplyHole(SparseMatrixTree<T>& mat, Tensorcd Phi, const Node& hole_node) {
+	Tensor<T> ApplyHole(SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& hole_node) {
 		assert(!hole_node.isToplayer());
 		const Node& parent = hole_node.parent();
 		size_t drop = hole_node.childIdx();

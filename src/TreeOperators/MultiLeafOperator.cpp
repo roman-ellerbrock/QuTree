@@ -9,10 +9,10 @@ MultiLeafOperator<T>::MultiLeafOperator()
 
 template <typename T>
 Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
-	const Leaf& Phy) const {
+	const Leaf& leaf) const {
 	Tensor<T> hPhi(Phi.shape());
-	size_t mode_x = Phy.Mode();
-	const LeafInterface& grid = Phy.PrimitiveGrid();
+	size_t mode_x = leaf.Mode();
+	const LeafInterface& grid = leaf.PrimitiveGrid();
 	bool switchbool = true;
 
 	// Applying the MLO uses switching of the result Tensor to increase performance.
