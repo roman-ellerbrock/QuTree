@@ -15,8 +15,7 @@ cmake_minimum_required(VERSION 2.8)
 project(QDlib C CXX)
 enable_language(C)
 enable_language(CXX)
-set(QDlib_VERSION_MAJOR 0)
-set(QDlib_VERSION_MINOR 1)
+set(QDlib_VERSION 0.1.0)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_policy(SET "CMP0042" NEW)
 
@@ -40,21 +39,38 @@ target_include_directories(QDlib
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
-set_target_properties(QDlib PROPERTIES PUBLIC_HEADER "${QDlib_INCLUDE_FILES}")
 
 # Install rules
 install(TARGETS QDlib
     EXPORT QDlib-export
-    PUBLIC_HEADER DESTINATION ${QDlib_INSTALL_INC_DIR}
     LIBRARY DESTINATION ${QDlib_INSTALL_LIB_DIR}
     ARCHIVE DESTINATION ${QDlib_INSTALL_LIB_DIR}
     )
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+    DESTINATION ${QDlib_INSTALL_INC_DIR}
+    FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT QDlib-export
     FILE QDlibTargets.cmake
     NAMESPACE QDlib::
     DESTINATION ${QDlib_INSTALL_CMAKE_DIR}
     )
+
+# Exports for external find_package
+include(CMakePackageConfigHelpers)
+configure_package_config_file(QDlibConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfig.cmake
+    INSTALL_DESTINATION ${QDlib_INSTALL_CMAKE_DIR}
+    PATH_VARS QDlib_INSTALL_INC_DIR QDlib_INSTALL_LIB_DIR)
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfigVersion.cmake
+    VERSION ${QDlib_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfigVersion.cmake
+    DESTINATION ${QDlib_INSTALL_CMAKE_DIR})
 
 set(openmp OFF)
 if (openmp)
