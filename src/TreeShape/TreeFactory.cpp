@@ -83,7 +83,9 @@ namespace TreeFactory {
 		PhysPar par;
 		Leaf leaf(dim_leaves, mode, leaf_type, leaf_subtype, par);
 
-		Node bottom(leaf, dim_nodes);
+//		size_t dim_now = min(dim_nodes, dim_leaves);
+		size_t dim_now = dim_nodes;
+		Node bottom(leaf, dim_now);
 		vector<Node> nodes;
 		for (size_t k = 0; k < num_leaves; ++k) {
 			nodes.push_back(bottom);

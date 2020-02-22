@@ -7,7 +7,10 @@
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "TreeClasses/TensorTree.h"
 
-namespace IOTree {
+namespace TreeIO {
+
+	template <typename T>
+	void Output(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);
 
 	template <typename T>
 	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);

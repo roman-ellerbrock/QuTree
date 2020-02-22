@@ -128,6 +128,7 @@ inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t l
 	return coeffs_[idx];
 }
 
+/*
 //////////////////////////////////////////////////////////
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) {
@@ -175,7 +176,7 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 	assert(j < active2);
 	assert(n < shape_.lastDimension());
 	return coeffs_[idx];
-}
+}*/
 
 //////////////////////////////////////////////////////////
 // File handling

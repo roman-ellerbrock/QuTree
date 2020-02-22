@@ -5,7 +5,15 @@
 #include "TreeClasses/TreeIO.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
 
-namespace IOTree {
+namespace TreeIO {
+
+	template<typename T>
+	void Output(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
+		MatrixTree<T> Rho(tree);
+		MatrixTreeFunctions::Contraction(Rho, Psi, tree, true);
+		Occupancy(Psi, tree, os);
+		Leafs(Psi, Rho, tree, os);
+	}
 
 	template <typename T>
 	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
@@ -42,18 +50,22 @@ namespace IOTree {
 		}
 		os.flush();
 	}
+
 }
 
 typedef complex<double>  cd;
 typedef double  d;
 
-template void IOTree::Occupancy<complex<double>>(const TensorTree<complex<double>>& Psi, const Tree& tree, ostream& os);
-template void IOTree::Occupancy<double>(const TensorTree<double>& Psi, const Tree& tree, ostream& os);
+template void TreeIO::Occupancy<complex<double>>(const TensorTree<complex<double>>& Psi, const Tree& tree, ostream& os);
+template void TreeIO::Occupancy<double>(const TensorTree<double>& Psi, const Tree& tree, ostream& os);
 
-template void IOTree::Leafs<cd>(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Tree& tree, ostream& os);
-template void IOTree::Leafs<d>(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Tree& tree, ostream& os);
+template void TreeIO::Output<d>(const TensorTree<d>& Psi, const Tree& tree, ostream& os);
+template void TreeIO::Output<cd>(const TensorTree<cd>& Psi, const Tree& tree, ostream& os);
 
-template Matrix<cd> IOTree::LeafDensity(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
-template Matrix<d> IOTree::LeafDensity(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
+template void TreeIO::Leafs<cd>(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Tree& tree, ostream& os);
+template void TreeIO::Leafs<d>(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Tree& tree, ostream& os);
+
+template Matrix<cd> TreeIO::LeafDensity(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
+template Matrix<d> TreeIO::LeafDensity(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
 
 
