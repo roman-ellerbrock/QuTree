@@ -66,12 +66,11 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 template<typename T>
 TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 	const Tree& basis) const {
-	for (size_t i = 0; i < basis.nNodes(); i++) {
-		const Node& node = basis.GetNode(i);
+	for (const Node& node : basis) {
 		if (node.isBottomlayer()) {
 			const Leaf& phy = node.getLeaf();
 			const LeafInterface& grid = phy.PrimitiveGrid();
-			int coord = phy.Mode();
+			size_t coord = phy.Mode();
 
 			// build list with active_ parts
 			vector<int> activelayerparts;

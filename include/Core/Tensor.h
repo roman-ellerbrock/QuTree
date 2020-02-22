@@ -81,6 +81,10 @@ public:
 
 	T& operator()(size_t i, size_t n);
 
+	T& operator()(size_t bef, size_t j, size_t aft, size_t leaf);
+
+	const T& operator()(size_t bef, size_t j, size_t aft, size_t leaf)const;
+
 	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n);
 
 	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n)const;

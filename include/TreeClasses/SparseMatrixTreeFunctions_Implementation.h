@@ -26,8 +26,8 @@ namespace SparseMatrixTreeFunctions {
 
 	template<typename T>
 	Matrix<T> RepresentBottom(const Tensor<T>& Bra,
-		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& phys) {
-		Tensor<T> MKet = M.ApplyBottomLayer(Ket, phys);
+		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& leaf) {
+		Tensor<T> MKet = M.ApplyBottomLayer(Ket, leaf);
 		return Bra.DotProduct(MKet);
 	}
 
@@ -87,65 +87,12 @@ namespace SparseMatrixTreeFunctions {
 	}
 
 ////////////////////////////////////////////////////////////////////////
-/// Apply SparseMatrixTree to tensor tree
-////////////////////////////////////////////////////////////////////////
-
-	template<typename T>
-	Tensor<T> ApplyUpper(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& node) {
-		Tensor<T> hPhi(Phi.shape());
-		bool switchbool = true;
-		for (size_t k = 0; k < node.nChildren(); ++k) {
-			const Node& child = node.child(k);
-			if (!mats.Active(child)) { continue; }
-			if (switchbool) {
-				MatrixTensor(hPhi, mats[child], Phi, true);
-			} else {
-				MatrixTensor(Phi, mats[child], hPhi, true);
-			}
-			switchbool = !switchbool;
-		}
-		if (switchbool) {
-			return Phi;
-		} else {
-			return hPhi;
-		}
-	}
-
-	/// Apply factor matrices locally
-	template<typename T>
-	Tensor<T> Apply(const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
-		const MLO<T>& M, const Node& node) {
-		if (!mats.Active(node)) { return Phi; }
-		if (node.isBottomlayer()) {
-			const Leaf& phys = node.getLeaf();
-			return M.ApplyBottomLayer(Phi, phys);
-		} else {
-			return ApplyUpper(mats, Phi, node);
-		}
-	}
-
-	template<typename T>
-	Tensor<T> ApplyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
-		assert(!hole_node.isToplayer());
-		const Node& parent = hole_node.parent();
-		size_t drop = hole_node.childIdx();
-
-		for (size_t k = 0; k < parent.nChildren(); ++k) {
-			const Node& child = parent.child(k);
-			size_t childidx = child.childIdx();
-			if ((childidx == drop) || (!mats.Active(child))) { continue; }
-			Phi = MatrixTensor(mats[child], Phi, childidx);
-		}
-		return Phi;
-	}
-
-////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-child (Backward)
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const SparseMatrixTree<T>& mats,const SparseTree& marker, const Tree& tree) {
+		const SparseMatrixTree<T>& mats, const SparseTree& marker, const Tree& tree) {
 
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = marker.size() - 1;
@@ -177,7 +124,7 @@ namespace SparseMatrixTreeFunctions {
 		Contraction(holes, Psi, Psi, mats, tree);
 	}
 
-	template <typename T>
+	template<typename T>
 	void Contraction(vector<SparseMatrixTree<T>>& holes, const SparseMatrixTrees<T>& Mats,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
 		assert(holes.size() == Mats.size());
@@ -190,28 +137,30 @@ namespace SparseMatrixTreeFunctions {
 /// Apply SparseMatrixTree to tensor tree
 ////////////////////////////////////////////////////////////////////////
 
+	/// Apply factor matrices locally
 	template<typename T>
-	Tensor<T> Apply(SparseMatrixTree<T>& mat, const Tensor<T>& Phi, const MLO<T>& M, const Node& node) {
-			if (!mat.Active(node)) { return Phi; }
-			if (node.isBottomlayer()) {
-				const Leaf& leaf = node.getLeaf();
-				return M.ApplyBottomLayer(Phi, leaf);
-			} else {
-				return ApplyUpper(mat, Phi, node);
-			}
+	Tensor<T> Apply(const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
+		const MLO<T>& M, const Node& node) {
+		if (!mats.Active(node)) { return Phi; }
+		if (node.isBottomlayer()) {
+			const Leaf& phys = node.getLeaf();
+			return M.ApplyBottomLayer(Phi, phys);
+		} else {
+			return ApplyUpper(mats, Phi, node);
+		}
 	}
 
 	template<typename T>
-	Tensor<T> ApplyUpper(SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
+	Tensor<T> ApplyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
 		Tensor<T> hPhi(Phi.shape());
 		bool switchbool = true;
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
 			if (!mat.Active(child)) { continue; }
 			if (switchbool) {
-				MatrixTensor(hPhi, mat[child], Phi, true);
+				MatrixTensor(hPhi, mat[child], Phi, child.childIdx(), true);
 			} else {
-				MatrixTensor(Phi, mat[child], hPhi, true);
+				MatrixTensor(Phi, mat[child], hPhi, child.childIdx(), true);
 			}
 			switchbool = !switchbool;
 		}
@@ -223,15 +172,16 @@ namespace SparseMatrixTreeFunctions {
 	}
 
 	template<typename T>
-	Tensor<T> ApplyHole(SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& hole_node) {
+	Tensor<T> ApplyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
 		assert(!hole_node.isToplayer());
 		const Node& parent = hole_node.parent();
 		size_t drop = hole_node.childIdx();
 
 		for (size_t k = 0; k < parent.nChildren(); ++k) {
 			const Node& child = parent.child(k);
-			if ((child.childIdx() == drop) || (!mat.Active(child))) { continue; }
-			Phi = MatrixTensor(mat[child], Phi, child.childIdx());
+			size_t childidx = child.childIdx();
+			if ((childidx == drop) || (!mats.Active(child))) { continue; }
+			Phi = MatrixTensor(mats[child], Phi, childidx);
 		}
 		return Phi;
 	}

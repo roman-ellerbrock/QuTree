@@ -113,6 +113,23 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
 }
 
 template<typename T>
+inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
+	size_t before = shape_.before(leaf);
+	size_t dim = shape_[leaf];
+	size_t idx = aft * before * dim + i * before + bef;
+	return coeffs_[idx];
+}
+
+template<typename T>
+inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) const {
+	size_t before = shape_.before(leaf);
+	size_t dim = shape_[leaf];
+	size_t idx = aft * before * dim + i * before + bef;
+	return coeffs_[idx];
+}
+
+//////////////////////////////////////////////////////////
+template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) {
 	size_t a = shape_.before(f);
 	size_t b = shape_[f];
@@ -318,18 +335,16 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 
 	// Copy the coefficients
 	size_t before = shape_.before(mode);
-	size_t after = shape_.after(mode) / shape_.lastDimension();
-	size_t nstates = shape_.lastDimension();
+	size_t after = shape_.after(mode);
 	size_t minactive = min(active, shape_[mode]);
-	for (size_t n = 0; n < nstates; n++) {
-		for (size_t l = 0; l < after; l++) {
-			for (size_t j = 0; j < minactive; j++) {
-				for (size_t i = 0; i < before; i++) {
-					newT(i, j, l, mode, n) = operator()(i, j, l, mode, n);
-				}
+	for (size_t l = 0; l < after; l++) {
+		for (size_t j = 0; j < minactive; j++) {
+			for (size_t i = 0; i < before; i++) {
+				newT(i, j, l, mode) = operator()(i, j, l, mode);
 			}
 		}
 	}
+
 	return newT;
 }
 
@@ -389,7 +404,6 @@ void Tensor<T>::Zero() {
 		coeffs_[i] = 0;
 }
 
-//////////////////////////////////////////////////////////
 // Non-member functions
 //////////////////////////////////////////////////////////
 template<typename T>
@@ -645,7 +659,7 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorShape tdim(B.shape());
 		size_t active1 = A.Dim1();
 		size_t active2 = A.Dim2();
-		tdim =  replaceDimension(tdim, mode, active1);
+		tdim = replaceDimension(tdim, mode, active1);
 		Tensor<T> C(tdim);
 		size_t after = tdim.after(mode);
 		size_t before = tdim.before(mode);

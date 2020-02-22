@@ -72,14 +72,13 @@ namespace SparseMatrixTreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	Tensor<T> Apply(SparseMatrixTree<T>& mat, const Tensor<T>& Phi, const MLO<T>& M, const Node& node);
+	Tensor<T> Apply(const SparseMatrixTree<T>& mat, const Tensor<T>& Phi, const MLO<T>& M, const Node& node);
 
 	template<typename T>
-	Tensor<T> ApplyUpper(SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node);
+	Tensor<T> ApplyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node);
 
 	template<typename T>
-	Tensor<T> ApplyHole(SparseMatrixTree<T>& holes, Tensor<T> Phi, const Node& hole_node);
-
+	Tensor<T> ApplyHole(const SparseMatrixTree<T>& holes, Tensor<T> Phi, const Node& hole_node);
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_H
