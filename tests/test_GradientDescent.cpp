@@ -6,13 +6,14 @@
 #include "Util/GradientDescent_Implementation.h"
 #include "Core/Vector.h"
 
-SUITE(GradientDescent) {
-	class Interface : public Vectord {
-		public:
+SUITE (GradientDescent) {
+	class Interface {
+	public:
 
-		Interface(): Vectord(2) {
-			operator()(0) = 0.5;
-			operator()(1) = -0.2;
+		Interface() {
+			x_ = Vectord(2);
+			x_(0) = 0.5;
+			x_(1) = -0.2;
 			alpha_ = 0.5;
 			beta_ = 0.4;
 		}
@@ -23,29 +24,36 @@ SUITE(GradientDescent) {
 			return -exp(-alpha_ * x(0) * x(0) - beta_ * x(1) * x(1)) + 1.;
 		}
 
-		Vectord Gradient() const {
+		Vectord& parameters() {
+			return x_;
+		}
+
+		Vectord gradient() const {
 			Vectord grad(2);
-			grad(0) = 2 * alpha_ * operator()(0) * evaluate(*this);
-			grad(1) = 2 * beta_ * operator()(1) * evaluate(*this);
+			grad(0) = 2 * alpha_ * x_(0) * evaluate(x_);
+			grad(1) = 2 * beta_ * x_(1) * evaluate(x_);
 			return grad;
 		}
 
-		void print()const {
+		void print() const {
 			cout << "x = ";
-			Vectord::print();
-			cout << "f(x) = " << evaluate(*this) << endl;
+			x_.print();
+			cout << "f(x) = " << evaluate(x_) << endl;
 		}
 
-		private:
+	private:
+		Vectord x_;
 		double alpha_;
 		double beta_;
 	};
 
-	TEST(GradientDescent1) {
+	TEST (GradientDescent1) {
 		Interface myInterface;
 		myInterface.print();
-		GradientDescent<Interface, Vectord>(myInterface, 1., 100);
+		GradientDescent<Interface, Vectord>(myInterface, 1., 20000);
 		myInterface.print();
-
+		Vectord x = myInterface.parameters();
+			CHECK_CLOSE(0., abs(x(0)), 0.05);
+			CHECK_CLOSE(0., abs(x(1)), 0.05);
 	}
 }
