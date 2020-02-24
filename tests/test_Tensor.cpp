@@ -1,6 +1,7 @@
 #include "Core/Tensor.h"
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
+#include "Util/QMConstants.h"
 
 using namespace std;
 
@@ -13,6 +14,9 @@ SUITE (Tensor) {
 
 		Tensorcd A;
 		Tensorcd B;
+		Tensorcd C_;
+		Tensorcd C2_;
+		TensorShape shape_c_;
 
 		void CreateTensorA() {
 			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
@@ -30,9 +34,32 @@ SUITE (Tensor) {
 			}
 		}
 
+		void CreateTensorC() {
+			shape_c_ = TensorShape({2, 2, 2});
+			// C
+			C_ = Tensorcd(shape_c_);
+			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
+				for (size_t act = 0; act < shape_c_[1]; ++act) {
+					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
+						C_(bef, act, aft, 1) = (double) act * QM::im;
+					}
+				}
+			}
+			// C2
+			C2_ = Tensorcd(shape_c_);
+			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
+				for (size_t act = 0; act < shape_c_[1]; ++act) {
+					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
+						C2_(bef, act, aft, 1) = (double) aft * QM::im;
+					}
+				}
+			}
+		}
+
 		void CreateTensors() {
 			CreateTensorA();
 			CreateTensorB();
+			CreateTensorC();
 		}
 	};
 
@@ -105,25 +132,76 @@ SUITE (Tensor) {
 		{
 			// Copy asignment operator
 			auto Aca = A;
-				CHECK_CLOSE(Residual(A, Aca), 0., eps);
+				CHECK_CLOSE(0., Residual(A, Aca), eps);
 		}
 
 		{
 			// Copy constructor
 			auto Acc(A);
-				CHECK_CLOSE(Residual(A, Acc), 0., eps);
+				CHECK_CLOSE(0., Residual(A, Acc), eps);
 		}
 
 		{
 			// Move asignment operator
 			auto Ama = move(NewTensor());
-				CHECK_CLOSE(Residual(A, Ama), 0., eps);
+				CHECK_CLOSE(0., Residual(A, Ama), eps);
 		}
 
 		{
 			// Move constructor
 			auto Amc(NewTensor());
-				CHECK_CLOSE(Residual(A, Amc), 0., eps);
+				CHECK_CLOSE(0., Residual(A, Amc), eps);
 		}
 	}
+
+	TEST_FIXTURE (TensorFactory, AdjustDimension_inc) {
+		GramSchmidt(A);
+		size_t leaf = 1;
+		size_t dim = A.shape()[leaf];
+		size_t inc_dim = dim + 1;
+
+		auto C = A.AdjustActiveDim(inc_dim, leaf);
+		A = A.AdjustActiveDim(inc_dim, leaf);
+		auto s = mHoleProduct(C, A, C.shape().lastIdx());
+		auto res = Residual(s, IdentityMatrix<complex<double>>(2));
+			CHECK_CLOSE(0., res, eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, AdjustDimension_inc_dec) {
+		GramSchmidt(A);
+		size_t leaf = 1;
+		size_t dim = A.shape()[leaf];
+		size_t inc_dim = dim + 1;
+
+		auto C = A.AdjustActiveDim(inc_dim, leaf);
+		C = C.AdjustActiveDim(dim, leaf);
+		auto s = mHoleProduct(C, A, C.shape().lastIdx());
+		auto res = Residual(s, IdentityMatrix<complex<double>>(2));
+			CHECK_CLOSE(0., res, eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, HoleProduct) {
+		Matrixcd s = mHoleProduct(C_, C_, 1);
+			CHECK_EQUAL(shape_c_[1], s.Dim1());
+			CHECK_EQUAL(shape_c_[1], s.Dim2());
+		double dim = shape_c_.before(1) * shape_c_.after(1);
+		for (size_t i = 0; i < shape_c_[1]; ++i) {
+			for (size_t j = 0; j < shape_c_[1]; ++j) {
+					CHECK_CLOSE(dim * (double) i * (double) j, abs(s(i, j)), eps);
+			}
+		}
+	}
+
+	TEST_FIXTURE (TensorFactory, DotProduct) {
+		Matrixcd s = C2_.DotProduct(C2_);
+			CHECK_EQUAL(shape_c_[2], s.Dim1());
+			CHECK_EQUAL(shape_c_[2], s.Dim2());
+		for (size_t i = 0; i < shape_c_[2]; ++i) {
+			for (size_t j = 0; j < shape_c_[2]; ++j) {
+					CHECK_CLOSE(shape_c_.before(2) * (double) i * (double) j, abs(s(i, j)), eps);
+			}
+		}
+	}
+
+
 }

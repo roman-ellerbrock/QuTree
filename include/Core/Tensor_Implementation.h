@@ -114,17 +114,29 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
 
 template<typename T>
 inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
+	assert(leaf < shape_.order());
+	assert(bef < shape_.before(leaf));
+	assert(i < shape_[leaf]);
+	assert(aft < shape_.after(leaf));
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
+	// @TODO: remove when tested
+	assert(idx < shape_.totalDimension());
 	return coeffs_[idx];
 }
 
 template<typename T>
 inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) const {
+	assert(leaf < shape_.order());
+	assert(bef < shape_.before(leaf));
+	assert(i < shape_[leaf]);
+	assert(aft < shape_.after(leaf));
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
+	// @TODO: remove when tested
+	assert(idx < shape_.totalDimension());
 	return coeffs_[idx];
 }
 
@@ -477,7 +489,7 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 template<typename T>
 Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorShape& tdim_a(A.shape());
-	const TensorShape& tdim_b(A.shape());
+	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
 	assert(k < tdim_b.order());
 	size_t active1 = tdim_a[k];
@@ -490,11 +502,13 @@ Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 template<typename T>
 void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorShape& tdim_a(A.shape());
-	const TensorShape& tdim_b(A.shape());
+	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
 	assert(k < tdim_b.order());
 	size_t before = tdim_a.before(k);
 	size_t after = tdim_a.after(k);
+	assert(tdim_b.before(k) == before);
+	assert(tdim_b.after(k) == after);
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);

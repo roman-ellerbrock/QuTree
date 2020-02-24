@@ -72,11 +72,15 @@ public:
 		return coeffs_[i];
 	}
 
+	Vector operator+=(Vector b);
+	Vector operator-=(Vector b);
 	Vector operator+(Vector b);
 	Vector operator-(Vector b);
 	T operator*(Vector b);
 	Vector& operator*=(T coeff);
 	Vector& operator/=(T coeff);
+	Vector operator*(T coeff);
+	Vector operator/(T coeff);
 
 	// Math Operators
 	double Norm() const;

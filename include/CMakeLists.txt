@@ -52,6 +52,8 @@ set(QDlib_INCLUDE_FILES
     include/Util/BS_integrator.h
     include/Util/FFT.h
     include/Util/FFTCooleyTukey.h
+    include/Util/GradientDescent.h
+    include/Util/GradientDescent_Implementation.h
     include/Util/JacobiRotationFramework.h
     include/Util/Lanzcos.h
     include/Util/MultiIndex.h

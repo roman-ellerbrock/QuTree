@@ -127,7 +127,7 @@ void Vector<T>::print(ostream& os) const {
 }
 
 //////////////////////////////////////////////////////////////////////
-// Fundamental Math operators
+// Arithmetic
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 Vector<T> Vector<T>::operator+(const Vector<T> b) {
@@ -145,6 +145,36 @@ Vector<T> Vector<T>::operator-(const Vector<T> b) {
 	for (size_t i = 0; i < dim_; i++)
 		res(i) = operator()(i) - b(i);
 	return res;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator+=(Vector b) {
+	assert(b.Dim() == Dim());
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] += b[i];
+	return *this;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator-=(Vector b) {
+	assert(b.Dim() == Dim());
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] -= b[i];
+	return *this;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator*(T coeff) {
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] *= coeff;
+	return *this;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator/(T coeff) {
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] /= coeff;
+	return *this;
 }
 
 template<typename T>
@@ -172,7 +202,6 @@ Vector<T>& Vector<T>::operator/=(T coeff) {
 	return *this;
 }
 
-// Math Operators
 template<typename T>
 double Vector<T>::Norm() const {
 	double norm = 0;
