@@ -7,22 +7,6 @@ void SpinGroup::Initialize(double par0, double par1, double par2, double par3) {
 	if (par3 < 0) { last_ = true; }
 }
 
-Tensorcd SpinGroup::applyX(const Tensorcd& A) const {
-	return A;
-}
-
-Tensorcd SpinGroup::ApplyX2(const Tensorcd& A) const {
-	return A;
-}
-
-Tensorcd SpinGroup::ApplyP(const Tensorcd& A) const {
-	return A;
-}
-
-Tensorcd SpinGroup::ApplyKin(const Tensorcd& A) const {
-	return A;
-}
-
 void SpinGroup::InitSPF(Tensorcd& A) const {
 	const TensorShape& tdim = A.shape();
 	size_t ntensor = tdim.lastDimension();

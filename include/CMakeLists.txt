@@ -34,15 +34,11 @@ set(QDlib_INCLUDE_FILES
     include/TreeOperators/SumOfProductsOperator_Implementation.h
     include/TreeShape/AbstractNode.h
     include/TreeShape/Leaf.h
-    include/TreeShape/LeafTypes/BosonNumberBasis.h
     include/TreeShape/LeafTypes/DVRBasis.h
     include/TreeShape/LeafTypes/FFTGrid.h
-    include/TreeShape/LeafTypes/FermionNumberBasis.h
     include/TreeShape/LeafTypes/HO_Basis.h
     include/TreeShape/LeafTypes/LeafInterface.h
     include/TreeShape/LeafTypes/LegendrePolynomials.h
-    include/TreeShape/LeafTypes/LogicalBasis.h
-    include/TreeShape/LeafTypes/NumberBasis.h
     include/TreeShape/LeafTypes/SpinGroup.h
     include/TreeShape/LinearizedLeaves.h
     include/TreeShape/Node.h

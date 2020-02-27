@@ -49,9 +49,7 @@ SUITE (GradientDescent) {
 
 	TEST (GradientDescent1) {
 		Interface myInterface;
-		myInterface.print();
 		GradientDescent<Interface, Vectord>(myInterface, 1., 20000);
-		myInterface.print();
 		Vectord x = myInterface.parameters();
 			CHECK_CLOSE(0., abs(x(0)), 0.05);
 			CHECK_CLOSE(0., abs(x(1)), 0.05);

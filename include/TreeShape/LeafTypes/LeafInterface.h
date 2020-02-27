@@ -19,14 +19,14 @@ public:
 		}
 	}
 
-	virtual Tensorcd applyX(const Tensorcd& A)const = 0;
-	virtual Tensorcd ApplyX2(const Tensorcd& A)const = 0;
-	virtual Tensorcd ApplyP(const Tensorcd& A)const = 0;
-	virtual Tensorcd ApplyKin(const Tensorcd& A)const = 0;
+	virtual void applyX(Tensorcd& xA, const Tensorcd& A)const = 0;
+	virtual void applyX2(Tensorcd& x2A, const Tensorcd& A)const = 0;
+	virtual void applyP(Tensorcd& pA, const Tensorcd& A)const = 0;
+	virtual void applyKin(Tensorcd& kinA, const Tensorcd& A)const = 0;
 	virtual const Vectord& GetX()const = 0;
 	virtual Vectord& GetX() = 0;
-	virtual Tensorcd ToGrid(const Tensorcd& A)const = 0;
-	virtual Tensorcd FromGrid(const Tensorcd& A)const = 0;
+	virtual void ToGrid(Tensorcd& UA, const Tensorcd& A)const = 0;
+	virtual void FromGrid(Tensorcd& UA, const Tensorcd& A)const = 0;
 	virtual int oSQR()const = 0;
 	virtual bool HasDVR()const = 0; // Tells wether a primitive basis does have a grid representation
 };

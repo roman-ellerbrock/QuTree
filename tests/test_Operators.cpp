@@ -37,7 +37,8 @@ SUITE (Operators) {
 		TensorShape tdim(vector<size_t>({10, 1}));
 		Tensorcd A(tdim);
 		ho.InitSPF(A);
-		auto xA = ho.applyX(A);
+		Tensorcd xA(A.shape());
+		ho.applyX(xA, A);
 		string file("HO_Applyx.dat");
 		xA.Write(file);
 		Tensorcd B(file);

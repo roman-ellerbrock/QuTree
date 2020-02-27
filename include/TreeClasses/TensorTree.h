@@ -7,6 +7,7 @@
 #include "NodeAttribute.h"
 #include "TreeShape/Tree.h"
 #include "Core/Tensor.h"
+#include <random>
 
 template<typename T>
 class TensorTree:
@@ -39,7 +40,7 @@ public:
 	explicit TensorTree(const string& filename);
 
 	/// Create tensor tree and occupy the coefficients
-	TensorTree(std::mt19937& gen, const Tree& tree, bool delta_lowest = true);
+	TensorTree(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// Default destructor
 	~TensorTree() = default;
@@ -48,7 +49,7 @@ public:
 	virtual void Initialize(const Tree& tree);
 
 	/// Generate TTs
-	void FillRandom(std::mt19937& gen, const Tree& tree, bool delta_lowest = true);
+	void FillRandom(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// (File) I/O
 	/// Read TensorTree from stream (binary format)
