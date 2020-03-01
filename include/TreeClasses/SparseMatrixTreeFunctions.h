@@ -30,25 +30,26 @@ namespace SparseMatrixTreeFunctions {
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node);
 
 	template<typename T>
-	void Represent(SparseMatrixTree<T>& hmat,
-		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const Tree& tree);
 
 	template<typename T>
-	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Bra,
-		const TensorTree<T>& Ket, const Tree& tree);
+	SparseMatrixTree<T> Represent(const MLO<T>& M,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const Tree& tree);
 
 	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
 		const TensorTree<T>& Psi, const Tree& tree);
 
 	template<typename T>
-	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Psi,
-		const Tree& tree);
+	SparseMatrixTree<T> Represent(const MLO<T>& M,
+		const TensorTree<T>& Psi, const Tree& tree);
 
 	template <typename T>
-	void Represent(vector<SparseMatrixTree<T>>& Mats, const TensorTree<T>& Bra,
-		const TensorTree<T>& Ket, const Tree& tree);
+	void Represent(vector<SparseMatrixTree<T>>& Mats, const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-child (Backward)
@@ -64,7 +65,7 @@ namespace SparseMatrixTreeFunctions {
 		const SparseMatrixTree<T>& mats, const Tree& tree);
 
 	template <typename T>
-	void Contraction(SparseMatrixTrees<T>& holes, const SparseMatrixTree<T>& mat,
+	void Contraction(SparseMatrixTrees<T>& holes, const SparseMatrixTrees<T>& mat,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
 ////////////////////////////////////////////////////////////////////////
