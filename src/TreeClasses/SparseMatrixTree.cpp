@@ -15,7 +15,7 @@ void SparseMatrixTree<T>::Initialize(const Tree& tree) {
 }
 
 template<typename T>
-void SparseMatrixTree<T>::print(ostream& os) {
+void SparseMatrixTree<T>::print(ostream& os) const {
 	for (const Node *node_ptr : Active()) {
 		const Node& node = *node_ptr;
 		node.info(os);

@@ -44,7 +44,7 @@ public:
 	void Initialize(const Tree& tree) override;
 
 	/// I/O
-	void print(ostream& os = cout);
+	void print(ostream& os = cout) const;
 	void Write(ostream& os) const;
 	void Write(const string& filename) const;
 	void Read(istream& is);
