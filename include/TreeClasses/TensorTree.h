@@ -125,6 +125,12 @@ typedef TensorTree<complex<double>> TensorTreecd;
 
 typedef TensorTree<double> TensorTreed;
 
+template <typename T>
+void Orthogonal(TensorTree<T>& Psi, const Tree& tree);
+
+template <typename T>
+void Orthonormal(TensorTree<T>& Psi, const Tree& tree);
+
 template<typename T>
 ostream& operator<<(ostream& os, const TensorTree<T>& t);
 template<typename T>

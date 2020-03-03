@@ -25,13 +25,9 @@ namespace RungeKutta4 {
 	void Integrate(double t, double t_end, double h,
 		Model& y, Interface& I) {
 		std::ofstream os("ho.dat");
-		os << t << "\t";
-		y.print(os);
 		while (t + 1e-7 < t_end) {
 			h = std::min(h, t_end - t);
 			step(t, y, h, I);
-			os << t << "\t";
-			y.print(os);
 		}
 	}
 
