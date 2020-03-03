@@ -130,24 +130,6 @@ void Vector<T>::print(ostream& os) const {
 // Arithmetic
 //////////////////////////////////////////////////////////////////////
 template<typename T>
-Vector<T> Vector<T>::operator+(const Vector<T> b) const {
-	assert(b.Dim() == dim_);
-	Vector res(dim_);
-	for (size_t i = 0; i < dim_; i++)
-		res(i) = operator()(i) + b(i);
-	return res;
-}
-
-template<typename T>
-Vector<T> Vector<T>::operator-(const Vector<T> b) const {
-	assert(b.Dim() == dim_);
-	Vector res(dim_);
-	for (size_t i = 0; i < dim_; i++)
-		res(i) = operator()(i) - b(i);
-	return res;
-}
-
-template<typename T>
 Vector<T> Vector<T>::operator+=(Vector b) {
 	assert(b.Dim() == Dim());
 	for (size_t i = 0; i < dim_; i++)
@@ -164,25 +146,16 @@ Vector<T> Vector<T>::operator-=(Vector b) {
 }
 
 template<typename T>
-Vector<T> Vector<T>::operator*(T coeff) const {
-	for (size_t i = 0; i < dim_; i++)
-		coeffs_[i] *= coeff;
-	return *this;
+Vector<T> Vector<T>::operator+(const Vector<T> b) const {
+	Vector res(dim_);
+	res += b;
+	return res;
 }
 
 template<typename T>
-Vector<T> Vector<T>::operator/(T coeff) const {
-	for (size_t i = 0; i < dim_; i++)
-		coeffs_[i] /= coeff;
-	return *this;
-}
-
-template<typename T>
-T Vector<T>::operator*(const Vector<T> b) const {
-	assert(b.Dim() == dim_);
-	T res = 0;
-	for (size_t i = 0; i < dim_; i++)
-		res += operator()(i) * b(i);
+Vector<T> Vector<T>::operator-(const Vector<T> b) const {
+	Vector res(dim_);
+	res -= b;
 	return res;
 }
 
@@ -200,6 +173,29 @@ Vector<T>& Vector<T>::operator/=(T coeff) {
 		coeffs_[i] /= coeff;
 	}
 	return *this;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator*(T coeff) const {
+	Vector<T> C(*this);
+	C *= coeff;
+	return C;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator/(T coeff) const {
+	Vector<T> C(*this);
+	C /= coeff;
+	return C;
+}
+
+template<typename T>
+T Vector<T>::operator*(const Vector<T> b) const {
+	assert(b.Dim() == dim_);
+	T res = 0;
+	for (size_t i = 0; i < dim_; i++)
+		res += operator()(i) * b(i);
+	return res;
 }
 
 template<typename T>

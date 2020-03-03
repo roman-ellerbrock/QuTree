@@ -4,6 +4,7 @@
 #include "UnitTest++/UnitTest++.h"
 #include "Util/RungeKutta4.h"
 #include "Core/Vector.h"
+#include "Util/QMConstants.h"
 
 SUITE(Integrators) {
 	class HOInterface {
@@ -25,7 +26,7 @@ SUITE(Integrators) {
 		y(0) = 0.;
 		y(1) = -1.;
 		double t = 0.;
-		double t_end = 2*3.1415926/3.*4.;
+		double t_end = QM::two_pi*2./3.;
 		double h = 0.0005;
 		HOInterface I;
 
