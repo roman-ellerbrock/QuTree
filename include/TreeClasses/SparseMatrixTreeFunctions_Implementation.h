@@ -18,7 +18,7 @@ namespace SparseMatrixTreeFunctions {
 		for (size_t l = 0; l < node.nChildren(); l++) {
 			const Node& child = node.child(l);
 			if (!hmat.Active(child)) { continue; }
-			hKet = MatrixTensor(hmat[child], hKet, node.childIdx());
+			hKet = MatrixTensor(hmat[child], hKet, child.childIdx());
 		}
 
 		return Bra.DotProduct(hKet);
