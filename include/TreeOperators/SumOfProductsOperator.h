@@ -73,6 +73,10 @@ public:
 
 	void print(ostream& os = cout) const {
 		os << "Number of parts in SOP operator: " << size() << endl;
+		for (size_t i = 0; i < size(); ++i) {
+			os << "coeff: " << Coeff(i) << endl;
+			mpos_[i].print(os);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////

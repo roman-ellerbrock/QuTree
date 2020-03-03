@@ -152,6 +152,10 @@ public:
 	/// Return vector of all active_ modes in this operator
 	const vector<size_t>& targetLeaves()const { return targetLeaves_; }
 
+	void print(ostream& os = cout)const {
+		os << size() << " operators in MLO" << endl;
+	}
+
 protected:
 	/// These are the SPOs
 	vector<shared_ptr<LeafOperator<T>>> leafOperators_;

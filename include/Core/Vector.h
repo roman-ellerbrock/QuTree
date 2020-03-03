@@ -74,13 +74,13 @@ public:
 
 	Vector operator+=(Vector b);
 	Vector operator-=(Vector b);
-	Vector operator+(Vector b);
-	Vector operator-(Vector b);
-	T operator*(Vector b);
+	Vector operator+(Vector b)const;
+	Vector operator-(Vector b)const;
+	T operator*(Vector b)const;
 	Vector& operator*=(T coeff);
 	Vector& operator/=(T coeff);
-	Vector operator*(T coeff);
-	Vector operator/(T coeff);
+	Vector operator*(T coeff)const;
+	Vector operator/(T coeff)const;
 
 	// Math Operators
 	double Norm() const;
