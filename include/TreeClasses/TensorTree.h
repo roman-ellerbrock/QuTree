@@ -92,14 +92,14 @@ public:
 	}
 
 	void operator*=(T c) {
-		for (size_t n = 0; n < attributes_.size(); ++n) {
-			attributes_[n] *= c;
+		for (auto& A : *this) {
+			A *= c;
 		}
 	}
 
 	void operator/=(T c) {
-		for (size_t n = 0; n < attributes_.size(); ++n) {
-			attributes_[n] /= c;
+		for (auto& A : *this) {
+			A /= c;
 		}
 	}
 

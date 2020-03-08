@@ -87,7 +87,7 @@ namespace SparseMatrixTreeFunctions {
 	}
 
 ////////////////////////////////////////////////////////////////////////
-/// Build SparseMatrixTree Top-child (Backward)
+/// Build SparseMatrixTree Top-down (Backward)
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
@@ -104,10 +104,10 @@ namespace SparseMatrixTreeFunctions {
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
-				if (!parent.isToplayer()) {
-					hKet = multStateAB(holes[parent], hKet);
-				}
+				hKet = multStateAB(holes[parent], hKet);
 				holes[node] = mHoleProduct(Bra[parent], hKet, node.childIdx());
+			} else {
+				holes[node] = IdentityMatrix<T>(node.shape().lastDimension());
 			}
 		}
 	}

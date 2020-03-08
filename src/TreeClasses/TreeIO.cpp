@@ -39,16 +39,19 @@ namespace TreeIO {
 
 	template <typename T>
 	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os) {
+		os << fixed;
 		for (size_t l = 0; l < tree.nLeaves(); ++l) {
 			const Leaf& leaf = tree.GetLeaf(l);
 			auto rho_leaf = LeafDensity(Psi, Rho, leaf, tree);
 			cout << "Leaf: " << l << "\n";
+			double norm = abs(rho_leaf.Trace());
 			for  (size_t i = 0; i < rho_leaf.Dim1(); ++i) {
-				os << abs(rho_leaf(i, i)) << "\t";
+				os << abs(rho_leaf(i, i)) / norm << "\t";
 			}
 			os << "\n";
 		}
 		os.flush();
+		os << defaultfloat;
 	}
 
 }
