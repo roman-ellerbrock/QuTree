@@ -500,7 +500,7 @@ Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 }
 
 template<typename T>
-void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero) {
 	const TensorShape& tdim_a(A.shape());
 	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
@@ -512,6 +512,7 @@ void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
+	if (zero) { S.Zero(); }
 	TensorHoleProduct(S, A, B, before, active1, active2, after);
 }
 
