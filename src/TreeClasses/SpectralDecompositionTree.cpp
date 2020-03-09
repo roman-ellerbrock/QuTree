@@ -54,7 +54,14 @@ void SpectralDecompositionTree<T>::print(const Tree& tree) const {
 		if (!node.isToplayer()) {
 			node.info();
 			const SpectralDecomposition<T>& x = this->operator[](node);
-			x.second.print();
+			auto ev = x.second;
+			double norm = 0.;
+			for (size_t i = 0; i < ev.Dim(); ++i) {
+				norm += ev(i);
+			}
+			norm = max(1e-50, norm);
+			ev /= norm;
+			ev.print();
 		}
 	}
 }
