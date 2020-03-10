@@ -52,7 +52,6 @@ SUITE (TensorTree) {
 		TensorTreecd Psi(tree);
 		for (const Tensorcd& A : Psi) {
 			TensorShape shape = A.shape();
-			shape.print();
 		}
 		for (const Node& node : tree) {
 			Tensorcd& A = Psi[node];

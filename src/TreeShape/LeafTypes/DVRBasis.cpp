@@ -15,8 +15,6 @@ void DVRBasis::applyX(Tensorcd& xPhi, const Tensorcd& phi) const {
 
 	//	psi = kin_*phi;
 	// @TODO: rewrite this code as a matrix*Tensor routine
-	x_.print();
-	getchar();
 //  	#pragma omp for
 	for (int n = 0; n < tdim.lastDimension(); n++) {
 		for (int i = 0; i < active; i++) {
