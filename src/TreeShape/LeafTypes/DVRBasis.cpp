@@ -5,7 +5,7 @@ DVRBasis::DVRBasis(int dim)
 	  omega_(0), r0_(0), wfr0_(0), wfomega_(0) {
 }
 
-void DVRBasis::applyX(Tensorcd& psi, const Tensorcd& phi) const {
+void DVRBasis::applyX(Tensorcd& xPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
@@ -15,10 +15,12 @@ void DVRBasis::applyX(Tensorcd& psi, const Tensorcd& phi) const {
 
 	//	psi = kin_*phi;
 	// @TODO: rewrite this code as a matrix*Tensor routine
+	x_.print();
+	getchar();
 //  	#pragma omp for
 	for (int n = 0; n < tdim.lastDimension(); n++) {
 		for (int i = 0; i < active; i++) {
-			psi(i, n) = x_(i) * phi(i, n);
+			xPhi(i, n) = x_(i) * phi(i, n);
 		}
 	}
 }
