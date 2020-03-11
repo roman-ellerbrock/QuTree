@@ -26,6 +26,17 @@ namespace WeightedSimultaneousDiagonalization
 	 * This performs a weighted simultaneous diagonalization of a set of matrices.
 	 *
 	 * @param Xs Matrices to diagonalize
+	 * @param W Weight matrix
+	 * @param eps Target accuracy
+	 * @return Transformation matrix and diagonal elements
+	 */
+	pair<Matrixcd, vector<Vectord>> Calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps);
+
+	/** \brief Calculate the weighted Simultaneous Diagonalization for the Matrices A with the weight W
+	 *
+	 * This performs a weighted simultaneous diagonalization of a set of matrices.
+	 *
+	 * @param Xs Matrices to diagonalize
 	 * @param XXs Second moments of matrices (not used, can be empty)
 	 * @param W Weight matrix
 	 * @param trafo Output transformation

@@ -86,6 +86,13 @@ namespace SparseMatrixTreeFunctions {
 		}
 	}
 
+	template <typename T>
+	void Represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
+		Represent(mats.matrices_, sop, Bra, Ket, tree);
+		Contraction(mats.contractions_, mats.matrices_, Bra, Ket, tree);
+	}
+
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-down (Backward)
 ////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,7 @@
 #ifndef SPARSEMATRIXTREEFUNCTIONS_H
 #define SPARSEMATRIXTREEFUNCTIONS_H
 #include "TreeClasses/SparseMatrixTree.h"
+#include "TreeClasses/SOPMatrixTrees.h"
 
 namespace SparseMatrixTreeFunctions {
 /**
@@ -51,6 +52,10 @@ namespace SparseMatrixTreeFunctions {
 	void Represent(vector<SparseMatrixTree<T>>& Mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
+	template <typename T>
+	void Represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-child (Backward)
 ////////////////////////////////////////////////////////////////////////
@@ -66,6 +71,10 @@ namespace SparseMatrixTreeFunctions {
 
 	template <typename T>
 	void Contraction(SparseMatrixTrees<T>& holes, const SparseMatrixTrees<T>& mat,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+	template <typename T>
+	void Contraction(vector<SparseMatrixTrees<T>>& holes, const vector<SparseMatrixTrees<T>>& mat,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
 ////////////////////////////////////////////////////////////////////////
