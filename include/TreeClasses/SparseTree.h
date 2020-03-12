@@ -33,6 +33,8 @@ public:
 		SparseInitialize(modes, tree, tail);
 	}
 
+	SparseTree(const MLOcd& M, const Tree& tree);
+
 	SparseTree(const SOPcd& sop, const Tree& tree);
 
 	void SparseInitialize(const vector<size_t>& modes,
@@ -93,5 +95,19 @@ TreeMarker(const SOP& sop, const TTBasis& tree) {
 	SparseInitialize(actives, tree);
 }
 */
+
+/// Create SparseTree with nodes that are NOT included in another sparse tree
+SparseTree InverseTree(const SparseTree& stree, const Tree& tree) {
+	vector<size_t> modes;
+	for (size_t k = 0; k < tree.nLeaves(); ++k) {
+		const Leaf& leaf = tree.GetLeaf(k);
+		const auto& node = (Node&) leaf.Up();
+		if (!stree.Active(node)) {
+			modes.emplace_back(leaf.Mode());
+		}
+	}
+	return SparseTree(modes, tree);
+}
+
 
 #endif //MCTDH_TREEMARKER_H

@@ -3,6 +3,8 @@
 //
 #include "TreeClasses/SparseTree.h"
 
+SparseTree::SparseTree(const MLOcd& M, const Tree& tree)
+:SparseTree(M.targetLeaves(), tree) {}
 
 SparseTree::SparseTree(const SOPcd& sop, const Tree& tree) {
 	vector<size_t> actives;
@@ -74,3 +76,4 @@ void SparseTree::print(const Tree& tree, ostream& os) const {
 		node->info();
 	}
 }
+
