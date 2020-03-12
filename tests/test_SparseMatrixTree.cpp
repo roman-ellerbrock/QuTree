@@ -86,12 +86,13 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE(HelperFactory, InverseTree) {
 		SparseTree stree(M_, tree_);
-		SparseTree itree = InverseTree(stree, tree_);
+		SparseTree itree(M_, tree_, true);
 		CHECK_EQUAL(tree_.nNodes(), itree.size()+stree.size());
 		for (const Node& node : tree_) {
 			CHECK_EQUAL(true, stree.Active(node) != itree.Active(node));
 			CHECK_EQUAL(true, stree.Active(node) || itree.Active(node));
 		}
 	}
+
 }
 

@@ -30,11 +30,9 @@ public:
 	SparseTree() = default;
 
 	SparseTree(const vector<size_t>& modes,
-		const Tree& tree, bool tail = true) {
-		SparseInitialize(modes, tree, tail);
-	}
+		const Tree& tree, bool tail = true, bool inverse_tree = false);
 
-	SparseTree(const MLOcd& M, const Tree& tree);
+	SparseTree(const MLOcd& M, const Tree& tree, bool inverse_tree = false);
 
 	SparseTree(const SOPcd& sop, const Tree& tree);
 
@@ -99,8 +97,5 @@ TreeMarker(const SOP& sop, const TTBasis& tree) {
 	SparseInitialize(actives, tree);
 }
 */
-
-/// Create SparseTree with nodes that are NOT included in another sparse tree
-SparseTree InverseTree(const SparseTree& stree, const Tree& tree);
 
 #endif //MCTDH_TREEMARKER_H

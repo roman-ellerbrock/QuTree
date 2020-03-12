@@ -23,8 +23,8 @@ public:
 	/// Construct object by providing a list of leaf-modes that are active_.
 	/// Will find path connecting the nodes.
 	SparseNodeAttribute(const vector<size_t>& modes,
-		const Tree& tree)
-		: active_(make_shared<SparseTree>(modes, tree)) {
+		const Tree& tree, bool tail = true, bool inverse = false)
+		: active_(make_shared<SparseTree>(modes, tree, tail, inverse)) {
 		SparseNodeAttribute::Initialize(tree);
 	}
 

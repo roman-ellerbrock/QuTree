@@ -3,8 +3,19 @@
 //
 #include "TreeClasses/SparseTree.h"
 
-SparseTree::SparseTree(const MLOcd& M, const Tree& tree)
-:SparseTree(M.targetLeaves(), tree) {}
+SparseTree::SparseTree(const MLOcd& M, const Tree& tree, bool inverse_tree)
+	:SparseTree(M.targetLeaves(), tree, true, inverse_tree) {}
+
+SparseTree::SparseTree(const vector<size_t>& modes,
+	const Tree& tree, bool tail, bool inverse_tree) {
+
+	if (inverse_tree) {
+		SparseTree stree(modes, tree, tail, false);
+		InitializeInverse(stree, tree);
+	} else {
+		SparseInitialize(modes, tree, tail);
+	}
+}
 
 SparseTree::SparseTree(const SOPcd& sop, const Tree& tree) {
 	vector<size_t> actives;
@@ -18,7 +29,6 @@ SparseTree::SparseTree(const SOPcd& sop, const Tree& tree) {
 	}
 	SparseInitialize(actives, tree);
 }
-
 
 void SparseTree::SparseInitialize(const vector<size_t>& modes,
 	const Tree& tree, bool tail) {
@@ -90,9 +100,3 @@ void SparseTree::InitializeInverse(const SparseTree& stree, const Tree& tree) {
 	}
 }
 
-/// Create SparseTree with nodes that are NOT included in another sparse tree
-SparseTree InverseTree(const SparseTree& stree, const Tree& tree) {
-	SparseTree itree({0}, tree);
-	itree.InitializeInverse(stree, tree);
-	return itree;
-}
