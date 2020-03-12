@@ -35,6 +35,11 @@ public:
 		SparseNodeAttribute::Initialize(tree);
 	}
 
+	SparseNodeAttribute(const SparseTree& stree, const Tree& tree)
+		: active_(make_shared<SparseTree>(stree)) {
+		SparseNodeAttribute::Initialize(tree);
+	}
+
 	/// Allocate memory. Call only after initializing TreeMarker. Requires default constructor.
 	virtual void Initialize(const Tree& tree) {
 		attributes_.resize(Active().size());
