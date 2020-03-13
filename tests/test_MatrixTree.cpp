@@ -38,7 +38,7 @@ SUITE (MatrixTree) {
 }
 
 SUITE (MatrixTreeFunctions) {
-	using namespace MatrixTreeFunctions;
+	using namespace TreeFunctions;
 
 	double eps = 1e-8;
 
@@ -92,7 +92,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		TensorTreecd Psi(gen, tree);
-		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, tree, true);
+		MatrixTreecd Rho = TreeFunctions::Contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
 		for (const Node& node : tree) {

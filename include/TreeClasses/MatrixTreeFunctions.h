@@ -7,7 +7,7 @@
 #include "TreeClasses/TensorTree.h"
 #include "TreeClasses/MatrixTree.h"
 
-namespace MatrixTreeFunctions {
+namespace TreeFunctions {
 
 	template<typename T>
 	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Phi, Tensor<T> AChi, const Node& node);

@@ -51,7 +51,7 @@ void dot_product_tree() {
     TensorTreecd Chi(Psi);
 
     /// Construct, allocate and calculate a factor matrix tree
-    MatrixTreecd w = MatrixTreeFunctions::DotProduct(Psi, Chi, tree);
+    MatrixTreecd w = TreeFunctions::DotProduct(Psi, Chi, tree);
     w.print();
 }
 
@@ -64,11 +64,11 @@ void hole_product_tree() {
     TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
 //    FactorMatrixTreecd w(Psi, Chi, tree);
-    MatrixTreecd w = MatrixTreeFunctions::DotProduct(Psi, Chi, tree);
+    MatrixTreecd w = TreeFunctions::DotProduct(Psi, Chi, tree);
 
     /// Construct, allocate and calculate a hole matrix tree
 //    HoleMatrixTreecd rho(Psi, Chi, w, tree);
-    MatrixTreecd rho = MatrixTreeFunctions::Contraction(Psi, Chi,  w, tree);
+    MatrixTreecd rho = TreeFunctions::Contraction(Psi, Chi,  w, tree);
     rho.print();
 
 }
@@ -83,7 +83,7 @@ void tree_examples() {
 	Psi.print(tree);
 
 	cout << "A MatrixTree from an overlap:\n";
-	using namespace MatrixTreeFunctions;
+	using namespace TreeFunctions;
 	MatrixTreecd W = DotProduct( Psi, Psi, tree);
 	W.print(tree);
 

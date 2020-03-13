@@ -6,7 +6,7 @@
 #define SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
 
-namespace SparseMatrixTreeFunctions {
+namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Bottom-parent (Forward)
 ////////////////////////////////////////////////////////////////////////
@@ -106,12 +106,13 @@ namespace SparseMatrixTreeFunctions {
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = marker.MCTDHNode(n);
 			if (!node.isToplayer()) {
-				assert(mats.Active(node));
 				assert(holes.Active(node));
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
-				hKet = multStateAB(holes[parent], hKet);
+				if (marker.Active(parent)) {
+					hKet = multStateAB(holes[parent], hKet);
+				}
 				holes[node] = mHoleProduct(Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = IdentityMatrix<T>(node.shape().lastDimension());

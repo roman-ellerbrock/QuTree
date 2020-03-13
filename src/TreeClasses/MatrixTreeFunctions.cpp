@@ -4,7 +4,7 @@
 
 #include "TreeClasses/MatrixTreeFunctions_Implementation.h"
 
-namespace MatrixTreeFunctions {
+namespace TreeFunctions {
 	typedef complex<double> cd;
 
 	template void DotProductLocal(MatrixTree<cd>& S, const Tensor<cd>& Bra, Tensor<cd> Ket, const Node& node);

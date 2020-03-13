@@ -7,7 +7,7 @@
 #include "TreeClasses/SparseMatrixTree.h"
 #include "TreeClasses/SOPMatrixTrees.h"
 
-namespace SparseMatrixTreeFunctions {
+namespace TreeFunctions {
 /**
  * \namespace SparseMatrixTreeFunctions
  *

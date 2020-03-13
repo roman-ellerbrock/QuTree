@@ -33,8 +33,8 @@ public:
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
-	SparseMatrixTree(const MLO<T>& M, const Tree& tree)
-		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree) {
+	SparseMatrixTree(const MLO<T>& M, const Tree& tree, bool tail = true, bool inverse_tree = false)
+		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree, tail, inverse_tree) {
 		Initialize(tree);
 	}
 
@@ -58,11 +58,13 @@ template<typename T>
 istream& operator<<(istream& is, SparseMatrixTree<T>& hmat);
 
 typedef SparseMatrixTree<complex<double>> SparseMatrixTreecd;
-
 typedef SparseMatrixTree<double> SparseMatrixTreed;
 
 template <typename T>
 using SparseMatrixTrees = vector<SparseMatrixTree<T>>;
+
+typedef SparseMatrixTrees<complex<double>> SparseMatrixTreescd;
+typedef SparseMatrixTrees<double> SparseMatrixTreesd;
 
 
 

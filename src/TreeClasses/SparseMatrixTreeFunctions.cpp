@@ -3,7 +3,7 @@
 //
 #include "TreeClasses/SparseMatrixTreeFunctions_Implementation.h"
 
-namespace SparseMatrixTreeFunctions {
+namespace TreeFunctions {
 	typedef complex<double> cd;
 
 	template void Represent(SparseMatrixTree<cd>& hmat,

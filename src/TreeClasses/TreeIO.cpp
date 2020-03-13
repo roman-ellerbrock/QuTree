@@ -10,7 +10,7 @@ namespace TreeIO {
 	template<typename T>
 	void Output(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
 		MatrixTree<T> Rho(tree);
-		MatrixTreeFunctions::Contraction(Rho, Psi, tree, true);
+		TreeFunctions::Contraction(Rho, Psi, tree, true);
 		Occupancy(Psi, tree, os);
 		Leafs(Psi, Rho, tree, os);
 	}
@@ -18,7 +18,7 @@ namespace TreeIO {
 	template <typename T>
 	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
 		MatrixTree<T> Rho(tree);
-		MatrixTreeFunctions::Contraction(Rho, Psi, tree, true);
+		TreeFunctions::Contraction(Rho, Psi, tree, true);
 		SpectralDecompositionTree<T> specs(Rho, tree);
 		specs.print(tree);
 	}
