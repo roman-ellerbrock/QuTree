@@ -66,6 +66,8 @@ protected:
 	vector<size_t> after_;
 };
 
+vector<size_t> indexMapping(size_t I, const TensorShape& shape);
+
 TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimension);
 
 ostream& operator<<(ostream& os, const TensorShape& tdim);

@@ -18,6 +18,8 @@ namespace TreeIO {
 	template <typename T>
 	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os = cout);
 
+	template <class A>
+	void print(const vector<A>& vec);
 }
 
 #endif //TREEIO_H

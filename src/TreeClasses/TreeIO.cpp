@@ -54,6 +54,12 @@ namespace TreeIO {
 		os << defaultfloat;
 	}
 
+	template <class A>
+	void print(const vector<A>& vec) {
+		for (const auto& element : vec) {
+			element.print();
+		}
+	}
 }
 
 typedef complex<double>  cd;

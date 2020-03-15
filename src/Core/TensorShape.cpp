@@ -172,3 +172,18 @@ TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimens
 	return shape;
 }
 
+vector<size_t> indexMapping(size_t I, const TensorShape& shape) {
+	/// Perform the super index mapping (backwards).
+	/// Break superindex into subindeces I -> (i_1, i_2, ... , i_d)
+	vector<size_t> subidx;
+	size_t r = I;
+	size_t n = 0;
+	for (size_t k = 0; k < shape.order(); k++) {
+		size_t l = shape[k];
+		n = r % l;
+		r /= l;
+		subidx.push_back(n);
+	}
+	return subidx;
+}
+
