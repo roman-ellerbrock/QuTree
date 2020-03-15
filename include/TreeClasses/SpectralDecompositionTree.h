@@ -32,6 +32,9 @@ public:
 	void print(const Tree& tree) const;
 };
 
+template<typename T>
+void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal = false);
+
 typedef SpectralDecompositionTree<complex<double>> SpectralDecompositionTreecd;
 typedef SpectralDecompositionTree<double> SpectralDecompositionTreed;
 

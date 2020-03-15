@@ -66,6 +66,25 @@ void SpectralDecompositionTree<T>::print(const Tree& tree) const {
 	}
 }
 
+template<typename T>
+void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
+
+	auto rho = TreeFunctions::Contraction(Psi, tree, orthogonal);
+	SpectralDecompositionTree<T> spec(rho, tree);
+
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			auto& p = spec[node].first;
+			Psi[node] = multATB(p, Psi[node], node.nChildren());
+			const Node& parent = node.parent();
+			Psi[parent] = multATB(p, Psi[parent], node.childIdx());
+		}
+	}
+}
+
+template void CanonicalTransformation(TensorTreecd& Psi, const Tree& tree, bool orthogonal);
+template void CanonicalTransformation(TensorTreed& Psi, const Tree& tree, bool orthogonal);
+
 template
 class SpectralDecompositionTree<complex<double>>;
 
