@@ -187,3 +187,10 @@ vector<size_t> indexMapping(size_t I, const TensorShape& shape) {
 	return subidx;
 }
 
+size_t indexMapping(const vector<size_t>& idx, const TensorShape& shape) {
+	size_t I = 0;
+	for (size_t k = 0; k < shape.order(); ++k) {
+		I += shape.before(k) * idx[k];
+	}
+	return I;
+}
