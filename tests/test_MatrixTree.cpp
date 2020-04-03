@@ -108,7 +108,9 @@ SUITE (MatrixTreeFunctions) {
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
 			const TensorShape& dim = node.shape();
-			H[node] = RandomMatrices::GUE(dim.lastDimension(), gen);
+			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
+			auto mat_dagger = mat.Transpose();
+			H[node] = mat * mat_dagger;
 		}
 
 		SpectralDecompositionTreecd X(H, tree);
@@ -125,7 +127,7 @@ SUITE (MatrixTreeFunctions) {
 		}
 	}
 
-	TEST(CanonicalTransformation) {
+	TEST (CanonicalTransformation) {
 
 		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
 		mt19937 gen(1993);
@@ -135,13 +137,13 @@ SUITE (MatrixTreeFunctions) {
 		auto rho = TreeFunctions::Contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
-			for (size_t j = 0; j < mat.Dim2(); ++j){
-				for (size_t i = 0; i <  mat.Dim1(); ++i) {
+			for (size_t j = 0; j < mat.Dim2(); ++j) {
+				for (size_t i = 0; i < mat.Dim1(); ++i) {
 					if (i != j) { off += abs(mat(i, j)); }
 				}
 			}
 		}
-		CHECK_CLOSE(0., off, eps);
+			CHECK_CLOSE(0., off, eps);
 	}
 
 	// @TODO: Move Unit tests from FactorMatrixTree to here.

@@ -13,5 +13,8 @@ template class Vector<complex<double>>;
 template double Residual(const Vectord& A, const Vectord& B);
 template double Residual(const Vectorcd& A, const Vectorcd& B);
 
+template Vector<d> Regularize(Vector<d> A, double eps);
+template Vector<cd> Regularize(Vector<cd> A, double eps);
+
 template Vector<d> Inverse(Vector<d> A, d eps);
 template Vector<cd> Inverse(Vector<cd> A, d eps);

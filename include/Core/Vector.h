@@ -102,6 +102,9 @@ template<typename T>
 double Residual(const Vector<T>& A, const Vector<T>& B);
 
 template<typename T>
+Vector<T> Regularize(Vector<T> A, double eps);
+
+template<typename T>
 Vector<T> Inverse(Vector<T> A, double eps = 1e-7);
 
 typedef Vector<double> Vectord;

@@ -140,8 +140,11 @@ SUITE (Matrix) {
 		mt19937 gen(1990);
 		size_t dim = 10;
 		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		Matrixcd Adag = A.Transpose();
+		A = A * Adag;
 		auto x = Diagonalize(A);
-		Matrixcd B = BuildInverse(x, 1e-12);
+
+		Matrixcd B = BuildInverse(x, 1e-10);
 		Matrixcd I_test = A * B;
 		Matrixcd I = IdentityMatrix<complex<double>>(A.Dim2());
 		auto residual = Residual(I, I_test);

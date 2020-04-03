@@ -215,6 +215,15 @@ void Vector<T>::Zero() {
 }
 
 template<typename T>
+T Sum(Vector<T>& a) {
+	T sum = 0.;
+	for (size_t i = 0; i < a.Dim();++i) {
+		sum += a(i);
+	}
+	return sum;
+}
+
+template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
 	double distance = 0;
 	for (size_t i = 0; i < a.Dim(); ++i) {
@@ -230,9 +239,18 @@ double Residual(const Vector<T>& A, const Vector<T>& B) {
 }
 
 template<typename T>
-Vector<T> Inverse(Vector<T> A, double eps) {
+Vector<T> Regularize(Vector<T> A, double eps) {
 	for (size_t i = 0; i < A.Dim(); ++i) {
-		A(i) = 1. / (A(i) + eps * exp(-A(i) / (A(i) + eps)));
+		A(i) += eps * exp(-A(i) / eps);
+	}
+	return A;
+}
+
+template<typename T>
+Vector<T> Inverse(Vector<T> A, double eps) {
+	A = Regularize(A, eps);
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		A(i) = 1. / A(i);
 	}
 	return A;
 }
