@@ -407,7 +407,7 @@ Node& Node::TopNode() {
 	if (isToplayer()) {
 		return (*this);
 	} else {
-		parent().parent();
+		return parent().TopNode();
 	}
 	exit(1);
 }
