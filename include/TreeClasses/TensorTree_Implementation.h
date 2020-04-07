@@ -126,6 +126,44 @@ void TensorTree<T>::print(const Tree& tree, ostream& os) const {
 	}
 }
 
+template <typename T>
+void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
+	//Bottom-Up-Sweep
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			Tensor<T>& Phi = Psi[node];
+			Matrix<T> S = Phi.DotProduct(Phi);
+			auto spec = Diagonalize(S);
+			const auto& trafo = spec.first;
+			const auto& eigenval = spec.second;
+
+			for (size_t j = 0; j < S.Dim1(); j++)
+				assert(eigenval(j) >= -1e-12);
+
+			Matrix<T> SW(S.Dim1(), S.Dim2());
+			for (size_t j = 0; j < S.Dim1(); j++) {
+				for (size_t k = 0; k < S.Dim1(); k++) {
+					for (size_t l = 0; l < S.Dim1(); l++) {
+						SW(j, k) += trafo(k, l) * sqrt(eigenval(l))
+							* conj(trafo(j, l));
+					}
+				}
+			}
+
+			const Node& parent = (Node&) node.parent();
+			Psi[parent] = MatrixTensor(SW, Psi[parent], node.childIdx());
+			GramSchmidt(Phi);
+		}
+	}
+}
+
+template <typename T>
+void Orthonormal(TensorTree<T>& Psi, const Tree& tree) {
+	for (const Node& node : tree) {
+		GramSchmidt(Psi[node]);
+	}
+}
+
 template<typename T>
 ostream& operator<<(ostream& os, const TensorTree<T>& t) {
 	t.Write(os);

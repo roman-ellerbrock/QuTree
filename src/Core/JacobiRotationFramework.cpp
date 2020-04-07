@@ -29,17 +29,11 @@ void JacobiRotationFramework::GivensRotation(Matrixcd& B,
 	}
 }
 
-void JacobiRotationFramework::RotateMatrices(vector<Matrixcd>& A,
+void JacobiRotationFramework::RotateMatrices(vector<Matrixcd>& As,
 	complex<double> c, complex<double> s, int i, int j) {
 	// Perform a Givens-Rotation: R*A*R^H with R= {{c, s}, {-s*, c}}
-	int dim = A[0].Dim1();
-	Matrixcd Ccopy(dim, 2);
-
-	int nmat = A.size();
-	for (int k = 0; k < nmat; k++) {
-		Matrixcd& B = A[k];
-
-		GivensRotation(B, c, s, i, j);
+	for (auto& a  : As) {
+		GivensRotation(a, c, s, i, j);
 	}
 }
 

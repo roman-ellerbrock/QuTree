@@ -20,6 +20,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeClasses/SparseMatrixTreeFunctions_Implementation.h
     include/TreeClasses/SparseNodeAttribute.h
     include/TreeClasses/SparseTree.h
+    include/TreeClasses/SOPMatrixTrees.h
     include/TreeClasses/SpectralDecompositionTree.h
     include/TreeClasses/TensorTree.h
     include/TreeClasses/TensorTree_Implementation.h
@@ -31,17 +32,14 @@ set(QuTree_INCLUDE_FILES
     include/TreeOperators/PotentialOperator.h
     include/TreeOperators/SOPVector.h
     include/TreeOperators/SumOfProductsOperator.h
+    include/TreeOperators/SumOfProductsOperator_Implementation.h
     include/TreeShape/AbstractNode.h
     include/TreeShape/Leaf.h
-    include/TreeShape/LeafTypes/BosonNumberBasis.h
     include/TreeShape/LeafTypes/DVRBasis.h
     include/TreeShape/LeafTypes/FFTGrid.h
-    include/TreeShape/LeafTypes/FermionNumberBasis.h
     include/TreeShape/LeafTypes/HO_Basis.h
     include/TreeShape/LeafTypes/LeafInterface.h
     include/TreeShape/LeafTypes/LegendrePolynomials.h
-    include/TreeShape/LeafTypes/LogicalBasis.h
-    include/TreeShape/LeafTypes/NumberBasis.h
     include/TreeShape/LeafTypes/SpinGroup.h
     include/TreeShape/LinearizedLeaves.h
     include/TreeShape/Node.h
@@ -51,6 +49,8 @@ set(QuTree_INCLUDE_FILES
     include/Util/BS_integrator.h
     include/Util/FFT.h
     include/Util/FFTCooleyTukey.h
+    include/Util/GradientDescent.h
+    include/Util/GradientDescent_Implementation.h
     include/Util/JacobiRotationFramework.h
     include/Util/Lanzcos.h
     include/Util/MultiIndex.h

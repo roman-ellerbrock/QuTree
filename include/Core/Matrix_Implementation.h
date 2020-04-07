@@ -456,14 +456,15 @@ void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
 	A.rDiag(S.first, S.second);
 }
 
-Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
+template <typename T>
+Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
 	assert(vec.Dim() > 0);
 	assert(mat.Dim1() == vec.Dim());
 	assert(mat.Dim1() == mat.Dim2());
 	size_t dim = vec.Dim();
-	Matrixcd A(dim, dim);
+	Matrix<T> A(dim, dim);
 	/// Could be improved by multiplying B = mat * diag(vec)
 	for (size_t i = 0; i < dim; ++i) {
 		for (size_t j = 0; j < dim; ++j) {
@@ -475,33 +476,25 @@ Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
 	return A;
 }
 
-Matrixd BuildMatrix(const SpectralDecompositiond& X) {
-	const auto& mat = X.first;
-	const auto& vec = X.second;
-	assert(vec.Dim() > 0);
-	assert(mat.Dim1() == vec.Dim());
-	assert(mat.Dim1() == mat.Dim2());
-	size_t dim = vec.Dim();
-	Matrixd A(dim, dim);
-	/// Could be improved by multiplying B = mat * diag(vec)
-	for (size_t i = 0; i < dim; ++i) {
-		for (size_t j = 0; j < dim; ++j) {
-			for (size_t k = 0; k < dim; ++k) {
-				A(j, i) += mat(j, k) * vec(k) * mat(i, k);
-			}
-		}
+template <typename T>
+Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
+	auto inv_vec = Inverse(X.second, eps);
+	return BuildMatrix<T>({X.first, inv_vec});
+}
+
+template <typename T>
+SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X) {
+	Vectord& lambda = X.second;
+	for (size_t i = 0; i < lambda.Dim(); ++i) {
+		lambda(i) = sqrt(lambda(i));
 	}
-	return A;
+	return X;
 }
 
-Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps) {
-	auto inv_vec = Inverse(X.second, eps);
-	return BuildMatrix({X.first, inv_vec});
-}
-
-Matrixd BuildInverse(const SpectralDecompositiond& X, double eps) {
-	auto inv_vec = Inverse(X.second, eps);
-	return BuildMatrix({X.first, inv_vec});
+template <typename T>
+SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps) {
+	X.second = Inverse(X.second, eps);
+	return X;
 }
 
 template<typename T>

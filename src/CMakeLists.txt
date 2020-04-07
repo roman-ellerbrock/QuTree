@@ -21,14 +21,10 @@ set(QuTree_SOURCE_FILES
     src/TreeOperators/MultiLeafOperator.cpp
     src/TreeOperators/SumOfProductsOperator.cpp
     src/TreeShape/Leaf.cpp
-    src/TreeShape/LeafTypes/BosonNumberBasis.cpp
     src/TreeShape/LeafTypes/DVRBasis.cpp
     src/TreeShape/LeafTypes/FFTGrid.cpp
-    src/TreeShape/LeafTypes/FermionNumberBasis.cpp
     src/TreeShape/LeafTypes/HO_Basis.cpp
     src/TreeShape/LeafTypes/LegendrePolynomials.cpp
-    src/TreeShape/LeafTypes/LogicalBasis.cpp
-    src/TreeShape/LeafTypes/NumberBasis.cpp
     src/TreeShape/LeafTypes/SpinGroup.cpp
     src/TreeShape/LinearizedLeaves.cpp
     src/TreeShape/Node.cpp

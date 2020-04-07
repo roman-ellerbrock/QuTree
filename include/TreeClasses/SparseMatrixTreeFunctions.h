@@ -5,8 +5,9 @@
 #ifndef SPARSEMATRIXTREEFUNCTIONS_H
 #define SPARSEMATRIXTREEFUNCTIONS_H
 #include "TreeClasses/SparseMatrixTree.h"
+#include "TreeClasses/SOPMatrixTrees.h"
 
-namespace SparseMatrixTreeFunctions {
+namespace TreeFunctions {
 /**
  * \namespace SparseMatrixTreeFunctions
  *
@@ -30,21 +31,30 @@ namespace SparseMatrixTreeFunctions {
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node);
 
 	template<typename T>
-	void Represent(SparseMatrixTree<T>& hmat,
-		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const Tree& tree);
 
 	template<typename T>
-	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Bra,
-		const TensorTree<T>& Ket, const Tree& tree);
+	SparseMatrixTree<T> Represent(const MLO<T>& M,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const Tree& tree);
 
 	template<typename T>
 	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
 		const TensorTree<T>& Psi, const Tree& tree);
 
 	template<typename T>
-	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Psi,
-		const Tree& tree);
+	SparseMatrixTree<T> Represent(const MLO<T>& M,
+		const TensorTree<T>& Psi, const Tree& tree);
+
+	template <typename T>
+	void Represent(vector<SparseMatrixTree<T>>& Mats, const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+	template <typename T>
+	void Represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-child (Backward)
@@ -58,6 +68,27 @@ namespace SparseMatrixTreeFunctions {
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const Tree& tree);
+
+	template <typename T>
+	void Contraction(SparseMatrixTrees<T>& holes, const SparseMatrixTrees<T>& mat,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+	template <typename T>
+	void Contraction(vector<SparseMatrixTrees<T>>& holes, const vector<SparseMatrixTrees<T>>& mat,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+////////////////////////////////////////////////////////////////////////
+/// Apply MatrixTree
+////////////////////////////////////////////////////////////////////////
+
+	template<typename T>
+	Tensor<T> Apply(const SparseMatrixTree<T>& mat, const Tensor<T>& Phi, const MLO<T>& M, const Node& node);
+
+	template<typename T>
+	Tensor<T> ApplyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node);
+
+	template<typename T>
+	Tensor<T> ApplyHole(const SparseMatrixTree<T>& holes, Tensor<T> Phi, const Node& hole_node);
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_H

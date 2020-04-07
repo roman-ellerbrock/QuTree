@@ -54,10 +54,70 @@ void SpectralDecompositionTree<T>::print(const Tree& tree) const {
 		if (!node.isToplayer()) {
 			node.info();
 			const SpectralDecomposition<T>& x = this->operator[](node);
-			x.second.print();
+			auto ev = x.second;
+			double norm = 0.;
+			for (size_t i = 0; i < ev.Dim(); ++i) {
+				norm += ev(i);
+			}
+			norm = max(1e-50, norm);
+			ev /= norm;
+			ev.print();
 		}
 	}
 }
+
+template<typename T>
+MatrixTree<T> to_matrixtree(const SpectralDecompositionTree<T>& X, const Tree& tree) {
+	MatrixTree<T> mattree(tree);
+	for (const Node& node : tree) {
+		mattree[node] = BuildMatrix(X[node]);
+	}
+	return mattree;
+}
+
+template<typename T>
+void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
+
+	auto rho = TreeFunctions::Contraction(Psi, tree, orthogonal);
+	SpectralDecompositionTree<T> spec(rho, tree);
+
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			auto& p = spec[node].first;
+			Psi[node] = multATB(p, Psi[node], node.nChildren());
+			const Node& parent = node.parent();
+			Psi[parent] = multATB(p, Psi[parent], node.childIdx());
+		}
+	}
+}
+
+template<typename T>
+SpectralDecompositionTree<T> Sqrt(SpectralDecompositionTree<T> X) {
+	for (auto& x : X) {
+		x = Sqrt(x);
+	}
+	return X;
+}
+
+template<typename T>
+SpectralDecompositionTree<T> Inverse(SpectralDecompositionTree<T> X, double eps) {
+	for (auto& x : X) {
+		x = Inverse(x, eps);
+	}
+	return X;
+}
+
+template SpectralDecompositionTreecd Sqrt(SpectralDecompositionTreecd X);
+template SpectralDecompositionTreed Sqrt(SpectralDecompositionTreed X);
+
+template SpectralDecompositionTreecd Inverse(SpectralDecompositionTreecd X, double eps);
+template SpectralDecompositionTreed Inverse(SpectralDecompositionTreed X, double eps);
+
+template MatrixTreecd to_matrixtree(const SpectralDecompositionTreecd& X, const Tree& tree);
+template MatrixTreed to_matrixtree(const SpectralDecompositionTreed& X, const Tree& tree);
+
+template void CanonicalTransformation(TensorTreecd& Psi, const Tree& tree, bool orthogonal);
+template void CanonicalTransformation(TensorTreed& Psi, const Tree& tree, bool orthogonal);
 
 template
 class SpectralDecompositionTree<complex<double>>;

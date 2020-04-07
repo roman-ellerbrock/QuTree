@@ -4,6 +4,7 @@
 #ifndef SPARSEMATRIXTREE_H
 #define SPARSEMATRIXTREE_H
 #include "TreeClasses/SparseNodeAttribute.h"
+#include "TreeClasses/TensorTree.h"
 
 template <typename T>
 class SparseMatrixTree : public SparseNodeAttribute<Matrix<T>>{
@@ -32,8 +33,8 @@ public:
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
-	SparseMatrixTree(const MLO<T>& M, const Tree& tree)
-		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree) {
+	SparseMatrixTree(const MLO<T>& M, const Tree& tree, bool tail = true, bool inverse_tree = false)
+		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree, tail, inverse_tree) {
 		Initialize(tree);
 	}
 
@@ -43,7 +44,7 @@ public:
 	void Initialize(const Tree& tree) override;
 
 	/// I/O
-	void print(ostream& os = cout);
+	void print(ostream& os = cout) const;
 	void Write(ostream& os) const;
 	void Write(const string& filename) const;
 	void Read(istream& is);
@@ -57,9 +58,13 @@ template<typename T>
 istream& operator<<(istream& is, SparseMatrixTree<T>& hmat);
 
 typedef SparseMatrixTree<complex<double>> SparseMatrixTreecd;
-
 typedef SparseMatrixTree<double> SparseMatrixTreed;
 
+template <typename T>
+using SparseMatrixTrees = vector<SparseMatrixTree<T>>;
+
+typedef SparseMatrixTrees<complex<double>> SparseMatrixTreescd;
+typedef SparseMatrixTrees<double> SparseMatrixTreesd;
 
 
 

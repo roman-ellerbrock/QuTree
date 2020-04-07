@@ -1,5 +1,6 @@
 #pragma once
 #include "TreeShape/Node.h"
+#include "TreeShape/Tree.h"
 
 /**
  * \defgroup Tree
@@ -74,3 +75,12 @@ protected:
 	vector<A> attributes_;
 };
 
+template <class A>
+void print(const NodeAttribute<A>& ATree, const Tree& tree) {
+	for (size_t i = 0; i < ATree.size(); ++i) {
+		const auto& node_ = tree.begin() + i;
+		const Node& node = *node_;
+		node.info();
+		ATree[node].print();
+	}
+}

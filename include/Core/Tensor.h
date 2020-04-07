@@ -81,6 +81,10 @@ public:
 
 	T& operator()(size_t i, size_t n);
 
+	T& operator()(size_t bef, size_t j, size_t aft, size_t leaf);
+
+	const T& operator()(size_t bef, size_t j, size_t aft, size_t leaf)const;
+
 	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n);
 
 	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n)const;
@@ -199,14 +203,14 @@ template<typename T>
 T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m);
 
 template<typename T>
-void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind);
 
 template<typename T>
-void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k);
+void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero = true);
 
 template<typename T>
-Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k);
+Matrix<T> Contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k);
 
 template <typename T, typename U>
 void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,

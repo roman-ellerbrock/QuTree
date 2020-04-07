@@ -4,15 +4,6 @@
 #include "NodePosition.h"
 
 #include "LeafTypes/LeafInterface.h"
-#include "LeafTypes/DVRBasis.h"
-#include "LeafTypes/HO_Basis.h"
-#include "LeafTypes/FFTGrid.h"
-#include "LeafTypes/LegendrePolynomials.h"
-#include "LeafTypes/BosonNumberBasis.h"
-#include "LeafTypes/FermionNumberBasis.h"
-#include "LeafTypes/NumberBasis.h"
-#include "LeafTypes/LogicalBasis.h"
-#include "LeafTypes/SpinGroup.h"
 
 // @TODO: Rename PhysPar
 // @TODO: Use dictionary to store general leaf-memory?

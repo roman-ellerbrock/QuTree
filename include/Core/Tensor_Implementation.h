@@ -12,6 +12,7 @@ template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_(new T[dim.totalDimension()]) {
 	if (InitZero) { Zero(); }
+
 }
 
 template<typename T>
@@ -113,6 +114,36 @@ inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
 }
 
 template<typename T>
+inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
+	assert(leaf < shape_.order());
+	assert(bef < shape_.before(leaf));
+	assert(i < shape_[leaf]);
+	assert(aft < shape_.after(leaf));
+	size_t before = shape_.before(leaf);
+	size_t dim = shape_[leaf];
+	size_t idx = aft * before * dim + i * before + bef;
+	// @TODO: remove when tested
+	assert(idx < shape_.totalDimension());
+	return coeffs_[idx];
+}
+
+template<typename T>
+inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) const {
+	assert(leaf < shape_.order());
+	assert(bef < shape_.before(leaf));
+	assert(i < shape_[leaf]);
+	assert(aft < shape_.after(leaf));
+	size_t before = shape_.before(leaf);
+	size_t dim = shape_[leaf];
+	size_t idx = aft * before * dim + i * before + bef;
+	// @TODO: remove when tested
+	assert(idx < shape_.totalDimension());
+	return coeffs_[idx];
+}
+
+/*
+//////////////////////////////////////////////////////////
+template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) {
 	size_t a = shape_.before(f);
 	size_t b = shape_[f];
@@ -158,7 +189,7 @@ T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
 	assert(j < active2);
 	assert(n < shape_.lastDimension());
 	return coeffs_[idx];
-}
+}*/
 
 //////////////////////////////////////////////////////////
 // File handling
@@ -318,18 +349,16 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 
 	// Copy the coefficients
 	size_t before = shape_.before(mode);
-	size_t after = shape_.after(mode) / shape_.lastDimension();
-	size_t nstates = shape_.lastDimension();
+	size_t after = shape_.after(mode);
 	size_t minactive = min(active, shape_[mode]);
-	for (size_t n = 0; n < nstates; n++) {
-		for (size_t l = 0; l < after; l++) {
-			for (size_t j = 0; j < minactive; j++) {
-				for (size_t i = 0; i < before; i++) {
-					newT(i, j, l, mode, n) = operator()(i, j, l, mode, n);
-				}
+	for (size_t l = 0; l < after; l++) {
+		for (size_t j = 0; j < minactive; j++) {
+			for (size_t i = 0; i < before; i++) {
+				newT(i, j, l, mode) = operator()(i, j, l, mode);
 			}
 		}
 	}
+
 	return newT;
 }
 
@@ -389,7 +418,6 @@ void Tensor<T>::Zero() {
 		coeffs_[i] = 0;
 }
 
-//////////////////////////////////////////////////////////
 // Non-member functions
 //////////////////////////////////////////////////////////
 template<typename T>
@@ -415,8 +443,8 @@ T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 }
 
 template<typename T>
-void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t after) {
+void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+	size_t before, size_t active1, size_t active2, size_t behind) {
 	// Variables for precalculation of indices
 	size_t actbef1 = active1 * before;
 	size_t actbef2 = active2 * before;
@@ -438,7 +466,7 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	}
 	*/
 #pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
-	for (size_t n = 0; n < after; n++) {
+	for (size_t n = 0; n < behind; n++) {
 		npreidx1 = n * actbef1;
 		npreidx2 = n * actbef2;
 		for (size_t j = 0; j < active2; j++) {
@@ -460,30 +488,33 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 }
 
 template<typename T>
-Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+Matrix<T> Contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorShape& tdim_a(A.shape());
-	const TensorShape& tdim_b(A.shape());
+	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
 	assert(k < tdim_b.order());
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	Matrix<T> S(active1, active2);
-	mHoleProduct(S, A, B, k);
+	Contraction(S, A, B, k);
 	return S;
 }
 
 template<typename T>
-void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero) {
 	const TensorShape& tdim_a(A.shape());
-	const TensorShape& tdim_b(A.shape());
+	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
 	assert(k < tdim_b.order());
 	size_t before = tdim_a.before(k);
 	size_t after = tdim_a.after(k);
+	assert(tdim_b.before(k) == before);
+	assert(tdim_b.after(k) == after);
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
-	TensorHoleProduct(S, A, B, before, active1, active2, after);
+	if (zero) { S.Zero(); }
+	TensorContraction(S, A, B, before, active1, active2, after);
 }
 
 template<typename T, typename U>
@@ -645,7 +676,7 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorShape tdim(B.shape());
 		size_t active1 = A.Dim1();
 		size_t active2 = A.Dim2();
-		tdim =  replaceDimension(tdim, mode, active1);
+		tdim = replaceDimension(tdim, mode, active1);
 		Tensor<T> C(tdim);
 		size_t after = tdim.after(mode);
 		size_t before = tdim.before(mode);

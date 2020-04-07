@@ -45,5 +45,19 @@ SUITE (TensorTree) {
 			CHECK_EQUAL(tree.nNodes(), Psi.size());
 	}
 
+
+
+	TEST (TreeTest) {
+		Tree tree = TreeFactory::BalancedTree(12, 5, 2);
+		TensorTreecd Psi(tree);
+		for (const Tensorcd& A : Psi) {
+			TensorShape shape = A.shape();
+		}
+		for (const Node& node : tree) {
+			Tensorcd& A = Psi[node];
+		}
+
+	}
+
 }
 

@@ -28,7 +28,7 @@ public:
 	Node(Node&& node) noexcept;
 	Node& operator=(const Node& old);
 	Node& operator=(Node&& old) noexcept;
-	Node(const Leaf& phys, size_t ntensor);
+	Node(const Leaf& leaf, size_t ntensor);
 	~Node() override = default;
 
 	// Initialize node

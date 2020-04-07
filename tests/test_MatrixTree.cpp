@@ -38,7 +38,7 @@ SUITE (MatrixTree) {
 }
 
 SUITE (MatrixTreeFunctions) {
-	using namespace MatrixTreeFunctions;
+	using namespace TreeFunctions;
 
 	double eps = 1e-8;
 
@@ -92,7 +92,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		TensorTreecd Psi(gen, tree);
-		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, tree, true);
+		MatrixTreecd Rho = TreeFunctions::Contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
 		for (const Node& node : tree) {
@@ -108,7 +108,9 @@ SUITE (MatrixTreeFunctions) {
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
 			const TensorShape& dim = node.shape();
-			H[node] = RandomMatrices::GUE(dim.lastDimension(), gen);
+			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
+			auto mat_dagger = mat.Transpose();
+			H[node] = mat * mat_dagger;
 		}
 
 		SpectralDecompositionTreecd X(H, tree);
@@ -125,5 +127,23 @@ SUITE (MatrixTreeFunctions) {
 		}
 	}
 
-	// @TODO: Move Unit tests from FactorMatrixTree to here.
+	TEST (CanonicalTransformation) {
+
+		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		mt19937 gen(1993);
+		TensorTreecd Psi(gen, tree);
+
+		CanonicalTransformation(Psi, tree, true);
+		auto rho = TreeFunctions::Contraction(Psi, tree, true);
+		double off = 0.;
+		for (const auto& mat : rho) {
+			for (size_t j = 0; j < mat.Dim2(); ++j) {
+				for (size_t i = 0; i < mat.Dim1(); ++i) {
+					if (i != j) { off += abs(mat(i, j)); }
+				}
+			}
+		}
+			CHECK_CLOSE(0., off, eps);
+	}
+
 }

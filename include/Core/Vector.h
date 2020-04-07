@@ -72,11 +72,15 @@ public:
 		return coeffs_[i];
 	}
 
-	Vector operator+(Vector b);
-	Vector operator-(Vector b);
-	T operator*(Vector b);
+	Vector operator+=(Vector b);
+	Vector operator-=(Vector b);
+	Vector operator+(Vector b)const;
+	Vector operator-(Vector b)const;
+	T operator*(Vector b)const;
 	Vector& operator*=(T coeff);
 	Vector& operator/=(T coeff);
+	Vector operator*(T coeff)const;
+	Vector operator/(T coeff)const;
 
 	// Math Operators
 	double Norm() const;
@@ -96,6 +100,9 @@ double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 
 template<typename T>
 double Residual(const Vector<T>& A, const Vector<T>& B);
+
+template<typename T>
+Vector<T> Regularize(Vector<T> A, double eps);
 
 template<typename T>
 Vector<T> Inverse(Vector<T> A, double eps = 1e-7);

@@ -6,7 +6,7 @@
 #define MATRIXTREE_IMPLEMENTATION_H
 #include "MatrixTreeFunctions.h"
 
-namespace MatrixTreeFunctions {
+namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 /// General DotProduct for Tensor Trees
 ////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace MatrixTreeFunctions {
 			}
 		}
 		size_t last = node.shape().lastIdx();
-		mHoleProduct(S[node], Bra, Ket, last);
+		Contraction(S[node], Bra, Ket, last);
 
 	}
 
@@ -63,7 +63,7 @@ namespace MatrixTreeFunctions {
 
 		Ket = multStateAB(Rho[parent], Ket);
 
-		mHoleProduct(Rho[node], Bra, Ket, child_idx);
+		Contraction(Rho[node], Bra, Ket, child_idx);
 	}
 
 	template<typename T>

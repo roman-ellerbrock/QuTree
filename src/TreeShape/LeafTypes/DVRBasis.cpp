@@ -5,12 +5,10 @@ DVRBasis::DVRBasis(int dim)
 	  omega_(0), r0_(0), wfr0_(0), wfomega_(0) {
 }
 
-Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
+void DVRBasis::applyX(Tensorcd& xPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
-
-	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -20,18 +18,15 @@ Tensorcd DVRBasis::applyX(const Tensorcd& phi) const {
 //  	#pragma omp for
 	for (int n = 0; n < tdim.lastDimension(); n++) {
 		for (int i = 0; i < active; i++) {
-			psi(i, n) = x_(i) * phi(i, n);
+			xPhi(i, n) = x_(i) * phi(i, n);
 		}
 	}
-	return psi;
 }
 
-Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
+void DVRBasis::applyX2(Tensorcd& psi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	// check that its really a bottom-layer_ tensor
 	assert(tdim.order() == 2);
-
-	Tensorcd psi(phi.shape());
 
 	int active = tdim.lastBefore();
 	assert(active == dim_);
@@ -44,37 +39,36 @@ Tensorcd DVRBasis::ApplyX2(const Tensorcd& phi) const {
 			psi(i, n) = x_(i) * x_(i) * phi(i, n);
 		}
 	}
-	return psi;
 }
 
-Tensorcd DVRBasis::ApplyP(const Tensorcd& phi) const {
+void DVRBasis::applyP(Tensorcd& uPhi, const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	return MatrixTensor(p_, phi, 0);
+	uPhi = MatrixTensor(p_, phi, 0);
 }
 
-Tensorcd DVRBasis::ApplyKin(const Tensorcd& phi) const {
+void DVRBasis::applyKin(Tensorcd& uPhi, const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	return MatrixTensor(kin_, phi, 0);
+	uPhi = MatrixTensor(kin_, phi, 0);
 }
 
-Tensorcd DVRBasis::ToGrid(const Tensorcd& phi) const {
+void DVRBasis::ToGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	return multATB(trafo_, phi, 0);
+	uPhi = multATB(trafo_, phi, 0);
 }
 
-Tensorcd DVRBasis::FromGrid(const Tensorcd& phi) const {
+void DVRBasis::FromGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	return MatrixTensor(trafo_, phi, 0);
+	uPhi = MatrixTensor(trafo_, phi, 0);
 }

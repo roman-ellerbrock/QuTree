@@ -7,7 +7,7 @@
 template<typename T>
 void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	const Tensor<T>& Acoeff) const {
-	MatrixTensor(hAcoeff, h_, Acoeff, 0);
+	MatrixTensor(hAcoeff, h_, Acoeff, 0, true);
 }
 
 template<typename T>

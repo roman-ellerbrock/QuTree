@@ -70,7 +70,7 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
 void hole_product(Tensorcd A, const Tensorcd& B) {
     cout << "\nhole_product:\n" << endl;
     for (size_t k = 0; k < A.shape().order(); k++) {
-        Matrixcd h = mHoleProduct(A, B, k);
+        Matrixcd h = Contraction(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
         cout << "Trace: " << h.Trace() << endl;

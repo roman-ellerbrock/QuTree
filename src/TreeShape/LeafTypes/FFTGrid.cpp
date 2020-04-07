@@ -35,48 +35,48 @@ void FFTGrid::Initialize(double x0, double x1, double wfr0, double wfomega) {
 //			trafo_(j, i) = exp(-imag*(x_(i) - x0_)*(p_(j) - p0));
 }
 
-Tensorcd FFTGrid::applyX(const Tensorcd& Acoeffs) const {
-	Tensorcd xA(Acoeffs);
+void FFTGrid::applyX(Tensorcd& xA, const Tensorcd& Acoeffs) const {
 //	#pragma omp for
+	xA = Acoeffs;
 	for (int n = 0; n < Acoeffs.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++)
 			xA(i, n) *= x_(i);
-	return xA;
 }
 
-Tensorcd FFTGrid::ApplyX2(const Tensorcd& Acoeffs) const {
-	Tensorcd xA(Acoeffs);
+void FFTGrid::applyX2(Tensorcd& xA, const Tensorcd& Acoeffs) const {
 //	#pragma omp for
+	xA = Acoeffs;
 	for (int n = 0; n < Acoeffs.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++)
 			xA(i, n) *= x_(i) * x_(i);
-	return xA;
 }
 
-Tensorcd FFTGrid::ApplyP(const Tensorcd& Acoeffs) const {
-	Tensorcd pA = FromGrid(Acoeffs);
+void FFTGrid::applyP(Tensorcd& pA, const Tensorcd& Acoeffs) const {
+	FromGrid(pA, Acoeffs);
 //	#pragma omp for
 	for (int n = 0; n < Acoeffs.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++)
 			pA(i, n) *= -p_(i);
-	pA = ToGrid(pA);
-	return pA;
+
+	Tensorcd tmp(pA);
+	ToGrid(pA, tmp);
 }
 
-Tensorcd FFTGrid::ToGrid(const Tensorcd& Acoeffs) const {
-	return multATB(trafo_, Acoeffs, 0);
+void FFTGrid::ToGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
+	uA = multATB(trafo_, Acoeffs, 0);
 }
 
-Tensorcd FFTGrid::FromGrid(const Tensorcd& Acoeffs) const {
-	return MatrixTensor(trafo_, Acoeffs, 0);
+void FFTGrid::FromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
+	uA = MatrixTensor(trafo_, Acoeffs, 0);
 }
 
-Tensorcd FFTGrid::ApplyKin(const Tensorcd& Acoeffs) const {
-	Tensorcd pA = FromGrid(Acoeffs);
+void FFTGrid::applyKin(Tensorcd& pA, const Tensorcd& Acoeffs) const {
+	FromGrid(pA, Acoeffs);
 	for (int n = 0; n < Acoeffs.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++)
 			pA(i, n) *= 0.5 * p_(i) * p_(i);
-	return ToGrid(pA);
+	Tensorcd tmp(pA);
+	ToGrid(pA, tmp);
 }
 
 void FFTGrid::InitSPF(Tensorcd& phi) const {

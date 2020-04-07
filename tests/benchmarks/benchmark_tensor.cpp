@@ -31,7 +31,7 @@ namespace benchmark {
 			start = std::chrono::system_clock::now();
 			for (size_t k = 0; k < A.size(); ++k) {
 				multStateArTB(sAs[k], Su[k], A[k]);
-				TensorHoleProduct(Ss[k], sAs[k], B[k], bef, act, act, aft);
+				TensorContraction(Ss[k], sAs[k], B[k], bef, act, act, aft);
 			}
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -75,7 +75,7 @@ namespace benchmark {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
 			for (size_t k = 0; k < chunk; ++k) {
-				TensorHoleProduct(S, A, B, bef, act, act, aft);
+				TensorContraction(S, A, B, bef, act, act, aft);
 			}
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
