@@ -113,7 +113,7 @@ namespace TreeFunctions {
 				if (marker.Active(parent)) {
 					hKet = multStateAB(holes[parent], hKet);
 				}
-				holes[node] = mHoleProduct(Bra[parent], hKet, node.childIdx());
+				holes[node] = Contraction(Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = IdentityMatrix<T>(node.shape().lastDimension());
 			}

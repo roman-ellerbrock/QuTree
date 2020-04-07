@@ -20,7 +20,7 @@ namespace TreeFunctions {
 			}
 		}
 		size_t last = node.shape().lastIdx();
-		mHoleProduct(S[node], Bra, Ket, last);
+		Contraction(S[node], Bra, Ket, last);
 
 	}
 
@@ -63,7 +63,7 @@ namespace TreeFunctions {
 
 		Ket = multStateAB(Rho[parent], Ket);
 
-		mHoleProduct(Rho[node], Bra, Ket, child_idx);
+		Contraction(Rho[node], Bra, Ket, child_idx);
 	}
 
 	template<typename T>

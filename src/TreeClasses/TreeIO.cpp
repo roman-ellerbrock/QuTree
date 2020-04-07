@@ -31,9 +31,9 @@ namespace TreeIO {
 		if (!node.isToplayer()) {
 			const auto& rho = Rho[node];
 			auto rhoPhi = multStateAB<T>(rho, Phi);
-			return mHoleProduct(Phi, rhoPhi, 0);
+			return Contraction(Phi, rhoPhi, 0);
 		} else {
-			return mHoleProduct(Phi, Phi, 0);
+			return Contraction(Phi, Phi, 0);
 		}
 	}
 

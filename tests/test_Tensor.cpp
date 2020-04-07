@@ -113,7 +113,7 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Product) {
-		Matrixcd x = mHoleProduct(A, B, 0);
+		Matrixcd x = Contraction(A, B, 0);
 		x.Write("Tensor_Product.dat");
 		Matrixcd s("Tensor_Product.dat");
 		auto r = Residual(s, x);
@@ -121,7 +121,7 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Matrix_Product) {
-		Matrixcd x = mHoleProduct(A, B, 1);
+		Matrixcd x = Contraction(A, B, 1);
 		x.Write("Tensor_Product_0.dat");
 		Matrixcd s("Tensor_Product_0.dat");
 		auto r = Residual(x, s);
@@ -162,7 +162,7 @@ SUITE (Tensor) {
 
 		auto C = A.AdjustActiveDim(inc_dim, leaf);
 		A = A.AdjustActiveDim(inc_dim, leaf);
-		auto s = mHoleProduct(C, A, C.shape().lastIdx());
+		auto s = Contraction(C, A, C.shape().lastIdx());
 		auto res = Residual(s, IdentityMatrix<complex<double>>(2));
 			CHECK_CLOSE(0., res, eps);
 	}
@@ -175,13 +175,13 @@ SUITE (Tensor) {
 
 		auto C = A.AdjustActiveDim(inc_dim, leaf);
 		C = C.AdjustActiveDim(dim, leaf);
-		auto s = mHoleProduct(C, A, C.shape().lastIdx());
+		auto s = Contraction(C, A, C.shape().lastIdx());
 		auto res = Residual(s, IdentityMatrix<complex<double>>(2));
 			CHECK_CLOSE(0., res, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, HoleProduct) {
-		Matrixcd s = mHoleProduct(C_, C_, 1);
+		Matrixcd s = Contraction(C_, C_, 1);
 			CHECK_EQUAL(shape_c_[1], s.Dim1());
 			CHECK_EQUAL(shape_c_[1], s.Dim2());
 		double dim = shape_c_.before(1) * shape_c_.after(1);

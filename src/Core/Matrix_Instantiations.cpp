@@ -24,6 +24,7 @@ template Matrix<cd> Merge(const Matrix<cd>& A, const Matrix<cd>& B,
 template double Residual(const Matrixcd& A, const Matrixcd& B);
 template double Residual(const Matrixd& A, const Matrixd& B);
 
+
 template ostream& operator<< <cd> (ostream& os, const Matrixcd& A);
 template istream& operator>> <cd> (istream& is, Matrixcd& A);
 
@@ -42,4 +43,13 @@ template ostream& operator<< <doub> (ostream& os, const Matrix<doub>& A);
 template istream& operator>> <doub> (istream& is, Matrix<doub>& A);
 
 
+
+template SpectralDecompositioncd Sqrt(SpectralDecompositioncd X);
+template SpectralDecompositiond Sqrt(SpectralDecompositiond X);
+template SpectralDecompositioncd Inverse(SpectralDecompositioncd X, double eps);
+template SpectralDecompositiond Inverse(SpectralDecompositiond X, double eps);
+template Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
+template Matrixd BuildMatrix(const SpectralDecompositiond& X);
+template Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps);
+template Matrixd BuildInverse(const SpectralDecompositiond& X, double eps);
 

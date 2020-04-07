@@ -443,8 +443,8 @@ T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 }
 
 template<typename T>
-void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t after) {
+void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+	size_t before, size_t active1, size_t active2, size_t behind) {
 	// Variables for precalculation of indices
 	size_t actbef1 = active1 * before;
 	size_t actbef2 = active2 * before;
@@ -466,7 +466,7 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	}
 	*/
 #pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
-	for (size_t n = 0; n < after; n++) {
+	for (size_t n = 0; n < behind; n++) {
 		npreidx1 = n * actbef1;
 		npreidx2 = n * actbef2;
 		for (size_t j = 0; j < active2; j++) {
@@ -488,7 +488,7 @@ void TensorHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 }
 
 template<typename T>
-Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+Matrix<T> Contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorShape& tdim_a(A.shape());
 	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
@@ -496,12 +496,12 @@ Matrix<T> mHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	Matrix<T> S(active1, active2);
-	mHoleProduct(S, A, B, k);
+	Contraction(S, A, B, k);
 	return S;
 }
 
 template<typename T>
-void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero) {
+void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero) {
 	const TensorShape& tdim_a(A.shape());
 	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
@@ -514,7 +514,7 @@ void mHoleProduct(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k
 	size_t active2 = tdim_b[k];
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
 	if (zero) { S.Zero(); }
-	TensorHoleProduct(S, A, B, before, active1, active2, after);
+	TensorContraction(S, A, B, before, active1, active2, after);
 }
 
 template<typename T, typename U>

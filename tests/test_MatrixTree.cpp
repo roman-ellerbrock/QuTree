@@ -146,5 +146,4 @@ SUITE (MatrixTreeFunctions) {
 			CHECK_CLOSE(0., off, eps);
 	}
 
-	// @TODO: Move Unit tests from FactorMatrixTree to here.
 }

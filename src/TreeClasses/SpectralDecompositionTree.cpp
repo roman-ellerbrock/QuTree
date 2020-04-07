@@ -67,6 +67,15 @@ void SpectralDecompositionTree<T>::print(const Tree& tree) const {
 }
 
 template<typename T>
+MatrixTree<T> to_matrixtree(const SpectralDecompositionTree<T>& X, const Tree& tree) {
+	MatrixTree<T> mattree(tree);
+	for (const Node& node : tree) {
+		mattree[node] = BuildMatrix(X[node]);
+	}
+	return mattree;
+}
+
+template<typename T>
 void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
 
 	auto rho = TreeFunctions::Contraction(Psi, tree, orthogonal);
@@ -81,6 +90,31 @@ void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogon
 		}
 	}
 }
+
+template<typename T>
+SpectralDecompositionTree<T> Sqrt(SpectralDecompositionTree<T> X) {
+	for (auto& x : X) {
+		x = Sqrt(x);
+	}
+	return X;
+}
+
+template<typename T>
+SpectralDecompositionTree<T> Inverse(SpectralDecompositionTree<T> X, double eps) {
+	for (auto& x : X) {
+		x = Inverse(x, eps);
+	}
+	return X;
+}
+
+template SpectralDecompositionTreecd Sqrt(SpectralDecompositionTreecd X);
+template SpectralDecompositionTreed Sqrt(SpectralDecompositionTreed X);
+
+template SpectralDecompositionTreecd Inverse(SpectralDecompositionTreecd X, double eps);
+template SpectralDecompositionTreed Inverse(SpectralDecompositionTreed X, double eps);
+
+template MatrixTreecd to_matrixtree(const SpectralDecompositionTreecd& X, const Tree& tree);
+template MatrixTreed to_matrixtree(const SpectralDecompositionTreed& X, const Tree& tree);
 
 template void CanonicalTransformation(TensorTreecd& Psi, const Tree& tree, bool orthogonal);
 template void CanonicalTransformation(TensorTreed& Psi, const Tree& tree, bool orthogonal);
