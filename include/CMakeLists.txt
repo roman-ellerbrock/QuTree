@@ -1,5 +1,5 @@
 # Easily regenerated with find include -name '*.h' | sort
-set(QDlib_INCLUDE_FILES
+set(QuTree_INCLUDE_FILES
     include/Core/Matrix.h
     include/Core/Matrix_Implementation.h
     include/Core/Tensor.h
