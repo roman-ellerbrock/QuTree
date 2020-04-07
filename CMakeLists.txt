@@ -1,76 +1,106 @@
 ###########################################################################
 #
-# --- QuantumDynamics library (QDlib) ---
+# --- QuTree library ---
 #
 # Description:
-# QDlib is a linear algebra library suited for quantum dynamics simulations.
-# The main intended use of the library are tensor tree applications.
+# QuTree is a linear algebra library suited for tensor tree applications.
+# The library was originally designed for quantum dynamics simulations.
 #
 # Main author: Roman Ellerbrock
 # Contributing authors: Stefan Seritan, K. Grace Johnson,
 #                       Thomas Weike, Tim Lenzen
 ###########################################################################
 
-cmake_minimum_required(VERSION 2.8)
-project(QDlib C CXX)
+cmake_minimum_required(VERSION 3.0)
+cmake_policy(SET "CMP0048" NEW)
+project(QuTree LANGUAGES C CXX VERSION 0.1.0)
 enable_language(C)
 enable_language(CXX)
-set(QDlib_VERSION 0.1.0)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_policy(SET "CMP0042" NEW)
 
 #####################################################################
 # Target setup
 #####################################################################
-set(QDlib_INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include/QDlib)
-set(QDlib_INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
-set(QDlib_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QDlib)
+set(QuTree_INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include/QuTree)
+set(QuTree_INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+set(QuTree_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QuTree)
 
 include(src/CMakeLists.txt)
 include(include/CMakeLists.txt)
 
-add_library(QDlib SHARED ${QDlib_SOURCE_FILES})
+add_library(QuTree SHARED ${QuTree_SOURCE_FILES})
+add_library(QuTree::QuTree ALIAS QuTree)
 
+#####################################################################
+# Find Required packages
+#####################################################################
+find_package(Eigen3 NO_MODULE)
+if (NOT TARGET Eigen3::Eigen)
+    message ( STATUS "Eigen not found, switching to internal submodule" )
+    execute_process(COMMAND git submodule update --init -- external/eigen
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+    # Set env and install headers as subdir of QuTree to avoid clashes
+    set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/eigen
+        CACHE PATH "Eigen include directory")
+    install(DIRECTORY ${EIGEN3_INCLUDE_DIR}/Eigen
+        DESTINATION ${QuTree_INSTALL_INC_DIR})
+
+    # Convenience target for exports
+    add_library(Eigen3::Eigen INTERFACE)
+    target_include_directories(Eigen3::Eigen INTERFACE
+        $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
+        $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>)
+    install(TARGETS Eigen3::Eigen
+        EXPORT eigen_export
+        DESTINATION ${QuTree_INSTALL_INC_DIR})
+endif()
+target_link_libraries(QuTree Eigen3::Eigen)
+
+#####################################################################
+# Target Installation setup
+#####################################################################
 # Set up headers in include/ for install & build and src/ for just building
-target_include_directories(QDlib
+target_include_directories(QuTree
     PUBLIC
-        $<INSTALL_INTERFACE:${QDlib_INSTALL_INC_DIR}>
+        $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
 # Install rules
-install(TARGETS QDlib
-    EXPORT QDlib-export
-    LIBRARY DESTINATION ${QDlib_INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${QDlib_INSTALL_LIB_DIR}
+install(TARGETS QuTree
+    EXPORT QuTree-export
+    LIBRARY DESTINATION ${QuTree_INSTALL_LIB_DIR}
+    ARCHIVE DESTINATION ${QuTree_INSTALL_LIB_DIR}
     )
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-    DESTINATION ${QDlib_INSTALL_INC_DIR}
+    DESTINATION ${QuTree_INSTALL_INC_DIR}
     FILES_MATCHING PATTERN "*.h*")
 
-install(EXPORT QDlib-export
-    FILE QDlibTargets.cmake
-    NAMESPACE QDlib::
-    DESTINATION ${QDlib_INSTALL_CMAKE_DIR}
+install(EXPORT QuTree-export
+    FILE QuTreeTargets.cmake
+    NAMESPACE QuTree::
+    DESTINATION ${QuTree_INSTALL_CMAKE_DIR}
     )
 
 # Exports for external find_package
 include(CMakePackageConfigHelpers)
-configure_package_config_file(QDlibConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfig.cmake
-    INSTALL_DESTINATION ${QDlib_INSTALL_CMAKE_DIR}
-    PATH_VARS QDlib_INSTALL_INC_DIR QDlib_INSTALL_LIB_DIR)
+configure_package_config_file(QuTreeConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfig.cmake
+    INSTALL_DESTINATION ${QuTree_INSTALL_CMAKE_DIR}
+    PATH_VARS QuTree_INSTALL_INC_DIR QuTree_INSTALL_LIB_DIR)
 write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfigVersion.cmake
-    VERSION ${QDlib_VERSION}
+    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/QDlibConfigVersion.cmake
-    DESTINATION ${QDlib_INSTALL_CMAKE_DIR})
+    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
+    DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
 
 set(openmp OFF)
 if (openmp)
@@ -119,68 +149,43 @@ endif ()
 # Set Compiler Flags
 #####################################################################
 # For debugging
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Ensure C++14 standard
-target_compile_features(QDlib PRIVATE cxx_std_14)
+target_compile_features(QuTree PUBLIC cxx_std_14)
 
 #set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
-set(QDlib_DEBUG_FLAGS "-g")
-set(QDlib_RELEASE_FLAGS "-O3 -ffast-math")
+set(QuTree_DEBUG_FLAGS "-g")
+set(QuTree_RELEASE_FLAGS "-O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")
-    set(QDlib_DEBUG_FLAGS "-mmacosx-version-min=10.14 ${QDlib_DEBUG_FLAGS}")
-    set(QDlib_RELEASE_FLAGS "-mmacosx-version-min=10.14 ${QDlib_RELEASE_FLAGS}")
+    set(QuTree_DEBUG_FLAGS "-mmacosx-version-min=10.14 ${QuTree_DEBUG_FLAGS}")
+    set(QuTree_RELEASE_FLAGS "-mmacosx-version-min=10.14 ${QuTree_RELEASE_FLAGS}")
     set(CMAKE_MACOSX_RPATH 1)
 elseif (UNIX)
     message("On UNIX")
-    set(QDlib_RELEASE_FLAGS "-ftree-parallelize-loops=8  ${QDlib_RELEASE_FLAGS}")
+    set(QuTree_RELEASE_FLAGS "-ftree-parallelize-loops=8  ${QuTree_RELEASE_FLAGS}")
 else ()
     message("Other OS")
 endif ()
 
 # Get command-line ready options for target_compile: https://stackoverflow.com/a/27651464/3052876
-separate_arguments(QDlib_DEBUG_FLAGS UNIX_COMMAND "${QDlib_DEBUG_FLAGS}")
-separate_arguments(QDlib_RELEASE_FLAGS UNIX_COMMAND "${QDlib_RELEASE_FLAGS}")
+separate_arguments(QuTree_DEBUG_FLAGS UNIX_COMMAND "${QuTree_DEBUG_FLAGS}")
+separate_arguments(QuTree_RELEASE_FLAGS UNIX_COMMAND "${QuTree_RELEASE_FLAGS}")
 
 # Set debug/release flags: https://stackoverflow.com/a/23995391/3052876
-target_compile_options(QDlib PUBLIC "$<$<CONFIG:DEBUG>:${QDlib_DEBUG_FLAGS}>")
-target_compile_options(QDlib PUBLIC "$<$<CONFIG:RELEASE>:${QDlib_RELEASE_FLAGS}>")
+target_compile_options(QuTree PUBLIC "$<$<CONFIG:DEBUG>:${QuTree_DEBUG_FLAGS}>")
+target_compile_options(QuTree PUBLIC "$<$<CONFIG:RELEASE>:${QuTree_RELEASE_FLAGS}>")
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-#####################################################################
-# Find Required packages
-#####################################################################
-find_package(Eigen3 QUIET)
-if (NOT EIGEN3_FOUND)
-    message ( STATUS "Eigen not found, switching to internal submodule" )
-    execute_process(COMMAND git submodule update --init -- external/eigen
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-    # Set env and install headers as subdir of QDlib to avoid clashes
-    set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/eigen
-        CACHE PATH "Eigen include directory")
-    install(DIRECTORY ${EIGEN3_INCLUDE_DIR}/Eigen
-        DESTINATION ${QDlib_INSTALL_INC_DIR})
-
-    # Convenience target for exports
-    add_library(Eigen INTERFACE)
-    target_include_directories(Eigen INTERFACE
-        $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
-        $<INSTALL_INTERFACE:${QDlib_INSTALL_INC_DIR}>)
-    install(TARGETS Eigen
-        EXPORT eigen_export
-        DESTINATION ${QDlib_INSTALL_INC_DIR})
-endif ()
-include_directories("${EIGEN3_INCLUDE_DIR}")
 
 #####################################################################
 # Recurse into subdirectories
 #####################################################################
-add_subdirectory("tests")
-add_subdirectory("examples")
+add_subdirectory(tests EXCLUDE_FROM_ALL)
+add_subdirectory(examples EXCLUDE_FROM_ALL)
 

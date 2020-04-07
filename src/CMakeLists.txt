@@ -1,5 +1,5 @@
 # Easily regenerate with find src -name '*.cpp' | sort
-set(QDlib_SOURCE_FILES
+set(QuTree_SOURCE_FILES
     src/Core/JacobiRotationFramework.cpp
     src/Core/Matrix_Instantiations.cpp
     src/Core/RandomMatrices.cpp

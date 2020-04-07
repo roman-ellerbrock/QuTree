@@ -23,8 +23,8 @@
 #include"Util/long_integer.h"
 
 /**
- * \defgroup QDlib
- * \brief QDlib is a C++ Tensor and Tensor Tree library.
+ * \defgroup QuTree
+ * \brief QuTree is a C++ Tensor and Tensor Tree library.
  *
  * This library has classes that are similar to libraries like Lapack,
  * Eigen, Armadillo, etc., but its focus is concentrated on handling
