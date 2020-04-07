@@ -88,10 +88,7 @@ install(EXPORT QuTree-export
 
 # Exports for external find_package
 include(CMakePackageConfigHelpers)
-configure_package_config_file(QuTreeConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfig.cmake
-    INSTALL_DESTINATION ${QuTree_INSTALL_CMAKE_DIR}
-    PATH_VARS QuTree_INSTALL_INC_DIR QuTree_INSTALL_LIB_DIR)
+configure_file(QuTreeConfig.cmake.in QuTreeConfig.cmake @ONLY)
 write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
     VERSION ${PROJECT_VERSION}
@@ -151,7 +148,7 @@ endif ()
 # For debugging
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# Ensure C++14 standard
+# Ensure C++14 standard (force downstream as well)
 target_compile_features(QuTree PUBLIC cxx_std_14)
 
 #set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
@@ -186,6 +183,7 @@ endif ()
 #####################################################################
 # Recurse into subdirectories
 #####################################################################
+# Excluded from default builds
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
 
