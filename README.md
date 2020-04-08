@@ -4,18 +4,18 @@ A tensor tree linear algebra package in C++ designed for quantum dynamics and ma
 
 ## Installation
 
-QuTree can simply be installed using HomeBrew on OS X, `apt` on Debian/Ubuntu, and `yum` on RHEL/CentOS. 
+QuTree can simply be installed using several package managers.
 
+On OS X, QuTree is available via a HomeBrew tap: 
 ```
-brew install qutree
-apt install qutree
-yum install qutree
+brew tap sseritan/qu-tree
+brew install qu-tree
 ```
+
+TODO: Apt and yum
 
 Tested operating systems:
 * OS X 10.14
-* Ubuntu 16.04 LTS
-* CentOS 7
 
 ## Compiling From Source
 
@@ -49,12 +49,34 @@ brew install llvm
 
 After installation, QuTree can be easily used in downstream CMake projects.
 
-In your CMake project, 
+Example CMakeLists.txt:
 ```
+cmake_minimum_required(VERSION 3.0)
+project(example CXX)
+
 find_package(QuTree REQUIRED)
 
-target_link_libraries(<your executable> QuTree::QuTree)
+add_executable(test test.cpp)
+target_link_libraries(test QuTree::QuTree)
 ```
+
+Example `test.cpp`:
+```
+#include <Core/Tensor.h>
+#include <Core/Matrix.h>
+
+int main()
+{
+TensorShape tdim({2, 3, 4});
+Tensorcd A(tdim);
+for (size_t i = 0; i < A.shape().totalDimension(); i++) {
+    A(i) = i;
+}
+Matrixcd w = A.DotProduct(A);
+w.print();
+}
+```
+
 For Makefiles, set your include and library paths to `$PREFIX/include` and `$PREFIX/lib`, respectively.
 
 For detailed examples on how to use the library,
