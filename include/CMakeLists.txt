@@ -10,7 +10,7 @@ set(QuTree_INCLUDE_FILES
     include/Core/Vector.h
     include/Core/Vector_Implementation.h
     include/Core/stdafx.h
-    include/QDlib.h
+    include/QuTree.h
     include/TreeClasses/MatrixTree.h
     include/TreeClasses/MatrixTreeFunctions.h
     include/TreeClasses/MatrixTreeFunctions_Implementation.h
