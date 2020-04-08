@@ -1,28 +1,69 @@
-# quTree
+# QuTree
 
-A tensor tree and general linear algebra package in C++.
+A tensor tree linear algebra package in C++ designed for quantum dynamics and machine learning applications.
+
+## Installation
+
+QuTree can simply be installed using HomeBrew on OS X, `apt` on Debian/Ubuntu, and `yum` on RHEL/CentOS. 
+
+```
+brew install qutree
+apt install qutree
+yum install qutree
+```
+
+Tested operating systems:
+* OS X 10.14
+* Ubuntu 16.04 LTS
+* CentOS 7
+
+## Compiling From Source
+
+Prerequisites include:
+* CMake >= 3.0
+* Eigen3
+* UnitTest++ (only for testing)
+
+If Eigen or UnitTest++ are not detected on your system, QuTree will use `git` submodules to build them locally.
+
+Compilation follows standard CMake procedure:
+```
+mkdir build
+cd build
+cmake ../
+make
+make install
+```
+For testing, run `make TestQuTree` instead.
+
+### OpenMP Support
+If you want to enable OpenMP for multi-threading on OS X, do the following:
+1) Install `llvm` and its version of `openmp` using HomeBrew:
+```
+brew install llvm
+```
+2) In CMakeLists.txt, `set(openmp ON)`
+3) When you run, `export OMP_NUM_THREADS=<desired no. threads>`
 
 ## Getting Started
 
-TODO: Basic example
+After installation, QuTree can be easily used in downstream CMake projects.
 
-## Installation
-quTree can simply be installed using common package managers. In order to get quTree via apt, just write 
+In your CMake project, 
 ```
-apt-get install qutree
-``` 
-or use a different package managers.
+find_package(QuTree REQUIRED)
 
-TODO: Instruction on compilation and/or installation through package managers
+target_link_libraries(<your executable> QuTree::QuTree)
+```
+For Makefiles, set your include and library paths to `$PREFIX/include` and `$PREFIX/lib`, respectively.
 
-If you want to enable OpenMP for multi-threading on MacOS, do the following:
-1) Install llvm and its version of openmp using homebrew:
-    $ brew install llvm
-2) In CMakeLists.txt, set(openmp ON)
-3) When you run, $ export OMP_NUM_THREADS=\<desired no. threads\>
+For detailed examples on how to use the library,
+please see the `examples` folder or further documentation here.
+
+TODO: Link to RTD
 
 ## Citation
 
-If quTree is useful to your work, please cite the following paper:
+If QuTree is useful to your work, please cite the following paper:
 
 TODO
