@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 4/9/20.
 //
 
-#ifndef MATRIXTREETRANSFORMATION_H
-#define MATRIXTREETRANSFORMATION_H
+#ifndef TREETRANSFORMATION_H
+#define TREETRANSFORMATION_H
 #include "TreeClasses/MatrixTreeFunctions.h"
 
 namespace TreeFunctions {
@@ -16,4 +16,4 @@ namespace TreeFunctions {
 
 }
 
-#endif //MATRIXTREETRANSFORMATION_H
+#endif //TREETRANSFORMATION_H

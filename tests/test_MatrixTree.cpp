@@ -109,7 +109,7 @@ SUITE (MatrixTreeFunctions) {
 		for (const Node& node : tree) {
 			const TensorShape& dim = node.shape();
 			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
-			auto mat_dagger = mat.Transpose();
+			auto mat_dagger = mat.Adjoint();
 			H[node] = mat * mat_dagger;
 		}
 
