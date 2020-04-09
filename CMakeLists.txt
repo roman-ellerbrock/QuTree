@@ -152,7 +152,7 @@ endif ()
 # Set Compiler Flags
 #####################################################################
 # For debugging
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Ensure C++14 standard (force downstream as well)
 target_compile_features(QuTree PUBLIC cxx_std_14)

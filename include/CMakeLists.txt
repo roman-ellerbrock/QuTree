@@ -14,6 +14,8 @@ set(QuTree_INCLUDE_FILES
     include/TreeClasses/MatrixTree.h
     include/TreeClasses/MatrixTreeFunctions.h
     include/TreeClasses/MatrixTreeFunctions_Implementation.h
+    include/TreeClasses/MatrixTreeTransformations.h
+    include/TreeClasses/MatrixTreeTransformations_Implementation.h
     include/TreeClasses/NodeAttribute.h
     include/TreeClasses/SparseMatrixTree.h
     include/TreeClasses/SparseMatrixTreeFunctions.h

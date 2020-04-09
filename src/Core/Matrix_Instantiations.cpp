@@ -44,10 +44,10 @@ template istream& operator>> <doub> (istream& is, Matrix<doub>& A);
 
 
 
-template SpectralDecompositioncd Sqrt(SpectralDecompositioncd X);
-template SpectralDecompositiond Sqrt(SpectralDecompositiond X);
-template SpectralDecompositioncd Inverse(SpectralDecompositioncd X, double eps);
-template SpectralDecompositiond Inverse(SpectralDecompositiond X, double eps);
+template SpectralDecompositioncd sqrt(SpectralDecompositioncd X);
+template SpectralDecompositiond sqrt(SpectralDecompositiond X);
+template SpectralDecompositioncd inverse(SpectralDecompositioncd X, double eps);
+template SpectralDecompositiond inverse(SpectralDecompositiond X, double eps);
 template Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
 template Matrixd BuildMatrix(const SpectralDecompositiond& X);
 template Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps);

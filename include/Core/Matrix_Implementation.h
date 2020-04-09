@@ -483,7 +483,7 @@ Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
 }
 
 template <typename T>
-SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X) {
+SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	Vectord& lambda = X.second;
 	for (size_t i = 0; i < lambda.Dim(); ++i) {
 		lambda(i) = sqrt(lambda(i));
@@ -492,7 +492,7 @@ SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X) {
 }
 
 template <typename T>
-SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps) {
+SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps) {
 	X.second = Inverse(X.second, eps);
 	return X;
 }

@@ -263,7 +263,7 @@ template <typename T>
 Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps = 1e-7);
 
 template <typename T>
-SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps = 1e-7);
+SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps = 1e-7);
 
 /**
  * \brief Calculate squareroot of matrix (decomposed)
@@ -271,7 +271,7 @@ SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps = 1e-7);
  * @return squareroot of matrix (decomposed)
  */
 template <typename T>
-SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X);
+SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X);
 
 /**
  * \brief Create an identity matrix

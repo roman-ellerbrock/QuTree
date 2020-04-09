@@ -92,9 +92,9 @@ void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogon
 }
 
 template<typename T>
-SpectralDecompositionTree<T> Sqrt(SpectralDecompositionTree<T> X) {
+SpectralDecompositionTree<T> sqrt(SpectralDecompositionTree<T> X) {
 	for (auto& x : X) {
-		x = Sqrt(x);
+		x = sqrt(x);
 	}
 	return X;
 }
@@ -102,13 +102,13 @@ SpectralDecompositionTree<T> Sqrt(SpectralDecompositionTree<T> X) {
 template<typename T>
 SpectralDecompositionTree<T> Inverse(SpectralDecompositionTree<T> X, double eps) {
 	for (auto& x : X) {
-		x = Inverse(x, eps);
+		x = inverse(x, eps);
 	}
 	return X;
 }
 
-template SpectralDecompositionTreecd Sqrt(SpectralDecompositionTreecd X);
-template SpectralDecompositionTreed Sqrt(SpectralDecompositionTreed X);
+template SpectralDecompositionTreecd sqrt(SpectralDecompositionTreecd X);
+template SpectralDecompositionTreed sqrt(SpectralDecompositionTreed X);
 
 template SpectralDecompositionTreecd Inverse(SpectralDecompositionTreecd X, double eps);
 template SpectralDecompositionTreed Inverse(SpectralDecompositionTreed X, double eps);
