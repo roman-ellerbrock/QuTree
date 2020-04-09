@@ -47,6 +47,8 @@ extensions = [
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+master_doc = 'index'
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -54,7 +56,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_theme = 'alabaster'
 
-# Display the Doxygen HTML as the docs
+# Display the Doxygen HTML as the docs (https://stackoverflow.com/a/41199722/3052876)
 html_extra_path = [ 'doxygen/html' ]
 
 # Add any paths that contain custom static files (such as style sheets) here,
