@@ -1,5 +1,10 @@
 find_package(UnitTest++ QUIET)
 if (NOT UnitTest++_FOUND)
+  message ( STATUS "UnitTest++ not found, falling back to PkgConfig" )
+  include(FindPkgConfig)
+  pkg_check_modules(UnitTest++ QUIET UnitTest++)
+endif()
+if (NOT UnitTest++_FOUND)
   message ( STATUS "UnitTest++ not found, switching to internal submodule" )
   execute_process(COMMAND git submodule update --init -- external/unittest-cpp
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
