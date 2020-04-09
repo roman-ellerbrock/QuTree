@@ -4,18 +4,18 @@ A tensor tree linear algebra package in C++ designed for quantum dynamics and ma
 
 ## Installation
 
-QuTree can simply be installed using several package managers.
+QuTree is available via HomeBrew on OSX or LinuxBrew on Linux distributions.
 
-On OS X, QuTree is available via a HomeBrew tap: 
+In either case, the QuTree package is distributed via a HomeBrew tap: 
 ```
 brew tap sseritan/qu-tree
 brew install qu-tree
 ```
 
-TODO: Apt and yum
-
 Tested operating systems:
 * OS X 10.14
+* Ubuntu 18.04 LTS (in progress)
+* CentOS 7 (in progress)
 
 ## Compiling From Source
 
