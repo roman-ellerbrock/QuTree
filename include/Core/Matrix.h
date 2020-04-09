@@ -108,8 +108,11 @@ public:
 	// Calculate the Trace
 	T Trace() const;
 
-	// Transpose a matrix
+	// Adjoint of a matrix
 	Matrix Adjoint();
+
+	// Transpose a matrix
+	Matrix Transpose();
 
 	// Inverts a complex matrix
 	Matrix<complex<double> > cInv() const;

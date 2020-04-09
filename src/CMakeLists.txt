@@ -10,7 +10,7 @@ set(QuTree_SOURCE_FILES
     src/Core/stdafx.cpp
     src/TreeClasses/MatrixTree.cpp
     src/TreeClasses/MatrixTreeFunctions.cpp
-    src/TreeClasses/MatrixTreeTransformations.cpp
+    src/TreeClasses/TreeTransformations.cpp
     src/TreeClasses/SparseMatrixTree.cpp
     src/TreeClasses/SparseMatrixTreeFunctions.cpp
     src/TreeClasses/SparseTree.cpp

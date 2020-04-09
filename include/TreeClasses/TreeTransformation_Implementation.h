@@ -41,7 +41,6 @@ namespace TreeFunctions {
 				Psi[node] = MatrixTensor(M[node], Psi[node], node.parentIdx());
 
 				const Node& parent = node.parent();
-				Psi[node] = M
 			}
 		}
 	}

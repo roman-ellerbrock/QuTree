@@ -174,6 +174,15 @@ Matrix<T> Matrix<T>::Adjoint() {
 }
 
 template<typename T>
+Matrix<T> Matrix<T>::Transpose() {
+	Matrix B(dim1_, dim2_);
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
+			B(i, j) = operator()(j, i);
+	return B;
+}
+
+template<typename T>
 SpectralDecompositiond Matrix<T>::rDiag() const {
 	Matrixd trafo(dim1_, dim2_);
 	Vectord ev(dim1_);
