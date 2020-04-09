@@ -9,6 +9,11 @@
 #include "Core/Tensor.h"
 #include <random>
 
+/**
+ * \defgroup Tree
+ * \brief This group contains all functionality pertaining to Trees.
+ */
+
 template<typename T>
 class TensorTree:
 	public NodeAttribute<Tensor<T>>
