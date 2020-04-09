@@ -10,11 +10,11 @@ Matrix<T>::Matrix()
 	:Matrix(1, 1) {}
 
 template<typename T>
-Matrix<T>::Matrix(size_t dim1_, size_t dim2_)
-	:dim1_(dim1_), dim2_(dim2_),
-	 coeffs_(new T[dim1_ * dim2_]) {
-	assert(dim1_ > 0);
-	assert(dim2_ > 0);
+Matrix<T>::Matrix(size_t dim1, size_t dim2)
+	:dim1_(dim1), dim2_(dim2),
+     coeffs_(new T[dim1 * dim2]) {
+	assert(dim1 > 0);
+	assert(dim2 > 0);
 	Zero();
 }
 
@@ -575,16 +575,16 @@ Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
 }
 
 template<typename T>
-Vectord Matrix<T>::SolveSLE(const Vectord& b_) {
+Vectord Matrix<T>::SolveSLE(const Vectord& b) {
 	// Re-organize b to Eigen-format
-	Eigen::VectorXd b(dim1_);
+	Eigen::VectorXd eb(dim1_);
 	for (size_t i = 0; i < dim1_; i++)
-		b(i) = b_(i);
+        eb(i) = b(i);
 
 	// Solve equations
 	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs_, dim1_, dim2_);
 	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> dec(A);
-	Eigen::VectorXd x = dec.solve(b);
+	Eigen::VectorXd x = dec.solve(eb);
 
 	// Save to QuTree-Vectord
 	Vectord x_(dim2_);

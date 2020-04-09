@@ -14,6 +14,7 @@ extensions = [
     'breathe',
     'sphinx.ext.mathjax',
 ]
+mathjax_path="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 
 # Set up Breathe extension for Sphinx
 breathe_projects = { "QuTree": "doxygen/xml" }
