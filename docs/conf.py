@@ -20,8 +20,8 @@ import subprocess
 subprocess.call('cd doxygen; doxygen', shell=True)
 
 # Set up Breathe extension for Sphinx
-breathe_projects = { "QuTree": "doxygen/xml" }
-breathe_default_project = "QuTree"
+#breathe_projects = { "QuTree": "doxygen/xml" }
+#breathe_default_project = "QuTree"
 
 # -- Project information -----------------------------------------------------
 
@@ -39,7 +39,7 @@ release = '0.1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'breathe',
+#    'breathe',
 ]
 
 # List of patterns, relative to source directory, that match files and
@@ -52,7 +52,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'alabaster'
+
+# Display the Doxygen HTML as the docs
+html_extra_path = [ 'doxygen/html' ]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

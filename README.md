@@ -79,10 +79,9 @@ w.print();
 
 For Makefiles, set your include and library paths to `$PREFIX/include` and `$PREFIX/lib`, respectively.
 
-For detailed examples on how to use the library,
-please see the `examples` folder or further documentation here.
+For detailed examples on how to use the library, please see the `examples` folder.
+For more extensive documentation, please see our [ReadTheDocs page](https://qutree.readthedocs.io/en/latest/).
 
-TODO: Link to RTD
 
 ## Citation
 
