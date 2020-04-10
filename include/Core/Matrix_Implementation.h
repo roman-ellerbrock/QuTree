@@ -165,7 +165,7 @@ T Matrix<T>::Trace() const {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Adjoint() {
+Matrix<T> Matrix<T>::Adjoint() const {
 	Matrix B(dim1_, dim2_);
 	for (size_t i = 0; i < dim1_; i++)
 		for (size_t j = 0; j < dim2_; j++)
@@ -174,7 +174,7 @@ Matrix<T> Matrix<T>::Adjoint() {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Transpose() {
+Matrix<T> Matrix<T>::Transpose() const {
 	Matrix B(dim1_, dim2_);
 	for (size_t i = 0; i < dim1_; i++)
 		for (size_t j = 0; j < dim2_; j++)

@@ -100,18 +100,36 @@ SpectralDecompositionTree<T> sqrt(SpectralDecompositionTree<T> X) {
 }
 
 template<typename T>
-SpectralDecompositionTree<T> Inverse(SpectralDecompositionTree<T> X, double eps) {
+MatrixTree<T> sqrt(MatrixTree<T> X, const Tree& tree) {
+	SpectralDecompositionTree<T> x(X, tree);
+	x = sqrt(x);
+	return to_matrixtree(x, tree);
+}
+
+template<typename T>
+SpectralDecompositionTree<T> inverse(SpectralDecompositionTree<T> X, double eps) {
 	for (auto& x : X) {
 		x = inverse(x, eps);
 	}
 	return X;
 }
 
+template<typename T>
+MatrixTree<T> inverse(MatrixTree<T> X, const Tree& tree, double eps) {
+	SpectralDecompositionTree<T> x(X, tree);
+	x = inverse(x, eps);
+	return to_matrixtree(x, tree);
+}
+
 template SpectralDecompositionTreecd sqrt(SpectralDecompositionTreecd X);
 template SpectralDecompositionTreed sqrt(SpectralDecompositionTreed X);
+template MatrixTreecd sqrt(MatrixTreecd X, const Tree& tree);
+template MatrixTreed sqrt(MatrixTreed X, const Tree& tree);
 
-template SpectralDecompositionTreecd Inverse(SpectralDecompositionTreecd X, double eps);
-template SpectralDecompositionTreed Inverse(SpectralDecompositionTreed X, double eps);
+template SpectralDecompositionTreecd inverse(SpectralDecompositionTreecd X, double eps);
+template SpectralDecompositionTreed inverse(SpectralDecompositionTreed X, double eps);
+template MatrixTreecd inverse(MatrixTreecd X, const Tree& tree, double eps);
+template MatrixTreed inverse(MatrixTreed X, const Tree& tree, double eps);
 
 template MatrixTreecd to_matrixtree(const SpectralDecompositionTreecd& X, const Tree& tree);
 template MatrixTreed to_matrixtree(const SpectralDecompositionTreed& X, const Tree& tree);

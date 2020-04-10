@@ -11,6 +11,7 @@ set(QuTree_INCLUDE_FILES
     include/Core/Vector_Implementation.h
     include/Core/stdafx.h
     include/QDlib.h
+    include/TreeClasses/EdgeAttribute.h
     include/TreeClasses/MatrixTree.h
     include/TreeClasses/MatrixTreeFunctions.h
     include/TreeClasses/MatrixTreeFunctions_Implementation.h
@@ -36,6 +37,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeOperators/SumOfProductsOperator.h
     include/TreeOperators/SumOfProductsOperator_Implementation.h
     include/TreeShape/AbstractNode.h
+    include/TreeShape/Edge.h
     include/TreeShape/Leaf.h
     include/TreeShape/LeafTypes/DVRBasis.h
     include/TreeShape/LeafTypes/FFTGrid.h

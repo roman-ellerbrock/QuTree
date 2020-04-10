@@ -15,34 +15,80 @@ namespace TreeFunctions {
 	template <typename T>
 	TensorTree<T> DotProductNormalization(TensorTree<T> Psi, const Tree& tree) {
 
+		return Psi;
+	}
+
+	template <typename T>
+	TensorTree<T> DirectionalInvarientRepresentation(TensorTree<T> Psi, const Tree& tree, bool orthogonal) {
+		/// Calculate contraction matrixtree
+		assert(orthogonal);
+		MatrixTree<T> rho = Contraction(Psi, tree, orthogonal);
+		auto B = sqrt(rho, tree);
+
+
+		for (const Edge& e : tree.Edges()) {
+			TransformEdgeDown(Psi, Psi, B[e], e);
+		}
+	}
+
+	template <typename T>
+	void TransformEdgeDown(TensorTree<T>& Chi, const TensorTree<T>& Psi, const Matrix<T>& M, const Edge& e) {
+		const Node& node = e.down();
+		Chi[node] = TensorMatrix(Psi[node], M, e.downIdx());
 	}
 
 	template <typename T>
 	TensorTree<T> ContractionNormalization(TensorTree<T> Psi, const Tree& tree, bool orthogonal) {
-		/// Calculate contraction matrixtree
+		assert(orthogonal);
+		/// Transform to Directional-Invariant rep
 		MatrixTree<T> rho = Contraction(Psi, tree, orthogonal);
-		auto rho_x = SpectralDecompositionTree<T>(rho);
+		auto B = sqrt(rho, tree);
+		auto B_inv = inverse(B, tree);
 
-		/// sqrt(rho)
-		auto sqrt_rho_x = sqrt(rho_x);
-		auto sqrt_rho = to_matrixtree(sqrt_rho_x);
+		for (const Edge& e : tree.Edges()) {
+			TransformEdgeDown(Psi, Psi, B[e], e);
+		}
 
-		/// Inverse of sqrt(rho)
-		auto inv_sqrt_rho_x = inverse(sqrt_rho_x);
-		auto inv_sqrt_rho = to_matrixtree(inv_sqrt_rho_x);
+		auto Chi(Psi);
+
+		for (const Edge& e : tree.Edges()) {
+			const Node& parent = e.up();
+			Chi[e] = MatrixTensor(B_inv[e], Psi[parent], e.upIdx());
+		}
+
+		return Chi;
 	}
 
 	template <typename T>
-	void Transform(TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
-		const Tree& tree) {
-		for (const Node& node : tree) {
-			if (!node.isToplayer()) {
-//				multStateAB(M[node], Psi[node], node.parent)
-				Psi[node] = MatrixTensor(M[node], Psi[node], node.parentIdx());
+	void TransformEdgeUp(TensorTree<T>& Chi, const TensorTree<T>& Psi, const Matrix<T>& Mi, const Edge& e) {
+		const Node& parent = e.up();
+		Chi[parent] = MatrixTensor(Mi, Psi[parent], e.upIdx());
+	}
 
-				const Node& parent = node.parent();
-			}
+	template <typename T>
+	void TransformEdge(TensorTree<T>& Chi, const TensorTree<T>& Psi, const Matrix<T>& M,
+		const Matrix<T>& M_inv, const Edge& e) {
+
+		const Node& node = e.down();
+		Chi[node] = TensorMatrix(Psi[node], M, node.parentIdx());
+
+		const Node& parent = e.up();
+		Chi[parent] = MatrixTensor(M_inv, Psi[parent], node.childIdx());
+	}
+
+	template <typename T>
+	void Transform(TensorTree<T>& Chi, const TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
+		const Tree& tree) {
+
+		for (const Edge& e : tree.Edges()) {
+			TransformEdgeUp(Chi, Psi, M_inv[e], e);
+			const Node& node = e.down();
+			auto x = Contraction(Chi[node], Chi[node], node.childIdx());
+			node.info();
+			x.print();
 		}
+		getchar();
+
 	}
 
 }

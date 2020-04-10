@@ -109,10 +109,10 @@ public:
 	T Trace() const;
 
 	// Adjoint of a matrix
-	Matrix Adjoint();
+	Matrix Adjoint() const;
 
 	// Transpose a matrix
-	Matrix Transpose();
+	Matrix Transpose() const;
 
 	// Inverts a complex matrix
 	Matrix<complex<double> > cInv() const;

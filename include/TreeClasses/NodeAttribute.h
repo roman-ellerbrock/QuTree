@@ -1,5 +1,6 @@
 #pragma once
 #include "TreeShape/Node.h"
+#include "TreeShape/Edge.h"
 #include "TreeShape/Tree.h"
 
 /**
@@ -36,6 +37,20 @@ public:
 	}
 
 	const A& operator[](const Node& x) const {
+		size_t address = x.Address();
+		assert(address < attributes_.size());
+		return attributes_[address];
+	}
+
+	A& operator[](const Edge& e) {
+		const Node& x = e.down();
+		size_t address = x.Address();
+		assert(address < attributes_.size());
+		return attributes_[address];
+	}
+
+	const A& operator[](const Edge& e) const {
+		const Node& x = e.down();
 		size_t address = x.Address();
 		assert(address < attributes_.size());
 		return attributes_[address];

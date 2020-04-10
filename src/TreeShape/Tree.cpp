@@ -42,7 +42,7 @@ void Tree::ResetLeafModes() {
 			leaf.Mode() = mode--;
 		}
 	}
-	this->Update();
+	Update();
 }
 
 void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
@@ -101,6 +101,14 @@ void Tree::LinearizeNodes() {
 			node.SetAddress(counter);
 			counter++;
 			linearizedNodes_.push_back(node);
+		}
+	}
+
+	edges_.clear();
+	for (const Node& node : linearizedNodes_) {
+		if (!node.isToplayer()) {
+			const Node& parent = node.parent();
+			edges_.emplace_back(Edge(node, parent));
 		}
 	}
 }
