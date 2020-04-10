@@ -1,6 +1,7 @@
 include(CMakeFindDependencyMacro)
 
-if (NOT @USE_INTERNAL_EIGEN@)
+set(USE_INTERNAL_EIGEN @USE_INTERNAL_EIGEN@)
+if (NOT USE_INTERNAL_EIGEN)
     find_dependency(Eigen3 REQUIRED)
 endif()
 

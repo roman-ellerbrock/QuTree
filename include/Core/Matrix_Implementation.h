@@ -595,7 +595,7 @@ Vectord Matrix<T>::SolveSLE(const Vectord& b_) {
 	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> dec(A);
 	Eigen::VectorXd x = dec.solve(b);
 
-	// Save to QDlib-Vectord
+	// Save to QuTree-Vectord
 	Vectord x_(dim2_);
 	for (size_t i = 0; i < dim2_; i++)
 		x_(i) = x(i);

@@ -3,13 +3,16 @@
 #include <functional>
 #include "Core/Tensor.h"
 
-
+/**
+ * \defgroup Util
+ * \brief This group includes common utilites in QuTree.
+ */
 
 template<class Q, class T, typename U>
 class BS_integrator
 /**
  * \class BS_integrator
- * \ingroup Core
+ * \ingroup Util
  * \brief This is a Bulirsch-Stoer Integrator.
  *
  * The design of this class is loosely related to the implementation
