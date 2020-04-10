@@ -13,7 +13,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET "CMP0048" NEW)
-project(QuTree LANGUAGES C CXX VERSION 1.0.0)
+project(QuTree LANGUAGES C CXX VERSION 0.1.0)
 enable_language(C)
 enable_language(CXX)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
