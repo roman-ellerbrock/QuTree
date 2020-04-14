@@ -43,6 +43,7 @@ template ostream& operator<< <doub> (ostream& os, const Matrix<doub>& A);
 template istream& operator>> <doub> (istream& is, Matrix<doub>& A);
 
 
+template Matrix<double> EuclideanDistance(const Matrix<double>& A);
 
 template SpectralDecompositioncd Sqrt(SpectralDecompositioncd X);
 template SpectralDecompositiond Sqrt(SpectralDecompositiond X);
