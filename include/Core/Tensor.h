@@ -2,6 +2,12 @@
 #include "TensorShape.h"
 #include "Core/Matrix.h"
 
+/**
+ * \defgroup Core
+ * \brief This group includes the basic datastructures in QuTree.
+ *
+ * These datastructures include the Vector, Matrix, and Tensor classes.
+ */
 
 template <typename T>
 class Tensor

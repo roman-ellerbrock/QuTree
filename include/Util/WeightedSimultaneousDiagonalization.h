@@ -8,7 +8,7 @@ using namespace JacobiRotationFramework;
 namespace WeightedSimultaneousDiagonalization
 /**
  * \namespace WeightedSimultaneousDiagonalization
- * \ingroup Core
+ * \ingroup Util
  * \brief Perform matrix-weighted Joint Diagonalization
  */
 {

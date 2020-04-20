@@ -1,28 +1,50 @@
-# quTree
+# QuTree
 
-A tensor tree and general linear algebra package in C++.
+A tensor tree linear algebra package in C++ designed for quantum dynamics and machine learning applications.
 
 ## Getting Started
 
-TODO: Basic example
-
-## Installation
-quTree can simply be installed using common package managers. In order to get quTree via apt, just write 
+Installation is easy using HomeBrew (on OS X) or LinuxBrew (on Linux):
 ```
-apt-get install qutree
-``` 
-or use a different package managers.
+brew tap sseritan/qu-tree
+brew install qu-tree
+```
 
-TODO: Instruction on compilation and/or installation through package managers
+After installation, QuTree can be easily used in downstream CMake projects.
 
-If you want to enable OpenMP for multi-threading on MacOS, do the following:
-1) Install llvm and its version of openmp using homebrew:
-    $ brew install llvm
-2) In CMakeLists.txt, set(openmp ON)
-3) When you run, $ export OMP_NUM_THREADS=\<desired no. threads\>
+Example CMakeLists.txt:
+```
+cmake_minimum_required(VERSION 3.0)
+project(example CXX)
+
+find_package(QuTree REQUIRED)
+
+add_executable(test test.cpp)
+target_link_libraries(test QuTree::QuTree)
+```
+
+Example `test.cpp`:
+```
+#include <Core/Tensor.h>
+#include <Core/Matrix.h>
+
+int main()
+{
+TensorShape tdim({2, 3, 4});
+Tensorcd A(tdim);
+for (size_t i = 0; i < A.shape().totalDimension(); i++) {
+    A(i) = i;
+}
+Matrixcd w = A.DotProduct(A);
+w.print();
+}
+```
+
+For detailed examples on how to use the library, please see the `examples` folder
+ or check out our [documentation](https://qutree.readthedocs.io/en/latest/).
 
 ## Citation
 
-If quTree is useful to your work, please cite the following paper:
+If QuTree is useful to your work, please cite the following paper:
 
 TODO

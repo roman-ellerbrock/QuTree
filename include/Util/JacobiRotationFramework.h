@@ -4,6 +4,7 @@
 namespace JacobiRotationFramework
 /**
  * \namespace JacobiRotationFramework
+ * \ingroup Util
  * \brief This namespace contains functions for Jacobi rotations algorithms
  */
 {

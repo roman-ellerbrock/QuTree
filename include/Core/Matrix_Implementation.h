@@ -113,6 +113,14 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& B) {
 }
 
 template<typename T>
+Matrix<T>& Matrix<T>::operator/=(T coeff) noexcept {
+	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
+		coeffs_[i] /= coeff;
+	}
+	return *this;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
 	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
 		coeffs_[i] *= coeff;
@@ -595,7 +603,7 @@ Vectord Matrix<T>::SolveSLE(const Vectord& b_) {
 	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> dec(A);
 	Eigen::VectorXd x = dec.solve(b);
 
-	// Save to QDlib-Vectord
+	// Save to QuTree-Vectord
 	Vectord x_(dim2_);
 	for (size_t i = 0; i < dim2_; i++)
 		x_(i) = x(i);
@@ -630,7 +638,7 @@ Matrix<T> EuclideanDistance(const Matrix<T>& A) {
 	Matrix<T> D(G.Dim1(), G.Dim2());
 	for (size_t j = 0; j < G.Dim1(); ++j) {
 		for (size_t i = 0; i < G.Dim2(); ++i) {
-			D(i, j) = G(i, i) + G(j, j) - 2 * G(i, j);
+			D(i, j) = G(i, i) + G(j, j) - 2. * G(i, j);
 		}
 	}
 	return D;
