@@ -523,6 +523,14 @@ Matrix<T> IdentityMatrix(size_t dim) {
 	return I;
 }
 
+Matrixcd IdentityMatrixcd(size_t dim) {
+	return IdentityMatrix<complex<double>>(dim);
+}
+
+Matrixd IdentityMatrixd(size_t dim) {
+	return IdentityMatrix<double>(dim);
+}
+
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 	const Matrix<T>& B) {

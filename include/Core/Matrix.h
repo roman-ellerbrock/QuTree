@@ -286,6 +286,9 @@ SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X);
 template<typename T>
 Matrix<T> IdentityMatrix(size_t dim);
 
+Matrixcd IdentityMatrixcd(size_t dim);
+Matrixd IdentityMatrixd(size_t dim);
+
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 		const Matrix<T>& B);
