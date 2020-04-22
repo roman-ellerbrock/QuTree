@@ -8,6 +8,7 @@
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
 #include "TreeShape/TreeFactory.h"
+#include "TreeClasses/TreeTransformation.h"
 
 SUITE (MatrixTree) {
 	double eps = 1e-8;
@@ -109,7 +110,7 @@ SUITE (MatrixTreeFunctions) {
 		for (const Node& node : tree) {
 			const TensorShape& dim = node.shape();
 			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
-			auto mat_dagger = mat.Transpose();
+			auto mat_dagger = mat.Adjoint();
 			H[node] = mat * mat_dagger;
 		}
 
@@ -146,4 +147,29 @@ SUITE (MatrixTreeFunctions) {
 			CHECK_CLOSE(0., off, eps);
 	}
 
+}
+
+SUITE(TreeTransformations) {
+	TEST(ContractionNormalized) {
+		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		// Increase number of states
+		Node& top = tree.TopNode();
+		TensorShape& shape = top.shape();
+		shape[shape.lastIdx()] += 1;
+		tree.Update();
+		mt19937 gen(1993);
+		TensorTreecd Psi(gen, tree);
+
+		auto edgePsi = TreeFunctions::ContractionNormalization(Psi, tree, true);
+
+		for (const Edge& e : tree.Edges()) {
+			auto phi = edgePsi[e];
+			Matrixcd deltaij = Contraction(phi, phi, e.upIdx());
+			Matrixcd I = IdentityMatrix<complex<double>>(deltaij.Dim1());
+			auto r = Residual(deltaij, I);
+			CHECK_CLOSE(0., r, 1e-7);
+		}
+
+
+	}
 }

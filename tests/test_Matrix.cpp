@@ -140,7 +140,7 @@ SUITE (Matrix) {
 		mt19937 gen(1990);
 		size_t dim = 10;
 		Matrixcd A = RandomMatrices::GUE(dim, gen);
-		Matrixcd Adag = A.Transpose();
+		Matrixcd Adag = A.Adjoint();
 		A = A * Adag;
 		auto x = Diagonalize(A);
 

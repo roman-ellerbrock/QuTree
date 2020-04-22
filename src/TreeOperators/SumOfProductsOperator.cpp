@@ -1,4 +1,5 @@
 #include "TreeOperators/SumOfProductsOperator_Implementation.h"
+#include "TreeOperators/SOPVector.h"
 
 
 typedef complex<double> cd;

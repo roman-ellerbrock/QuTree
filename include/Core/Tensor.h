@@ -233,6 +233,12 @@ template <typename T, typename U>
 Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
 
 template <typename T, typename U>
+void TensorMatrix(Tensor<T>& C, const Tensor<T>& B, const Matrix<U>& A, size_t mode, bool zero = true);
+
+template<typename T, typename U>
+Tensor<T> TensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode);
+
+template <typename T, typename U>
 Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
 
 template <typename T, typename U>

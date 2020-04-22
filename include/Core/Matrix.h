@@ -203,6 +203,13 @@ public:
 	 */
 	Matrix& operator*=(T coeff) noexcept;
 
+    /** \brief In-place elementwise scalar matrix division
+    *
+    * @param coeff Scalar
+    * @return Scaled Matrix
+    */
+	Matrix& operator/=(T coeff) noexcept;
+
 	/** \brief Matrix equality
 	 *
 	 * @param A Test Matrix
@@ -235,10 +242,15 @@ public:
 	 */
 	T Trace() const;
 
+    /**
+     * @return Adjoint of matrix
+     */
+	Matrix Adjoint() const;
+
 	/**
 	 * @return Transposed matrix
 	 */
-	Matrix Transpose();
+	Matrix Transpose() const;
 
 	/** \brief Invert a complex Matrix
 	 *
@@ -368,6 +380,9 @@ typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
  */
 typedef SpectralDecomposition<double> SpectralDecompositiond;
 
+//////////////////////////////////////////////////////////////////////
+// Non-Member functions
+//////////////////////////////////////////////////////////////////////
 template<typename T, typename U>
 Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B);
 
@@ -450,7 +465,7 @@ template <typename T>
 Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps = 1e-7);
 
 template <typename T>
-SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps = 1e-7);
+SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps = 1e-7);
 
 /**
  * \brief Calculate squareroot of matrix (decomposed)
@@ -458,7 +473,7 @@ SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps = 1e-7);
  * @return squareroot of matrix (decomposed)
  */
 template <typename T>
-SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X);
+SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X);
 
 /**
  * \brief Create an identity matrix
@@ -468,6 +483,9 @@ SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X);
  */
 template<typename T>
 Matrix<T> IdentityMatrix(size_t dim);
+
+Matrixcd IdentityMatrixcd(size_t dim);
+Matrixd IdentityMatrixd(size_t dim);
 
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,

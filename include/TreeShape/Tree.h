@@ -5,6 +5,7 @@
 #ifndef TREE_H
 #define TREE_H
 #include "Node.h"
+#include "Edge.h"
 #include "LinearizedLeaves.h"
 #include <map>
 
@@ -123,7 +124,8 @@ public:
 	void ReplaceNode(Node& old_node, Node& new_node);
 
 	/// Set the root of the tree and update the TreeShape
-	void SetRoot(Node& root) { root_ = root;
+	void SetRoot(Node& root) {
+		root_ = root;
 		root_.UpdatePosition(NodePosition());
 		Update();
 	}
@@ -141,19 +143,24 @@ public:
 	}
 
 	/// Top-down iterator over all nodes in the mctdh-tree
-	vector<reference_wrapper<Node>>::const_reverse_iterator  rbegin() const {
+	vector<reference_wrapper<Node>>::const_reverse_iterator rbegin() const {
 		return linearizedNodes_.rbegin();
 	}
 
 	/// Bottom-up const iterator over all nodes in the mctdh-tree
-	vector<reference_wrapper<Node>>::const_reverse_iterator  rend() const {
+	vector<reference_wrapper<Node>>::const_reverse_iterator rend() const {
 		return linearizedNodes_.rend();
 	}
+
 	/// Check whether TensorTreeBasis is working correctly
 	bool IsWorking();
 
 	/// Human readable output of the tree shape
 	void print(ostream& os = cout) const;
+
+	const vector<Edge>& Edges() const { return edges_; }
+
+	const LinearizedNodes& Nodes() const { return linearizedNodes_; }
 
 protected:
 	void LinearizeNodes();
@@ -165,6 +172,8 @@ protected:
 
 	/// Reference block to mctdh-nodes
 	LinearizedNodes linearizedNodes_;
+
+	vector<Edge> edges_;
 
 	/// MCTDH tree holds memory
 	Node root_;

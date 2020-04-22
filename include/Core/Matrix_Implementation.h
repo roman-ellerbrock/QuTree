@@ -113,6 +113,14 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& B) {
 }
 
 template<typename T>
+Matrix<T>& Matrix<T>::operator/=(T coeff) noexcept {
+	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
+		coeffs_[i] /= coeff;
+	}
+	return *this;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
 	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
 		coeffs_[i] *= coeff;
@@ -165,11 +173,20 @@ T Matrix<T>::Trace() const {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Transpose() {
+Matrix<T> Matrix<T>::Adjoint() const {
 	Matrix B(dim1_, dim2_);
 	for (size_t i = 0; i < dim1_; i++)
 		for (size_t j = 0; j < dim2_; j++)
 			B(i, j) = conjugate(operator()(j, i));
+	return B;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::Transpose() const {
+	Matrix B(dim1_, dim2_);
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
+			B(i, j) = operator()(j, i);
 	return B;
 }
 
@@ -483,7 +500,7 @@ Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
 }
 
 template <typename T>
-SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X) {
+SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	Vectord& lambda = X.second;
 	for (size_t i = 0; i < lambda.Dim(); ++i) {
 		lambda(i) = sqrt(lambda(i));
@@ -492,7 +509,7 @@ SpectralDecomposition<T> Sqrt(SpectralDecomposition<T> X) {
 }
 
 template <typename T>
-SpectralDecomposition<T> Inverse(SpectralDecomposition<T> X, double eps) {
+SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps) {
 	X.second = Inverse(X.second, eps);
 	return X;
 }
@@ -504,6 +521,14 @@ Matrix<T> IdentityMatrix(size_t dim) {
 		I(i, i) = 1.;
 	}
 	return I;
+}
+
+Matrixcd IdentityMatrixcd(size_t dim) {
+	return IdentityMatrix<complex<double>>(dim);
+}
+
+Matrixd IdentityMatrixd(size_t dim) {
+	return IdentityMatrix<double>(dim);
 }
 
 template<typename T>
@@ -621,7 +646,7 @@ Matrix<T> EuclideanDistance(const Matrix<T>& A) {
 	Matrix<T> D(G.Dim1(), G.Dim2());
 	for (size_t j = 0; j < G.Dim1(); ++j) {
 		for (size_t i = 0; i < G.Dim2(); ++i) {
-			D(i, j) = G(i, i) + G(j, j) - 2 * G(i, j);
+			D(i, j) = G(i, i) + G(j, j) - 2. * G(i, j);
 		}
 	}
 	return D;

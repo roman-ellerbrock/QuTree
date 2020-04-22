@@ -36,10 +36,16 @@ template<typename T>
 void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal = false);
 
 template <typename T>
-SpectralDecompositionTree<T> Sqrt(SpectralDecompositionTree<T> X);
+SpectralDecompositionTree<T> sqrt(SpectralDecompositionTree<T> X);
 
 template <typename T>
-SpectralDecompositionTree<T> Inverse(SpectralDecompositionTree<T> X);
+MatrixTree<T> sqrt(MatrixTree<T> X, const Tree& tree);
+
+template <typename T>
+SpectralDecompositionTree<T> inverse(SpectralDecompositionTree<T> X, double eps = 1e-7);
+
+template <typename T>
+MatrixTree<T> inverse(MatrixTree<T> X, const Tree& tree, double eps = 1e-7);
 
 template <typename T>
 MatrixTree<T> to_matrixtree(const SpectralDecompositionTree<T>& X, const Tree& tree);

@@ -70,6 +70,7 @@ public:
 	// Returns the index in the vector of children of the parent
 	// (e.g. this is the 2nd child: this getter returns "1")
 	int childIdx() const { return position_.ChildIdx(); }
+	size_t parentIdx() const { return nChildren(); }
 
 	// Getter for the number of children of this node
 	int nChildren() const { return down_.size(); }
