@@ -1,78 +1,65 @@
-
-set(QDlib_INCLUDE_FILES
-        Util/BS_integrator.h
-        Util/FFT.h
-        Util/FFTCooleyTukey.h
-        Util/JacobiRotationFramework.h
-        Util/Lanzcos.h
-        Util/long_integer.h
-        Core/Matrix.h
-        Core/Matrix_Implementation.h
-        Util/MultiIndex.h
-        QDlib.h
-        Util/QMConstants.h
-        Util/SimultaneousDiagonalization.h
-        Util/RandomMatrices.h
-        Core/Tensor.h
-        Core/TensorDim.h
-        Core/TensorDim_Extension.h
-        Core/Tensor_Extension.h
-        Core/Tensor_Extension_Implementation.h
-        Core/Tensor_Implementation.h
-        Util/Tree.h
-        Util/TreeNode.h
-        Core/Vector.h
-        Core/Vector_Implementation.h
-        Util/WeightedSimultaneousDiagonalization.h
-        Core/stdafx.h
-        QDlib.h
-        )
-
-set(TENSOR_TREE_FILES
-        TreeShape/AbstractNode.h
-        TreeShape/Leaf.h
-        TreeShape/LinearizedLeaves.h
-        TreeShape/Node.h
-        TreeShape/NodePosition.h
-        TreeShape/Tree.h
-        TreeShape/TreeFactory.h
-        TreeClasses/NodeAttribute.h
-        TreeClasses/TensorTree.h
-        TreeClasses/TensorTree_Implementation.h
-        TreeClasses/NodeAttribute.h
-        TreeClasses/SparseTree.h
-        TreeClasses/SpectralDecompositionTree.h
-        TreeClasses/TreeIO.h
-        TreeClasses/MatrixTree.h
-        TreeClasses/MatrixTreeFunctions.h
-        TreeClasses/MatrixTreeFunctions_Implementation.h
-        TreeClasses/SparseMatrixTree.h
-        TreeClasses/SparseMatrixTreeFunctions.h
-        TreeClasses/SparseMatrixTreeFunctions_Implementation.h
-        )
-
-set(OPERATOR_FILES
-        TreeOperators/MultiLeafOperator.h
-        TreeOperators/LeafOperator.h
-        TreeOperators/LeafMatrix.h
-        TreeOperators/LeafFunction.h
-        TreeOperators/SumOfProductsOperator.h
-        )
-
-set(LEAF_TYPE_FILES
-        TreeShape/LeafTypes/LeafInterface.h
-        TreeShape/LeafTypes/BosonNumberBasis.h
-        TreeShape/LeafTypes/DVRBasis.h
-        TreeShape/LeafTypes/FermionNumberBasis.h
-        TreeShape/LeafTypes/FFTGrid.h
-        TreeShape/LeafTypes/HO_Basis.h
-        TreeShape/LeafTypes/LegendrePolynomials.h
-        TreeShape/LeafTypes/LogicalBasis.h
-        TreeShape/LeafTypes/NumberBasis.h
-        TreeShape/LeafTypes/SpinGroup.h
-        )
-
-install(FILES ${QDlib_INCLUDE_FILES} DESTINATION include/QDlib)
-install(FILES ${TENSOR_TREE_FILES} DESTINATION include/QDlib/TensorTree)
-install(FILES ${OPERATOR_FILES} DESTINATION include/QDlib/Operators)
+# Easily regenerated with find include -name '*.h' | sort
+set(QuTree_INCLUDE_FILES
+    include/Core/Matrix.h
+    include/Core/Matrix_Implementation.h
+    include/Core/Tensor.h
+    include/Core/TensorShape.h
+    include/Core/Tensor_Extension.h
+    include/Core/Tensor_Extension_Implementation.h
+    include/Core/Tensor_Implementation.h
+    include/Core/Vector.h
+    include/Core/Vector_Implementation.h
+    include/Core/stdafx.h
+    include/QuTree.h
+    include/TreeClasses/MatrixTree.h
+    include/TreeClasses/MatrixTreeFunctions.h
+    include/TreeClasses/MatrixTreeFunctions_Implementation.h
+    include/TreeClasses/NodeAttribute.h
+    include/TreeClasses/SparseMatrixTree.h
+    include/TreeClasses/SparseMatrixTreeFunctions.h
+    include/TreeClasses/SparseMatrixTreeFunctions_Implementation.h
+    include/TreeClasses/SparseNodeAttribute.h
+    include/TreeClasses/SparseTree.h
+    include/TreeClasses/SOPMatrixTrees.h
+    include/TreeClasses/SpectralDecompositionTree.h
+    include/TreeClasses/TensorTree.h
+    include/TreeClasses/TensorTree_Implementation.h
+    include/TreeClasses/TreeIO.h
+    include/TreeOperators/LeafFunction.h
+    include/TreeOperators/LeafMatrix.h
+    include/TreeOperators/LeafOperator.h
+    include/TreeOperators/MultiLeafOperator.h
+    include/TreeOperators/PotentialOperator.h
+    include/TreeOperators/SOPVector.h
+    include/TreeOperators/SumOfProductsOperator.h
+    include/TreeOperators/SumOfProductsOperator_Implementation.h
+    include/TreeShape/AbstractNode.h
+    include/TreeShape/Leaf.h
+    include/TreeShape/LeafTypes/DVRBasis.h
+    include/TreeShape/LeafTypes/FFTGrid.h
+    include/TreeShape/LeafTypes/HO_Basis.h
+    include/TreeShape/LeafTypes/LeafInterface.h
+    include/TreeShape/LeafTypes/LegendrePolynomials.h
+    include/TreeShape/LeafTypes/SpinGroup.h
+    include/TreeShape/LinearizedLeaves.h
+    include/TreeShape/Node.h
+    include/TreeShape/NodePosition.h
+    include/TreeShape/Tree.h
+    include/TreeShape/TreeFactory.h
+    include/Util/BS_integrator.h
+    include/Util/FFT.h
+    include/Util/FFTCooleyTukey.h
+    include/Util/GradientDescent.h
+    include/Util/GradientDescent_Implementation.h
+    include/Util/JacobiRotationFramework.h
+    include/Util/Lanzcos.h
+    include/Util/MultiIndex.h
+    include/Util/QMConstants.h
+    include/Util/RandomMatrices.h
+    include/Util/SimultaneousDiagonalization.h
+    include/Util/Tree.h
+    include/Util/TreeNode.h
+    include/Util/WeightedSimultaneousDiagonalization.h
+    include/Util/long_integer.h
+    )
 

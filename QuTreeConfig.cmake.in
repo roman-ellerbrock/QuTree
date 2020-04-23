@@ -1,0 +1,8 @@
+include(CMakeFindDependencyMacro)
+
+set(USE_INTERNAL_EIGEN @USE_INTERNAL_EIGEN@)
+if (NOT USE_INTERNAL_EIGEN)
+    find_dependency(Eigen3 REQUIRED)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/QuTreeTargets.cmake")

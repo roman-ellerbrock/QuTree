@@ -1,9 +1,10 @@
 #pragma once
+#include <Eigen/Dense>
+#include"Core/stdafx.h"
 #include"Core/Matrix.h"
 #include"Core/Matrix_Implementation.h"
 #include"Core/Tensor.h"
-#include"Core/TensorDim.h"
-#include"Core/TensorDim_Extension.h"
+#include"Core/TensorShape.h"
 #include"Core/Tensor_Extension.h"
 #include"Core/Tensor_Extension_Implementation.h"
 #include"Core/Tensor_Implementation.h"
@@ -15,16 +16,13 @@
 #include"Util/FFTCooleyTukey.h"
 #include"Util/JacobiRotationFramework.h"
 #include"Util/Lanzcos.h"
-#include"Util/MultiIndex.h"
 #include"Util/QMConstants.h"
 #include"Util/SimultaneousDiagonalization.h"
-#include"Util/Tree.h"
-#include"Util/TreeNode.h"
 #include"Util/long_integer.h"
 
 /**
- * \defgroup QDlib
- * \brief QDlib is a C++ Tensor and Tensor Tree library.
+ * \defgroup QuTree
+ * \brief QuTree is a C++ Tensor and Tensor Tree library.
  *
  * This library has classes that are similar to libraries like Lapack,
  * Eigen, Armadillo, etc., but its focus is concentrated on handling

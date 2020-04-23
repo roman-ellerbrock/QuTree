@@ -8,6 +8,7 @@
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
 #include "TreeShape/TreeFactory.h"
+#include "TreeClasses/TreeTransformation.h"
 
 SUITE (MatrixTree) {
 	double eps = 1e-8;
@@ -38,7 +39,7 @@ SUITE (MatrixTree) {
 }
 
 SUITE (MatrixTreeFunctions) {
-	using namespace MatrixTreeFunctions;
+	using namespace TreeFunctions;
 
 	double eps = 1e-8;
 
@@ -72,7 +73,7 @@ SUITE (MatrixTreeFunctions) {
 		TensorTreecd Psi(gen, tree, true);
 		MatrixTreecd Rho = Contraction(Psi, tree, true);
 		for (const Node& node : tree) {
-			if (!node.IsToplayer()) {
+			if (!node.isToplayer()) {
 				Matrixcd& rho = Rho[node];
 					CHECK_EQUAL(rho.Dim2(), rho.Dim1());
 				for (size_t j = 0; j < rho.Dim2(); ++j) {
@@ -92,11 +93,11 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		TensorTreecd Psi(gen, tree);
-		MatrixTreecd Rho = MatrixTreeFunctions::Contraction(Psi, tree, true);
+		MatrixTreecd Rho = TreeFunctions::Contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
 		for (const Node& node : tree) {
-			if (!node.IsToplayer()) {
+			if (!node.isToplayer()) {
 					CHECK_CLOSE(1., X[node].second(1), eps);
 			}
 		}
@@ -107,8 +108,10 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
-			const TensorDim& dim = node.TDim();
-			H[node] = RandomMatrices::GUE(dim.LastActive(), gen);
+			const TensorShape& dim = node.shape();
+			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
+			auto mat_dagger = mat.Adjoint();
+			H[node] = mat * mat_dagger;
 		}
 
 		SpectralDecompositionTreecd X(H, tree);
@@ -125,5 +128,48 @@ SUITE (MatrixTreeFunctions) {
 		}
 	}
 
-	// @TODO: Move Unit tests from FactorMatrixTree to here.
+	TEST (CanonicalTransformation) {
+
+		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		mt19937 gen(1993);
+		TensorTreecd Psi(gen, tree);
+
+		CanonicalTransformation(Psi, tree, true);
+		auto rho = TreeFunctions::Contraction(Psi, tree, true);
+		double off = 0.;
+		for (const auto& mat : rho) {
+			for (size_t j = 0; j < mat.Dim2(); ++j) {
+				for (size_t i = 0; i < mat.Dim1(); ++i) {
+					if (i != j) { off += abs(mat(i, j)); }
+				}
+			}
+		}
+			CHECK_CLOSE(0., off, eps);
+	}
+
+}
+
+SUITE(TreeTransformations) {
+	TEST(ContractionNormalized) {
+		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		// Increase number of states
+		Node& top = tree.TopNode();
+		TensorShape& shape = top.shape();
+		shape[shape.lastIdx()] += 1;
+		tree.Update();
+		mt19937 gen(1993);
+		TensorTreecd Psi(gen, tree);
+
+		auto edgePsi = TreeFunctions::ContractionNormalization(Psi, tree, true);
+
+		for (const Edge& e : tree.Edges()) {
+			auto phi = edgePsi[e];
+			Matrixcd deltaij = Contraction(phi, phi, e.upIdx());
+			Matrixcd I = IdentityMatrix<complex<double>>(deltaij.Dim1());
+			auto r = Residual(deltaij, I);
+			CHECK_CLOSE(0., r, 1e-7);
+		}
+
+
+	}
 }

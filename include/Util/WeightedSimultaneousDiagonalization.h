@@ -8,7 +8,7 @@ using namespace JacobiRotationFramework;
 namespace WeightedSimultaneousDiagonalization
 /**
  * \namespace WeightedSimultaneousDiagonalization
- * \ingroup Core
+ * \ingroup Util
  * \brief Perform matrix-weighted Joint Diagonalization
  */
 {
@@ -20,6 +20,17 @@ namespace WeightedSimultaneousDiagonalization
 	 */
 	double MeasureWeightedDiagonality(const vector<Matrixcd>& A,
 			const Matrixcd& W);
+
+	/** \brief Calculate the weighted Simultaneous Diagonalization for the Matrices A with the weight W
+	 *
+	 * This performs a weighted simultaneous diagonalization of a set of matrices.
+	 *
+	 * @param Xs Matrices to diagonalize
+	 * @param W Weight matrix
+	 * @param eps Target accuracy
+	 * @return Transformation matrix and diagonal elements
+	 */
+	pair<Matrixcd, vector<Vectord>> Calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps);
 
 	/** \brief Calculate the weighted Simultaneous Diagonalization for the Matrices A with the weight W
 	 *

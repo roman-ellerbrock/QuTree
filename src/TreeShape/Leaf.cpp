@@ -1,4 +1,9 @@
 #include "TreeShape/Leaf.h"
+#include "TreeShape/LeafTypes/DVRBasis.h"
+#include "TreeShape/LeafTypes/HO_Basis.h"
+#include "TreeShape/LeafTypes/FFTGrid.h"
+#include "TreeShape/LeafTypes/LegendrePolynomials.h"
+#include "TreeShape/LeafTypes/SpinGroup.h"
 
 Leaf::Leaf()
 	: dim_(-1), type_(0), mode_(-1), subType_(0), up_(nullptr), nodeType_(0) {}
@@ -31,12 +36,6 @@ void Leaf::CreatePrimitiveBasis(size_t type, size_t subtype, size_t dim) {
 		primitiveBasis_ = make_unique<FFTGrid>(dim);
 	} else if (type == 2) {
 		primitiveBasis_ = make_unique<LegendrePolynomials>(dim);
-	} else if (type == 3) {
-		primitiveBasis_ = make_unique<BosonNumberBasis>(dim);
-	} else if (type == 4) {
-		primitiveBasis_ = make_unique<FermionNumberBasis>(dim);
-	} else if (type == 5) {
-		primitiveBasis_ = make_unique<LogicalBasis>();
 	} else if (type == 6) {
 		primitiveBasis_ = make_unique<SpinGroup>(dim);
 	} else {
@@ -78,7 +77,7 @@ void Leaf::Write(ostream& os) const {
 	os << dim_ << "\t" << type_ << "\t" << mode_ << "\n";
 }
 
-void Leaf::Update(const NodePosition& p) {
+void Leaf::update(const NodePosition& p) {
 	UpdatePosition(p);
 }
 

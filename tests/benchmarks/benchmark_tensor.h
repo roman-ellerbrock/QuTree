@@ -10,7 +10,7 @@
 #include "benchmark_helper.h"
 
 namespace benchmark {
-	TensorDim make_TensorDim(size_t order, size_t dim);
+	TensorShape make_TensorDim(size_t order, size_t dim);
 
 	void run();
 

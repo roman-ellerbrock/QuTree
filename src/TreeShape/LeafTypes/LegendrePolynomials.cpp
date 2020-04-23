@@ -1,4 +1,4 @@
-#include "LegendrePolynomials.h"
+#include "TreeShape/LeafTypes/LegendrePolynomials.h"
 
 void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, double wfomega) {
 	// save all parameters
@@ -42,7 +42,7 @@ void LegendrePolynomials::InitSPF(Tensorcd& phi) const {
 	}
 
 	// excited state_ wavefunction
-	for (int n = 1; n < phi.Dim().LastActive(); n++)
+	for (int n = 1; n < phi.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++) {
 			phi(i, n) = phi(i, n - 1) * x_(i);
 		}

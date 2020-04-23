@@ -1,8 +1,8 @@
 //
 // Created by Roman Ellerbrock on 2020-01-23.
 //
-#include "TensorTree.h"
-#include "TensorTree_Implementation.h"
+#include "TreeClasses/TensorTree.h"
+#include "TreeClasses/TensorTree_Implementation.h"
 
 //template class Tree<double>;
 typedef complex<double> cd;
@@ -23,3 +23,8 @@ template istream& operator>> <d>(istream& , TensorTree<d>& );
 template TensorTree<d> operator*(d c, TensorTree<d> R);
 template TensorTree<d> operator/(d c, TensorTree<d> R);
 
+template void Orthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
+template void Orthogonal<d>(TensorTree<d>& Psi, const Tree& tree);
+
+template void Orthonormal<cd>(TensorTree<cd>& Psi, const Tree& tree);
+template void Orthonormal<d>(TensorTree<d>& Psi, const Tree& tree);

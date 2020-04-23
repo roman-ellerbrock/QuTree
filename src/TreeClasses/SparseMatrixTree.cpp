@@ -9,13 +9,13 @@ void SparseMatrixTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
-		size_t dim = node.TDim().LastActive();
+		size_t dim = node.shape().lastDimension();
 		attributes_.emplace_back(Matrix<T>(dim, dim));
 	}
 }
 
 template<typename T>
-void SparseMatrixTree<T>::print(ostream& os) {
+void SparseMatrixTree<T>::print(ostream& os) const {
 	for (const Node *node_ptr : Active()) {
 		const Node& node = *node_ptr;
 		node.info(os);

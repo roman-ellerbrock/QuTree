@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/13/20.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "SparseMatrixTreeFunctions.h"
+#include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
 #include "TreeShape/TreeFactory.h"
 
@@ -52,14 +52,14 @@ SUITE (SparseMatrixTree) {
 	}
 
 	TEST_FIXTURE (HelperFactory, Represent) {
-		SparseMatrixTreecd hmat = SparseMatrixTreeFunctions::Represent(M_, Psi_, tree_);
+		SparseMatrixTreecd hmat = TreeFunctions::Represent(M_, Psi_, tree_);
 			CHECK_CLOSE(0.25, real(hmat[tree_.TopNode()](0, 0)), 0E-12);
 	}
 
 	TEST_FIXTURE (HelperFactory, Contraction) {
-		SparseMatrixTreecd mats = SparseMatrixTreeFunctions::Represent(M_, Psi_, tree_);
+		SparseMatrixTreecd mats = TreeFunctions::Represent(M_, Psi_, tree_);
 		SparseMatrixTreecd holes(M_, tree_);
-		SparseMatrixTreeFunctions::Contraction(holes, Psi_, Psi_, mats, tree_);
+		TreeFunctions::Contraction(holes, Psi_, Psi_, mats, tree_);
 		for (const Node& node : tree_) {
 
 		}
@@ -83,5 +83,16 @@ SUITE (SparseMatrixTree) {
 				CHECK_CLOSE(0., r, eps);
 		}
 	}
+
+	TEST_FIXTURE(HelperFactory, InverseTree) {
+		SparseTree stree(M_, tree_);
+		SparseTree itree(M_, tree_, true);
+		CHECK_EQUAL(tree_.nNodes(), itree.size()+stree.size());
+		for (const Node& node : tree_) {
+			CHECK_EQUAL(true, stree.Active(node) != itree.Active(node));
+			CHECK_EQUAL(true, stree.Active(node) || itree.Active(node));
+		}
+	}
+
 }
 

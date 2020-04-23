@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2020-01-19.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "TensorTree.h"
-#include "TensorTree_Implementation.h"
+#include "TreeClasses/TensorTree.h"
+#include "TreeClasses/TensorTree_Implementation.h"
 #include "TreeShape/Tree.h"
 #include "TreeShape/TreeFactory.h"
 
@@ -43,6 +43,20 @@ SUITE (TensorTree) {
 		mt19937 gen(2468);
 		TensorTreecd Psi(gen, tree);
 			CHECK_EQUAL(tree.nNodes(), Psi.size());
+	}
+
+
+
+	TEST (TreeTest) {
+		Tree tree = TreeFactory::BalancedTree(12, 5, 2);
+		TensorTreecd Psi(tree);
+		for (const Tensorcd& A : Psi) {
+			TensorShape shape = A.shape();
+		}
+		for (const Node& node : tree) {
+			Tensorcd& A = Psi[node];
+		}
+
 	}
 
 }

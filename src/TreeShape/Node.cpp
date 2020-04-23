@@ -16,13 +16,13 @@ Node::Node(const Node& node)
 	  position_(node.position_),
 	  address_(node.address_), nodeType_(node.nodeType_),
 	  bottomLayer_(node.bottomLayer_) {
-	if (IsBottomlayer()) {
-		down_.emplace_back(make_unique<Leaf>(node.PhysCoord()));
-		PhysCoord().SetUp(this);
+	if (isBottomlayer()) {
+		down_.emplace_back(make_unique<Leaf>(node.getLeaf()));
+		getLeaf().setParent(this);
 	} else {
 		for (size_t i = 0; i < node.nChildren(); i++) {
-			down_.emplace_back(make_unique<Node>(node.Down(i)));
-			Down(i).SetUp(this);
+			down_.emplace_back(make_unique<Node>(node.child(i)));
+			child(i).setParent(this);
 		}
 	}
 }
@@ -37,11 +37,11 @@ Node::Node(Node&& node) noexcept
 	  bottomLayer_(node.bottomLayer_), nextNodeNumFortran_(node.nextNodeNumFortran_) {
 	// Set upwards connectivity of children
 	down_ = move(node.down_);
-	if (node.IsBottomlayer()) {
-		PhysCoord().SetUp(this);
+	if (node.isBottomlayer()) {
+		getLeaf().setParent(this);
 	} else {
 		for (size_t i = 0; i < nChildren(); i++) {
-			Down(i).SetUp(this);
+			child(i).setParent(this);
 		}
 	}
 }
@@ -68,11 +68,11 @@ Node& Node::operator=(Node&& old) noexcept {
 	bottomLayer_ = old.bottomLayer_;
 	down_ = move(old.down_);
 	// Set upwards connectivity of children
-	if (IsBottomlayer()) {
-		PhysCoord().SetUp(this);
+	if (isBottomlayer()) {
+		getLeaf().setParent(this);
 	} else {
 		for (size_t i = 0; i < nChildren(); i++) {
-			Down(i).SetUp(this);
+			child(i).setParent(this);
 		}
 	}
 
@@ -92,11 +92,11 @@ Node::Node(const Leaf& phys, size_t ntensor)
 	nextNodeNumFortran_ = 0;
 
 	// Set connectivity of linearizedLeaves_ node
-	Leaf& phy = PhysCoord();
-	phy.SetUp(this);
+	Leaf& phy = getLeaf();
+	phy.setParent(this);
 
 	// Build the TensorDim
-	tensorDim_ = TensorDim({phys.Dim(), ntensor});
+	tensorDim_ = TensorShape({phys.Dim(), ntensor});
 }
 
 void Node::Initialize(istream& file, Node *up,
@@ -151,7 +151,7 @@ void Node::Initialize(istream& file, Node *up,
 
 	// create a TensorDim after dimensions were read
 	dim.push_back(nstates);
-	tensorDim_ = TensorDim(dim);
+	tensorDim_ = TensorShape(dim);
 
 	nextNodeNum_ = down_.size() - 1;
 }
@@ -172,9 +172,9 @@ void Node::info(ostream& os) const {
 }
 
 void Node::Write(ostream& os) const {
-	const TensorDim& tdim = TDim();
+	const TensorShape& tdim = shape();
 	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
-	os << tdim.LastActive() << "\t-" << nChildren() << "\n";
+	os << tdim.lastDimension() << "\t-" << nChildren() << "\n";
 	for (size_t i = 0; i < nChildren(); i++) {
 		down_[i]->Write(os);
 	}
@@ -182,44 +182,44 @@ void Node::Write(ostream& os) const {
 
 void Node::push_back(const Node& node) {
 	down_.emplace_back(std::make_unique<Node>(node));
-	down_.back()->SetUp(this);
+	down_.back()->setParent(this);
 	Updatennodes();
 }
 
-bool Node::IsToplayer() const {
+bool Node::isToplayer() const {
 	return (up_ == nullptr);
 }
 
-Leaf& Node::PhysCoord() {
+Leaf& Node::getLeaf() {
 	assert(bottomLayer_);
 	AbstractNode *node = down_[0].get();
 	return (Leaf&) (*node);
 }
 
-const Leaf& Node::PhysCoord() const {
+const Leaf& Node::getLeaf() const {
 	assert(bottomLayer_);
 	AbstractNode *node = down_[0].get();
 	return (Leaf&) (*node);
 }
 
-const Node& Node::Down(size_t i) const {
+const Node& Node::child(size_t i) const {
 	assert(i < down_.size());
 	assert(!bottomLayer_);
 	return (Node&) *down_[i];
 }
 
-Node& Node::Down(size_t i) {
+Node& Node::child(size_t i) {
 	assert(i < down_.size());
 	assert(!bottomLayer_);
 	return (Node&) *down_[i];
 }
 
-Node& Node::Up() {
+Node& Node::parent() {
 	assert(up_ != nullptr);
 	return (Node&) *up_;
 }
 
-const Node& Node::Up() const {
+const Node& Node::parent() const {
 	assert(up_ != nullptr);
 	return (Node&) *up_;
 }
@@ -261,8 +261,8 @@ unique_ptr<AbstractNode> Node::DownUnique(size_t i) {
 	return move(down_[i]);
 }
 
-void Node::ExpandChild(size_t i) {
-	assert(!IsBottomlayer());
+void Node::expandChild(size_t i) {
+	assert(!isBottomlayer());
 	assert(i < down_.size());
 
 	// Make a new "down_new" by adding all old children
@@ -276,13 +276,13 @@ void Node::ExpandChild(size_t i) {
 	}
 
 	// append the children of the expanded node to down_new
-	Node& child = Down(i);
-	assert(!child.IsBottomlayer());
+	Node& child = this->child(i);
+	assert(!child.isBottomlayer());
 	size_t nchildren = child.nChildren();
 	for (size_t j = 0; j < nchildren; j++) {
-		// Update Up-ptr of new children
-		Node& subnode = child.Down(j);
-		subnode.SetUp(this);
+		// Update parent-ptr of new children
+		Node& subnode = child.child(j);
+		subnode.setParent(this);
 		// Update subnodes positionindices
 		int child_nr = down_new.size();
 		subnode.UpdatePosition(position_ * child_nr);
@@ -303,7 +303,7 @@ void Node::ExpandChild(size_t i) {
 	// Adjust TensorDim
 	UpdateTDim();
 
-	// Update Position
+	// Update position
 	UpdatePosition(position_);
 
 	// update nTotalNodes_: All nTotalNodes_ of the nodes above change
@@ -316,7 +316,7 @@ void Node::ExpandChild(size_t i) {
 	nextNodeNum_ = down_.size() - 1;
 }
 
-void Node::Update(const NodePosition& p) {
+void Node::update(const NodePosition& p) {
 	// @TODO: Should reset state_ and Update(connectivity) be in separate routines?
 	ResetCounters();
 	UpdatePosition(p);
@@ -332,27 +332,27 @@ void Node::UpdateTDim() {
 	} else {
 		// If this node is not a toplayer-node, ntensor is given by the parents 
 		// active_ size
-		Node& parent = Up();
+		Node& parent = parent();
 		// @TODO: This looks wrong - check again. Doesnt it have to be active_(k)?
-		ntensor = parent.TDim().LastActive();
+		ntensor = parent.shape().LastActive();
 	}*/
 
 	// Get the dimensions of the children by requesting their ntensors
 	vector<size_t> dim_new;
-	if (IsBottomlayer()) {
-		const Leaf& phys = PhysCoord();
+	if (isBottomlayer()) {
+		const Leaf& phys = getLeaf();
 		dim_new.push_back(phys.Dim());
 	} else {
 		for (int i = 0; i < nChildren(); i++) {
-			const Node& child = Down(i);
-			const TensorDim& tdimchild = child.TDim();
-			dim_new.push_back(tdimchild.LastActive());
+			const Node& child = this->child(i);
+			const TensorShape& tdimchild = child.shape();
+			dim_new.push_back(tdimchild.lastDimension());
 		}
 	}
 
 	// Create a new TensorDim from the dim_-vector and ntensor
-	dim_new.push_back(tensorDim_.LastActive());
-	tensorDim_ = TensorDim(dim_new);
+	dim_new.push_back(tensorDim_.lastDimension());
+	tensorDim_ = TensorShape(dim_new);
 }
 
 void Node::UpdatePosition(const NodePosition& p) {
@@ -362,11 +362,11 @@ void Node::UpdatePosition(const NodePosition& p) {
 	// Update positions of children
 	for (size_t i = 0; i < down_.size(); i++) {
 		NodePosition subp = p * i;
-		if (IsBottomlayer()) {
-			Leaf& phy = PhysCoord();
+		if (isBottomlayer()) {
+			Leaf& phy = getLeaf();
 			phy.UpdatePosition(subp);
 		} else {
-			Node& child = Down(i);
+			Node& child = this->child(i);
 			child.UpdatePosition(subp);
 		}
 	}
@@ -376,15 +376,15 @@ void Node::ResetCounters() {
 
 	nextNodeNum_ = down_.size() - 1;
 	nextNodeNumFortran_ = 0;
-	if (!IsBottomlayer()) {
+	if (!isBottomlayer()) {
 		for (size_t k = 0; k < nChildren(); ++k) {
-			Down(k).ResetCounters();
+			child(k).ResetCounters();
 		}
 	}
 }
 
 void Node::Updatennodes() {
-	if (IsBottomlayer()) {
+	if (isBottomlayer()) {
 		nTotalNodes_ = 2;
 		nNodes_ = 1;
 		nLeaves_ = 1;
@@ -393,7 +393,7 @@ void Node::Updatennodes() {
 		nNodes_ = 1;
 		nLeaves_ = 0;
 		for (size_t k = 0; k < down_.size(); k++) {
-			Node& child = Down(k);
+			Node& child = this->child(k);
 			child.Updatennodes();
 			nTotalNodes_ += child.nTotalNodes();
 			nNodes_ += child.nNodes();
@@ -404,10 +404,10 @@ void Node::Updatennodes() {
 
 Node& Node::TopNode() {
 	// Returns the topnode of the tree
-	if (IsToplayer()) {
+	if (isToplayer()) {
 		return (*this);
 	} else {
-		Up().TopNode();
+		parent().parent();
 	}
 	exit(1);
 }

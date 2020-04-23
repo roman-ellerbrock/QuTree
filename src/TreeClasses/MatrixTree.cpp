@@ -23,8 +23,8 @@ template <typename T>
 void MatrixTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
-		const TensorDim& tdim = node.TDim();
-		size_t dim = tdim.LastActive();
+		const TensorShape& tdim = node.shape();
+		size_t dim = tdim.lastDimension();
 		attributes_.emplace_back(Matrix<T>(dim, dim));
 	}
 }

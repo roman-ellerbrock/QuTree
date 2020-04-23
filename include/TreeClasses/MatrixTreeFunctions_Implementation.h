@@ -6,21 +6,21 @@
 #define MATRIXTREE_IMPLEMENTATION_H
 #include "MatrixTreeFunctions.h"
 
-namespace MatrixTreeFunctions {
+namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 /// General DotProduct for Tensor Trees
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
 	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket, const Node& node) {
-		if (!node.IsBottomlayer()) {
+		if (!node.isBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
-				const Node& child = node.Down(k);
-				Ket = multAB(S[child], Ket, k);
+				const Node& child = node.child(k);
+				Ket = MatrixTensor(S[child], Ket, k);
 			}
 		}
-		size_t last = node.TDim().GetLastIdx();
-		mHoleProduct(S[node], Bra, Ket, last);
+		size_t last = node.shape().lastIdx();
+		Contraction(S[node], Bra, Ket, last);
 
 	}
 
@@ -45,27 +45,25 @@ namespace MatrixTreeFunctions {
 	template<typename T>
 	void ContractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
 		const Node& node, const MatrixTree<T> *S_opt) {
-		assert(!node.IsToplayer());
+		assert(!node.isToplayer());
 
-		const Node& parent = node.Up();
-		auto child_idx = (size_t) node.ChildIdx();
+		const Node& parent = node.parent();
+		auto child_idx = (size_t) node.childIdx();
 
 		/// Optional Overlap matrix
 		if (S_opt != nullptr) {
 			const MatrixTree<T>& S = *S_opt;
 			for (size_t k = 0; k < parent.nChildren(); ++k) {
 				if (k != child_idx) {
-					const Node& child = parent.Down(k);
-					Ket = multAB(S[child], Ket, k);
+					const Node& child = parent.child(k);
+					Ket = MatrixTensor(S[child], Ket, k);
 				}
 			}
 		}
 
-		if (!parent.IsToplayer()) {
-			Ket = multStateAB(Rho[parent], Ket);
-		}
+		Ket = multStateAB(Rho[parent], Ket);
 
-		mHoleProduct(Rho[node], Bra, Ket, child_idx);
+		Contraction(Rho[node], Bra, Ket, child_idx);
 	}
 
 	template<typename T>
@@ -73,20 +71,20 @@ namespace MatrixTreeFunctions {
 		const Tree& tree, const MatrixTree<T> *S_opt = nullptr) {
 		if (S_opt != nullptr) {
 			assert(S_opt->size() == tree.nNodes());
+
 		}
 		assert(Rho.size() == tree.nNodes());
 		assert(Psi.size() == tree.nNodes());
 		assert(Chi.size() == tree.nNodes());
 
 		// @TODO: Use reverse iterator
-//		for (int n = (int) tree.nNodes() - 2; n >= 0; --n) {
 		for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 			const Node& node = *it;
-			if (!node.IsToplayer()) {
-				const Node& parent = node.Up();
+			if (!node.isToplayer()) {
+				const Node& parent = node.parent();
 				ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
 			} else {
-				Rho[node] = IdentityMatrix<T>(node.TDim().LastActive());
+				Rho[node] = IdentityMatrix<T>(node.shape().lastDimension());
 			}
 		}
 	}

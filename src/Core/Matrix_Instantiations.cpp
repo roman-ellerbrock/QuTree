@@ -24,12 +24,14 @@ template Matrix<cd> Merge(const Matrix<cd>& A, const Matrix<cd>& B,
 template double Residual(const Matrixcd& A, const Matrixcd& B);
 template double Residual(const Matrixd& A, const Matrixd& B);
 
+
 template ostream& operator<< <cd> (ostream& os, const Matrixcd& A);
 template istream& operator>> <cd> (istream& is, Matrixcd& A);
 
 typedef double doub;
 template Vector<double> multAB<doub>(const Matrix<double>& A,
 	const Vector<double>& B);
+template Matrix<double> multAB(const Matrix<double>& A, const Matrix<double>& B);
 template Matrix<doub> addAB(const Matrix<doub>& A, const Matrix<doub>& B);
 template Matrix<cd> multscalar<cd, doub>(const double sca,
 	const Matrix<cd>& B);
@@ -42,4 +44,14 @@ template ostream& operator<< <doub> (ostream& os, const Matrix<doub>& A);
 template istream& operator>> <doub> (istream& is, Matrix<doub>& A);
 
 
+template Matrix<double> EuclideanDistance(const Matrix<double>& A);
+
+template SpectralDecompositioncd sqrt(SpectralDecompositioncd X);
+template SpectralDecompositiond sqrt(SpectralDecompositiond X);
+template SpectralDecompositioncd inverse(SpectralDecompositioncd X, double eps);
+template SpectralDecompositiond inverse(SpectralDecompositiond X, double eps);
+template Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
+template Matrixd BuildMatrix(const SpectralDecompositiond& X);
+template Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps);
+template Matrixd BuildInverse(const SpectralDecompositiond& X, double eps);
 

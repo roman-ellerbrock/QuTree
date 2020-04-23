@@ -127,32 +127,35 @@ void Vector<T>::print(ostream& os) const {
 }
 
 //////////////////////////////////////////////////////////////////////
-// Fundamental Math operators
+// Arithmetic
 //////////////////////////////////////////////////////////////////////
 template<typename T>
-Vector<T> Vector<T>::operator+(const Vector<T> b) {
-	assert(b.Dim() == dim_);
-	Vector res(dim_);
+Vector<T> Vector<T>::operator+=(Vector b) {
+	assert(b.Dim() == Dim());
 	for (size_t i = 0; i < dim_; i++)
-		res(i) = operator()(i) + b(i);
+		coeffs_[i] += b[i];
+	return *this;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator-=(Vector b) {
+	assert(b.Dim() == Dim());
+	for (size_t i = 0; i < dim_; i++)
+		coeffs_[i] -= b[i];
+	return *this;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator+(const Vector<T> b) const {
+	Vector res(dim_);
+	res += b;
 	return res;
 }
 
 template<typename T>
-Vector<T> Vector<T>::operator-(const Vector<T> b) {
-	assert(b.Dim() == dim_);
+Vector<T> Vector<T>::operator-(const Vector<T> b) const {
 	Vector res(dim_);
-	for (size_t i = 0; i < dim_; i++)
-		res(i) = operator()(i) - b(i);
-	return res;
-}
-
-template<typename T>
-T Vector<T>::operator*(const Vector<T> b) {
-	assert(b.Dim() == dim_);
-	T res = 0;
-	for (size_t i = 0; i < dim_; i++)
-		res += operator()(i) * b(i);
+	res -= b;
 	return res;
 }
 
@@ -172,7 +175,29 @@ Vector<T>& Vector<T>::operator/=(T coeff) {
 	return *this;
 }
 
-// Math Operators
+template<typename T>
+Vector<T> Vector<T>::operator*(T coeff) const {
+	Vector<T> C(*this);
+	C *= coeff;
+	return C;
+}
+
+template<typename T>
+Vector<T> Vector<T>::operator/(T coeff) const {
+	Vector<T> C(*this);
+	C /= coeff;
+	return C;
+}
+
+template<typename T>
+T Vector<T>::operator*(const Vector<T> b) const {
+	assert(b.Dim() == dim_);
+	T res = 0;
+	for (size_t i = 0; i < dim_; i++)
+		res += operator()(i) * b(i);
+	return res;
+}
+
 template<typename T>
 double Vector<T>::Norm() const {
 	double norm = 0;
@@ -187,6 +212,15 @@ template<typename T>
 void Vector<T>::Zero() {
 	for (size_t i = 0; i < dim_; i++)
 		coeffs_[i] = 0;
+}
+
+template<typename T>
+T Sum(Vector<T>& a) {
+	T sum = 0.;
+	for (size_t i = 0; i < a.Dim();++i) {
+		sum += a(i);
+	}
+	return sum;
 }
 
 template<typename T>
@@ -205,9 +239,18 @@ double Residual(const Vector<T>& A, const Vector<T>& B) {
 }
 
 template<typename T>
-Vector<T> Inverse(Vector<T> A, double eps) {
+Vector<T> Regularize(Vector<T> A, double eps) {
 	for (size_t i = 0; i < A.Dim(); ++i) {
-		A(i) = 1. / (A(i) + eps * exp(-A(i) / (A(i) + eps)));
+		A(i) += eps * exp(-A(i) / eps);
+	}
+	return A;
+}
+
+template<typename T>
+Vector<T> Inverse(Vector<T> A, double eps) {
+	A = Regularize(A, eps);
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		A(i) = 1. / A(i);
 	}
 	return A;
 }

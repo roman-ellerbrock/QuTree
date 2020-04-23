@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 #include <iostream>
-#include "Core/TensorDim.h"
+#include "Core/TensorShape.h"
 
 typedef vector<size_t> Path;
 

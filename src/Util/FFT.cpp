@@ -19,16 +19,16 @@ size_t FFT::getGoodSize(size_t size)
 Tensorcd FFT::reverseOrder(const Tensorcd& in)
 {
 	//get the next best size for fft
-	const TensorDim& dim = in.Dim();
-	size_t size = dim.LastBefore();
-	size_t states = dim.LastActive();
+	const TensorShape& dim = in.shape();
+	size_t size = dim.lastBefore();
+	size_t states = dim.lastDimension();
 	size_t N = getGoodSize(size);
 
 	//build the output tensor withe the new sizes
 	vector<size_t> d;
 	d.push_back(N);
-	d.push_back(dim.LastActive());
-	TensorDim newdim(d);
+	d.push_back(dim.lastDimension());
+	TensorShape newdim(d);
 	Tensorcd out(newdim);
 	
 	for(size_t n = 0; n < states; n++)
@@ -66,9 +66,9 @@ Tensorcd FFT::reverseOrder(const Tensorcd& in)
 Tensorcd FFT::generalFFT(const Tensorcd& in, const int sign)
 {
 	//get sizes for fft
-	const TensorDim& dim = in.Dim();
-	size_t size = dim.LastBefore();
-	size_t states = dim.LastActive();
+	const TensorShape& dim = in.shape();
+	size_t size = dim.lastBefore();
+	size_t states = dim.lastDimension();
 
 	//get primefactors
 	vector<size_t> primefactors = primeFactorization(size);
@@ -85,15 +85,15 @@ Tensorcd FFT::generalFFT(const Tensorcd& in, const int sign)
 Tensorcd FFT::dft(const Tensorcd& in, const int sign)
 {
 	//get sizes for dft
-	const TensorDim& dim = in.Dim();
-	size_t size = dim.LastBefore();
-	size_t states = dim.LastActive();
+	const TensorShape& dim = in.shape();
+	size_t size = dim.lastBefore();
+	size_t states = dim.lastDimension();
 
 	//otherwise perform dft
 	vector<size_t> d;
 	d.push_back(size);
 	d.push_back(states);
-	TensorDim newdim(d);
+	TensorShape newdim(d);
 	Tensorcd out(newdim);
 	for(size_t k = 0; k < states; k++)
 	{
@@ -124,9 +124,9 @@ Tensorcd FFT::factor2FFT(const Tensorcd& in, const int sign)
 void FFT::danielsonLanczosAlgorithm(Tensorcd& in, const int sign)
 {
 	//get sizes for fft
-	const TensorDim& dim = in.Dim();
-	size_t size = dim.LastBefore();
-	size_t states = dim.LastActive();
+	const TensorShape& dim = in.shape();
+	size_t size = dim.lastBefore();
+	size_t states = dim.lastDimension();
 
 	//save some intermediat results
 	complex<double> tmp(0., 0.);

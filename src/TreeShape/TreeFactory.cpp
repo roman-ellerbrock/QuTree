@@ -14,8 +14,8 @@ namespace TreeFactory {
 		train.push_back(bottom);
 		dims.push_back(dimNodes);
 		dims.push_back(dimNodes);
-		TensorDim tdim(dims);
-		train.TDim() = tdim;
+		TensorShape tdim(dims);
+		train.shape() = tdim;
 		return train;
 	}
 
@@ -23,8 +23,8 @@ namespace TreeFactory {
 		Node train;
 		train.push_back(bottom);
 		train.push_back(old_train);
-		TensorDim tdim({dimNodes, dimNodes, dimNodes});
-		train.TDim() = tdim;
+		TensorShape tdim({dimNodes, dimNodes, dimNodes});
+		train.shape() = tdim;
 		return train;
 	}
 
@@ -40,9 +40,9 @@ namespace TreeFactory {
 			train = TrainLayer(train, bottom, dimNodes);
 		}
 
-		train.SetUp(nullptr);
-		auto& tdim_ = train.TDim();
-		tdim_.SetActive(1, tdim_.GetLastIdx());
+		train.setParent(nullptr);
+		auto& tdim_ = train.shape();
+		tdim_.setDimension(1, tdim_.lastIdx());
 		Tree tree;
 		tree.SetRoot(train);
 		tree.ResetLeafModes();
@@ -63,8 +63,8 @@ namespace TreeFactory {
 				dims.push_back(dim_node);
 			}
 			dims.push_back(dim_node);
-			TensorDim tensordim(dims);
-			p.TDim() = tensordim;
+			TensorShape tensordim(dims);
+			p.shape() = tensordim;
 			groups.emplace_back(p);
 		}
 		size_t n_rest = nodes.size() % n_partition;
@@ -83,7 +83,9 @@ namespace TreeFactory {
 		PhysPar par;
 		Leaf leaf(dim_leaves, mode, leaf_type, leaf_subtype, par);
 
-		Node bottom(leaf, dim_nodes);
+//		size_t dim_now = min(dim_nodes, dim_leaves);
+		size_t dim_now = dim_nodes;
+		Node bottom(leaf, dim_now);
 		vector<Node> nodes;
 		for (size_t k = 0; k < num_leaves; ++k) {
 			nodes.push_back(bottom);
@@ -97,8 +99,8 @@ namespace TreeFactory {
 				exit(1);
 			}
 		}
-		auto& tdim = nodes.front().TDim();
-		tdim.SetActive(1, tdim.GetLastIdx());
+		auto& tdim = nodes.front().shape();
+		tdim.setDimension(1, tdim.lastIdx());
 		Tree tree;
 		tree.SetRoot(nodes.front());
 		tree.ResetLeafModes();

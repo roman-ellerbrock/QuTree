@@ -7,14 +7,14 @@
 #include "benchmark_tree.h"
 
 namespace benchmark {
-	TensorDim make_TensorDim(size_t order, size_t dim) {
+	TensorShape make_TensorDim(size_t order, size_t dim) {
 		assert(order > 1);
 		assert(dim > 0);
 		vector<size_t> dims;
 		for (size_t i = 0; i < order; ++i) {
 			dims.emplace_back(dim);
 		}
-		return TensorDim(dims);
+		return TensorShape(dims);
 	}
 
 	auto vector_hole_product_sample(Matrixcd& S, const vector<Tensorcd>& A,
@@ -31,7 +31,7 @@ namespace benchmark {
 			start = std::chrono::system_clock::now();
 			for (size_t k = 0; k < A.size(); ++k) {
 				multStateArTB(sAs[k], Su[k], A[k]);
-				TensorHoleProduct(Ss[k], sAs[k], B[k], bef, act, act, aft);
+				TensorContraction(Ss[k], sAs[k], B[k], bef, act, act, aft);
 			}
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -59,9 +59,9 @@ namespace benchmark {
 			Sus.emplace_back(Su);
 		}
 		Matrixcd S(dim, dim);
-		size_t aft = tdim.After(mode);
-		size_t act = tdim.Active(mode);
-		size_t bef = tdim.Before(mode);
+		size_t aft = tdim.after(mode);
+		size_t act = tdim[mode];
+		size_t bef = tdim.before(mode);
 
 		/// Run hole-product
 		return vector_hole_product_sample(S, As, Bs, Sus, nsample, bef, act, aft);
@@ -75,7 +75,7 @@ namespace benchmark {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
 			for (size_t k = 0; k < chunk; ++k) {
-				TensorHoleProduct(S, A, B, bef, act, act, aft);
+				TensorContraction(S, A, B, bef, act, act, aft);
 			}
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -92,9 +92,9 @@ namespace benchmark {
 		Tensor_Extension::Generate(A, gen);
 		Tensor_Extension::Generate(B, gen);
 		Matrixcd S(dim, dim);
-		size_t aft = tdim.After(mode);
-		size_t act = tdim.Active(mode);
-		size_t bef = tdim.Before(mode);
+		size_t aft = tdim.after(mode);
+		size_t act = tdim[mode];
+		size_t bef = tdim.before(mode);
 
 		/// Run hole-product
 		return hole_product_sample(S, A, B, nsample, bef, act, aft);
@@ -123,9 +123,9 @@ namespace benchmark {
 		Tensor_Extension::Generate(A, gen);
 		Tensor_Extension::Generate(S, gen);
 		Tensorcd B(tdim, true);
-		size_t aft = tdim.After(mode);
-		size_t act = tdim.Active(mode);
-		size_t bef = tdim.Before(mode);
+		size_t aft = tdim.after(mode);
+		size_t act = tdim[mode];
+		size_t bef = tdim.before(mode);
 
 		return matrix_tensor_sample(B, S, A, nsample, bef, act, aft);
 	}

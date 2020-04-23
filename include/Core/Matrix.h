@@ -94,6 +94,7 @@ public:
 	Matrix& operator-=(const Matrix<T>& B);
 
 	Matrix& operator*=(T coeff) noexcept;
+	Matrix& operator/=(T coeff) noexcept;
 
 	bool operator==(const Matrix<T>& A)const;
 	bool operator!=(const Matrix<T>& A)const;
@@ -108,8 +109,11 @@ public:
 	// Calculate the Trace
 	T Trace() const;
 
+	// Adjoint of a matrix
+	Matrix Adjoint() const;
+
 	// Transpose a matrix
-	Matrix Transpose();
+	Matrix Transpose() const;
 
 	// Inverts a complex matrix
 	Matrix<complex<double> > cInv() const;
@@ -251,28 +255,27 @@ pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
  * @param X Decomposed matrix
  * @return Re-constructed matrix
  */
-Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
-
-/**
- * \brief Construct matrix from its decomposition
- * @param X Decomposed matrix
- * @return Re-constructed matrix
- */
-Matrixd BuildMatrix(const SpectralDecompositiond& X);
+template <typename T>
+Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X);
 
 /**
  * \brief Construct inverse matrix from SpectralDecomposition
  * @param X Decomposed matrix
  * @return Inverse matrix
  */
-Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps = 1e-7);
+template <typename T>
+Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps = 1e-7);
+
+template <typename T>
+SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps = 1e-7);
 
 /**
- * \brief Construct inverse matrix from SpectralDecomposition
+ * \brief Calculate squareroot of matrix (decomposed)
  * @param X Decomposed matrix
- * @return Inverse matrix
+ * @return squareroot of matrix (decomposed)
  */
-Matrixd BuildInverse(const SpectralDecompositiond& X, double eps = 1e-7);
+template <typename T>
+SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X);
 
 /**
  * \brief Create an identity matrix
@@ -282,6 +285,9 @@ Matrixd BuildInverse(const SpectralDecompositiond& X, double eps = 1e-7);
  */
 template<typename T>
 Matrix<T> IdentityMatrix(size_t dim);
+
+Matrixcd IdentityMatrixcd(size_t dim);
+Matrixd IdentityMatrixd(size_t dim);
 
 template<typename T>
 Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,

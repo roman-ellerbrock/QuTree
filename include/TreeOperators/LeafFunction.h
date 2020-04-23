@@ -1,10 +1,8 @@
 #pragma once
 #include "LeafOperator.h"
 
-// This is the abstract form of a single particle operator
-// implemented in functional paradigma
 template<typename T>
-using SPOF = function<void(const LeafInterface&, Tensor<T>&, const Tensor<T>&)>;
+using LeafFun = function<void(const LeafInterface&, Tensor<T>&, const Tensor<T>&)>;
 
 template<typename T>
 class LeafFunction
@@ -18,7 +16,7 @@ class LeafFunction
 public:
 	LeafFunction() = default;
 
-	explicit LeafFunction(const SPOF<T> h)
+	explicit LeafFunction(const LeafFun<T> h)
 		: h_(move(h)) {}
 
 	~LeafFunction() = default;
@@ -27,11 +25,9 @@ public:
 		const Tensor<T>& Acoeff) const override;
 
 protected:
-	SPOF<T> h_;
+	LeafFun<T> h_;
 };
 
-template<typename T>
-using SPOf = LeafFunction<T>;
-
-typedef LeafFunction<complex<double>> SPOfcd;
+typedef LeafFun<complex<double>> LeafFuncd;
+typedef LeafFunction<complex<double>> LeafFunctioncd;
 

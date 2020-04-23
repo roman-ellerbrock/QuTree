@@ -2,12 +2,13 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "LeafOperator.h"
-#include "LeafMatrix.h"
-#include "MultiLeafOperator.h"
-#include "HO_Basis.h"
+#include "TreeOperators/LeafOperator.h"
+#include "TreeOperators/LeafMatrix.h"
+#include "TreeOperators/MultiLeafOperator.h"
+#include "TreeShape/LeafTypes/HO_Basis.h"
 #include "TreeShape/Tree.h"
 #include "TreeShape/TreeFactory.h"
+#include "TreeOperators/SumOfProductsOperator_Implementation.h"
 
 SUITE (Operators) {
 	class HelperFactory {
@@ -33,10 +34,11 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, SPO_HO) {
 		HO_Basis ho(10);
 		ho.Initialize(1., 0., 0., 1.);
-		TensorDim tdim(vector<size_t>({10, 1}));
+		TensorShape tdim(vector<size_t>({10, 1}));
 		Tensorcd A(tdim);
 		ho.InitSPF(A);
-		auto xA = ho.applyX(A);
+		Tensorcd xA(A.shape());
+		ho.applyX(xA, A);
 		string file("HO_Applyx.dat");
 		xA.Write(file);
 		Tensorcd B(file);
@@ -47,10 +49,10 @@ SUITE (Operators) {
 		// Check that applying a Matrix to a tensor
 		// or the corresponding SPOM does the same
 
-		TensorDim tdim(vector<size_t>({2, 1}));
+		TensorShape tdim(vector<size_t>({2, 1}));
 		Tensorcd A(tdim);
 		A(0) = 1.;
-		Tensorcd XA = multAB(X, A, 0);
+		Tensorcd XA = MatrixTensor(X, A, 0);
 		Tensorcd xA(tdim);
 		x.Apply(ho, xA, A);
 			CHECK_EQUAL(XA, xA);
@@ -72,5 +74,19 @@ SUITE (Operators) {
 		for (const Node& node : tree) {
 				CHECK_EQUAL(Xi[node], Psi[node]);
 		}
+	}
+
+	TEST_FIXTURE (HelperFactory, SOP_1) {
+		MLOcd M(x, 1);
+		MLOcd M2(x, 2);
+		SOPcd S(M, 1.);
+		S.push_back(M2, 0.5);
+		auto M_sq = M * M;
+			CHECK_EQUAL(2, M_sq.size());
+		complex<double> c (0.5);
+		SOPcd cS = c * S;
+			CHECK_EQUAL(2, cS.size());
+		SOPcd SS = S * S;
+			CHECK_EQUAL(4, SS.size());
 	}
 }

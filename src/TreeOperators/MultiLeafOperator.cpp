@@ -1,4 +1,4 @@
-#include "MultiLeafOperator.h"
+#include "TreeOperators/MultiLeafOperator.h"
 
 
 template <typename T>
@@ -9,10 +9,10 @@ MultiLeafOperator<T>::MultiLeafOperator()
 
 template <typename T>
 Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
-	const Leaf& Phy) const {
-	Tensor<T> hPhi(Phi.Dim());
-	size_t mode_x = Phy.Mode();
-	const LeafInterface& grid = Phy.PrimitiveGrid();
+	const Leaf& leaf) const {
+	Tensor<T> hPhi(Phi.shape());
+	size_t mode_x = leaf.Mode();
+	const LeafInterface& grid = leaf.PrimitiveGrid();
 	bool switchbool = true;
 
 	// Applying the MLO uses switching of the result Tensor to increase performance.
@@ -39,7 +39,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 template <typename T>
 Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 	const vector<int>& list, const LeafInterface& grid) const {
-	Tensor<T> hAcoeff(Acoeffs.Dim());
+	Tensor<T> hAcoeff(Acoeffs.shape());
 	bool switchbool = true;
 	// Applying the MLO uses switching of the result Tensor to increase performance.
 	for (size_t l = 0; l < list.size(); l++) {
@@ -66,12 +66,11 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 template<typename T>
 TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 	const Tree& basis) const {
-	for (size_t i = 0; i < basis.nNodes(); i++) {
-		const Node& node = basis.GetNode(i);
-		if (node.IsBottomlayer()) {
-			const Leaf& phy = node.PhysCoord();
+	for (const Node& node : basis) {
+		if (node.isBottomlayer()) {
+			const Leaf& phy = node.getLeaf();
 			const LeafInterface& grid = phy.PrimitiveGrid();
-			int coord = phy.Mode();
+			size_t coord = phy.Mode();
 
 			// build list with active_ parts
 			vector<int> activelayerparts;
@@ -94,5 +93,21 @@ void MultiLeafOperator<T>::SetV(const PotentialOperator& V_) {
     hasV_ = true;
 }
 
+template <typename T>
+MultiLeafOperator<T> operator*(const MultiLeafOperator<T>& A,
+	const MultiLeafOperator<T>& B) {
+	MultiLeafOperator<T> M = B;
+
+	for (size_t i = 0; i < A.size(); i++) {
+		M.push_back(A[i], A.Mode(i));
+	}
+
+	return M;
+}
+
+
+typedef complex<double> cd;
 template class MultiLeafOperator<complex<double>>;
+template MultiLeafOperator<cd> operator*(const MultiLeafOperator<cd>& A, const MultiLeafOperator<cd>& B);
+
 template class MultiLeafOperator<double>;

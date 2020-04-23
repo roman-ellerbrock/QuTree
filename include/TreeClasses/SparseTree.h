@@ -6,8 +6,8 @@
 #define MCTDH_TREEMARKER_H
 #include "NodeAttribute.h"
 #include "TreeShape/Tree.h"
-#include "MultiLeafOperator.h"
-#include "SumOfProductsOperator.h"
+#include "TreeOperators/MultiLeafOperator.h"
+#include "TreeOperators/SumOfProductsOperator.h"
 #include <map>
 #include <chrono>
 
@@ -27,45 +27,51 @@ class SparseTree
  * */
 {
 public:
+	SparseTree() = default;
 
 	SparseTree(const vector<size_t>& modes,
-		const Tree& tree, bool tail = true) {
-		SparseInitialize(modes, tree, tail);
-	}
+		const Tree& tree, bool tail = true, bool inverse_tree = false);
+
+	SparseTree(const MLOcd& M, const Tree& tree, bool inverse_tree = false);
+
+	SparseTree(const SOPcd& sop, const Tree& tree);
 
 	void SparseInitialize(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true);
 
+	void InitializeInverse(const SparseTree& stree,
+		const Tree& tree);
+
 	size_t Active(const Node& node) const {
-		size_t count = co_address.count(node.Address());
+		size_t count = co_address_.count(node.Address());
 		return (count != 0);
 	}
 
-	size_t size() const { return nodes.size(); }
+	size_t size() const { return nodes_.size(); }
 
 	vector<const Node *>::const_iterator begin() const {
-		return nodes.begin();
+		return nodes_.begin();
 	}
 
 	vector<const Node *>::const_iterator end() const {
-		return nodes.end();
+		return nodes_.end();
 	}
 
 	const Node& MCTDHNode(size_t n) const {
-		assert(n < nodes.size());
-		return *nodes[n];
+		assert(n < nodes_.size());
+		return *nodes_[n];
 	}
 
 	size_t SparseAddress(const Node& node) const {
 		size_t addr = node.Address();
-		return co_address.at(addr);
+		return co_address_.at(addr);
 	}
 
 	void print(const Tree& tree, ostream& os = cout) const;
 
 protected:
-	vector<const Node *> nodes;
-	map<size_t, size_t> co_address;
+	vector<const Node *> nodes_;
+	map<size_t, size_t> co_address_;
 };
 
 /*

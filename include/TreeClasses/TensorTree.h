@@ -6,7 +6,13 @@
 #define TENSORTREE_H
 #include "NodeAttribute.h"
 #include "TreeShape/Tree.h"
-#include "Core/Tensor_Implementation.h"
+#include "Core/Tensor.h"
+#include <random>
+
+/**
+ * \defgroup Tree
+ * \brief This group contains all functionality pertaining to Trees.
+ */
 
 template<typename T>
 class TensorTree:
@@ -39,7 +45,7 @@ public:
 	explicit TensorTree(const string& filename);
 
 	/// Create tensor tree and occupy the coefficients
-	TensorTree(std::mt19937& gen, const Tree& tree, bool delta_lowest = true);
+	TensorTree(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// Default destructor
 	~TensorTree() = default;
@@ -48,7 +54,7 @@ public:
 	virtual void Initialize(const Tree& tree);
 
 	/// Generate TTs
-	void FillRandom(std::mt19937& gen, const Tree& tree, bool delta_lowest = true);
+	void FillRandom(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// (File) I/O
 	/// Read TensorTree from stream (binary format)
@@ -91,14 +97,14 @@ public:
 	}
 
 	void operator*=(T c) {
-		for (size_t n = 0; n < attributes_.size(); ++n) {
-			attributes_[n] *= c;
+		for (auto& A : *this) {
+			A *= c;
 		}
 	}
 
 	void operator/=(T c) {
-		for (size_t n = 0; n < attributes_.size(); ++n) {
-			attributes_[n] /= c;
+		for (auto& A : *this) {
+			A /= c;
 		}
 	}
 
@@ -123,6 +129,12 @@ protected:
 typedef TensorTree<complex<double>> TensorTreecd;
 
 typedef TensorTree<double> TensorTreed;
+
+template <typename T>
+void Orthogonal(TensorTree<T>& Psi, const Tree& tree);
+
+template <typename T>
+void Orthonormal(TensorTree<T>& Psi, const Tree& tree);
 
 template<typename T>
 ostream& operator<<(ostream& os, const TensorTree<T>& t);

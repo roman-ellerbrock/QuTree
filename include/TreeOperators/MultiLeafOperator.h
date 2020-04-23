@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Tensor.h"
 #include "TreeShape/Tree.h"
-#include "TensorTree.h"
+#include "TreeClasses/TensorTree.h"
 #include "LeafOperator.h"
 #include "LeafFunction.h"
 #include "LeafMatrix.h"
@@ -45,9 +45,15 @@ public:
 		push_back(h, mode_x);
 	}
 
+	/// Construct a MLO from a single RefSPO
+	MultiLeafOperator(const LeafFun<T>& h, size_t mode_x)
+		: MultiLeafOperator() {
+		push_back(h, mode_x);
+	}
+
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
-		const Leaf& phys) const;
+		const Leaf& leaf) const;
 
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
@@ -68,6 +74,12 @@ public:
 	/// Push back a RefSPO to the MLO
 	void push_back(const LeafFunction<T>& h, size_t mode_x) {
 		auto *spo = new LeafFunction<T>(h);
+		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
+		targetLeaves_.push_back(mode_x);
+	}
+
+	void push_back(const LeafFun<T>& h_f, size_t mode_x) {
+		auto *spo = new LeafFunction<T>(h_f);
 		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
 		targetLeaves_.push_back(mode_x);
 	}
@@ -111,12 +123,11 @@ public:
 	}
 
 	/// Multiply two MPOs.
-	friend MultiLeafOperator operator*(const MultiLeafOperator& A,
-		const MultiLeafOperator& B) {
-		MultiLeafOperator M = B;
+	MultiLeafOperator operator*(const MultiLeafOperator& B)const {
+		MultiLeafOperator<T> M = B;
 
-		for (size_t i = 0; i < A.size(); i++) {
-			M.push_back(A[i], A.Mode(i));
+		for (size_t i = 0; i < leafOperators_.size(); i++) {
+			M.push_back(leafOperators_[i], Mode(i));
 		}
 
 		return M;
@@ -140,6 +151,10 @@ public:
 
 	/// Return vector of all active_ modes in this operator
 	const vector<size_t>& targetLeaves()const { return targetLeaves_; }
+
+	void print(ostream& os = cout)const {
+		os << size() << " operators in MLO" << endl;
+	}
 
 protected:
 	/// These are the SPOs

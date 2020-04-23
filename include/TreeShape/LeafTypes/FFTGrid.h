@@ -13,17 +13,17 @@ public:
 
 	void Initialize(double omega, double r0, double wfr0, double wfomega) override;
 
-	Tensorcd applyX(const Tensorcd & A)const override;
-	Tensorcd ApplyX2(const Tensorcd & A)const override;
-	Tensorcd ApplyP(const Tensorcd & A)const override;
-	Tensorcd ApplyKin(const Tensorcd & A)const override;
+	void applyX(Tensorcd& uA, const Tensorcd & A)const override;
+	void applyX2(Tensorcd& uA, const Tensorcd & A)const override;
+	void applyP(Tensorcd& uA, const Tensorcd & A)const override;
+	void applyKin(Tensorcd& uA, const Tensorcd & A)const override;
 	void InitSPF(Tensorcd & A)const override;
 
 	const Vectord& GetX()const override { return x_; }
 	Vectord& GetX() override { return x_; }
 
-	Tensorcd ToGrid(const Tensorcd& A)const override;
-	Tensorcd FromGrid(const Tensorcd& A)const override;
+	void ToGrid(Tensorcd& uA, const Tensorcd& A)const override;
+	void FromGrid(Tensorcd& uA, const Tensorcd& A)const override;
 	int oSQR()const override {return -1;}//added by TW 30.07.17
 	bool HasDVR()const override {return true;}
 

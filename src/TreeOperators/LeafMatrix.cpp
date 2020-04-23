@@ -2,12 +2,12 @@
 // Created by Roman Ellerbrock on 2020-01-24.
 //
 
-#include "LeafMatrix.h"
+#include "TreeOperators/LeafMatrix.h"
 
 template<typename T>
 void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	const Tensor<T>& Acoeff) const {
-	multAB(hAcoeff, h_, Acoeff, 0);
+	MatrixTensor(hAcoeff, h_, Acoeff, 0, true);
 }
 
 template<typename T>

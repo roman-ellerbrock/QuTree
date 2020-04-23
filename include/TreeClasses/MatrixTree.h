@@ -46,7 +46,7 @@ istream& operator>>(istream& is, MatrixTree<T>& S);
 
 typedef MatrixTree<complex<double>> MatrixTreecd;
 
-typedef MatrixTree<complex<double>> MatrixTreed;
+typedef MatrixTree<double> MatrixTreed;
 
 
 #endif //MATRIXTREE_H

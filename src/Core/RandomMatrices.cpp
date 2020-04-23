@@ -13,7 +13,7 @@ namespace RandomMatrices {
 				r(j, i) = complex<double>(dist(gen), dist(gen));
 			}
 		}
-		return 0.5 * (r + r.Transpose());
+		return 0.5 * (r + r.Adjoint());
 	}
 
 	SpectralDecompositioncd GUE_diag(size_t dim, mt19937& gen) {
@@ -29,7 +29,7 @@ namespace RandomMatrices {
 				r(j, i) = dist(gen);
 			}
 		}
-		return 0.5 * (r + r.Transpose());
+		return 0.5 * (r + r.Adjoint());
 	}
 
 	SpectralDecompositiond GOE_diag(size_t dim, mt19937& gen) {

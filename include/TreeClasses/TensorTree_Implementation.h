@@ -31,7 +31,7 @@ template<typename T>
 void TensorTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
-		attributes_.emplace_back(Tensor<T>(node.TDim()));
+		attributes_.emplace_back(Tensor<T>(node.shape()));
 	}
 }
 
@@ -40,7 +40,7 @@ void TensorTree<T>::FillRandom(std::mt19937& gen, const Tree& tree, bool delta_l
 	assert(tree.nNodes() == attributes_.size());
 	for (const Node& node : tree) {
 		Tensor<T>& Phi = this->operator[](node);
-		if (node.IsBottomlayer()) {
+		if (node.isBottomlayer()) {
 			FillBottom(Phi, node);
 		} else {
 			FillUpper(Phi, gen, node, delta_lowest);
@@ -52,11 +52,11 @@ template<typename T>
 void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	mt19937& gen, const Node& node, bool delta_lowest) {
 
-	assert(Phi.Dim().GetDimTot() > 0);
+	assert(Phi.shape().totalDimension() > 0);
 	Tensor_Extension::Generate(Phi, gen);
 	// Set ground-state to "Hartree-Product" if flag is set
 	if (delta_lowest) {
-		for (size_t i = 0; i < Phi.Dim().LastBefore(); ++i) {
+		for (size_t i = 0; i < Phi.shape().lastBefore(); ++i) {
 			Phi(i, 0) = 0.;
 		}
 		Phi(0, 0) = 1.;
@@ -69,7 +69,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 template<typename T>
 void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 	const Node& node) {
-	const Leaf& coord = node.PhysCoord();
+	const Leaf& coord = node.getLeaf();
 	const LeafInterface& grid = coord.PrimitiveGrid();
 	grid.InitSPF(Phi);
 }
@@ -123,6 +123,44 @@ void TensorTree<T>::print(const Tree& tree, ostream& os) const {
 	for (const Node& node : tree) {
 		node.info(os);
 		this->operator[](node).print(os);
+	}
+}
+
+template <typename T>
+void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
+	//Bottom-Up-Sweep
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			Tensor<T>& Phi = Psi[node];
+			Matrix<T> S = Phi.DotProduct(Phi);
+			auto spec = Diagonalize(S);
+			const auto& trafo = spec.first;
+			const auto& eigenval = spec.second;
+
+			for (size_t j = 0; j < S.Dim1(); j++)
+				assert(eigenval(j) >= -1e-12);
+
+			Matrix<T> SW(S.Dim1(), S.Dim2());
+			for (size_t j = 0; j < S.Dim1(); j++) {
+				for (size_t k = 0; k < S.Dim1(); k++) {
+					for (size_t l = 0; l < S.Dim1(); l++) {
+						SW(j, k) += trafo(k, l) * sqrt(eigenval(l))
+							* conj(trafo(j, l));
+					}
+				}
+			}
+
+			const Node& parent = (Node&) node.parent();
+			Psi[parent] = MatrixTensor(SW, Psi[parent], node.childIdx());
+			GramSchmidt(Phi);
+		}
+	}
+}
+
+template <typename T>
+void Orthonormal(TensorTree<T>& Psi, const Tree& tree) {
+	for (const Node& node : tree) {
+		GramSchmidt(Psi[node]);
 	}
 }
 

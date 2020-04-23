@@ -1,5 +1,7 @@
 #pragma once
 #include "TreeShape/Node.h"
+#include "TreeShape/Edge.h"
+#include "TreeShape/Tree.h"
 
 /**
  * \defgroup Tree
@@ -40,6 +42,20 @@ public:
 		return attributes_[address];
 	}
 
+	A& operator[](const Edge& e) {
+		const Node& x = e.down();
+		size_t address = x.Address();
+		assert(address < attributes_.size());
+		return attributes_[address];
+	}
+
+	const A& operator[](const Edge& e) const {
+		const Node& x = e.down();
+		size_t address = x.Address();
+		assert(address < attributes_.size());
+		return attributes_[address];
+	}
+
 	typename vector<A>::iterator begin() {
 		return attributes_.begin();
 	}
@@ -62,7 +78,7 @@ public:
 	 * \brief Erase the data assigned to x_.
 	 * \param x Object which's attributes_ get deleted
 	 *
-	 * After erasing the attributes_, the old structure needs to
+	 * after erasing the attributes_, the old structure needs to
 	 * be updated (addresses become invalid).
 	 */
 	void erase(const Node& x) {
@@ -74,3 +90,12 @@ protected:
 	vector<A> attributes_;
 };
 
+template <class A>
+void print(const NodeAttribute<A>& ATree, const Tree& tree) {
+	for (size_t i = 0; i < ATree.size(); ++i) {
+		const auto& node_ = tree.begin() + i;
+		const Node& node = *node_;
+		node.info();
+		ATree[node].print();
+	}
+}

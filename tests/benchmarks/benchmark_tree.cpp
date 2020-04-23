@@ -5,11 +5,11 @@
 #include "TreeShape/Tree.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "benchmark_helper.h"
-#include "SparseMatrixTreeFunctions.h"
+#include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "TreeShape/TreeFactory.h"
 
 namespace benchmark {
-	using namespace MatrixTreeFunctions;
+	using namespace TreeFunctions;
 	auto holematrixtree_sample(MatrixTreecd& Rho, const TensorTreecd& Psi,
 		const Tree& tree, size_t nsample) {
 
@@ -66,7 +66,7 @@ auto sparse_factormatrixtree_sample(SparseMatrixTreecd& fmat, const MLOcd& M,
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		SparseMatrixTreeFunctions::Represent(fmat, M, Psi, tree);
+		TreeFunctions::Represent(fmat, M, Psi, tree);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -96,7 +96,7 @@ auto sparse_holematrixtree_sample(SparseMatrixTreecd& hole,
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		SparseMatrixTreeFunctions::Contraction(hole, Psi, fmat, tree);
+		TreeFunctions::Contraction(hole, Psi, fmat, tree);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -115,7 +115,7 @@ pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nlea
 	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
 	SparseMatrixTreecd fmat(M, tree);
-	SparseMatrixTreeFunctions::Represent(fmat, M, Psi, tree);
+	TreeFunctions::Represent(fmat, M, Psi, tree);
 	SparseMatrixTreecd hole(M, tree);
 	return sparse_holematrixtree_sample(hole, fmat, M, Psi, tree, nsample);
 }

@@ -3,13 +3,16 @@
 #include <functional>
 #include "Core/Tensor.h"
 
-
+/**
+ * \defgroup Util
+ * \brief This group includes common utilites in QuTree.
+ */
 
 template<class Q, class T, typename U>
 class BS_integrator
 /**
  * \class BS_integrator
- * \ingroup Core
+ * \ingroup Util
  * \brief This is a Bulirsch-Stoer Integrator.
  *
  * The design of this class is loosely related to the implementation
@@ -18,13 +21,15 @@ class BS_integrator
 {
 public:
 	BS_integrator(){}
+	BS_integrator(int dim, T& initializer) {
+		Initialize(dim, initializer);
+	}
 	~BS_integrator(){}
 
-	void Initialize(int dim, double eps, T& initializer)
+	void Initialize(int dim, T& initializer)
 	{
 		// set control parameters
 		dim_ = dim;
-		eps_ = eps;
 		maxuse_ = 7;
 		max_ = 11;
 		shrink_ = 0.95;
@@ -50,14 +55,14 @@ public:
 
 	}
 
-	void Integrate(T& y, double& x, double xend, double& dx,
+	void Integrate(T& y, double& x, double xend, double& dx, double eps,
 		function<void(Q&, double, T&, T&)> ddx, function<double(Q&, T&, T&)> err, Q& container)
 	{
 		while (xend - x > dx*1e-6)
 		{
 			if (x + dx > xend) { dx = xend - x + 1E-10; }
 //			cout << "\t" << "t=" << x << " dt=" << dx << endl;
-			y=bsstep(y, x, dx, ddx, err, container);
+			y=bsstep(y, x, dx, eps, ddx, err, container);
 		}
 	}
 
@@ -92,7 +97,7 @@ public:
 		}
 	}
 
-	T bsstep(T y, double& x, double& dx,
+	T bsstep(T y, double& x, double& dx, double eps,
 		function<void(Q&, double, T&, T&)> ddx, function<double(Q&, T&, T&)> err, Q& container)
 	{
 
@@ -136,7 +141,7 @@ public:
 				// Calculate error and adjust step size
 				double error = err(container, yvec_[0], yvec_[1]);
 
-				if (error < eps_)
+				if (error < eps)
 				{
 					x += h;
 					if (i == maxuse_ - 1)
@@ -295,7 +300,6 @@ protected:
 	vector<T> ytab_;
 	int dim_;
 	int max_, maxuse_;
-	double eps_;
 	double shrink_, grow_;
 };
 

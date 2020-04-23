@@ -3,7 +3,7 @@
 namespace WeightedSimultaneousDiagonalization {
 
 	void Calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs,
-			Matrixcd& W, Matrixcd& trafo, double eps) {
+		Matrixcd& W, Matrixcd& trafo, double eps) {
 		// Checks
 		for (const Matrixcd& x : Xs) {
 			assert(W.Dim1() == x.Dim1());
@@ -53,7 +53,7 @@ namespace WeightedSimultaneousDiagonalization {
 	}
 
 	double MeasureWeightedDiagonality(
-			const vector<Matrixcd>& A, const Matrixcd& W) {
+		const vector<Matrixcd>& A, const Matrixcd& W) {
 		// Measure of diagonality in WSD
 		double loc = 0;
 		for (const Matrixcd& X : A) {
@@ -68,7 +68,7 @@ namespace WeightedSimultaneousDiagonalization {
 	}
 
 	void WeightedJacobiRotations(
-			vector<Matrixcd>& Xs, vector<Matrixcd>& XXs, Matrixcd& W, Matrixcd& trafo) {
+		vector<Matrixcd>& Xs, vector<Matrixcd>& XXs, Matrixcd& W, Matrixcd& trafo) {
 		// Angles for Givens-Rotation
 		complex<double> c, s = 0;
 
@@ -97,9 +97,9 @@ namespace WeightedSimultaneousDiagonalization {
 	}
 
 	int CalculateWeightedAngles(
-			complex<double>& c, complex<double>& s,
-			size_t i, size_t j, const vector<Matrixcd>& Xs,
-			const vector<Matrixcd>& XXs, const Matrixcd& W) {
+		complex<double>& c, complex<double>& s,
+		size_t i, size_t j, const vector<Matrixcd>& Xs,
+		const vector<Matrixcd>& XXs, const Matrixcd& W) {
 		// Rational function optimization (RFO) to optimize angles in WSD
 
 		// Control parameters for RFO-Algorithm
@@ -176,11 +176,9 @@ namespace WeightedSimultaneousDiagonalization {
 				// Adjust a-factor
 				if (diff < 0) {
 					a /= 2;
-				}
-				else {
+				} else {
 					if (a < amax) { a *= 2; }
 				}
-
 			}
 
 			// save angles, if they improve the measure
@@ -196,8 +194,7 @@ namespace WeightedSimultaneousDiagonalization {
 		// Check if Angle-optimization worked (0) or not (1)
 		if (iter > maxiter || a > amin) {
 			return 1;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}
@@ -255,100 +252,121 @@ namespace WeightedSimultaneousDiagonalization {
 	}
 	 */
 
-double WeightedJacobiLoc(
+	double WeightedJacobiLoc(
 		const vector<Matrixcd>& Xs, const vector<Matrixcd>& XXs,
 		const Matrixcd& W, size_t p, size_t q,
 		complex<double> c, complex<double> s) {
-	// Weight matrix contribution
-	// First rotation W*J^H
-	Vectord W_new = RotatedDiagonals(W, p, q, c, s);
+		// Weight matrix contribution
+		// First rotation W*J^H
+		Vectord W_new = RotatedDiagonals(W, p, q, c, s);
 
-	// Change of Xw-Matrix diagonals
-	Vectord x_old(2), x_new(2);
-	for (const Matrixcd& Xw : Xs) {
-		x_old(0) += pow(real(Xw(p, p)), 2);
-		x_old(1) += pow(real(Xw(q, q)), 2);
+		// Change of Xw-Matrix diagonals
+		Vectord x_old(2), x_new(2);
+		for (const Matrixcd& Xw : Xs) {
+			x_old(0) += pow(real(Xw(p, p)), 2);
+			x_old(1) += pow(real(Xw(q, q)), 2);
+		}
+
+		for (const Matrixcd& Xw : Xs) {
+			Vectord Xw_rot = RotatedDiagonals(Xw, p, q, c, s);
+			x_new(0) += pow(Xw_rot(0), 2);
+			x_new(1) += pow(Xw_rot(1), 2);
+		}
+
+		// Resulting change in the localization measure
+		double diff = 0;
+		diff += x_new(0) / W_new(0) - x_old(0) / real(W(p, p));
+		diff += x_new(1) / W_new(1) - x_old(1) / real(W(q, q));
+
+		return diff;
 	}
 
-	for (const Matrixcd& Xw : Xs) {
-		Vectord Xw_rot = RotatedDiagonals(Xw, p, q, c, s);
-		x_new(0) += pow(Xw_rot(0), 2);
-		x_new(1) += pow(Xw_rot(1), 2);
-	}
-
-	// Resulting change in the localization measure
-	double diff = 0;
-	diff += x_new(0) / W_new(0) - x_old(0) / real(W(p, p));
-	diff += x_new(1) / W_new(1) - x_old(1) / real(W(q, q));
-
-	return diff;
-}
-
-
-void WeightedJacobiDerivatives(Vectord& grad,
+	void WeightedJacobiDerivatives(Vectord& grad,
 		Matrixd& preHessian, complex<double> s_in,
 		const vector<Matrixcd>& Xs, const vector<Matrixcd>& XXs,
 		const Matrixcd& W, size_t p, size_t q, double delta) {
-	assert(delta > 0);
-	assert(grad.Dim() == 2);
-	assert(preHessian.Dim1() == 2);
-	assert(preHessian.Dim2() == 2);
-	Vectord s(2), x(2);
-	s(0) = real(s_in);
-	s(1) = imag(s_in);
+		assert(delta > 0);
+		assert(grad.Dim() == 2);
+		assert(preHessian.Dim1() == 2);
+		assert(preHessian.Dim2() == 2);
+		Vectord s(2), x(2);
+		s(0) = real(s_in);
+		s(1) = imag(s_in);
 
-	// Build a displacement-matrix y
-	Matrixd y(3, 3);
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < 3; j++) {
-			x(0) = s(0) + ((int) i - 1) * delta;
-			x(1) = s(1) + ((int) j - 1) * delta;
-			double z = x(0) * x(0) + x(1) * x(1);
-			complex<double> cnow(sqrt(abs(1 - z)), 0);
-			complex<double> snow = InterpretComplex(x);
-			y(i, j) = WeightedJacobiLoc(Xs, XXs, W, p, q, cnow, snow);
+		// Build a displacement-matrix y
+		Matrixd y(3, 3);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				x(0) = s(0) + ((int) i - 1) * delta;
+				x(1) = s(1) + ((int) j - 1) * delta;
+				double z = x(0) * x(0) + x(1) * x(1);
+				complex<double> cnow(sqrt(abs(1 - z)), 0);
+				complex<double> snow = InterpretComplex(x);
+				y(i, j) = WeightedJacobiLoc(Xs, XXs, W, p, q, cnow, snow);
+			}
 		}
+
+		// Calculate the gradient from the displacement matrix
+		grad(0) = (y(2, 1) - y(0, 1)) / (2 * delta);
+		grad(1) = (y(1, 2) - y(1, 0)) / (2 * delta);
+
+		// Calculate the hessian from the displacement matrix
+		preHessian(0, 0) = (y(2, 1) + y(0, 1) - 2 * y(1, 1)) / (delta * delta);
+		preHessian(1, 1) = (y(1, 2) + y(1, 0) - 2 * y(1, 1)) / (delta * delta);
+		preHessian(0, 1) = (y(2, 2) + y(0, 0) - y(2, 0) - y(0, 2)) / (4 * delta * delta);
+		preHessian(1, 0) = preHessian(0, 1);
 	}
 
-	// Calculate the gradient from the displacement matrix
-	grad(0) = (y(2, 1) - y(0, 1)) / (2 * delta);
-	grad(1) = (y(1, 2) - y(1, 0)) / (2 * delta);
-
-	// Calculate the hessian from the displacement matrix
-	preHessian(0, 0) = (y(2, 1) + y(0, 1) - 2 * y(1, 1)) / (delta * delta);
-	preHessian(1, 1) = (y(1, 2) + y(1, 0) - 2 * y(1, 1)) / (delta * delta);
-	preHessian(0, 1) = (y(2, 2) + y(0, 0) - y(2, 0) - y(0, 2)) / (4 * delta * delta);
-	preHessian(1, 0) = preHessian(0, 1);
-}
-
-double MeasureWeightedOffDiagonality(
+	double MeasureWeightedOffDiagonality(
 		const vector<Matrixcd>& Xws, const vector<Matrixcd>& Xs,
 		const Matrixcd& W, const Matrixcd& trafo) {
-	// Measure of diagonality in WSD
-	double loc = 0;
-	for (size_t k = 0; k < Xws.size(); k++) {
-		const Matrixcd& Xw = Xws[k];
-		const Matrixcd& X = Xs[k];
-		Matrixcd X_diag(Xw.Dim1(), Xw.Dim2());
+		// Measure of diagonality in WSD
+		double loc = 0;
+		for (size_t k = 0; k < Xws.size(); k++) {
+			const Matrixcd& Xw = Xws[k];
+			const Matrixcd& X = Xs[k];
+			Matrixcd X_diag(Xw.Dim1(), Xw.Dim2());
 
-		for (size_t i = 0; i < Xw.Dim1(); i++) {
-			X_diag(i, i) = real(Xw(i, i) / W(i, i));
+			for (size_t i = 0; i < Xw.Dim1(); i++) {
+				X_diag(i, i) = real(Xw(i, i) / W(i, i));
+			}
+
+			// Xd = trafo_^A * Xd * trafo_
+			Matrixcd X_trafo = UnitarySimilarityTrafo(X, trafo);
+
+			// X-Xtrafo
+			X_diag = X_diag - X_trafo;
+			X_diag = X_diag * X_diag;
+
+			// Weight with density matrix
+			X_diag = W * X_diag;
+
+			loc += real(X_diag.Trace());
+		}
+		return loc;
+	}
+
+	vector<Vectord> GetDiagonals(const vector<Matrixcd>& Xws, const Matrixcd& W) {
+		vector<Vectord> x_evs;
+		for (const Matrixcd& x : Xws) {
+			Vectord x_ev(x.Dim1());
+			for (size_t i = 0; i < x.Dim1(); i++) {
+				x_ev(i) = real(x(i, i) / W(i, i));
+			}
+			x_evs.emplace_back(x_ev);
 		}
 
-		// Xd = trafo_^A * Xd * trafo_
-		Matrixcd X_trafo = UnitarySimilarityTrafo(X, trafo);
-
-		// X-Xtrafo
-		X_diag = X_diag - X_trafo;
-		X_diag = X_diag * X_diag;
-
-		// Weight with density matrix
-		X_diag = W * X_diag;
-
-		loc += real(X_diag.Trace());
-
+		return x_evs;
 	}
-	return loc;
-}
 
+	pair<Matrixcd, vector<Vectord>>
+	Calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps) {
+		auto trafo = IdentityMatrix<complex<double>>(W.Dim1());
+		vector<Matrixcd> XXs;
+
+		Calculate(Xs, XXs, W, trafo, eps);
+
+		vector<Vectord> x_evs = GetDiagonals(Xs, W);
+		return {trafo, x_evs};
+	}
 }

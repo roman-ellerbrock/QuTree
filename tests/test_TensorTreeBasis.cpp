@@ -9,18 +9,18 @@ SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_Generator) {
 		size_t n_leaf = 4;
 		size_t n_node = 2;
-		TensorDim tdim_top({n_node, n_node, 1});
-		TensorDim tdim_upper({n_node, n_node, n_node});
-		TensorDim tdim_bottom({n_leaf, n_node});
+		TensorShape tdim_top({n_node, n_node, 1});
+		TensorShape tdim_upper({n_node, n_node, n_node});
+		TensorShape tdim_bottom({n_leaf, n_node});
 
 		for (size_t n_modes = 2; n_modes < 18; ++n_modes) {
 			Tree tree = TreeFactory::BalancedTree(n_modes, n_leaf, n_node);
 
 			for (const Node& node : tree) {
-				const TensorDim& tdim = node.TDim();
-				if (node.IsToplayer()) {
+				const TensorShape& tdim = node.shape();
+				if (node.isToplayer()) {
 						CHECK_EQUAL(tdim_top, tdim);
-				} else if (node.IsBottomlayer()) {
+				} else if (node.isBottomlayer()) {
 						CHECK_EQUAL(tdim_bottom, tdim);
 				} else {
 						CHECK_EQUAL(tdim_upper, tdim);
@@ -32,9 +32,9 @@ SUITE (TensorTreeBasis) {
 	TEST (TensorTreeBasis_FileIO) {
 		size_t n_leaf = 4;
 		size_t n_node = 2;
-		TensorDim tdim_top({n_node, n_node, 1});
-		TensorDim tdim_upper({n_node, n_node, n_node});
-		TensorDim tdim_bottom({n_leaf, n_node});
+		TensorShape tdim_top({n_node, n_node, 1});
+		TensorShape tdim_upper({n_node, n_node, n_node});
+		TensorShape tdim_bottom({n_leaf, n_node});
 		size_t n_modes = 13;
 
 		Tree tree = TreeFactory::BalancedTree(n_modes, n_leaf, n_node);
@@ -59,8 +59,8 @@ SUITE (TensorTreeBasis) {
 
 		size_t k = 0;
 		for (const Node& node : tree) {
-			if (node.IsBottomlayer()) {
-				const Leaf& leaf = node.PhysCoord();
+			if (node.isBottomlayer()) {
+				const Leaf& leaf = node.getLeaf();
 					CHECK_EQUAL(k++, leaf.Mode());
 			}
 		}

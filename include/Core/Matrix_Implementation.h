@@ -113,6 +113,14 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& B) {
 }
 
 template<typename T>
+Matrix<T>& Matrix<T>::operator/=(T coeff) noexcept {
+	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
+		coeffs_[i] /= coeff;
+	}
+	return *this;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
 	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
 		coeffs_[i] *= coeff;
@@ -165,11 +173,20 @@ T Matrix<T>::Trace() const {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Transpose() {
+Matrix<T> Matrix<T>::Adjoint() const {
 	Matrix B(dim1_, dim2_);
 	for (size_t i = 0; i < dim1_; i++)
 		for (size_t j = 0; j < dim2_; j++)
 			B(i, j) = conjugate(operator()(j, i));
+	return B;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::Transpose() const {
+	Matrix B(dim1_, dim2_);
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
+			B(i, j) = operator()(j, i);
 	return B;
 }
 
@@ -456,14 +473,15 @@ void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
 	A.rDiag(S.first, S.second);
 }
 
-Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
+template <typename T>
+Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
 	assert(vec.Dim() > 0);
 	assert(mat.Dim1() == vec.Dim());
 	assert(mat.Dim1() == mat.Dim2());
 	size_t dim = vec.Dim();
-	Matrixcd A(dim, dim);
+	Matrix<T> A(dim, dim);
 	/// Could be improved by multiplying B = mat * diag(vec)
 	for (size_t i = 0; i < dim; ++i) {
 		for (size_t j = 0; j < dim; ++j) {
@@ -475,33 +493,25 @@ Matrixcd BuildMatrix(const SpectralDecompositioncd& X) {
 	return A;
 }
 
-Matrixd BuildMatrix(const SpectralDecompositiond& X) {
-	const auto& mat = X.first;
-	const auto& vec = X.second;
-	assert(vec.Dim() > 0);
-	assert(mat.Dim1() == vec.Dim());
-	assert(mat.Dim1() == mat.Dim2());
-	size_t dim = vec.Dim();
-	Matrixd A(dim, dim);
-	/// Could be improved by multiplying B = mat * diag(vec)
-	for (size_t i = 0; i < dim; ++i) {
-		for (size_t j = 0; j < dim; ++j) {
-			for (size_t k = 0; k < dim; ++k) {
-				A(j, i) += mat(j, k) * vec(k) * mat(i, k);
-			}
-		}
+template <typename T>
+Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
+	auto inv_vec = Inverse(X.second, eps);
+	return BuildMatrix<T>({X.first, inv_vec});
+}
+
+template <typename T>
+SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
+	Vectord& lambda = X.second;
+	for (size_t i = 0; i < lambda.Dim(); ++i) {
+		lambda(i) = sqrt(lambda(i));
 	}
-	return A;
+	return X;
 }
 
-Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps) {
-	auto inv_vec = Inverse(X.second, eps);
-	return BuildMatrix({X.first, inv_vec});
-}
-
-Matrixd BuildInverse(const SpectralDecompositiond& X, double eps) {
-	auto inv_vec = Inverse(X.second, eps);
-	return BuildMatrix({X.first, inv_vec});
+template <typename T>
+SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps) {
+	X.second = Inverse(X.second, eps);
+	return X;
 }
 
 template<typename T>
@@ -511,6 +521,14 @@ Matrix<T> IdentityMatrix(size_t dim) {
 		I(i, i) = 1.;
 	}
 	return I;
+}
+
+Matrixcd IdentityMatrixcd(size_t dim) {
+	return IdentityMatrix<complex<double>>(dim);
+}
+
+Matrixd IdentityMatrixd(size_t dim) {
+	return IdentityMatrix<double>(dim);
 }
 
 template<typename T>
@@ -593,7 +611,7 @@ Vectord Matrix<T>::SolveSLE(const Vectord& b_) {
 	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> dec(A);
 	Eigen::VectorXd x = dec.solve(b);
 
-	// Save to QDlib-Vectord
+	// Save to QuTree-Vectord
 	Vectord x_(dim2_);
 	for (size_t i = 0; i < dim2_; i++)
 		x_(i) = x(i);
@@ -628,7 +646,7 @@ Matrix<T> EuclideanDistance(const Matrix<T>& A) {
 	Matrix<T> D(G.Dim1(), G.Dim2());
 	for (size_t j = 0; j < G.Dim1(); ++j) {
 		for (size_t i = 0; i < G.Dim2(); ++i) {
-			D(i, j) = G(i, i) + G(j, j) - 2 * G(i, j);
+			D(i, j) = G(i, i) + G(j, j) - 2. * G(i, j);
 		}
 	}
 	return D;
