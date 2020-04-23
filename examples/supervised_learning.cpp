@@ -5,7 +5,7 @@
 #include "TreeShape/TreeFactory.h"
 #include "Util/RandomMatrices.h"
 
-using namespace MatrixTreeFunctions;
+using namespace TreeFunctions;
 
 void calculateDensity(MatrixTreecd& Rho_tree, const TensorTreecd& A_tree, const TensorTreecd& X_tree, const MatrixTreecd& S_tree,
 	 const Matrixcd& S_label, const Tree& tree) {
@@ -14,8 +14,8 @@ void calculateDensity(MatrixTreecd& Rho_tree, const TensorTreecd& A_tree, const 
 	for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 		const Node& node = *it;
 
-		if (!node.IsToplayer()) {
-			const Node& parent = node.Up();
+		if (!node.isToplayer()) {
+			const Node& parent = node.parent();
 			ContractionLocal(Rho_tree, A_tree[parent], X_tree[parent], node, &S_tree);
 		} else {
 			// calculate delta S for top layer
@@ -29,16 +29,16 @@ void calculateGradient(TensorTreecd& Grad_tree, const TensorTreecd& A_tree, cons
 
 	for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 		const Node& node = *it;
-		const TensorDim& tdim = node.TDim();
+		const TensorShape& tdim = node.shape();
 		Tensorcd B = X_tree[node];
-		if (!node.IsBottomlayer()) {
+		if (!node.isBottomlayer()) {
 			for (size_t k = 0; k < node.nChildren(); ++k) {
-				const Node& child_node = node.Down(k);
-				B = multAB(S_tree[child_node], B, k); // overwrite into A
+				const Node& child_node = node.child(k);
+				B = MatrixTensor(S_tree[child_node], B, k); // overwrite into A
 			}
 		}
 		// grad = deltaS * B
-		Grad_tree[node] = multAB(Rho_tree[node], B, tdim.GetLastIdx());
+		Grad_tree[node] = MatrixTensor(Rho_tree[node], B, tdim.lastIdx());
 	}
 }
 
@@ -67,13 +67,13 @@ void gradDescent() {
 	X_tree.print(tree);
 
 	// calculate overlap, S (feedforward)
-	using namespace MatrixTreeFunctions;
+	using namespace TreeFunctions;
 	MatrixTreecd S_tree = DotProduct(A_tree, X_tree, tree);
 	cout << "\n  => S_tree <= \n";
 	S_tree.print(tree);
 
 	// generate randomised S_label matrix (will be passed in with correct labels)
-	Matrixcd S_label = RandomMatrices::GUE(tree.TopNode().TDim().LastActive(), gen);
+	Matrixcd S_label = RandomMatrices::GUE(tree.TopNode().shape().lastDimension(), gen);
 	cout << "\n  => S_label <= \n";
 	S_label.print();
 

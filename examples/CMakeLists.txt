@@ -16,4 +16,4 @@ add_custom_target(TestExamples
     COMMENT "Run all examples")
 
 add_executable(supervised_learning supervised_learning.cpp)
-target_link_libraries(supervised_learning QDlib)
+target_link_libraries(supervised_learning QuTree::QuTree)
