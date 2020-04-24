@@ -34,6 +34,7 @@ set(QuTree_SOURCE_FILES
     src/TreeShape/TreeFactory.cpp
     src/Util/FFT.cpp
     src/Util/SimultaneousDiagonalization.cpp
+    src/Util/string_ext.cpp
     src/Util/WeightedSimultaneousDiagonalization.cpp
     src/Util/long_integer.cpp
     )

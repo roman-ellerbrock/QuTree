@@ -57,6 +57,7 @@ set(QuTree_INCLUDE_FILES
     include/Util/QMConstants.h
     include/Util/RandomMatrices.h
     include/Util/SimultaneousDiagonalization.h
+    include/Util/string_ext.h
     include/Util/Tree.h
     include/Util/TreeNode.h
     include/Util/WeightedSimultaneousDiagonalization.h
