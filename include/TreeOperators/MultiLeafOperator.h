@@ -66,30 +66,20 @@ public:
 	}
 
 	void push_back(const LeafMatrix<T>& h, size_t mode) {
-		auto* h_ptr = new LeafMatrix<T>(h);
-		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(h_ptr));
-		targetLeaves_.emplace_back(mode);
+		push_back(make_shared<LeafMatrix<T>>(h), mode);
 	}
 
-	/// Push back a RefSPO to the MLO
-	void push_back(const LeafFunction<T>& h, size_t mode_x) {
-		auto *spo = new LeafFunction<T>(h);
-		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
-		targetLeaves_.push_back(mode_x);
+	/// Push back a function to the MLO
+	void push_back(const LeafFunction<T>& h, size_t mode) {
+		push_back(make_shared<LeafFunction<T>>(h), mode);
 	}
 
-	void push_back(const LeafFun<T>& h_f, size_t mode_x) {
-		auto *spo = new LeafFunction<T>(h_f);
-		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
-		targetLeaves_.push_back(mode_x);
+	void push_back(const LeafFun<T>& h, size_t mode) {
+		push_back(make_shared<LeafFunction<T>>(h), mode);
 	}
 
 	void push_back(Matrix<T> h, size_t mode, bool adjoint = false) {
-		if (adjoint) {
-			push_back(LeafMatrix<T>(h.Adjoint()), mode);
-		} else {
-			push_back(LeafMatrix<T>(h), mode);
-		}
+		push_back(LeafMatrix<T>(h, adjoint), mode);
 	}
 
 	/// Access the i-th SPO in the MLO

@@ -11,8 +11,11 @@ void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 }
 
 template<typename T>
-LeafMatrix<T>::LeafMatrix(Matrix<T> h)
-: h_(h) {
+LeafMatrix<T>::LeafMatrix(Matrix<T> h, bool adjoint)
+: h_(move(h)) {
+	if (adjoint) {
+		h_ = h.Adjoint();
+	}
 }
 
 template

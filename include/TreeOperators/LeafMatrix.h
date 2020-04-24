@@ -17,7 +17,7 @@ class LeafMatrix: public LeafOperator<T>
 public:
 	LeafMatrix() = default;
 
-	explicit LeafMatrix(Matrix<T> h); // <- can be added if needed
+	explicit LeafMatrix(Matrix<T> h, bool adjoint = false); // <- can be added if needed
 
 	~LeafMatrix() = default;
 
