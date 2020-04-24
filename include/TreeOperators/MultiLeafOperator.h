@@ -84,6 +84,14 @@ public:
 		targetLeaves_.push_back(mode_x);
 	}
 
+	void push_back(Matrix<T> h, size_t mode, bool adjoint = false) {
+		if (adjoint) {
+			push_back(LeafMatrix<T>(h.Adjoint()), mode);
+		} else {
+			push_back(LeafMatrix<T>(h), mode);
+		}
+	}
+
 	/// Access the i-th SPO in the MLO
 	shared_ptr<LeafOperator<T>> operator()(size_t i) {
 		assert(i >= 0);

@@ -2,6 +2,7 @@
 // Created by Roman Ellerbrock on 4/24/20.
 //
 #include "Util/string_ext.h"
+#include <algorithm>
 
 namespace std {
 
