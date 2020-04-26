@@ -13,8 +13,20 @@ class SOPVector: public std::vector<SOP<T>>
 public:
 	using vector<SOP<T>>::push_back;
 	using vector<SOP<T>>::insert;
+
+	SOPVector() = default;
+
+	SOPVector(const SOP<T>& A) {
+		append(A);
+	}
+
 	void append(const SOP<T>& A) {
 		this->push_back(A);
+	}
+
+	void append(const MLO<T>& M) {
+		SOP<T> A(M);
+		append(A);
 	}
 
 	void append(const SOPVector<T>& A) {
