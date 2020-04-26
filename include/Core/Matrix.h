@@ -95,6 +95,8 @@ public:
 
 	Matrix& operator*=(T coeff) noexcept;
 
+	Matrix& operator/=(T coeff) noexcept;
+
 	bool operator==(const Matrix<T>& A)const;
 	bool operator!=(const Matrix<T>& A)const;
 

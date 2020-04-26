@@ -121,6 +121,12 @@ Matrix<T>& Matrix<T>::operator*=(T coeff) noexcept {
 }
 
 template<typename T>
+Matrix<T>& Matrix<T>::operator/=(T coeff) noexcept {
+	this->operator*=(1./coeff);
+	return *this;
+}
+
+template<typename T>
 bool Matrix<T>::operator==(const Matrix<T>& A) const {
 	/// This class checks whether two Matrices are precisely equal.
 	/// Note: The routine should not be used to check for approximate
