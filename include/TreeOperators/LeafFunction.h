@@ -5,6 +5,12 @@ template<typename T>
 using LeafFun = function<void(const LeafInterface&, Tensor<T>&, const Tensor<T>&)>;
 
 template<typename T>
+using LeafFunPair = pair<LeafFun<T>, LeafFun<T>>;
+
+typedef LeafFunPair<complex<double>> LeafFunPaircd;
+typedef LeafFunPair<double> LeafFunPaird;
+
+template<typename T>
 class LeafFunction
 	: public LeafOperator<T>
 	/**
