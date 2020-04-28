@@ -135,18 +135,19 @@ public:
 		return C;
 	}
 
-	void operator+=(const Tensor& A);
+	Tensor& operator+=(const Tensor& A);
 
-	void operator-=(const Tensor& A);
+	Tensor& operator-=(const Tensor& A);
 
-	void operator*=(T a);
+	Tensor& operator*=(T a);
 
-    friend Tensor operator*(T a, const Tensor<T>& A) {
+	Tensor& operator/=(T a);
+
+	friend Tensor operator*(T a, const Tensor<T>& A) {
         Tensor B(A);
         B *= a;
         return B;
     }
-    void operator/=(T a);
 
 	Tensor coeffprod(const Tensor& A, const Tensor& B);
 

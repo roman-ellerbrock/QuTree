@@ -271,33 +271,37 @@ void Tensor<T>::Read(const string& filename) {
 //////////////////////////////////////////////////////////
 
 template<typename T>
-void Tensor<T>::operator+=(const Tensor& A) {
+Tensor<T>& Tensor<T>::operator+=(const Tensor& A) {
 	assert(A.shape().totalDimension() == shape().totalDimension());
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
 		(*this)(i) += A(i);
 	}
+	return *this;
 }
 
 template<typename T>
-void Tensor<T>::operator-=(const Tensor& A) {
+Tensor<T>& Tensor<T>::operator-=(const Tensor& A) {
 	assert(A.shape().totalDimension() == shape().totalDimension());
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
 		(*this)(i) -= A(i);
 	}
+	return *this;
 }
 
 template<typename T>
-void Tensor<T>::operator*=(T a) {
+Tensor<T>& Tensor<T>::operator*=(T a) {
 	for (size_t i = 0; i < shape().totalDimension(); i++) {
 		operator()(i) = a * operator()(i);
 	}
+	return *this;
 }
 
 template<typename T>
-void Tensor<T>::operator/=(T a) {
+Tensor<T>& Tensor<T>::operator/=(T a) {
 	for (size_t i = 0; i < shape().totalDimension(); i++) {
 		operator()(i) = operator()(i) / a;
 	}
+	return *this;
 }
 
 template<typename T>
