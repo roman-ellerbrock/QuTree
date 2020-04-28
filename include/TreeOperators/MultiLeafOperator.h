@@ -39,6 +39,15 @@ public:
 		push_back(h, mode_x);
 	}
 
+	MultiLeafOperator(const Matrix<T> h, size_t mode, size_t adjoint = false)
+		: MultiLeafOperator() {
+		if (!adjoint) {
+			push_back(LeafMatrix<T>(h, mode));
+		} else {
+			push_back(LeafMatrix<T>(h.Adjoint(), mode));
+		}
+	}
+
 	/// Construct a MLO from a single RefSPO
 	MultiLeafOperator(const LeafFunction<T>& h, size_t mode_x)
 		: MultiLeafOperator() {
