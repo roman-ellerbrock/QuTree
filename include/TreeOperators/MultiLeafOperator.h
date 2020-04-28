@@ -51,6 +51,10 @@ public:
 		push_back(h, mode_x);
 	}
 
+	MultiLeafOperator(const shared_ptr<LeafOperator<T>>& h, size_t mode) {
+		push_back(h, mode);
+	}
+
 	/// This routine manages how to apply a MLO
 	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
 		const Leaf& leaf) const;
