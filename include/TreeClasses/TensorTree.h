@@ -72,16 +72,18 @@ public:
 	////////////////////////////////////////////////////////////////////////
 	/// Arithmetic operators
 	////////////////////////////////////////////////////////////////////////
-	void operator+=(const TensorTree<T>& R) {
+	TensorTree& operator+=(const TensorTree<T>& R) {
 		for (size_t n = 0; n < attributes_.size(); ++n) {
 			attributes_[n] += R.attributes_[n];
 		}
+		return *this;
 	}
 
-	void operator-=(const TensorTree<T>& R) {
+	TensorTree& operator-=(const TensorTree<T>& R) {
 		for (size_t n = 0; n < attributes_.size(); ++n) {
 			attributes_[n] -= R.attributes_[n];
 		}
+		return *this;
 	}
 
 	TensorTree operator+(const TensorTree<T>& R) {
