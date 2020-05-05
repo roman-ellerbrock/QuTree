@@ -174,18 +174,18 @@ T Matrix<T>::Trace() const {
 
 template<typename T>
 Matrix<T> Matrix<T>::Adjoint() const {
-	Matrix B(dim1_, dim2_);
-	for (size_t i = 0; i < dim1_; i++)
-		for (size_t j = 0; j < dim2_; j++)
+	Matrix B(dim2_, dim1_);
+	for (size_t i = 0; i < dim2_; i++)
+		for (size_t j = 0; j < dim1_; j++)
 			B(i, j) = conjugate(operator()(j, i));
 	return B;
 }
 
 template<typename T>
 Matrix<T> Matrix<T>::Transpose() const {
-	Matrix B(dim1_, dim2_);
-	for (size_t i = 0; i < dim1_; i++)
-		for (size_t j = 0; j < dim2_; j++)
+	Matrix B(dim2_, dim1_);
+	for (size_t i = 0; i < dim2_; i++)
+		for (size_t j = 0; j < dim1_; j++)
 			B(i, j) = operator()(j, i);
 	return B;
 }
@@ -669,4 +669,37 @@ istream& operator>>(istream& is, Matrix<T>& A) {
 	A.Read(is);
 	return is;
 }
+
+Eigen::MatrixXd toEigen(Matrixd A) {
+	Eigen::MatrixXd Aeigen = Eigen::Map<Eigen::MatrixXd>((double *) A.Coeffs(),
+		A.Dim1(), A.Dim2());
+	return Eigen::MatrixXd(Aeigen);
+}
+
+Eigen::MatrixXcd toEigen(Matrixcd A) {
+	Eigen::MatrixXcd Aeigen = Eigen::Map<Eigen::MatrixXcd>((complex<double> *)
+		A.Coeffs(), A.Dim1(), A.Dim2());
+	return Eigen::MatrixXcd(Aeigen);
+}
+
+Matrixd toQutree(Eigen::MatrixXd A) {
+	Matrixd Aqutree(A.rows(), A.cols());
+	for (size_t r = 0; r < A.rows(); ++r) {
+		for (size_t c = 0; c < A.cols(); ++c) {
+			Aqutree(r, c) = A(r, c);
+		}
+	}
+	return Aqutree;
+}
+
+Matrixcd toQutree(Eigen::MatrixXcd A) {
+	Matrixcd Aqutree(A.rows(), A.cols());
+	for (size_t r = 0; r < A.rows(); ++r) {
+		for (size_t c = 0; c < A.cols(); ++c) {
+			Aqutree(r, c) = A(r, c);
+		}
+	}
+	return Aqutree;
+}
+
 

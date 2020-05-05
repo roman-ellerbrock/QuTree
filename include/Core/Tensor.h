@@ -45,6 +45,9 @@ public:
 
 	explicit Tensor(const string& filename);
 
+	// Construct Tensor from Matrix
+	explicit Tensor(const Matrix<T>& mat);
+
 	// Copy constructor
 	Tensor(const Tensor& old);
 

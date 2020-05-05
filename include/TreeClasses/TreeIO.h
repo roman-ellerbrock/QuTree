@@ -6,6 +6,7 @@
 #define TREEIO_H
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "TreeClasses/TensorTree.h"
+#include "TreeClasses/SparseMatrixTree.h"
 
 namespace TreeIO {
 
@@ -20,6 +21,10 @@ namespace TreeIO {
 
 	template <typename T>
 	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const MatrixTree<T>& Rho,
+		const Leaf& leaf, const Tree& tree);
+
+	template <typename T>
+	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree);
 
 	template <class A>

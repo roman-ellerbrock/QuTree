@@ -38,6 +38,12 @@ public:
 		Initialize(tree);
 	}
 
+	/// Create HoleMatrixTree only for relevant nodes for a given Operator
+	SparseMatrixTree(const vector<size_t>& targets, const Tree& tree, bool tail = true, bool inverse_tree = false)
+		: SparseNodeAttribute<Matrix<T>>(targets, tree, tail, inverse_tree) {
+		Initialize(tree);
+	}
+
 	~SparseMatrixTree() = default;
 
 	/// Create Matrices for active_ nodes in the tree

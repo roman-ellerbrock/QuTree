@@ -12,7 +12,6 @@ template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_(new T[dim.totalDimension()]) {
 	if (InitZero) { Zero(); }
-
 }
 
 template<typename T>
@@ -420,6 +419,17 @@ template<typename T>
 void Tensor<T>::Zero() {
 	for (size_t i = 0; i < shape_.totalDimension(); i++)
 		coeffs_[i] = 0;
+}
+
+template<typename T>
+Tensor<T>::Tensor(const Matrix<T>& mat)
+	: Tensor<T>({mat.Dim1(), mat.Dim2()}) {
+
+	for (size_t i = 0; i < mat.Dim2(); ++i) {
+		for (size_t k = 0; k < mat.Dim1(); ++k) {
+			this->operator[](indexMapping({k, i}, shape_)) = mat(k, i);
+		}
+	}
 }
 
 // Non-member functions

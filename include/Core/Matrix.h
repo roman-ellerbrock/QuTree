@@ -311,3 +311,9 @@ ostream& operator<<(ostream& os, const Matrix<T>& A);
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A);
 
+Eigen::MatrixXd toEigen(Matrixd A);
+Eigen::MatrixXcd toEigen(Matrixcd A);
+Matrixd toQutree(Eigen::MatrixXd A);
+Matrixcd toQutree(Eigen::MatrixXcd A);
+
+
