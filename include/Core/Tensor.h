@@ -282,6 +282,12 @@ template<typename T>
 double Residual(Tensor<T> A, const Tensor<T>& B);
 
 template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& A);
+
+template<typename T>
+Tensor<T> toTensor(const Matrix<T>& B);
+
+template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A);
 
 template<typename T>

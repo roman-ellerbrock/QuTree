@@ -150,4 +150,13 @@ SUITE (Matrix) {
 		auto residual = Residual(I, I_test);
 		CHECK_CLOSE(0., residual, eps);
 	}
+
+	TEST(svd) {
+		mt19937 gen(1293123);
+		size_t dim = 20;
+		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		auto Asvd = svd(A);
+		auto B = toMatrix(Asvd);
+		CHECK_CLOSE(0., Residual(A, B), 1e-8);
+	}
 }

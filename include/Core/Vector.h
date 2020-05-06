@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-
+#include "Eigen/Dense"
 
 template<typename T>
 class Vector {
@@ -116,3 +116,7 @@ Vector<T> Inverse(Vector<T> A, double eps = 1e-7);
 typedef Vector<double> Vectord;
 
 typedef Vector<complex<double>> Vectorcd;
+
+Vectord toQutree(const Eigen::VectorXd& v);
+
+Vectorcd toQutree(const Eigen::VectorXcd& v);

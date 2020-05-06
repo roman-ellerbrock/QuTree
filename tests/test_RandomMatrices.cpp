@@ -85,7 +85,6 @@ SUITE (RMT) {
 		double S_svd = entropy(ew_svd);
 
 		auto r = Residual(ew_app, ew_acc);
-		cout << r<< endl;
 //			CHECK_CLOSE(0., r, 1e-3);
 	}
 
@@ -141,6 +140,56 @@ SUITE (RMT) {
 
 		CHECK_CLOSE(0., alpha_app, 1e-2);
 		CHECK_CLOSE(0., alpha_red, 1e-2);
+
+	}
+
+	TEST(randomSVD) {
+		mt19937 gen(1239);
+		size_t dim = 10;
+		size_t rank = 3;
+		size_t p = 3;
+
+		/// Build a test matrix
+		Vectord ew(dim);
+		auto U1 = RandomMatrices::GUE(dim, gen);
+		auto U2 = RandomMatrices::GUE(dim, gen);
+		for (size_t r = 0; r < rank; ++r) {
+			ew(r) = 1.;
+		}
+		SVDcd x(U1, U2, ew);
+		auto A = toMatrix(x);
+
+		auto svd_acc = svd(A);
+		auto C = toMatrix(svd_acc);
+		CHECK_CLOSE(0., Residual(A, C), 1e-12);
+
+		auto svd_rand = svdRandom(A, rank + p, gen);
+		auto B = toMatrix(svd_rand);
+		CHECK_CLOSE(0., Residual(A, B), 1e-12);
+	}
+
+	TEST(ProjectRandomGUE) {
+		mt19937 gen(1239);
+		size_t dim = 200;
+		size_t rank = 100;
+		Vectord ew(dim);
+		auto U1 = RandomMatrices::GUE(dim, gen);
+		auto U2 = RandomMatrices::GUE(dim, gen);
+		auto A = U1 * U2;
+		A /= 1. *A.Dim1();
+		/// B = A * P
+		auto P = RandomProjector(A.Dim2(), rank, gen);
+		auto B = A * P;
+
+		double avg = 0.;
+		for(size_t r = 0.; r < A.Dim1(); ++r) {
+			auto ui = A.row(r);
+			auto vi = B.row(r);
+			double contr = (ui.Norm()-vi.Norm())/ui.Norm();
+			avg += contr;
+		}
+		avg /= 1. * A.Dim1();
+		CHECK_CLOSE(0., avg, 1e-2);
 
 	}
 }

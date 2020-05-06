@@ -90,6 +90,30 @@ inline T& Matrix<T>::operator()(const size_t i, const size_t j) {
 }
 
 //////////////////////////////////////////////////////////////////////
+// Getter & Setters
+//////////////////////////////////////////////////////////////////////
+
+template<typename T>
+Vector<T> Matrix<T>::row(size_t r) {
+	assert(r < dim1_);
+	Vector<T> v(dim2_);
+	for (size_t c = 0; c < dim2_; ++c) {
+		v(c) = operator()(r, c);
+	}
+	return v;
+}
+
+template<typename T>
+Vector<T> Matrix<T>::col(size_t c) {
+	assert(c < dim2_);
+	Vector<T> v(dim2_);
+	for (size_t r = 0; r < dim1_; ++r) {
+		v(r) = operator()(r, c);
+	}
+	return v;
+}
+
+//////////////////////////////////////////////////////////////////////
 // Fundamental Math operators
 //////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -713,5 +737,40 @@ Matrixcd QR(const Matrixcd& A) {
 	auto QR = Aeigen.householderQr();
 	Eigen::MatrixXcd Q = QR.householderQ();
 	return toQutree(Q);
+}
+
+SVDcd svd(const Matrixcd& A) {
+	using namespace Eigen;
+	MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), A.Dim1(), A.Dim2());
+	JacobiSVD<MatrixXcd> svd(Am, ComputeThinU | ComputeThinV);
+	auto U = toQutree(svd.matrixU());
+	auto V = toQutree(svd.matrixV());
+	auto sigma = toQutree(svd.singularValues());
+	return {U, V, sigma};
+}
+
+Matrixcd toMatrix(const SVDcd& svd) {
+	const auto& U = get<0>(svd);
+	auto V = get<1>(svd);
+	const auto& sigma = get<2>(svd);
+	for (size_t i = 0; i < V.Dim1(); ++i) {
+		for (size_t j = 0; j < V.Dim2(); ++j) {
+			V(i, j) *= sigma(j);
+		}
+	}
+	return U * V.Adjoint();
+}
+
+template <typename T>
+Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2) {
+	assert(dim1 <= A.Dim1());
+	assert(dim2 <= A.Dim2());
+	Matrix<T> B(dim1, dim2);
+	for (size_t j = 0; j < dim2; ++j) {
+		for (size_t i = 0; i < dim1; ++i) {
+			B(i, j) = A(i, j);
+		}
+	}
+	return B;
 }
 

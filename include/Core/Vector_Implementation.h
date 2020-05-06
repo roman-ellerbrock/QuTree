@@ -273,3 +273,18 @@ Vector<T> Inverse(Vector<T> A, double eps) {
 	return A;
 }
 
+Vectord toQutree(const Eigen::VectorXd& v) {
+	Vectord vqutree(v.rows());
+	for (size_t i = 0; i < vqutree.Dim();++i) {
+		vqutree(i) = v(i);
+	}
+	return vqutree;
+}
+
+Vectorcd toQutree(const Eigen::VectorXcd& v) {
+	Vectorcd vqutree(v.rows());
+	for (size_t i = 0; i < vqutree.Dim();++i) {
+		vqutree(i) = v(i);
+	}
+	return vqutree;
+}
