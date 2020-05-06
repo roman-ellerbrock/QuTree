@@ -248,6 +248,15 @@ Vector<T> reverse(const Vector<T>& A) {
 }
 
 template<typename T>
+T sum(const Vector<T>& A) {
+	T s = 0.;
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		s+= A(i);
+	}
+	return s;
+}
+
+template<typename T>
 Vector<T> Regularize(Vector<T> A, double eps) {
 	for (size_t i = 0; i < A.Dim(); ++i) {
 		A(i) += eps * exp(-A(i) / eps);

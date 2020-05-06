@@ -191,6 +191,16 @@ Matrix<T> Matrix<T>::Transpose() const {
 }
 
 template<typename T>
+Vector<T> Matrix<T>::diag() const {
+	size_t dim = min(dim1_, dim2_);
+	Vector<T> d(dim);
+	for (size_t i = 0; i < dim; ++i) {
+		d(i) = this->operator()(i, i);
+	}
+	return d;
+}
+
+template<typename T>
 SpectralDecompositiond Matrix<T>::rDiag() const {
 	Matrixd trafo(dim1_, dim2_);
 	Vectord ev(dim1_);
@@ -478,19 +488,15 @@ Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
 	assert(vec.Dim() > 0);
-	assert(mat.Dim1() == vec.Dim());
-	assert(mat.Dim1() == mat.Dim2());
+	assert(mat.Dim2() == vec.Dim());
 	size_t dim = vec.Dim();
-	Matrix<T> A(dim, dim);
-	/// Could be improved by multiplying B = mat * diag(vec)
-	for (size_t i = 0; i < dim; ++i) {
-		for (size_t j = 0; j < dim; ++j) {
-			for (size_t k = 0; k < dim; ++k) {
-				A(j, i) += mat(j, k) * vec(k) * conj(mat(i, k));
-			}
+	auto mat2(mat);
+	for (size_t i = 0; i < mat2.Dim1(); ++i) {
+		for (size_t k = 0; k < mat2.Dim2(); ++k) {
+			mat2(i, k) *= vec(k);
 		}
 	}
-	return A;
+	return mat * mat2.Adjoint();
 }
 
 template <typename T>

@@ -105,6 +105,9 @@ template<typename T>
 Vector<T> reverse(const Vector<T>& A);
 
 template<typename T>
+T sum(const Vector<T>& A);
+
+template<typename T>
 Vector<T> Regularize(Vector<T> A, double eps);
 
 template<typename T>

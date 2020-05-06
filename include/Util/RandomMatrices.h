@@ -15,6 +15,12 @@ namespace RandomMatrices {
 		size_t stat_dim, mt19937& gen);
 	SpectralDecompositioncd DiagonalizeRandom(const Matrixcd& A,
 		size_t rank, size_t p, mt19937& gen);
+
+	/// Take absolute square of diagonals(A)
+	Vectord probabilitiyDist(const Matrixcd& A);
+
+	double entropy(const Vectord& p);
+	double crossEntropy(const Vectord& p, const Vectord& q);
 }
 
 #endif //RANDOMMATRICES_H

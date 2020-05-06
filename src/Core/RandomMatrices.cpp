@@ -125,5 +125,32 @@ namespace RandomMatrices {
 
 		return {U, ew};
 	}
+
+	Vectord probabilitiyDist(const Matrixcd& A) {
+		auto tmp = A.diag();
+		size_t dim = min(A.Dim1(), A.Dim2());
+		Vectord p(dim);
+		for (size_t i = 0; i < dim; ++i) {
+			p(i) = pow(abs(tmp(i)), 2);
+		}
+		p /= sum(p);
+		return p;
+	}
+
+	double entropy(const Vectord& p) {
+		double S = 0;
+		for (size_t i = 0; i < p.Dim(); ++i) {
+			S -= p(i) * log(p(i));
+		}
+		return S;
+	}
+
+	double crossEntropy(const Vectord& p, const Vectord& q) {
+		double H = 0;
+		for (size_t i = 0; i < p.Dim(); ++i) {
+			H -= p(i) * log(q(i));
+		}
+		return H;
+	}
 }
 

@@ -116,6 +116,9 @@ public:
 	// Transpose a matrix
 	Matrix Transpose() const;
 
+	// Diagonals of a matrix
+	Vector<T> diag() const;
+
 	// Inverts a complex matrix
 	Matrix<complex<double> > cInv() const;
 
