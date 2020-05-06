@@ -239,6 +239,15 @@ double Residual(const Vector<T>& A, const Vector<T>& B) {
 }
 
 template<typename T>
+Vector<T> reverse(const Vector<T>& A) {
+	Vector<T> B(A.Dim());
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		B(A.Dim() - 1 - i) = A(i);
+	}
+	return B;
+}
+
+template<typename T>
 Vector<T> Regularize(Vector<T> A, double eps) {
 	for (size_t i = 0; i < A.Dim(); ++i) {
 		A(i) += eps * exp(-A(i) / eps);

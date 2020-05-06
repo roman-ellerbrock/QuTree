@@ -702,4 +702,10 @@ Matrixcd toQutree(Eigen::MatrixXcd A) {
 	return Aqutree;
 }
 
+Matrixcd QR(const Matrixcd& A) {
+	auto Aeigen = toEigen(A);
+	auto QR = Aeigen.householderQr();
+	Eigen::MatrixXcd Q = QR.householderQ();
+	return toQutree(Q);
+}
 

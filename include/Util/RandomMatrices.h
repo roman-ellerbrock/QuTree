@@ -11,8 +11,10 @@ namespace RandomMatrices {
 	Matrixcd GUE(size_t dim, mt19937& gen);
 	Matrixd GOE(size_t dim, mt19937& gen);
 	Matrixcd BuildQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen);
-	Matrixcd RandomProjection(const Matrixcd A,
+	Matrixcd RandomProjection(const Matrixcd& A,
 		size_t stat_dim, mt19937& gen);
+	SpectralDecompositioncd DiagonalizeRandom(const Matrixcd& A,
+		size_t rank, size_t p, mt19937& gen);
 }
 
 #endif //RANDOMMATRICES_H
