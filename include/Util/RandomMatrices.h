@@ -23,6 +23,7 @@ namespace RandomMatrices {
 	Matrixcd RandomProjection(const Matrixcd& A,
 		size_t stat_dim, mt19937& gen);
 
+	Matrixcd RandomQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen);
 
 	/// randomized Factorizations
 	SpectralDecompositioncd DiagonalizeRandom(const Matrixcd& A,

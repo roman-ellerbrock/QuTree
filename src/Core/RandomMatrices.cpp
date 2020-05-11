@@ -88,7 +88,8 @@ namespace RandomMatrices {
 		/// Y = QR
 		/// YY^ = QRR^Q^
 		auto Q2 = QR(Y);
-		auto Q = Submatrix(Q2, Y.Dim1(), Y.Dim1());
+
+		auto Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
 		return Q;
 	}
 
