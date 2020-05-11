@@ -2,13 +2,24 @@
 
 A tensor tree linear algebra package in C++ designed for quantum dynamics and machine learning applications.
 
-## Getting Started
+## Installation
 
 Installation is easy using HomeBrew (on OS X) or LinuxBrew (on Linux):
 ```
 brew tap sseritan/qu-tree
 brew install qu-tree
 ```
+
+Developers can get access to the cutting-edge package by using the `--HEAD` flag to install directly from the HEAD of master.
+Subsequent builds can be upgraded by using the `--fetch-HEAD` flag.
+```
+brew install --HEAD qu-tree
+brew upgrade --fetch-HEAD qu-tree
+```
+
+For instructions on how to install from source, check out our [documentation](https://qutree.readthedocs.io/en/latest/).
+
+## Using QuTree
 
 After installation, QuTree can be easily used in downstream CMake projects.
 

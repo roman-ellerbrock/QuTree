@@ -20,6 +20,9 @@ public:
 		append(A);
 	}
 
+	SOPVector(const MLO<T>& M) : SOPVector(SOP<T>(M, 1.)){
+	}
+
 	void append(const SOP<T>& A) {
 		this->push_back(A);
 	}

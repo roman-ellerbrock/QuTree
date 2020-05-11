@@ -37,4 +37,5 @@ set(QuTree_SOURCE_FILES
     src/Util/string_ext.cpp
     src/Util/WeightedSimultaneousDiagonalization.cpp
     src/Util/long_integer.cpp
-    )
+)
+

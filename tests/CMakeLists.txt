@@ -23,7 +23,8 @@ set(QuTree_tests
         test_Operators.cpp
         test_TensorTreeBasis.cpp
         test_MatrixTree.cpp
-        test_SparseMatrixTree.cpp)
+        test_SparseMatrixTree.cpp
+        test_RandomMatrices.cpp)
 
 add_executable(TestQuTree ${QuTree_tests})
 target_link_libraries(TestQuTree QuTree)

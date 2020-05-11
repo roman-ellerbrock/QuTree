@@ -33,10 +33,19 @@ public:
 	/// Default destructor
 	~MultiLeafOperator() = default;
 
+	MultiLeafOperator(const shared_ptr<LeafOperator<T>>& h, size_t mode) {
+		push_back(h, mode);
+	}
+
 	/// Construct a MLO from a single SPO
 	MultiLeafOperator(const LeafMatrix<T>& h, size_t mode_x)
 		: MultiLeafOperator() {
 		push_back(h, mode_x);
+	}
+
+	MultiLeafOperator(const Matrix<T> h, size_t mode, size_t adjoint = false)
+		: MultiLeafOperator() {
+		push_back(h, mode, adjoint);
 	}
 
 	/// Construct a MLO from a single RefSPO
@@ -69,7 +78,15 @@ public:
 		push_back(make_shared<LeafMatrix<T>>(h), mode);
 	}
 
-	/// Push back a function to the MLO
+	void push_back(const Matrix<T>& h, size_t mode, bool adjoint = false) {
+		if (!adjoint) {
+			push_back(make_shared<LeafMatrix<T>>(h), mode);
+		} else {
+			push_back(make_shared<LeafMatrix<T>>(h.Adjoint()), mode);
+		}
+	}
+
+	/// Push back a RefSPO to the MLO
 	void push_back(const LeafFunction<T>& h, size_t mode) {
 		push_back(make_shared<LeafFunction<T>>(h), mode);
 	}
@@ -78,8 +95,12 @@ public:
 		push_back(make_shared<LeafFunction<T>>(h), mode);
 	}
 
-	void push_back(Matrix<T> h, size_t mode, bool adjoint = false) {
-		push_back(LeafMatrix<T>(h, adjoint), mode);
+	void push_back(const LeafFunPair<T>& hs, size_t mode, bool adjoint = false) {
+		if (adjoint) {
+			push_back(hs.second, mode);
+		} else {
+			push_back(hs.first, mode);
+		}
 	}
 
 	/// Access the i-th SPO in the MLO

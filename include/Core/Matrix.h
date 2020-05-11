@@ -96,6 +96,7 @@ public:
 	Matrix& operator*=(T coeff) noexcept;
 	Matrix& operator/=(T coeff) noexcept;
 
+
 	bool operator==(const Matrix<T>& A)const;
 	bool operator!=(const Matrix<T>& A)const;
 
@@ -309,4 +310,12 @@ template<typename T>
 ostream& operator<<(ostream& os, const Matrix<T>& A);
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A);
+
+Matrixcd QR(const Matrixcd& A);
+
+Eigen::MatrixXd toEigen(Matrixd A);
+Eigen::MatrixXcd toEigen(Matrixcd A);
+Matrixd toQutree(Eigen::MatrixXd A);
+Matrixcd toQutree(Eigen::MatrixXcd A);
+
 
