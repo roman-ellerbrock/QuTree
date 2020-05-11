@@ -930,6 +930,32 @@ double Residual(Tensor<T> D, const Tensor<T>& B) {
 }
 
 template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& A) {
+	const TensorShape& shape = A.shape();
+	size_t diml = shape.lastBefore();
+	size_t dimr = shape.lastDimension();
+	Matrix<T> B(diml, dimr);
+	for (size_t j = 0; j < dimr; ++j) {
+		for (size_t i = 0; i < diml; ++i) {
+			B(i, j) = A(i, j);
+		}
+	}
+	return B;
+}
+
+template<typename T>
+Tensor<T> toTensor(const Matrix<T>& B) {
+	TensorShape shape({B.Dim1(), B.Dim2()});
+	Tensor<T> A(shape);
+	for (size_t j = 0; j < B.Dim2(); ++j) {
+		for (size_t i = 0; i < B.Dim1(); ++i) {
+			A(i, j) = B(i, j);
+		}
+	}
+	return A;
+}
+
+template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A) {
 	A.Write(os);
 	return os;

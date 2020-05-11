@@ -5,14 +5,31 @@
 #include "Util/RandomMatrices.h"
 
 namespace RandomMatrices {
-	Matrixcd GUE(size_t dim, mt19937& gen) {
-		Matrixcd r(dim, dim);
+
+	Matrixcd RandomRealGauss(size_t dim1, size_t dim2, mt19937& gen) {
+		Matrixcd g(dim1, dim2);
 		normal_distribution<double> dist(0., 1.);
-		for (size_t i = 0; i < dim; ++i) {
-			for (size_t j = 0; j < dim; ++j) {
-				r(j, i) = complex<double>(dist(gen), dist(gen));
+		for (size_t i = 0; i < dim2; ++i) {
+			for (size_t j = 0; j < dim1; ++j) {
+				g(j, i) = dist(gen);
 			}
 		}
+		return g;
+	}
+
+	Matrixcd RandomGauss(size_t dim1, size_t dim2, mt19937& gen) {
+		Matrixcd g(dim1, dim2);
+		normal_distribution<double> dist(0., 1.);
+		for (size_t i = 0; i < dim2; ++i) {
+			for (size_t j = 0; j < dim1; ++j) {
+				g(j, i) = complex<double>(dist(gen), dist(gen));
+			}
+		}
+		return g;
+	}
+
+	Matrixcd GUE(size_t dim, mt19937& gen) {
+		Matrixcd r = RandomGauss(dim, dim, gen);
 		return 0.5 * (r + r.Adjoint());
 	}
 
@@ -40,58 +57,45 @@ namespace RandomMatrices {
 	Matrixcd GUE(size_t dim1, size_t dim2, mt19937& gen) {
 		size_t dim = max(dim1, dim2);
 		auto G = GUE(dim, gen);
-		Matrixcd Grect(dim1, dim2);
-		for (size_t c = 0; c < dim2; ++c) {
-			for (size_t r = 0; r < dim1; ++r) {
-				Grect(r, c) = G(r, c);
-			}
-		}
+		auto Grect = Submatrix(G, dim1, dim2);
 		return Grect;
 	}
 
-	Matrixcd QR_viaDiag(const Matrixcd Y) {
-		/// Do Y = QR and return Q
-
-		auto YY = Y * Y.Adjoint();
-		auto x = Diagonalize(YY);
-		Matrixcd Q(Y.Dim1(), Y.Dim2());
-		size_t last = YY.Dim2() - 1;
-		for (size_t r = 0; r < Y.Dim1(); ++r) {
-			for (size_t c = 0; c < Y.Dim2(); ++c) {
-				Q(r, c) = x.first(r, last - c);
+	Matrixcd RandomProjector(size_t dim1, size_t dim2, mt19937& gen) {
+		/// Right hand side projector
+		auto P = RandomRealGauss(dim1, dim2, gen);
+//		P /= sqrt((double) dim2);
+		for (size_t i = 0; i < P.Dim1(); ++i) {
+			double norm = P.row(i).Norm();
+			for (size_t j = 0; j < P.Dim2(); ++j) {
+				P(i, j) /= norm;
 			}
 		}
-		return Q;
+		return P;
+	}
+
+	/// Build AP
+	Matrixcd GUEProjector(size_t dim1, size_t dim2, mt19937& gen) {
+		auto G = GUE(dim1, dim2, gen);
+		auto Q = QR(G);
+		return Submatrix(Q, dim1, dim2);
 	}
 
 	Matrixcd RandomQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen) {
 		assert(k_plus_p <= A.Dim2());
 		Matrixcd Omega = GUE(k_plus_p, A.Dim1(), gen);
 		Matrixcd Y = A * Omega.Adjoint();
-//		Matrixcd Q = Y;
-//		GramSchmidt(Q);
 		/// Y = QR
 		/// YY^ = QRR^Q^
-//		auto Q = QR_viaDiag(Y);
 		auto Q2 = QR(Y);
-//		Q.print();
-/*		cout << "Q2:\n";
-		Q2.print();
-		auto R = Q2.Adjoint() * Y;
-		cout << "R:\n";
-		R.print();*/
 
-		Matrixcd Q(Y.Dim1(), Y.Dim2());
-		for (size_t j = 0; j < Y.Dim2(); ++j) {
-			for (size_t i = 0; i < Y.Dim1(); ++i) {
-				Q(i, j) = Q2(i, j);
-			}
-		}
+		auto Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
 		return Q;
 	}
 
 	Matrixcd RandomProjection(const Matrixcd& A,
 		size_t rdim, mt19937& gen) {
+		assert(A.Dim1() == A.Dim2());
 		Matrixcd Q = RandomQ(A, rdim, gen);
 		return Q.Adjoint() * A * Q;
 	}
@@ -101,7 +105,7 @@ namespace RandomMatrices {
 		/**
 		 * \brief Diagonalize using random projection
 		 *
-		 * For a detailed description see Ref. [1].
+		 * For a detailed description see algorithm 5.3 in Ref. [1].
 		 *
 		 * [1] SIAM Rev., 53(2), 217–288. (72 pages)
 		 *
@@ -124,6 +128,51 @@ namespace RandomMatrices {
 		auto U = Q * V;
 
 		return {U, ew};
+	}
+
+	SVDcd svdRandom(const Matrixcd& A,
+		size_t rank, mt19937& gen) {
+		/**
+		 * \brief Perform a randomized SVD
+		 *
+		 * For a detailed description see algorithm 5.1 in Ref. [1].
+		 *
+		 * [1] SIAM Rev., 53(2), 217–288. (72 pages)
+		 *
+		 * */
+		auto Q = RandomQ(A, rank, gen);
+		auto B = Q.Adjoint() * A;
+		SVDcd Bsvd = svd(B);
+		auto& U = get<0>(Bsvd);
+		U = Q * U;
+		return Bsvd;
+	}
+
+	Vectord probabilitiyDist(const Matrixcd& A) {
+		auto tmp = A.diag();
+		size_t dim = min(A.Dim1(), A.Dim2());
+		Vectord p(dim);
+		for (size_t i = 0; i < dim; ++i) {
+			p(i) = pow(abs(tmp(i)), 2);
+		}
+		p /= sum(p);
+		return p;
+	}
+
+	double entropy(const Vectord& p) {
+		double S = 0;
+		for (size_t i = 0; i < p.Dim(); ++i) {
+			S -= p(i) * log(p(i));
+		}
+		return S;
+	}
+
+	double crossEntropy(const Vectord& p, const Vectord& q) {
+		double H = 0;
+		for (size_t i = 0; i < p.Dim(); ++i) {
+			H -= p(i) * log(q(i));
+		}
+		return H;
 	}
 }
 

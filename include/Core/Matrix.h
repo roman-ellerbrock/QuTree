@@ -152,6 +152,11 @@ public:
 	// Getter & Setter
 	//////////////////////////////////////////////////////////////////////
 
+	Vector<T> row(size_t i);
+	Vector<T> col(size_t i);
+	Vector<T> diag() const;
+
+
 	size_t Dim1() const { return dim1_; }
 
 	size_t Dim2() const { return dim2_; }
@@ -313,9 +318,17 @@ istream& operator>>(istream& is, Matrix<T>& A);
 
 Matrixcd QR(const Matrixcd& A);
 
+typedef tuple<Matrixcd, Matrixcd, Vectord> SVDcd;
+typedef tuple<Matrixd, Matrixd, Vectord> SVDd;
+
+SVDcd svd(const Matrixcd& A);
+Matrixcd toMatrix(const SVDcd& svd);
+
 Eigen::MatrixXd toEigen(Matrixd A);
 Eigen::MatrixXcd toEigen(Matrixcd A);
 Matrixd toQutree(Eigen::MatrixXd A);
 Matrixcd toQutree(Eigen::MatrixXcd A);
 
+template <typename T>
+Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2);
 

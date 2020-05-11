@@ -248,6 +248,15 @@ Vector<T> reverse(const Vector<T>& A) {
 }
 
 template<typename T>
+T sum(const Vector<T>& A) {
+	T s = 0.;
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		s+= A(i);
+	}
+	return s;
+}
+
+template<typename T>
 Vector<T> Regularize(Vector<T> A, double eps) {
 	for (size_t i = 0; i < A.Dim(); ++i) {
 		A(i) += eps * exp(-A(i) / eps);
@@ -264,3 +273,18 @@ Vector<T> Inverse(Vector<T> A, double eps) {
 	return A;
 }
 
+Vectord toQutree(const Eigen::VectorXd& v) {
+	Vectord vqutree(v.rows());
+	for (size_t i = 0; i < vqutree.Dim();++i) {
+		vqutree(i) = v(i);
+	}
+	return vqutree;
+}
+
+Vectorcd toQutree(const Eigen::VectorXcd& v) {
+	Vectorcd vqutree(v.rows());
+	for (size_t i = 0; i < vqutree.Dim();++i) {
+		vqutree(i) = v(i);
+	}
+	return vqutree;
+}
