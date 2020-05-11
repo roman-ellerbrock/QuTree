@@ -33,6 +33,7 @@ typedef double doub;
 template Vector<double> multAB<doub>(const Matrix<double>& A,
 	const Vector<double>& B);
 template Matrix<double> multAB(const Matrix<double>& A, const Matrix<double>& B);
+template Matrix<double> multATB(const Matrix<double>& A, const Matrix<double>& B);
 template Matrix<doub> addAB(const Matrix<doub>& A, const Matrix<doub>& B);
 template Matrix<doub> substAB(const Matrix<doub>& A, const Matrix<doub>& B);
 template Matrix<cd> multscalar<cd, doub>(const double sca,
