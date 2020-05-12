@@ -147,14 +147,14 @@ Vector<T> Vector<T>::operator-=(Vector b) {
 
 template<typename T>
 Vector<T> Vector<T>::operator+(const Vector<T> b) const {
-	Vector res(dim_);
+	Vector res(*this);
 	res += b;
 	return res;
 }
 
 template<typename T>
 Vector<T> Vector<T>::operator-(const Vector<T> b) const {
-	Vector res(dim_);
+	Vector res(*this);
 	res -= b;
 	return res;
 }
@@ -194,7 +194,7 @@ T Vector<T>::operator*(const Vector<T> b) const {
 	assert(b.Dim() == dim_);
 	T res = 0;
 	for (size_t i = 0; i < dim_; i++)
-		res += operator()(i) * b(i);
+		res += conj(operator()(i)) * b(i);
 	return res;
 }
 
@@ -221,6 +221,12 @@ T Sum(Vector<T>& a) {
 		sum += a(i);
 	}
 	return sum;
+}
+
+template <typename T>
+void normalize(Vector<T>& a) {
+	double norm = a.Norm();
+	a /= (norm);
 }
 
 template<typename T>

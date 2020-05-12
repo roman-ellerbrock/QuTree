@@ -389,6 +389,32 @@ void Matrix<T>::Zero() {
 //////////////////////////////////////////////////////////////////////
 // Non-Member functions
 //////////////////////////////////////////////////////////////////////
+
+template<typename T, typename U>
+Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
+	assert(B.Dim() == A.Dim2());
+	Vector<T> C(A.Dim1());
+	for (size_t i = 0; i < A.Dim1(); i++) {
+		for (size_t j = 0; j < A.Dim2(); j++) {
+			C(i) += A(i, j) * B(j);
+		}
+	}
+	return C;
+}
+
+template<typename T, typename U>
+Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
+	assert(B.Dim() == A.Dim2());
+	Vector<T> C(A.Dim1());
+	for (size_t i = 0; i < A.Dim1(); i++) {
+		for (size_t j = 0; j < A.Dim2(); j++) {
+			C(i) += conj(A(j, i)) * B(j);
+		}
+	}
+	return C;
+}
+
+
 template<typename T>
 Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 	assert(A.Dim2() == B.Dim1());
@@ -462,6 +488,19 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
 			C(i, j) = A(i, j) - B(i, j);
 	return C;
 }
+
+//////////////////////////////////////////////////////////////////////
+/// operator overloadings
+//////////////////////////////////////////////////////////////////////
+
+template <typename T, typename U>
+Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
+	return multAB(A, v);
+}
+
+//////////////////////////////////////////////////////////////////////
+/// Diagonalization framework
+//////////////////////////////////////////////////////////////////////
 
 template<typename T>
 void Diagonalize(Matrix<T>& trafo, Vector<double> & ev, const Matrix<T>& B) {
@@ -570,30 +609,6 @@ Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 	assert(A.Dim1() == A.Dim2());
 	Matrix<T> C(multAB(A, B));
 	return multATB(B, C);
-}
-
-template<typename T, typename U>
-Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.Dim2());
-	Vector<T> C(A.Dim1());
-	for (size_t i = 0; i < A.Dim1(); i++) {
-		for (size_t j = 0; j < A.Dim2(); j++) {
-			C(i) += A(i, j) * B(j);
-		}
-	}
-	return C;
-}
-
-template<typename T, typename U>
-Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.Dim2());
-	Vector<T> C(A.Dim1());
-	for (size_t i = 0; i < A.Dim1(); i++) {
-		for (size_t j = 0; j < A.Dim2(); j++) {
-			C(i) += conj(A(j, i)) * B(j);
-		}
-	}
-	return C;
 }
 
 template<typename T>

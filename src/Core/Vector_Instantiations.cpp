@@ -10,6 +10,9 @@ typedef double d;
 template class Vector<double>;
 template class Vector<complex<double>>;
 
+template void normalize(Vectord& a);
+template void normalize(Vectorcd& a);
+
 template double Residual(const Vectord& A, const Vectord& B);
 template double Residual(const Vectorcd& A, const Vectorcd& B);
 

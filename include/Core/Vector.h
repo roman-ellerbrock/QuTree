@@ -95,6 +95,9 @@ protected:
 	size_t dim_;
 };
 
+template <typename T>
+void normalize(Vector<T>& a);
+
 template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 

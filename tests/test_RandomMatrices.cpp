@@ -176,7 +176,7 @@ SUITE (RMT) {
 		auto U1 = RandomMatrices::GUE(dim, gen);
 		auto U2 = RandomMatrices::GUE(dim, gen);
 		auto A = U1 * U2;
-		A /= 1. *A.Dim1();
+		A /= 1. * A.Dim1();
 		/// B = A * P
 		auto P = RandomProjector(A.Dim2(), rank, gen);
 		auto B = A * P;
@@ -190,6 +190,69 @@ SUITE (RMT) {
 		}
 		avg /= 1. * A.Dim1();
 		CHECK_CLOSE(0., avg, 1e-2);
+
+	}
+
+	TEST(Krylov) {
+		size_t dim = 100;
+		size_t rank = 20;
+		normal_distribution<double> dist;
+		mt19937 gen(2343854);
+
+		/// Build a test matrix
+		Vectord ew(dim);
+		auto U1 = RandomMatrices::GUE(dim, gen);
+		auto U2 = RandomMatrices::GUE(dim, gen);
+/*		for (size_t r = 0; r < rank; ++r) {
+			ew(r) = 1.;
+		}*/
+		for (size_t r = 0; r < dim; ++r) {
+			ew(r) = 1./(r + 1.);
+		}
+		SVDcd x(U1, U2, ew);
+		auto A = toMatrix(x);
+		A /= A.Trace();
+
+		/// Build a start vector
+		Vectorcd r(dim);
+		Vectorcd r2(dim);
+		for (size_t i = 0; i < dim; ++i) {
+			r(i) = dist(gen);
+			r2(i) = dist(gen);
+		}
+
+		auto space = RandomMatrices::BuildKrylovSpace(r, A, rank);
+		for (size_t i = 0; i < space.size(); ++i) {
+			for (size_t j = 0; j < space.size(); ++j) {
+				double dot = abs(space[i] * space[j]);
+				if (i == j) {
+					CHECK_CLOSE(1., dot, 1e-10);
+				} else {
+					CHECK_CLOSE(0., dot, 1e-10);
+				}
+			}
+		}
+		auto P = toMatrix(space);
+//		auto P = RandomProjector(dim, rank, gen);
+//		auto P = RandomGauss(dim, rank, gen);
+		auto PP = P * P.Adjoint();
+
+		/// CHECK moment
+		auto y = r2;
+		for (size_t i = 0; i < space.size(); ++i) {
+			normalize(y);
+			auto PPy = y;
+			PPy = PP * PPy;
+			normalize(PPy);
+			cout << "Residual: " << Residual(y, PPy) << endl;
+			y = A * y;
+		}
+
+		auto PPA = PP * A;
+		cout << "entropy(A) = " << entropy(A) << endl;
+		cout << "entropy(PP * A) = " << entropy(PPA) << endl;
+		cout << "cross-entropy(PP* A,  A) = " << crossEntropy(PPA, A) << endl;
+		cout << "cross-entropy-diff(PP* A,  A) = " << crossEntropyDifference(PPA, A) << endl;
 
 	}
 }

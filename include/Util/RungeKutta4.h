@@ -28,6 +28,7 @@ namespace RungeKutta4 {
 		while (t + 1e-7 < t_end) {
 			h = std::min(h, t_end - t);
 			step(t, y, h, I);
+			I.summary(t, y);
 		}
 	}
 

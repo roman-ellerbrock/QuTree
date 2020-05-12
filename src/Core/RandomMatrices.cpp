@@ -28,6 +28,24 @@ namespace RandomMatrices {
 		return g;
 	}
 
+	Matrixcd randomSparse(size_t dim1, size_t dim2, mt19937& gen) {
+		Matrixcd ran(dim1, dim2);
+		uniform_real_distribution<double> dist(0., 1.);
+		for (size_t i = 0; i < dim2; ++i) {
+			for (size_t j = 0; j < dim1; ++j) {
+				double r = dist(gen);
+				if (r < 1./3.) {
+					ran(j, i) = 1.;
+				} else if (r < 2./3.) {
+					ran(j, i) = 0.;
+				} else {
+					ran(j, i) = -1.;
+				}
+			}
+		}
+		return ran;
+	}
+
 	Matrixcd GUE(size_t dim, mt19937& gen) {
 		Matrixcd r = RandomGauss(dim, dim, gen);
 		return 0.5 * (r + r.Adjoint());
@@ -83,7 +101,8 @@ namespace RandomMatrices {
 
 	Matrixcd RandomQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen) {
 		assert(k_plus_p <= A.Dim2());
-		Matrixcd Omega = GUE(k_plus_p, A.Dim1(), gen);
+		Matrixcd Omega = randomSparse(k_plus_p, A.Dim1(), gen);
+//		Matrixcd Omega = GUE(k_plus_p, A.Dim1(), gen);
 		Matrixcd Y = A * Omega.Adjoint();
 		/// Y = QR
 		/// YY^ = QRR^Q^
@@ -148,6 +167,10 @@ namespace RandomMatrices {
 		return Bsvd;
 	}
 
+//////////////////////////////////////////////////////////////
+/// entropy & cross entropy
+//////////////////////////////////////////////////////////////
+
 	Vectord probabilitiyDist(const Matrixcd& A) {
 		auto tmp = A.diag();
 		size_t dim = min(A.Dim1(), A.Dim2());
@@ -173,6 +196,73 @@ namespace RandomMatrices {
 			H -= p(i) * log(q(i));
 		}
 		return H;
+	}
+
+	double entropy(const Matrixcd& A) {
+		double S = 0.;
+		for (size_t i = 0; i < A.Dim1(); ++i) {
+			for (size_t j = 0; j < A.Dim2(); ++j) {
+				double p = pow(abs(A(i, j)), 2);
+				S -= p * log(p);
+			}
+		}
+		return S;
+	}
+
+	double crossEntropy(const Matrixcd& p, const Matrixcd& q) {
+		double H = 0.;
+		for (size_t i = 0; i < p.Dim1(); ++i) {
+			for (size_t j = 0; j < q.Dim2(); ++j) {
+				double pa = pow(abs(p(i, j)), 2);
+				double qa = pow(abs(q(i, j)), 2);
+				H -= pa * log(qa);
+			}
+		}
+		return H;
+	}
+
+	double crossEntropyDifference(const Matrixcd& p, const Matrixcd& q) {
+		double H = crossEntropy(p, q);
+		double S = entropy(p);
+		cout << "H=" << H << endl;
+		cout << "S=" << S << endl;
+		return (H - S);
+	}
+
+	template <typename T>
+	void GramSchmidt(Vector<T>& v, const vector<Vector<T>>& es) {
+		double conv = 0.;
+		for (const auto& e : es) {
+			T c = e * v;
+			v -= e * c;
+		}
+		normalize(v);
+	}
+
+	vector<Vectorcd> BuildKrylovSpace(Vectorcd x,
+		const Matrixcd& A, size_t dim_subspace) {
+		normalize(x);
+		vector<Vectorcd> vec({x});
+		for (size_t i = 0; i < dim_subspace; ++i) {
+			Vectorcd Av = A * vec[i];
+			GramSchmidt(Av, vec);
+			vec.emplace_back(Av);
+		}
+		return vec;
+	}
+
+	Matrixcd toMatrix(const vector<Vectorcd>& x) {
+		assert(!x.empty());
+		size_t dim1 = x.front().Dim();
+		size_t dim2 = x.size();
+		Matrixcd y(dim1, dim2);
+		for (size_t j = 0; j < dim2; ++j) {
+			const auto& a = x[j];
+			for (size_t i = 0; i < dim1; ++i) {
+				y(i, j) = a(i);
+			}
+		}
+		return y;
 	}
 }
 

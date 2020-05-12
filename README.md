@@ -14,6 +14,9 @@ Developers can get access to the cutting-edge package by using the `--HEAD` flag
 Subsequent builds can be upgraded by using the `--fetch-HEAD` flag.
 ```
 brew install --HEAD qu-tree
+```
+Subsequent builds can be upgraded by using the `--fetch-HEAD` flag.
+```
 brew upgrade --fetch-HEAD qu-tree
 ```
 
