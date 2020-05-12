@@ -223,9 +223,7 @@ namespace RandomMatrices {
 
 	double crossEntropyDifference(const Matrixcd& p, const Matrixcd& q) {
 		double H = crossEntropy(p, q);
-		double S = entropy(p);
-		cout << "H=" << H << endl;
-		cout << "S=" << S << endl;
+		double S = entropy(q);
 		return (H - S);
 	}
 

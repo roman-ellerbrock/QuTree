@@ -238,22 +238,24 @@ SUITE (RMT) {
 		auto PP = P * P.Adjoint();
 
 		/// CHECK moment
-		auto y = r2;
+		auto y = r;
 		for (size_t i = 0; i < space.size(); ++i) {
 			normalize(y);
 			auto PPy = y;
 			PPy = PP * PPy;
 			normalize(PPy);
-			cout << "Residual: " << Residual(y, PPy) << endl;
+			double res = Residual(y, PPy);
+			CHECK_CLOSE(0., res, 1e-12);
+//			cout << "Residual: " << res << endl;
 			y = A * y;
 		}
 
-		auto PPA = PP * A;
+/*		auto PPA = PP * A;
 		cout << "entropy(A) = " << entropy(A) << endl;
 		cout << "entropy(PP * A) = " << entropy(PPA) << endl;
 		cout << "cross-entropy(PP* A,  A) = " << crossEntropy(PPA, A) << endl;
 		cout << "cross-entropy-diff(PP* A,  A) = " << crossEntropyDifference(PPA, A) << endl;
-
+*/
 	}
 }
 
