@@ -10,7 +10,10 @@
 namespace RandomMatrices {
 
 	Matrixcd RandomRealGauss(size_t dim1, size_t dim2, mt19937& gen);
+
 	Matrixcd RandomGauss(size_t dim1, size_t dim2, mt19937& gen);
+
+	Vectorcd GaussVector(size_t dim, mt19937& gen);
 
 	Matrixcd RandomProjector(size_t dim1, size_t dim2, mt19937& gen);
 
@@ -47,12 +50,11 @@ namespace RandomMatrices {
 	double crossEntropy(const Matrixcd& p, const Matrixcd& q);
 	double crossEntropyDifference(const Matrixcd& p, const Matrixcd& q);
 
-
 	/// Krylov subspace stuff
 	vector<Vectorcd> BuildKrylovSpace(Vectorcd x,
-	const Matrixcd& A, size_t dim_subspace);
+		const Matrixcd& A, size_t dim_subspace);
 
-	template <typename T>
+	template<typename T>
 	void GramSchmidt(Vector<T>& v, const vector<Vector<T>>& es);
 
 	Matrixcd toMatrix(const vector<Vectorcd>& x);

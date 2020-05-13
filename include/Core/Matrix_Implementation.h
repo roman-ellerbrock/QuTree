@@ -489,6 +489,16 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
 	return C;
 }
 
+template<typename T>
+Matrix<T> Re(const Matrix<T>& A) {
+	for (size_t j = 0; j < A.Dim2(); ++j) {
+		for (size_t i = 0; i < A.Dim1(); ++i) {
+			A(i, j) = real(A(i, j));
+		}
+	}
+	return A;
+}
+
 //////////////////////////////////////////////////////////////////////
 /// operator overloadings
 //////////////////////////////////////////////////////////////////////

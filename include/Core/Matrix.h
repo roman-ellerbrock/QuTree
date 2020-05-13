@@ -219,6 +219,10 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B);
 template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 
+template<typename T>
+Matrix<T> Re(const Matrix<T>& A);
+
+
 //////////////////////////////////////////////////////////////////////
 /// operator overloadings
 //////////////////////////////////////////////////////////////////////

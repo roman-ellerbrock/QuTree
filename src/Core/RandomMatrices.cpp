@@ -28,6 +28,15 @@ namespace RandomMatrices {
 		return g;
 	}
 
+	Vectorcd GaussVector(size_t dim, mt19937& gen) {
+		normal_distribution<double> dist;
+		Vectorcd r(dim);
+		for (size_t i = 0; i < dim; ++i) {
+			r(i) = dist(gen);
+		}
+		return r;
+	}
+
 	Matrixcd randomSparse(size_t dim1, size_t dim2, mt19937& gen) {
 		Matrixcd ran(dim1, dim2);
 		uniform_real_distribution<double> dist(0., 1.);
@@ -199,26 +208,11 @@ namespace RandomMatrices {
 	}
 
 	double entropy(const Matrixcd& A) {
-		double S = 0.;
-		for (size_t i = 0; i < A.Dim1(); ++i) {
-			for (size_t j = 0; j < A.Dim2(); ++j) {
-				double p = pow(abs(A(i, j)), 2);
-				S -= p * log(p);
-			}
-		}
-		return S;
+		return entropy(probabilitiyDist(A));
 	}
 
 	double crossEntropy(const Matrixcd& p, const Matrixcd& q) {
-		double H = 0.;
-		for (size_t i = 0; i < p.Dim1(); ++i) {
-			for (size_t j = 0; j < q.Dim2(); ++j) {
-				double pa = pow(abs(p(i, j)), 2);
-				double qa = pow(abs(q(i, j)), 2);
-				H -= pa * log(qa);
-			}
-		}
-		return H;
+		return crossEntropy(probabilitiyDist(p), probabilitiyDist(q));
 	}
 
 	double crossEntropyDifference(const Matrixcd& p, const Matrixcd& q) {
