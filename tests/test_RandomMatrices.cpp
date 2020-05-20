@@ -3,6 +3,7 @@
 //
 #include "UnitTest++/UnitTest++.h"
 #include "Util/RandomMatrices.h"
+#include "Core/Matrix_Extension.h"
 
 
 SUITE (RMT) {
@@ -13,7 +14,7 @@ SUITE (RMT) {
 		for (size_t i = rank; i < ew.Dim(); ++i) {
 			ew(i) = 0.;
 		}
-		return BuildMatrix(SpectralDecompositioncd({x.first, ew}));
+		return toMatrix(SpectralDecompositioncd({x.first, ew}));
 	}
 
 	TEST (LowRankDiagonalization) {
@@ -30,7 +31,7 @@ SUITE (RMT) {
 			ew(r) = 1.;
 		}
 		SpectralDecompositioncd x(U, ew);
-		Matrixcd A = BuildMatrix(x);
+		Matrixcd A = toMatrix(x);
 		double diag = abs(A.Trace());
 		A /= diag;
 
@@ -58,7 +59,7 @@ SUITE (RMT) {
 			ew(r) = 1. / (2. * pow(r + 1., 1));
 		}
 		SpectralDecompositioncd x(U, ew);
-		Matrixcd A = BuildMatrix(x);
+		Matrixcd A = toMatrix(x);
 		double diag = abs(A.Trace());
 		A /= diag;
 
@@ -103,10 +104,10 @@ SUITE (RMT) {
 			ew(r) = 1. / (2. * log(r + 2.));
 		}
 		SpectralDecompositioncd y({U, ew});
-		Matrixcd A = BuildMatrix(y);
+		Matrixcd A = toMatrix(y);
 
 		auto x = RandomMatrices::DiagonalizeRandom(A, rank, p, gen);
-		auto Aprime = BuildMatrix(x);
+		auto Aprime = toMatrix(x);
 
 		auto Ared = BuildRankReduced(y, rank + p);
 
@@ -192,8 +193,9 @@ SUITE (RMT) {
 	}
 
 	TEST (Krylov) {
-		size_t dim = 100;
-		size_t rank = 30;
+		size_t dim = 128;
+		size_t rank = 20;
+//		uniform_real_distribution<double> dist(0., 1.);
 		normal_distribution<double> dist;
 		mt19937 gen(2343854);
 
@@ -205,26 +207,37 @@ SUITE (RMT) {
 //			ew(r) = 1. / (r + 1.);
 			ew(r) = dist(gen);
 		}
-		SVDcd x(U1, U2, ew);
+		SpectralDecompositioncd x(U1, ew);
 		auto A = toMatrix(x);
-		A /= A.Trace();
+		x = Diagonalize(A);
+		ew = x.second;
+		double shift = ew(0);
+		for (size_t i = 0; i < dim; ++i) {
+//			ew(i) -= shift;
+		}
+		for (size_t i = 0; i < dim; ++i) {
+//			ew(i) /= ew(dim - 1);
+		}
+		x.second = ew;
+		A = toMatrix(x);
+		A /= A.FrobeniusNorm();
 
 		/// Build a start vector
 		auto r = GaussVector(dim, gen);
 		auto r2 = GaussVector(dim, gen);
 
-//		auto B = A.Adjoint() * A;
 		auto space = RandomMatrices::BuildKrylovSpace(r, A, rank);
 		for (size_t i = 0; i < space.size(); ++i) {
 			for (size_t j = 0; j < space.size(); ++j) {
 				double dot = abs(space[i] * space[j]);
 				if (i == j) {
-						CHECK_CLOSE(1., dot, 1e-10);
+						CHECK_CLOSE(1., dot, 1e-9);
 				} else {
-						CHECK_CLOSE(0., dot, 1e-10);
+						CHECK_CLOSE(0., dot, 1e-9);
 				}
 			}
 		}
+
 		auto P = toMatrix(space);
 //		auto P = RandomProjector(dim, rank, gen);
 //		auto P = RandomGauss(dim, rank, gen);
@@ -238,16 +251,24 @@ SUITE (RMT) {
 			PPy = PP * PPy;
 			normalize(PPy);
 			double res = Residual(y, PPy);
-				CHECK_CLOSE(0., res, 1e-12);
-//			cout << "Residual: " << res << endl;
+				CHECK_CLOSE(0., res, 1e-8);
+			cout << "Residual: " << res << endl;
 			y = A * y;
 		}
 
 		if (true) {
 			auto PPA = PP * A;
+			PPA /= PPA.FrobeniusNorm();
+
+			auto Arr_x = reduceRank(x, rank);
+			auto Arr = toMatrix(Arr_x);
+			Arr /= PPA.FrobeniusNorm();
+
 			cout << "entropy(A) = " << entropy(A) << endl;
 			cout << "entropy(PP * A) = " << entropy(PPA) << endl;
+			cout << "entropy(Arr) = " << entropy(Arr) << endl;
 			cout << "cross-entropy(PP* A,  A) = " << crossEntropy(PPA, A) << endl;
+			cout << "cross-entropy(Arr,  A) = " << crossEntropy(Arr, A) << endl;
 			cout << "cross-entropy-diff(PP* A,  A) = " << crossEntropyDifference(PPA, A) << endl;
 		}
 	}

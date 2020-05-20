@@ -131,7 +131,7 @@ SUITE (Matrix) {
 		size_t dim = 10;
 		Matrixcd A = RandomMatrices::GUE(dim, gen);
 		auto x = Diagonalize(A);
-		Matrixcd B = BuildMatrix(x);
+		Matrixcd B = toMatrix(x);
 		auto residual = Residual(A, B);
 		CHECK_CLOSE(0., residual, eps);
 	}

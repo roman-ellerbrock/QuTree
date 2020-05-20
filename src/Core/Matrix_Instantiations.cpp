@@ -8,7 +8,10 @@ typedef complex<double> cd;
 typedef double doub;
 typedef double d;
 
-// Matrix instantiations
+///////////////////////////////////////////////////////////////
+/// Matrix class instantiations
+///////////////////////////////////////////////////////////////
+
 template class Matrix<double>;
 template class Matrix<complex<double>>;
 
@@ -26,6 +29,7 @@ template Matrix<double> multAB(const Matrix<double>& A, const Matrix<double>& B)
 template Matrix<cd> multAB(const Matrix<cd>& A, const Matrix<cd>& B);
 
 template Matrix<double> multATB(const Matrix<double>& A, const Matrix<double>& B);
+template Matrix<cd> multATB(const Matrix<cd>& A, const Matrix<cd>& B);
 
 template Matrix<cd> addAB(const Matrix<cd>& A, const Matrix<cd>& B);
 template Matrix<doub> addAB(const Matrix<doub>& A, const Matrix<doub>& B);
@@ -80,10 +84,12 @@ template SpectralDecompositiond sqrt(SpectralDecompositiond X);
 template SpectralDecompositioncd inverse(SpectralDecompositioncd X, double eps);
 template SpectralDecompositiond inverse(SpectralDecompositiond X, double eps);
 
-template Matrixcd BuildMatrix(const SpectralDecompositioncd& X);
-template Matrixd BuildMatrix(const SpectralDecompositiond& X);
+template Matrixcd toMatrix(const SpectralDecompositioncd& X);
+template Matrixd toMatrix(const SpectralDecompositiond& X);
 
 template Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps);
 template Matrixd BuildInverse(const SpectralDecompositiond& X, double eps);
 
+template SpectralDecomposition<double> reduceRank(const SpectralDecomposition<double>& x, size_t rank);
+template SpectralDecomposition<cd> reduceRank(const SpectralDecomposition<cd>& x, size_t rank);
 

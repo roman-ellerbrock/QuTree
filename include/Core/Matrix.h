@@ -277,7 +277,7 @@ pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
  * @return Re-constructed matrix
  */
 template <typename T>
-Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X);
+Matrix<T> toMatrix(const SpectralDecomposition<T>& X);
 
 /**
  * \brief Construct inverse matrix from SpectralDecomposition

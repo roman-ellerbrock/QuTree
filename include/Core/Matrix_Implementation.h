@@ -557,7 +557,7 @@ void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
 }
 
 template <typename T>
-Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X) {
+Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
 	assert(vec.Dim() > 0);
@@ -575,7 +575,7 @@ Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X) {
 template <typename T>
 Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
 	auto inv_vec = Inverse(X.second, eps);
-	return BuildMatrix<T>({X.first, inv_vec});
+	return toMatrix<T>({X.first, inv_vec});
 }
 
 template <typename T>
@@ -619,39 +619,6 @@ Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 	assert(A.Dim1() == A.Dim2());
 	Matrix<T> C(multAB(A, B));
 	return multATB(B, C);
-}
-
-template<typename T>
-Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
-	const Matrix<T>& AB) {
-	// Merge Block matrices into one matrix
-	// 	C =	(	A	AB	)
-	// 		(	AB	B	)
-	size_t n = A.Dim1();
-	size_t m = B.Dim1();
-	assert(n == AB.Dim1());
-	assert(m == AB.Dim2());
-	size_t N = m + n;
-
-	Matrix<T> C(N, N);
-	for (size_t i = 0; i < n; ++i) {
-		for (size_t j = 0; j < n; ++j) {
-			C(j, i) = A(j, i);
-		}
-	}
-	for (size_t i = 0; i < m; ++i) {
-		for (size_t j = 0; j < m; ++j) {
-			C(j + n, i + n) = B(j, i);
-		}
-	}
-	// Off diagonals
-	for (size_t i = 0; i < m; ++i) {
-		for (size_t j = 0; j < n; ++j) {
-			C(j, i + n) = AB(j, i);
-			C(i + n, j) = conj(AB(j, i));
-		}
-	}
-	return C;
 }
 
 template<typename T>
