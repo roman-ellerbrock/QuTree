@@ -22,6 +22,7 @@ set(QuTree_SOURCE_FILES
     src/TreeOperators/MultiLeafOperator.cpp
     src/TreeOperators/SumOfProductsOperator.cpp
     src/TreeOperators/TreeStructured/TreeSOP.cpp
+    src/TreeOperators/TreeStructured/MatrixListTree.cpp
     src/TreeShape/Leaf.cpp
     src/TreeShape/LeafTypes/DVRBasis.cpp
     src/TreeShape/LeafTypes/FFTGrid.cpp

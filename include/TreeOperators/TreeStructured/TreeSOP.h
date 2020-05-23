@@ -107,7 +107,8 @@ public:
 		return leafoperatorlibs[mode];
 	}
 
-	void push_back(const LeafOperatorLib& lib, const vector<string>& names) {
+	void push_back(const LeafOperatorLib& lib,
+		const vector<string>& names) {
 		assert(lib.size() == names.size());
 		leafoperatorlibs.push_back(lib);
 		leafoperatornames.push_back(names);
@@ -115,9 +116,10 @@ public:
 
 	void print(const Tree& tree) const;
 
-	vector<vector<string>> LeafOperatorLibNames() const { return leafoperatornames; }
+	vector<vector<string>> LeafOperatorLibNames() const {
+			return leafoperatornames;
+	}
 
-	size_t size()const { return attributes_.size(); }
 	bool empty()const { return attributes_.empty(); }
 
 private:

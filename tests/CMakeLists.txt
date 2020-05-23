@@ -1,9 +1,14 @@
+
+
+
 find_package(UnitTest++ QUIET)
+
 if (NOT UnitTest++_FOUND)
   message ( STATUS "UnitTest++ not found, falling back to PkgConfig" )
   include(FindPkgConfig)
   pkg_check_modules(UnitTest++ QUIET UnitTest++)
 endif()
+
 if (NOT UnitTest++_FOUND)
   message ( STATUS "UnitTest++ not found, switching to internal submodule" )
   execute_process(COMMAND git submodule update --init -- tests/external/unittest-cpp
@@ -23,6 +28,7 @@ set(QuTree_tests
         test_Operators.cpp
         test_TensorTreeBasis.cpp
         test_MatrixTree.cpp
+        test_MatrixListTree.cpp
         test_SparseMatrixTree.cpp
         test_RandomMatrices.cpp)
 
