@@ -8,7 +8,7 @@
 #include "TreeClasses/TensorTree.h"
 #include "TreeOperators/LeafMatrix.h"
 
-class TensorOperatorTree : public NodeAttribute<Tensorcd> {
+class TensorOperatorTree : public TensorTreecd {
 public:
 	TensorOperatorTree() = default;
 	explicit TensorOperatorTree(const Tree& tree);

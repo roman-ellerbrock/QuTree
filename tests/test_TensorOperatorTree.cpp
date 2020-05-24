@@ -129,13 +129,15 @@ SUITE(TensorOperatorTree) {
 		}
 
 		MatrixListTree Hmean = TreeFunctions::Contraction(Psi_, H_, Hrep, tree_);
-		MatrixTreecd rho = TreeFunctions::Contraction(Psi_, tree_, true);
 
 		for (const Node& node : tree_) {
 			if (!node.isToplayer()) {
 				const MatrixList& hmeans = Hmean[node];
 				size_t dim = hmeans[0].Dim1();
-					CHECK_CLOSE(0., Residual(hmeans[0], rho[node]), eps);
+					CHECK_CLOSE(1., abs(hmeans[0](0,0)), eps);
+					CHECK_CLOSE(0., abs(hmeans[0](1,0)), eps);
+					CHECK_CLOSE(0., abs(hmeans[0](0,1)), eps);
+					CHECK_CLOSE(0., abs(hmeans[0](1,1)), eps);
 					CHECK_CLOSE(0., Residual(hmeans[1], Matrixcd(dim, dim)), eps);
 			}
 		}
