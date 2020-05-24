@@ -9,6 +9,7 @@
 #include "Util/RandomMatrices.h"
 #include "TreeShape/TreeFactory.h"
 #include "TreeClasses/TreeTransformation.h"
+#include "TreeClasses/TensorTreeFunctions.h"
 
 SUITE (MatrixTree) {
 	double eps = 1e-8;
@@ -150,6 +151,8 @@ SUITE (MatrixTreeFunctions) {
 }
 
 SUITE(TreeTransformations) {
+	double eps = 1e-8;
+
 	TEST(ContractionNormalized) {
 		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
 		// Increase number of states
@@ -169,7 +172,29 @@ SUITE(TreeTransformations) {
 			auto r = Residual(deltaij, I);
 			CHECK_CLOSE(0., r, 1e-7);
 		}
+	}
 
+	TEST(CompressTensorTree) {
+		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		mt19937 gen(1993);
+		TensorTreecd Psi(gen, tree);
+		CanonicalTransformation(Psi, tree, true);
+		MatrixTreecd Rho = TreeFunctions::Contraction(Psi, tree, true);
+		SpectralDecompositionTreecd X(Rho, tree);
 
+		TreeFunctions::Adjust(Psi, tree, X, 1e-7);
+		for (const Node& node : tree) {
+			const TensorShape& shape = node.shape();
+			/// Check Node TensorShape
+			if (!node.isBottomlayer()) {
+				CHECK_EQUAL(1, shape.totalDimension());
+			} else {
+				CHECK_EQUAL(4, shape.totalDimension());
+			}
+			/// Check Tensor
+			Tensorcd Phiacc(shape);
+			Phiacc(0) = 1.;
+				CHECK_CLOSE(0., Residual(Psi[node], Phiacc), eps);
+		}
 	}
 }

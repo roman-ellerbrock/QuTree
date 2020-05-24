@@ -354,10 +354,14 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	size_t before = shape_.before(mode);
 	size_t after = shape_.after(mode);
 	size_t minactive = min(active, shape_[mode]);
+	/// Offsets are used to add new & delete functions at first indices.
+	/// This ensures low-to-high occupancy convention.
+	size_t offset_old = shape_[mode] - minactive;
+	size_t offset_new = active - minactive;
 	for (size_t l = 0; l < after; l++) {
 		for (size_t j = 0; j < minactive; j++) {
 			for (size_t i = 0; i < before; i++) {
-				newT(i, j, l, mode) = operator()(i, j, l, mode);
+				newT(i, j + offset_new, l, mode) = operator()(i, j + offset_old, l, mode);
 			}
 		}
 	}

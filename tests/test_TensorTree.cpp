@@ -45,8 +45,6 @@ SUITE (TensorTree) {
 			CHECK_EQUAL(tree.nNodes(), Psi.size());
 	}
 
-
-
 	TEST (TreeTest) {
 		Tree tree = TreeFactory::BalancedTree(12, 5, 2);
 		TensorTreecd Psi(tree);
@@ -56,7 +54,6 @@ SUITE (TensorTree) {
 		for (const Node& node : tree) {
 			Tensorcd& A = Psi[node];
 		}
-
 	}
 
 }
