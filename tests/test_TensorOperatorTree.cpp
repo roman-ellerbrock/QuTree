@@ -6,6 +6,7 @@
 #include "TreeShape/TreeFactory.h"
 #include "TreeOperators/TensorOperators/MatrixListTree.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
+#include "TreeClasses/TensorTreeFunctions.h"
 #include "TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h"
 #include <UnitTest++/UnitTest++.h>
 
@@ -139,6 +140,29 @@ SUITE(TensorOperatorTree) {
 					CHECK_CLOSE(0., abs(hmeans[0](0,1)), eps);
 					CHECK_CLOSE(0., abs(hmeans[0](1,1)), eps);
 					CHECK_CLOSE(0., Residual(hmeans[1], Matrixcd(dim, dim)), eps);
+			}
+		}
+	}
+
+	TEST_FIXTURE(HelperFactory, Compress) {
+		MatrixTreecd rho = TreeFunctions::Contraction(H_, optree_, true);
+		SpectralDecompositionTreecd X(rho, optree_);
+		CanonicalTransformation(H_, optree_, true);
+		TreeFunctions::Adjust(H_, optree_, X, 1e-7);
+		for (const Node& node : optree_) {
+			const TensorShape& shape = node.shape();
+				CHECK_EQUAL(3, shape.order());
+			if (node.isBottomlayer()) {
+					CHECK_EQUAL(4, shape.totalDimension());
+				Tensorcd Phi(shape);
+				Phi(0) = 1.;
+				Phi(3) = 1.;
+					CHECK_CLOSE(0., Residual(H_[node], Phi), eps);
+			} else {
+					CHECK_EQUAL(1, shape.totalDimension());
+				Tensorcd Phi(shape);
+				Phi(0) = 1.;
+					CHECK_CLOSE(0., Residual(H_[node], Phi), eps);
 			}
 		}
 	}

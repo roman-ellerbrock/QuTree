@@ -24,8 +24,9 @@ namespace TreeFunctions {
 
 		/// Adjust node content
 		TensorShape& shape = node.shape();
-		size_t node_idx = node.parentIdx();
-		shape.setDimension(n_occ, node_idx);
+		/// do not switch to node.ChildIdx here:
+		/// This does not work with TensorOperators
+		shape.setDimension(n_occ, shape.lastIdx());
 		Phi = Phi.AdjustDimensions(shape);
 
 		/// Adjust parent content
