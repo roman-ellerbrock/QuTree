@@ -11,6 +11,7 @@ set(QuTree_INCLUDE_FILES
     include/Core/Vector_Implementation.h
     include/Core/stdafx.h
     include/QuTree.h
+
     include/TreeClasses/EdgeAttribute.h
     include/TreeClasses/MatrixTree.h
     include/TreeClasses/MatrixTreeFunctions.h
@@ -28,6 +29,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeClasses/TensorTree.h
     include/TreeClasses/TensorTree_Implementation.h
     include/TreeClasses/TreeIO.h
+
     include/TreeOperators/LeafFunction.h
     include/TreeOperators/LeafMatrix.h
     include/TreeOperators/LeafOperator.h
@@ -36,6 +38,10 @@ set(QuTree_INCLUDE_FILES
     include/TreeOperators/SOPVector.h
     include/TreeOperators/SumOfProductsOperator.h
     include/TreeOperators/SumOfProductsOperator_Implementation.h
+    include/TreeOperators/TensorOperators/MatrixListTree.h
+    include/TreeOperators/TensorOperators/TensorOperatorTree.h
+    include/TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h
+
     include/TreeShape/AbstractNode.h
     include/TreeShape/Edge.h
     include/TreeShape/Leaf.h
@@ -50,6 +56,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeShape/NodePosition.h
     include/TreeShape/Tree.h
     include/TreeShape/TreeFactory.h
+
     include/Util/BS_integrator.h
     include/Util/FFT.h
     include/Util/FFTCooleyTukey.h

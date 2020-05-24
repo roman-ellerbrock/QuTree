@@ -27,8 +27,8 @@ set(QuTree_tests
         test_TensorTree.cpp
         test_Operators.cpp
         test_TensorTreeBasis.cpp
+        test_TensorOperatorTree.cpp
         test_MatrixTree.cpp
-        test_MatrixListTree.cpp
         test_SparseMatrixTree.cpp
         test_RandomMatrices.cpp)
 

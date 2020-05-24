@@ -32,7 +32,7 @@ SUITE(Integrators) {
 		y(1) = -1.;
 		double t = 0.;
 		double t_end = QM::two_pi;
-		double h = 0.0005;
+		double h = 0.005;
 		HOInterface I;
 
 		auto y_correct = y;

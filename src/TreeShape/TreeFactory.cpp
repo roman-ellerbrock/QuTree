@@ -106,6 +106,20 @@ namespace TreeFactory {
 		tree.ResetLeafModes();
 		return tree;
 	}
+
+	Tree OperatorTree(const Tree& tree) {
+		Tree otree(tree);
+		for (Node& node : otree) {
+			if (node.isBottomlayer()) {
+				TensorShape& shape = node.shape();
+				size_t dim = shape.lastBefore();
+				size_t ldim = shape.lastDimension();
+				TensorShape newshape({dim, dim, ldim});
+				node.shape() = newshape;
+			}
+		}
+		return otree;
+	}
 }
 
 
