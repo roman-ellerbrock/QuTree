@@ -2,6 +2,7 @@
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
 #include "Util/QMConstants.h"
+#include "Core/Tensor_Extension.h"
 
 using namespace std;
 
@@ -203,5 +204,31 @@ SUITE (Tensor) {
 		}
 	}
 
+	TEST (DirectSum) {
+		TensorShape Ashape({2, 2});
+		TensorShape Bshape({3, 3});
+		Tensord A(Ashape);
+		for (size_t I = 0; I < Ashape.totalDimension(); ++I) {
+			A(I) = I * I + 1;
+		}
+		Tensord B(Bshape);
+		for (size_t I = 0; I < Bshape.totalDimension(); ++I) {
+			B(I) = I + 1;
+		}
+		Tensord C = Tensor_Extension::DirectSum(A, B, true, true);
+		for (size_t I = 0; I < Ashape.totalDimension(); ++I) {
+			auto Ibreak = indexMapping(I, Ashape);
+			size_t L = indexMapping(Ibreak, C.shape());
+			CHECK_CLOSE(A(I), C(L), eps);
+		}
 
+		for (size_t I = 0; I < Bshape.totalDimension(); ++I) {
+			auto Ibreak = indexMapping(I, Bshape);
+			for (size_t k = 0; k < Ashape.order(); ++k) {
+				Ibreak[k] += Ashape[k];
+			}
+			size_t L = indexMapping(Ibreak, C.shape());
+				CHECK_CLOSE(B(I), C(L), eps);
+		}
+	}
 }

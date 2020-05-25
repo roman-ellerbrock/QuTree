@@ -48,6 +48,27 @@ namespace TreeFunctions {
 			}
 		}
 	}
+
+	template <typename T>
+	void ToplayerSum(Tensor<T>& A, const Tensor<T>& B) {
+		const TensorShape& Ashape = A.shape();
+		const TensorShape& Bshape = B.shape();
+		auto dims = Ashape.dimensions();
+		for (size_t i = 0; i < Bshape.order() - 1; ++i) {
+
+		}
+	}
+
+	template <typename T>
+	void DirectSum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi) {
+		for (Node& node : tree) {
+			Psi[node] = Tensor_Extension::DirectSum(Psi[node], Chi[node],
+				!node.isBottomlayer(), !node.isToplayer());
+			node.shape() = Psi[node].shape();
+		}
+		tree.print();
+		Psi.print(tree);
+	}
 }
 
 

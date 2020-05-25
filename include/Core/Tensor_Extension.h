@@ -29,6 +29,24 @@ namespace Tensor_Extension {
 	void WeightedOuterProductAdd(Matrix<T>& M, const Tensor<T>& A,
 		const Tensor<T>& B, const Matrix<T>& rho);
 
+	//////////////////////////////////////////////////////////////////////
+	/// Direct Sum + Product
+	//////////////////////////////////////////////////////////////////////
+
+	void shiftIndices(vector<size_t>& Ibreak, const TensorShape& shift,
+		bool beforeLast, bool last);
+
+	TensorShape DirectSum(const TensorShape& A, const TensorShape& B,
+		bool before, bool last);
+
+	template<typename T>
+	Tensor<T> DirectSum(const Tensor<T>& A, const Tensor<T>& B,
+		bool before, bool last);
+
+	//////////////////////////////////////////////////////////////////////
+	/// Random number routines for tensors
+	//////////////////////////////////////////////////////////////////////
+
 	// Generate randomly occupied Tensor
 	template<typename T>
 	void Generate(Tensor<T>& A, mt19937& gen);

@@ -9,6 +9,8 @@
 
 namespace TreeFunctions {
 
+	void DirectSum(TensorOperatorTree& H, Tree& tree, const TensorOperatorTree& G);
+
 	MatrixListTree Represent(const TensorTreecd& Psi, const TensorOperatorTree& H,
 		const Tree& tree);
 
