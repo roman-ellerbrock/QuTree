@@ -66,8 +66,6 @@ namespace TreeFunctions {
 				!node.isBottomlayer(), !node.isToplayer());
 			node.shape() = Psi[node].shape();
 		}
-		tree.print();
-		Psi.print(tree);
 	}
 }
 
