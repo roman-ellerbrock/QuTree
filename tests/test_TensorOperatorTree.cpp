@@ -10,7 +10,7 @@
 #include "TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h"
 #include <UnitTest++/UnitTest++.h>
 
-SUITE(TensorOperatorTree) {
+SUITE (TensorOperatorTree) {
 
 	double eps = 1e-7;
 
@@ -34,7 +34,7 @@ SUITE(TensorOperatorTree) {
 			Psi_ = TensorTreecd(rng_, tree_);
 
 			Matrixcd I = IdentityMatrixcd(2);
-			Matrixcd X(2,2);
+			Matrixcd X(2, 2);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;
 			LeafMatrixcd leafI(I);
@@ -51,17 +51,17 @@ SUITE(TensorOperatorTree) {
 		}
 	};
 
-	TEST(OperatorTree) {
+	TEST (OperatorTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 4);
 		Tree optree = TreeFactory::OperatorTree(tree);
 		for (const Node& node : optree) {
 			if (node.isBottomlayer()) {
-				CHECK_EQUAL(3, node.shape().order());
+					CHECK_EQUAL(3, node.shape().order());
 			}
 		}
 	}
 
-	TEST(TensorOperatorTree) {
+	TEST (TensorOperatorTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		Tree optree = TreeFactory::OperatorTree(tree);
 		TensorOperatorTree H(optree);
@@ -77,12 +77,12 @@ SUITE(TensorOperatorTree) {
 		}
 	}
 
-	TEST(SetLeafOperator) {
+	TEST (SetLeafOperator) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		Tree optree = TreeFactory::OperatorTree(tree);
 
 		Matrixcd I = IdentityMatrixcd(2);
-		Matrixcd X(2,2);
+		Matrixcd X(2, 2);
 		LeafMatrixcd leafI(I);
 		LeafMatrixcd leafX(X);
 
@@ -95,7 +95,7 @@ SUITE(TensorOperatorTree) {
 		}
 	}
 
-	TEST(MatrixListTree) {
+	TEST (MatrixListTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		mt19937 gen(1990);
 		TensorTreecd Psi(gen, tree);
@@ -103,7 +103,7 @@ SUITE(TensorOperatorTree) {
 		Tree optree = TreeFactory::OperatorTree(tree);
 
 		Matrixcd I = IdentityMatrixcd(2);
-		Matrixcd X(2,2);
+		Matrixcd X(2, 2);
 		X(0, 1) = 1.;
 		X(1, 0) = 1.;
 		LeafMatrixcd leafI(I);
@@ -118,15 +118,14 @@ SUITE(TensorOperatorTree) {
 		}
 
 		MatrixListTree Hrep = TreeFunctions::Represent(Psi, H, tree);
-
 	}
 
-	TEST_FIXTURE(HelperFactory, CNot) {
+	TEST_FIXTURE (HelperFactory, CNot) {
 		auto Hrep = TreeFunctions::Represent(Psi_, H_, tree_);
 		for (const Node& node : tree_) {
 			Matrixcd I = IdentityMatrixcd(node.shape().lastDimension());
 			const MatrixList& hs = Hrep[node];
-			CHECK_CLOSE(0., Residual(I, hs[0]), 1e-6);
+				CHECK_CLOSE(0., Residual(I, hs[0]), 1e-6);
 		}
 
 		MatrixListTree Hmean = TreeFunctions::Contraction(Psi_, H_, Hrep, tree_);
@@ -135,16 +134,16 @@ SUITE(TensorOperatorTree) {
 			if (!node.isToplayer()) {
 				const MatrixList& hmeans = Hmean[node];
 				size_t dim = hmeans[0].Dim1();
-					CHECK_CLOSE(1., abs(hmeans[0](0,0)), eps);
-					CHECK_CLOSE(0., abs(hmeans[0](1,0)), eps);
-					CHECK_CLOSE(0., abs(hmeans[0](0,1)), eps);
-					CHECK_CLOSE(0., abs(hmeans[0](1,1)), eps);
+					CHECK_CLOSE(1., abs(hmeans[0](0, 0)), eps);
+					CHECK_CLOSE(0., abs(hmeans[0](1, 0)), eps);
+					CHECK_CLOSE(0., abs(hmeans[0](0, 1)), eps);
+					CHECK_CLOSE(0., abs(hmeans[0](1, 1)), eps);
 					CHECK_CLOSE(0., Residual(hmeans[1], Matrixcd(dim, dim)), eps);
 			}
 		}
 	}
 
-	TEST_FIXTURE(HelperFactory, Compress) {
+	TEST_FIXTURE (HelperFactory, Compress) {
 		MatrixTreecd rho = TreeFunctions::Contraction(H_, optree_, true);
 		SpectralDecompositionTreecd X(rho, optree_);
 		CanonicalTransformation(H_, optree_, true);
@@ -167,6 +166,18 @@ SUITE(TensorOperatorTree) {
 		}
 	}
 
+	TEST_FIXTURE (HelperFactory, MLOInit) {
+		MLOcd M;
+		Matrixcd X(2, 2);
+		X(0, 1) = 1.;
+		X(1, 0) = 1.;
+		LeafMatrixcd leafX(X);
+		M.push_back(leafX, 0);
+		M.push_back(leafX, 1);
+		M.push_back(leafX, tree_.nLeaves() - 1);
 
+		TensorOperatorTree H(M, optree_);
+		H.print(optree_);
+	}
 }
 

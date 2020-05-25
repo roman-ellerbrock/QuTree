@@ -4,6 +4,25 @@
 
 #include "TreeOperators/TensorOperators/TensorOperatorTree.h"
 
+TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
+	const Tree& tree) : TensorOperatorTree(tree) {
+	Occupy(tree);
+	vector<size_t> idxs(tree.nLeaves());
+
+	for (size_t k = 0; k < M.size(); ++k) {
+		size_t mode = M.Mode(k);
+		const Leaf& leaf = tree.GetLeaf(mode);
+		const auto& node = (const Node&) leaf.Up();
+
+		const shared_ptr<LeafOperatorcd>& h = M[k];
+		Matrixcd hmat = toMatrix(*h, leaf);
+		hmat.print();
+		setLeafOperator(hmat, idxs[mode], node);
+		idxs[mode]++;
+	}
+
+}
+
 TensorOperatorTree::TensorOperatorTree(const Tree &tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
@@ -24,6 +43,10 @@ void TensorOperatorTree::Occupy(const Tree& tree) {
 		for (size_t i = 0; i < Phi.shape().lastDimension(); ++i) {
 			Phi(i, i) = 1.;
 		}
+		if (node.isBottomlayer()) {
+			size_t dim = sqrt(node.shape().lastBefore());
+			setLeafOperator(IdentityMatrixcd(dim), 0, node);
+		}
 	}
 }
 
@@ -34,11 +57,10 @@ void TensorOperatorTree::print(const Tree& tree) const {
 	}
 }
 
-void TensorOperatorTree::setLeafOperator(const LeafMatrixcd& M,
+void TensorOperatorTree::setLeafOperator(const Matrixcd& m,
 	size_t operator_idx, const Node& node) {
 
 	const TensorShape& shape = node.shape();
-	const Matrixcd& m = M.matrix();
 	assert(m.Dim1() * m.Dim2() == shape.lastBefore());
 	assert(operator_idx < shape.lastDimension());
 
@@ -47,6 +69,4 @@ void TensorOperatorTree::setLeafOperator(const LeafMatrixcd& M,
 		h(i, operator_idx) = m[i];
 	}
 }
-
-
 

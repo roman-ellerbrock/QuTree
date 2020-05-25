@@ -154,6 +154,39 @@ namespace Tensor_Extension {
 		return C;
 	}
 
+	TensorShape DirectProduct(const TensorShape& A, const TensorShape& B) {
+		assert(A.order() == B.order());
+		auto dims = A.dimensions();
+		for (size_t k = 0; k < A.order(); ++k) {
+			dims[k] *= B[k];
+		}
+		return TensorShape(dims);
+	}
+
+	size_t mergeIndex(size_t I, size_t J, const TensorShape& A, const TensorShape& B,
+		const TensorShape& C) {
+		auto Ibreak = indexMapping(I, A);
+		auto Jbreak = indexMapping(J, B);
+		auto Lbreak(Ibreak);
+		for (size_t k = 0; k < Ibreak.size(); ++k) {
+			Lbreak[k] = Jbreak[k] * A[k] + Ibreak[k];
+		}
+		return indexMapping(Lbreak, C);
+	}
+
+	template<typename T>
+	Tensor<T> DirectProduct(const Tensor<T>& A, const Tensor<T>& B) {
+		TensorShape shape = DirectProduct(A.shape(), B.shape());
+		Tensor<T> C(shape);
+		for (size_t J = 0; J < B.shape().totalDimension(); ++J) {
+			for (size_t I = 0; I < A.shape().totalDimension(); ++I) {
+				J = mergeIndex(I, J, A.shape(), B.shape());
+				C(J) = A(I) * B(J);
+			}
+		}
+		return C;
+	}
+
 	//////////////////////////////////////////////////////////////////////
 	/// Random number routines for tensors
 	//////////////////////////////////////////////////////////////////////

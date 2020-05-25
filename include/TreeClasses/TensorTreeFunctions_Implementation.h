@@ -74,6 +74,14 @@ namespace TreeFunctions {
 			node.shape() = Psi[node].shape();
 		}
 	}
+
+	template <typename T>
+	void Product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi) {
+		for (Node& node : tree) {
+			Psi[node] = Tensor_Extension::DirectProduct(Psi[node], Chi[node]);
+			node.shape() = Psi[node].shape();
+		}
+	}
 }
 
 

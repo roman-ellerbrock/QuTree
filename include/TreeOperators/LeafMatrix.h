@@ -5,6 +5,9 @@
 #define LEAFMATRIX_H
 #include "LeafOperator.h"
 #include "Core/Matrix.h"
+#include "TreeShape/Leaf.h"
+
+Matrixcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf);
 
 template<typename T>
 class LeafMatrix: public LeafOperator<T>

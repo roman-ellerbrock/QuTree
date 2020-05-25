@@ -43,6 +43,9 @@ namespace Tensor_Extension {
 	Tensor<T> DirectSum(const Tensor<T>& A, const Tensor<T>& B,
 		bool before, bool last);
 
+	template<typename T>
+	Tensor<T> DirectProduct(const Tensor<T>& A, const Tensor<T>& B);
+
 	//////////////////////////////////////////////////////////////////////
 	/// Random number routines for tensors
 	//////////////////////////////////////////////////////////////////////

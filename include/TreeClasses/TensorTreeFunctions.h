@@ -17,6 +17,10 @@ namespace TreeFunctions {
 	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
 		bool sharedLeafs = true, bool sumToplayer = true);
 
+	/// Perform a product of tensor trees.
+	template <typename T>
+	void Product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi);
+
 }
 
 #endif //TENSORTREEFUNCTIONS_H
