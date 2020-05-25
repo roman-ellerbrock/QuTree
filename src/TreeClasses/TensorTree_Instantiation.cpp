@@ -33,5 +33,5 @@ template void Orthonormal<d>(TensorTree<d>& Psi, const Tree& tree);
 template void TreeFunctions::Adjust(TensorTree<cd>& Psi, Tree& tree, const SpectralDecompositionTree<cd>& X, double eps);
 template void TreeFunctions::Adjust(TensorTree<d>& Psi, Tree& tree, const SpectralDecompositionTree<d>& X, double eps);
 
-template void TreeFunctions::DirectSum(TensorTree<d>& Psi, Tree& tree, const TensorTree<d>& Chi);
-template void TreeFunctions::DirectSum(TensorTree<cd>& Psi, Tree& tree, const TensorTree<cd>& Chi);
+template void TreeFunctions::Sum(TensorTree<d>& Psi, Tree& tree, const TensorTree<d>& Chi, bool sameLeafs, bool sumToplayer);
+template void TreeFunctions::Sum(TensorTree<cd>& Psi, Tree& tree, const TensorTree<cd>& Chi, bool sameLeafs, bool sumToplayer);

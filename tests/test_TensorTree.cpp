@@ -61,7 +61,7 @@ SUITE (TensorTree) {
 		mt19937 gen(234);
 		TensorTreecd Psi(gen, tree);
 		TensorTreecd Chi(gen, tree);
-		TreeFunctions::DirectSum(Psi, tree, Chi);
+		TreeFunctions::Sum(Psi, tree, Chi, true, true);
 
 		for (const Node& node : tree) {
 			const TensorShape& shape = node.shape();

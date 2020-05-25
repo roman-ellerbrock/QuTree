@@ -16,7 +16,7 @@ namespace TreeFunctions {
 		return n;
 	}
 
-	template <typename T>
+	template<typename T>
 	void AdjustNode(Tensor<T>& Phi, Tensor<T>& A, Node& node, Node& parent,
 		const SpectralDecomposition<T>& x, double eps) {
 		const Vectord& p = x.second;
@@ -35,10 +35,9 @@ namespace TreeFunctions {
 		Phi = Phi.AdjustDimensions(shape);
 		pshape.setDimension(n_occ, k);
 		A = A.AdjustDimensions(pshape);
-
 	}
 
-	template <typename T>
+	template<typename T>
 	void Adjust(TensorTree<T>& Psi, Tree& tree,
 		const SpectralDecompositionTree<T>& X, double eps) {
 		for (Node& node : tree) {
@@ -49,21 +48,29 @@ namespace TreeFunctions {
 		}
 	}
 
-	template <typename T>
-	void ToplayerSum(Tensor<T>& A, const Tensor<T>& B) {
-		const TensorShape& Ashape = A.shape();
-		const TensorShape& Bshape = B.shape();
-		auto dims = Ashape.dimensions();
-		for (size_t i = 0; i < Bshape.order() - 1; ++i) {
+	template<typename T>
+	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
+		bool sharedLeafs, bool sumToplayer) {
+		/**
+		 * \brief Perform sum on TensorTrees.
+		 *
+		 * This is the generalized sum for Tensor Trees. It performs a direct sum of the basis
+		 * and can perform either a regular sum (Psi + Chi) at the toplayer or a direct sum
+		 * at toplayer (Psi [+] Chi) depending on the boolean sumToplayer. The Boolean
+		 * sharedLeafs tells whether the LeafInterface is the same or not.
+		 *
+		 * @param Psi left element of sum
+		 * @param Chi left element of sum
+		 * @param tree Treestructure of Psi & Chi, will get changed during sum.
+		 * @param sharedLeafs Tells whether leaf basis is same for Psi & Chi.
+		 * @param sumToplayer If true, the toplayer will be a regular sum, otherwise a direct sum.
+		 */
 
-		}
-	}
-
-	template <typename T>
-	void DirectSum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi) {
 		for (Node& node : tree) {
+			bool before = !(node.isBottomlayer() && sharedLeafs);
+			bool last = !(node.isToplayer() && sumToplayer);
 			Psi[node] = Tensor_Extension::DirectSum(Psi[node], Chi[node],
-				!node.isBottomlayer(), !node.isToplayer());
+				before, last);
 			node.shape() = Psi[node].shape();
 		}
 	}

@@ -7,16 +7,15 @@
 #include "TreeClasses/SpectralDecompositionTree.h"
 
 namespace TreeFunctions {
+	/// Compress the TensorTree for a given accuracy.
 	template <typename T>
 	void Adjust(TensorTree<T>& Psi, Tree& tree,
 		const SpectralDecompositionTree<T>& X, double eps);
 
-
+	/// Perform a (generalized) sum of tensor trees. By default, a regular sum will be performed.
 	template <typename T>
-	void ToplayerSum(Tensor<T>& A, const Tensor<T>& B);
-
-	template <typename T>
-	void DirectSum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi);
+	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
+		bool sharedLeafs = true, bool sumToplayer = true);
 
 }
 
