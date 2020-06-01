@@ -16,5 +16,6 @@ RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 # Entrypoint to enable devtoolset-7 and git 2.18
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/bin/bash"]
+ENV BASH_ENV="/entrypoint.sh" \
+    ENV="/entrypoint.sh" \
+    PROMPT_COMMAND=". /entrypoint.sh"
