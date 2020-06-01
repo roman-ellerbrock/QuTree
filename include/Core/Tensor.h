@@ -45,6 +45,9 @@ public:
 
 	explicit Tensor(const string& filename);
 
+	// Construct Tensor from Matrix
+	explicit Tensor(const Matrix<T>& mat);
+
 	// Copy constructor
 	Tensor(const Tensor& old);
 
@@ -135,18 +138,19 @@ public:
 		return C;
 	}
 
-	void operator+=(const Tensor& A);
+	Tensor& operator+=(const Tensor& A);
 
-	void operator-=(const Tensor& A);
+	Tensor& operator-=(const Tensor& A);
 
-	void operator*=(T a);
+	Tensor& operator*=(T a);
 
-    friend Tensor operator*(T a, const Tensor<T>& A) {
+	Tensor& operator/=(T a);
+
+	friend Tensor operator*(T a, const Tensor<T>& A) {
         Tensor B(A);
         B *= a;
         return B;
     }
-    void operator/=(T a);
 
 	Tensor coeffprod(const Tensor& A, const Tensor& B);
 
@@ -276,6 +280,12 @@ Tensor<T> conj(Tensor<T> A);
 
 template<typename T>
 double Residual(Tensor<T> A, const Tensor<T>& B);
+
+template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& A);
+
+template<typename T>
+Tensor<T> toTensor(const Matrix<T>& B);
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A);

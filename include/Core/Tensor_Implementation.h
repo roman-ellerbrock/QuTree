@@ -12,7 +12,6 @@ template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_(new T[dim.totalDimension()]) {
 	if (InitZero) { Zero(); }
-
 }
 
 template<typename T>
@@ -271,33 +270,37 @@ void Tensor<T>::Read(const string& filename) {
 //////////////////////////////////////////////////////////
 
 template<typename T>
-void Tensor<T>::operator+=(const Tensor& A) {
+Tensor<T>& Tensor<T>::operator+=(const Tensor& A) {
 	assert(A.shape().totalDimension() == shape().totalDimension());
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
 		(*this)(i) += A(i);
 	}
+	return *this;
 }
 
 template<typename T>
-void Tensor<T>::operator-=(const Tensor& A) {
+Tensor<T>& Tensor<T>::operator-=(const Tensor& A) {
 	assert(A.shape().totalDimension() == shape().totalDimension());
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
 		(*this)(i) -= A(i);
 	}
+	return *this;
 }
 
 template<typename T>
-void Tensor<T>::operator*=(T a) {
+Tensor<T>& Tensor<T>::operator*=(T a) {
 	for (size_t i = 0; i < shape().totalDimension(); i++) {
 		operator()(i) = a * operator()(i);
 	}
+	return *this;
 }
 
 template<typename T>
-void Tensor<T>::operator/=(T a) {
+Tensor<T>& Tensor<T>::operator/=(T a) {
 	for (size_t i = 0; i < shape().totalDimension(); i++) {
 		operator()(i) = operator()(i) / a;
 	}
+	return *this;
 }
 
 template<typename T>
@@ -351,10 +354,14 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 	size_t before = shape_.before(mode);
 	size_t after = shape_.after(mode);
 	size_t minactive = min(active, shape_[mode]);
+	/// Offsets are used to add new & delete functions at first indices.
+	/// This ensures low-to-high occupancy convention.
+	size_t offset_old = shape_[mode] - minactive;
+	size_t offset_new = active - minactive;
 	for (size_t l = 0; l < after; l++) {
 		for (size_t j = 0; j < minactive; j++) {
 			for (size_t i = 0; i < before; i++) {
-				newT(i, j, l, mode) = operator()(i, j, l, mode);
+				newT(i, j + offset_new, l, mode) = operator()(i, j + offset_old, l, mode);
 			}
 		}
 	}
@@ -416,6 +423,17 @@ template<typename T>
 void Tensor<T>::Zero() {
 	for (size_t i = 0; i < shape_.totalDimension(); i++)
 		coeffs_[i] = 0;
+}
+
+template<typename T>
+Tensor<T>::Tensor(const Matrix<T>& mat)
+	: Tensor<T>({mat.Dim1(), mat.Dim2()}) {
+
+	for (size_t i = 0; i < mat.Dim2(); ++i) {
+		for (size_t k = 0; k < mat.Dim1(); ++k) {
+			this->operator[](indexMapping({k, i}, shape_)) = mat(k, i);
+		}
+	}
 }
 
 // Non-member functions
@@ -913,6 +931,32 @@ double Residual(Tensor<T> D, const Tensor<T>& B) {
 	D -= B;
 	auto S = D.DotProduct(D);
 	return S.FrobeniusNorm();
+}
+
+template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& A) {
+	const TensorShape& shape = A.shape();
+	size_t diml = shape.lastBefore();
+	size_t dimr = shape.lastDimension();
+	Matrix<T> B(diml, dimr);
+	for (size_t j = 0; j < dimr; ++j) {
+		for (size_t i = 0; i < diml; ++i) {
+			B(i, j) = A(i, j);
+		}
+	}
+	return B;
+}
+
+template<typename T>
+Tensor<T> toTensor(const Matrix<T>& B) {
+	TensorShape shape({B.Dim1(), B.Dim2()});
+	Tensor<T> A(shape);
+	for (size_t j = 0; j < B.Dim2(); ++j) {
+		for (size_t i = 0; i < B.Dim1(); ++i) {
+			A(i, j) = B(i, j);
+		}
+	}
+	return A;
 }
 
 template<typename T>

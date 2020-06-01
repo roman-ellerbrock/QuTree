@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-
+#include "Eigen/Dense"
 
 template<typename T>
 class Vector {
@@ -95,11 +95,20 @@ protected:
 	size_t dim_;
 };
 
+template <typename T>
+void normalize(Vector<T>& a);
+
 template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 
 template<typename T>
 double Residual(const Vector<T>& A, const Vector<T>& B);
+
+template<typename T>
+Vector<T> reverse(const Vector<T>& A);
+
+template<typename T>
+T sum(const Vector<T>& A);
 
 template<typename T>
 Vector<T> Regularize(Vector<T> A, double eps);
@@ -110,3 +119,7 @@ Vector<T> Inverse(Vector<T> A, double eps = 1e-7);
 typedef Vector<double> Vectord;
 
 typedef Vector<complex<double>> Vectorcd;
+
+Vectord toQutree(const Eigen::VectorXd& v);
+
+Vectorcd toQutree(const Eigen::VectorXcd& v);

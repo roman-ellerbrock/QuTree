@@ -3,9 +3,9 @@
 //
 #include "UnitTest++/UnitTest++.h"
 #include "TreeClasses/TensorTree.h"
-#include "TreeClasses/TensorTree_Implementation.h"
 #include "TreeShape/Tree.h"
 #include "TreeShape/TreeFactory.h"
+#include "TreeClasses/TensorTreeFunctions.h"
 
 SUITE (TensorTree) {
 
@@ -45,8 +45,6 @@ SUITE (TensorTree) {
 			CHECK_EQUAL(tree.nNodes(), Psi.size());
 	}
 
-
-
 	TEST (TreeTest) {
 		Tree tree = TreeFactory::BalancedTree(12, 5, 2);
 		TensorTreecd Psi(tree);
@@ -56,7 +54,33 @@ SUITE (TensorTree) {
 		for (const Node& node : tree) {
 			Tensorcd& A = Psi[node];
 		}
+	}
 
+	TEST(DirectSum) {
+		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
+		mt19937 gen(234);
+		TensorTreecd Psi(gen, tree);
+		TensorTreecd Chi(gen, tree);
+		TreeFunctions::Sum(Psi, tree, Chi, true, true);
+
+		for (const Node& node : tree) {
+			const TensorShape& shape = node.shape();
+			if (node.isToplayer()) {
+				CHECK_EQUAL(3, shape.order());
+				CHECK_EQUAL(1, shape.lastDimension());
+				CHECK_EQUAL(4*4, shape.lastBefore());
+			} else if (node.isBottomlayer()) {
+				CHECK_EQUAL(2, shape.order());
+				CHECK_EQUAL(4, shape.lastDimension());
+				CHECK_EQUAL(2, shape.lastBefore());
+
+			} else {
+				CHECK_EQUAL(3, shape.order());
+				CHECK_EQUAL(4, shape.lastDimension());
+				CHECK_EQUAL(4*4, shape.lastBefore());
+
+			}
+		}
 	}
 
 }

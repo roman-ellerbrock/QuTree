@@ -18,6 +18,11 @@ SUITE(Integrators) {
 			dy(1) = y(0); // dq
 			return dy;
 		}
+
+		void summary(double t, const Vectord& y) {
+/*			cout << t << "\t";
+			y.print();*/
+		}
 	};
 
 	TEST(RK4) {
@@ -26,8 +31,8 @@ SUITE(Integrators) {
 		y(0) = 0.;
 		y(1) = -1.;
 		double t = 0.;
-		double t_end = QM::two_pi*2./3.;
-		double h = 0.0005;
+		double t_end = QM::two_pi;
+		double h = 0.005;
 		HOInterface I;
 
 		auto y_correct = y;

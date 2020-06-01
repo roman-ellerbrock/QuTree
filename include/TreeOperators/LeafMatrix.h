@@ -17,13 +17,14 @@ class LeafMatrix: public LeafOperator<T>
 public:
 	LeafMatrix() = default;
 
-	explicit LeafMatrix(Matrix<T> h); // <- can be added if needed
+	explicit LeafMatrix(Matrix<T> h, bool adjoint = false); // <- can be added if needed
 
 	~LeafMatrix() = default;
 
 	virtual void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
 
+	const Matrix<T>& matrix()const { return h_; }
 private:
 	Matrix<T> h_;
 };

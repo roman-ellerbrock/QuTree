@@ -10,10 +10,19 @@ brew tap sseritan/qu-tree
 brew install qu-tree
 ```
 
-Or to install the cutting-edge tip:
+Developers can get access to the cutting-edge package by using the `--HEAD` flag to install directly from the HEAD of master.
+Subsequent builds can be upgraded by using the `--fetch-HEAD` flag.
 ```
 brew install --HEAD qu-tree
 ```
+Subsequent builds can be upgraded by using the `--fetch-HEAD` flag.
+```
+brew upgrade --fetch-HEAD qu-tree
+```
+
+For instructions on how to install from source, check out our [documentation](https://qutree.readthedocs.io/en/latest/).
+
+## Using QuTree
 
 After installation, QuTree can be easily used in downstream CMake projects.
 If installed to non-standard locations, make sure to set `QuTree_DIR` to the location of `QuTreeConfig.cmake`.

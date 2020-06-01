@@ -70,7 +70,7 @@ template<typename T>
 MatrixTree<T> to_matrixtree(const SpectralDecompositionTree<T>& X, const Tree& tree) {
 	MatrixTree<T> mattree(tree);
 	for (const Node& node : tree) {
-		mattree[node] = BuildMatrix(X[node]);
+		mattree[node] = toMatrix(X[node]);
 	}
 	return mattree;
 }

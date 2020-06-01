@@ -25,6 +25,8 @@ template Tensor<cd> ProjectOrthogonal<cd>(const Tensor<cd>& A, const Tensor<cd>&
 template void multAdd<cd, cd>(Tensor<cd>& A, const Tensor<cd>& B, cd coeff);
 template Tensor<cd> conj<cd>(Tensor<cd> A);
 template double Residual(Tensorcd A, const Tensorcd& B);
+template Matrix<cd> toMatrix(const Tensor<cd>& A);
+template Tensor<cd> toTensor(const Matrix<cd>& B);
 template void TensorContraction<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t before, size_t active1, size_t active2, size_t behind);
 template void MatrixTensor<cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
 template Matrix<cd> Contraction(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
@@ -53,6 +55,8 @@ template void multStateAB<doub, doub>(Tensor<double>& C, const Matrix<double>& A
 template void multAdd<doub, doub>(Tensor<double>& A, const Tensor<double>& B, doub coeff);
 template Tensor<double> conj<double>(Tensor<double> A);
 template double Residual(Tensord A, const Tensord& B);
+template Matrix<double> toMatrix(const Tensor<double>& A);
+template Tensor<double> toTensor(const Matrix<double>& B);
 template void TensorContraction<doub>(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t before, size_t active1, size_t active2, size_t behind);
 template void MatrixTensor<doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
 template Matrix<doub> Contraction(const Tensor<doub>& A, const Tensor<doub>& B, size_t k);

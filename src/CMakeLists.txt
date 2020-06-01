@@ -8,6 +8,7 @@ set(QuTree_SOURCE_FILES
     src/Core/Tensor_Instantiations.cpp
     src/Core/Vector_Instantiations.cpp
     src/Core/stdafx.cpp
+
     src/TreeClasses/MatrixTree.cpp
     src/TreeClasses/MatrixTreeFunctions.cpp
     src/TreeClasses/TreeTransformations.cpp
@@ -17,10 +18,16 @@ set(QuTree_SOURCE_FILES
     src/TreeClasses/SpectralDecompositionTree.cpp
     src/TreeClasses/TensorTree_Instantiation.cpp
     src/TreeClasses/TreeIO.cpp
+
     src/TreeOperators/LeafFunction.cpp
     src/TreeOperators/LeafMatrix.cpp
     src/TreeOperators/MultiLeafOperator.cpp
     src/TreeOperators/SumOfProductsOperator.cpp
+    src/TreeOperators/TreeStructured/TreeSOP.cpp
+    src/TreeOperators/TensorOperators/MatrixListTree.cpp
+    src/TreeOperators/TensorOperators/TensorOperatorTree.cpp
+    src/TreeOperators/TensorOperators/TensorOperatorTreeFunctions.cpp
+
     src/TreeShape/Leaf.cpp
     src/TreeShape/LeafTypes/DVRBasis.cpp
     src/TreeShape/LeafTypes/FFTGrid.cpp
@@ -32,8 +39,11 @@ set(QuTree_SOURCE_FILES
     src/TreeShape/NodePosition.cpp
     src/TreeShape/Tree.cpp
     src/TreeShape/TreeFactory.cpp
+
     src/Util/FFT.cpp
     src/Util/SimultaneousDiagonalization.cpp
+    src/Util/string_ext.cpp
     src/Util/WeightedSimultaneousDiagonalization.cpp
     src/Util/long_integer.cpp
-    )
+)
+

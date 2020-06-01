@@ -147,14 +147,14 @@ Vector<T> Vector<T>::operator-=(Vector b) {
 
 template<typename T>
 Vector<T> Vector<T>::operator+(const Vector<T> b) const {
-	Vector res(dim_);
+	Vector res(*this);
 	res += b;
 	return res;
 }
 
 template<typename T>
 Vector<T> Vector<T>::operator-(const Vector<T> b) const {
-	Vector res(dim_);
+	Vector res(*this);
 	res -= b;
 	return res;
 }
@@ -194,7 +194,7 @@ T Vector<T>::operator*(const Vector<T> b) const {
 	assert(b.Dim() == dim_);
 	T res = 0;
 	for (size_t i = 0; i < dim_; i++)
-		res += operator()(i) * b(i);
+		res += conj(operator()(i)) * b(i);
 	return res;
 }
 
@@ -223,6 +223,12 @@ T Sum(Vector<T>& a) {
 	return sum;
 }
 
+template <typename T>
+void normalize(Vector<T>& a) {
+	double norm = a.Norm();
+	a /= (norm);
+}
+
 template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
 	double distance = 0;
@@ -236,6 +242,24 @@ double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
 template<typename T>
 double Residual(const Vector<T>& A, const Vector<T>& B) {
 	return euclidean_distance(A, B);
+}
+
+template<typename T>
+Vector<T> reverse(const Vector<T>& A) {
+	Vector<T> B(A.Dim());
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		B(A.Dim() - 1 - i) = A(i);
+	}
+	return B;
+}
+
+template<typename T>
+T sum(const Vector<T>& A) {
+	T s = 0.;
+	for (size_t i = 0; i < A.Dim(); ++i) {
+		s+= A(i);
+	}
+	return s;
 }
 
 template<typename T>
@@ -255,3 +279,18 @@ Vector<T> Inverse(Vector<T> A, double eps) {
 	return A;
 }
 
+Vectord toQutree(const Eigen::VectorXd& v) {
+	Vectord vqutree(v.rows());
+	for (size_t i = 0; i < vqutree.Dim();++i) {
+		vqutree(i) = v(i);
+	}
+	return vqutree;
+}
+
+Vectorcd toQutree(const Eigen::VectorXcd& v) {
+	Vectorcd vqutree(v.rows());
+	for (size_t i = 0; i < vqutree.Dim();++i) {
+		vqutree(i) = v(i);
+	}
+	return vqutree;
+}

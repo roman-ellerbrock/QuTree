@@ -33,10 +33,19 @@ public:
 	/// Default destructor
 	~MultiLeafOperator() = default;
 
+	MultiLeafOperator(const shared_ptr<LeafOperator<T>>& h, size_t mode) {
+		push_back(h, mode);
+	}
+
 	/// Construct a MLO from a single SPO
 	MultiLeafOperator(const LeafMatrix<T>& h, size_t mode_x)
 		: MultiLeafOperator() {
 		push_back(h, mode_x);
+	}
+
+	MultiLeafOperator(const Matrix<T> h, size_t mode, size_t adjoint = false)
+		: MultiLeafOperator() {
+		push_back(h, mode, adjoint);
 	}
 
 	/// Construct a MLO from a single RefSPO
@@ -66,22 +75,32 @@ public:
 	}
 
 	void push_back(const LeafMatrix<T>& h, size_t mode) {
-		auto* h_ptr = new LeafMatrix<T>(h);
-		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(h_ptr));
-		targetLeaves_.emplace_back(mode);
+		push_back(make_shared<LeafMatrix<T>>(h), mode);
+	}
+
+	void push_back(const Matrix<T>& h, size_t mode, bool adjoint = false) {
+		if (!adjoint) {
+			push_back(make_shared<LeafMatrix<T>>(h), mode);
+		} else {
+			push_back(make_shared<LeafMatrix<T>>(h.Adjoint()), mode);
+		}
 	}
 
 	/// Push back a RefSPO to the MLO
-	void push_back(const LeafFunction<T>& h, size_t mode_x) {
-		auto *spo = new LeafFunction<T>(h);
-		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
-		targetLeaves_.push_back(mode_x);
+	void push_back(const LeafFunction<T>& h, size_t mode) {
+		push_back(make_shared<LeafFunction<T>>(h), mode);
 	}
 
-	void push_back(const LeafFun<T>& h_f, size_t mode_x) {
-		auto *spo = new LeafFunction<T>(h_f);
-		leafOperators_.push_back(shared_ptr<LeafOperator<T>>(spo));
-		targetLeaves_.push_back(mode_x);
+	void push_back(const LeafFun<T>& h, size_t mode) {
+		push_back(make_shared<LeafFunction<T>>(h), mode);
+	}
+
+	void push_back(const LeafFunPair<T>& hs, size_t mode, bool adjoint = false) {
+		if (adjoint) {
+			push_back(hs.second, mode);
+		} else {
+			push_back(hs.first, mode);
+		}
 	}
 
 	/// Access the i-th SPO in the MLO

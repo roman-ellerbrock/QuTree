@@ -131,7 +131,7 @@ SUITE (Matrix) {
 		size_t dim = 10;
 		Matrixcd A = RandomMatrices::GUE(dim, gen);
 		auto x = Diagonalize(A);
-		Matrixcd B = BuildMatrix(x);
+		Matrixcd B = toMatrix(x);
 		auto residual = Residual(A, B);
 		CHECK_CLOSE(0., residual, eps);
 	}
@@ -149,5 +149,14 @@ SUITE (Matrix) {
 		Matrixcd I = IdentityMatrix<complex<double>>(A.Dim2());
 		auto residual = Residual(I, I_test);
 		CHECK_CLOSE(0., residual, eps);
+	}
+
+	TEST(svd) {
+		mt19937 gen(1293123);
+		size_t dim = 20;
+		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		auto Asvd = svd(A);
+		auto B = toMatrix(Asvd);
+		CHECK_CLOSE(0., Residual(A, B), 1e-8);
 	}
 }

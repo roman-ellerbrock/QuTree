@@ -90,6 +90,30 @@ inline T& Matrix<T>::operator()(const size_t i, const size_t j) {
 }
 
 //////////////////////////////////////////////////////////////////////
+// Getter & Setters
+//////////////////////////////////////////////////////////////////////
+
+template<typename T>
+Vector<T> Matrix<T>::row(size_t r) {
+	assert(r < dim1_);
+	Vector<T> v(dim2_);
+	for (size_t c = 0; c < dim2_; ++c) {
+		v(c) = operator()(r, c);
+	}
+	return v;
+}
+
+template<typename T>
+Vector<T> Matrix<T>::col(size_t c) {
+	assert(c < dim2_);
+	Vector<T> v(dim2_);
+	for (size_t r = 0; r < dim1_; ++r) {
+		v(r) = operator()(r, c);
+	}
+	return v;
+}
+
+//////////////////////////////////////////////////////////////////////
 // Fundamental Math operators
 //////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -174,20 +198,30 @@ T Matrix<T>::Trace() const {
 
 template<typename T>
 Matrix<T> Matrix<T>::Adjoint() const {
-	Matrix B(dim1_, dim2_);
-	for (size_t i = 0; i < dim1_; i++)
-		for (size_t j = 0; j < dim2_; j++)
+	Matrix B(dim2_, dim1_);
+	for (size_t i = 0; i < dim2_; i++)
+		for (size_t j = 0; j < dim1_; j++)
 			B(i, j) = conjugate(operator()(j, i));
 	return B;
 }
 
 template<typename T>
 Matrix<T> Matrix<T>::Transpose() const {
-	Matrix B(dim1_, dim2_);
-	for (size_t i = 0; i < dim1_; i++)
-		for (size_t j = 0; j < dim2_; j++)
+	Matrix B(dim2_, dim1_);
+	for (size_t i = 0; i < dim2_; i++)
+		for (size_t j = 0; j < dim1_; j++)
 			B(i, j) = operator()(j, i);
 	return B;
+}
+
+template<typename T>
+Vector<T> Matrix<T>::diag() const {
+	size_t dim = min(dim1_, dim2_);
+	Vector<T> d(dim);
+	for (size_t i = 0; i < dim; ++i) {
+		d(i) = this->operator()(i, i);
+	}
+	return d;
 }
 
 template<typename T>
@@ -355,6 +389,32 @@ void Matrix<T>::Zero() {
 //////////////////////////////////////////////////////////////////////
 // Non-Member functions
 //////////////////////////////////////////////////////////////////////
+
+template<typename T, typename U>
+Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
+	assert(B.Dim() == A.Dim2());
+	Vector<T> C(A.Dim1());
+	for (size_t i = 0; i < A.Dim1(); i++) {
+		for (size_t j = 0; j < A.Dim2(); j++) {
+			C(i) += A(i, j) * B(j);
+		}
+	}
+	return C;
+}
+
+template<typename T, typename U>
+Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
+	assert(B.Dim() == A.Dim2());
+	Vector<T> C(A.Dim1());
+	for (size_t i = 0; i < A.Dim1(); i++) {
+		for (size_t j = 0; j < A.Dim2(); j++) {
+			C(i) += conj(A(j, i)) * B(j);
+		}
+	}
+	return C;
+}
+
+
 template<typename T>
 Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 	assert(A.Dim2() == B.Dim1());
@@ -430,6 +490,29 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
 }
 
 template<typename T>
+Matrix<T> Re(const Matrix<T>& A) {
+	for (size_t j = 0; j < A.Dim2(); ++j) {
+		for (size_t i = 0; i < A.Dim1(); ++i) {
+			A(i, j) = real(A(i, j));
+		}
+	}
+	return A;
+}
+
+//////////////////////////////////////////////////////////////////////
+/// operator overloadings
+//////////////////////////////////////////////////////////////////////
+
+template <typename T, typename U>
+Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
+	return multAB(A, v);
+}
+
+//////////////////////////////////////////////////////////////////////
+/// Diagonalization framework
+//////////////////////////////////////////////////////////////////////
+
+template<typename T>
 void Diagonalize(Matrix<T>& trafo, Vector<double> & ev, const Matrix<T>& B) {
 	assert(B.Dim1() == B.Dim2());
 	assert(ev.Dim() == B.Dim1());
@@ -474,29 +557,25 @@ void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
 }
 
 template <typename T>
-Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X) {
+Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
 	assert(vec.Dim() > 0);
-	assert(mat.Dim1() == vec.Dim());
-	assert(mat.Dim1() == mat.Dim2());
+	assert(mat.Dim2() == vec.Dim());
 	size_t dim = vec.Dim();
-	Matrix<T> A(dim, dim);
-	/// Could be improved by multiplying B = mat * diag(vec)
-	for (size_t i = 0; i < dim; ++i) {
-		for (size_t j = 0; j < dim; ++j) {
-			for (size_t k = 0; k < dim; ++k) {
-				A(j, i) += mat(j, k) * vec(k) * conj(mat(i, k));
-			}
+	auto mat2(mat);
+	for (size_t i = 0; i < mat2.Dim1(); ++i) {
+		for (size_t k = 0; k < mat2.Dim2(); ++k) {
+			mat2(i, k) *= vec(k);
 		}
 	}
-	return A;
+	return mat * mat2.Adjoint();
 }
 
 template <typename T>
 Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
 	auto inv_vec = Inverse(X.second, eps);
-	return BuildMatrix<T>({X.first, inv_vec});
+	return toMatrix<T>({X.first, inv_vec});
 }
 
 template <typename T>
@@ -540,63 +619,6 @@ Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
 	assert(A.Dim1() == A.Dim2());
 	Matrix<T> C(multAB(A, B));
 	return multATB(B, C);
-}
-
-template<typename T, typename U>
-Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.Dim2());
-	Vector<T> C(A.Dim1());
-	for (size_t i = 0; i < A.Dim1(); i++) {
-		for (size_t j = 0; j < A.Dim2(); j++) {
-			C(i) += A(i, j) * B(j);
-		}
-	}
-	return C;
-}
-
-template<typename T, typename U>
-Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.Dim2());
-	Vector<T> C(A.Dim1());
-	for (size_t i = 0; i < A.Dim1(); i++) {
-		for (size_t j = 0; j < A.Dim2(); j++) {
-			C(i) += conj(A(j, i)) * B(j);
-		}
-	}
-	return C;
-}
-
-template<typename T>
-Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
-	const Matrix<T>& AB) {
-	// Merge Block matrices into one matrix
-	// 	C =	(	A	AB	)
-	// 		(	AB	B	)
-	size_t n = A.Dim1();
-	size_t m = B.Dim1();
-	assert(n == AB.Dim1());
-	assert(m == AB.Dim2());
-	size_t N = m + n;
-
-	Matrix<T> C(N, N);
-	for (size_t i = 0; i < n; ++i) {
-		for (size_t j = 0; j < n; ++j) {
-			C(j, i) = A(j, i);
-		}
-	}
-	for (size_t i = 0; i < m; ++i) {
-		for (size_t j = 0; j < m; ++j) {
-			C(j + n, i + n) = B(j, i);
-		}
-	}
-	// Off diagonals
-	for (size_t i = 0; i < m; ++i) {
-		for (size_t j = 0; j < n; ++j) {
-			C(j, i + n) = AB(j, i);
-			C(i + n, j) = conj(AB(j, i));
-		}
-	}
-	return C;
 }
 
 template<typename T>
@@ -668,5 +690,79 @@ template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A) {
 	A.Read(is);
 	return is;
+}
+
+Eigen::MatrixXd toEigen(Matrixd A) {
+	Eigen::MatrixXd Aeigen = Eigen::Map<Eigen::MatrixXd>((double *) A.Coeffs(),
+		A.Dim1(), A.Dim2());
+	return Eigen::MatrixXd(Aeigen);
+}
+
+Eigen::MatrixXcd toEigen(Matrixcd A) {
+	Eigen::MatrixXcd Aeigen = Eigen::Map<Eigen::MatrixXcd>((complex<double> *)
+		A.Coeffs(), A.Dim1(), A.Dim2());
+	return Eigen::MatrixXcd(Aeigen);
+}
+
+Matrixd toQutree(Eigen::MatrixXd A) {
+	Matrixd Aqutree(A.rows(), A.cols());
+	for (size_t r = 0; r < A.rows(); ++r) {
+		for (size_t c = 0; c < A.cols(); ++c) {
+			Aqutree(r, c) = A(r, c);
+		}
+	}
+	return Aqutree;
+}
+
+Matrixcd toQutree(Eigen::MatrixXcd A) {
+	Matrixcd Aqutree(A.rows(), A.cols());
+	for (size_t r = 0; r < A.rows(); ++r) {
+		for (size_t c = 0; c < A.cols(); ++c) {
+			Aqutree(r, c) = A(r, c);
+		}
+	}
+	return Aqutree;
+}
+
+Matrixcd QR(const Matrixcd& A) {
+	auto Aeigen = toEigen(A);
+	auto QR = Aeigen.householderQr();
+	Eigen::MatrixXcd Q = QR.householderQ();
+	return toQutree(Q);
+}
+
+SVDcd svd(const Matrixcd& A) {
+	using namespace Eigen;
+	MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), A.Dim1(), A.Dim2());
+	JacobiSVD<MatrixXcd> svd(Am, ComputeThinU | ComputeThinV);
+	auto U = toQutree(svd.matrixU());
+	auto V = toQutree(svd.matrixV());
+	auto sigma = toQutree(svd.singularValues());
+	return {U, V, sigma};
+}
+
+Matrixcd toMatrix(const SVDcd& svd) {
+	const auto& U = get<0>(svd);
+	auto V = get<1>(svd);
+	const auto& sigma = get<2>(svd);
+	for (size_t i = 0; i < V.Dim1(); ++i) {
+		for (size_t j = 0; j < V.Dim2(); ++j) {
+			V(i, j) *= sigma(j);
+		}
+	}
+	return U * V.Adjoint();
+}
+
+template <typename T>
+Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2) {
+	assert(dim1 <= A.Dim1());
+	assert(dim2 <= A.Dim2());
+	Matrix<T> B(dim1, dim2);
+	for (size_t j = 0; j < dim2; ++j) {
+		for (size_t i = 0; i < dim1; ++i) {
+			B(i, j) = A(i, j);
+		}
+	}
+	return B;
 }
 

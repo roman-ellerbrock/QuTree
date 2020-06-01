@@ -38,6 +38,22 @@ namespace TreeIO {
 	}
 
 	template <typename T>
+	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
+		const Leaf& leaf, const Tree& tree) {
+		const auto& node = (const Node&) leaf.Up();
+		const SparseTree& stree = Rho.Active();
+		assert(stree.Active(node));
+		const auto& Phi = Psi[node];
+		if (!node.isToplayer()) {
+			const auto& rho = Rho[node];
+			auto rhoPhi = multStateAB<T>(rho, Phi);
+			return Contraction(Phi, rhoPhi, 0);
+		} else {
+			return Contraction(Phi, Phi, 0);
+		}
+	}
+
+	template <typename T>
 	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os) {
 		os << fixed;
 		for (size_t l = 0; l < tree.nLeaves(); ++l) {
@@ -76,5 +92,8 @@ template void TreeIO::Leafs<d>(const TensorTree<d>& Psi, const MatrixTree<d>& Rh
 
 template Matrix<cd> TreeIO::LeafDensity(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
 template Matrix<d> TreeIO::LeafDensity(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
+
+template Matrix<cd> TreeIO::LeafDensity(const TensorTree<cd>& Psi, const SparseMatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
+template Matrix<d> TreeIO::LeafDensity(const TensorTree<d>& Psi, const SparseMatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
 
 

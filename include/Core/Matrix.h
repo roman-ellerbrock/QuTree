@@ -210,6 +210,7 @@ public:
     */
 	Matrix& operator/=(T coeff) noexcept;
 
+
 	/** \brief Matrix equality
 	 *
 	 * @param A Test Matrix
@@ -332,6 +333,11 @@ public:
     /** \name Getters/Setters */
     ///@{
 
+	Vector<T> row(size_t i);
+	Vector<T> col(size_t i);
+	Vector<T> diag() const;
+
+
 	size_t Dim1() const { return dim1_; }
 
 	size_t Dim2() const { return dim2_; }
@@ -411,6 +417,21 @@ Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B);
 template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 
+template<typename T>
+Matrix<T> Re(const Matrix<T>& A);
+
+
+//////////////////////////////////////////////////////////////////////
+/// operator overloadings
+//////////////////////////////////////////////////////////////////////
+
+template <typename T>
+Vector<T> operator*(const Matrix<T>& A, const Vector<T>& v);
+
+//////////////////////////////////////////////////////////////////////
+/// Diagonalization framework
+//////////////////////////////////////////////////////////////////////
+
 /**
  * \brief Diagonalize a complex double matrix
  * @param A Matrix to be diagonalized
@@ -454,7 +475,7 @@ pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
  * @return Re-constructed matrix
  */
 template <typename T>
-Matrix<T> BuildMatrix(const SpectralDecomposition<T>& X);
+Matrix<T> toMatrix(const SpectralDecomposition<T>& X);
 
 /**
  * \brief Construct inverse matrix from SpectralDecomposition
@@ -508,4 +529,19 @@ ostream& operator<<(ostream& os, const Matrix<T>& A);
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A);
 
+Matrixcd QR(const Matrixcd& A);
+
+typedef tuple<Matrixcd, Matrixcd, Vectord> SVDcd;
+typedef tuple<Matrixd, Matrixd, Vectord> SVDd;
+
+SVDcd svd(const Matrixcd& A);
+Matrixcd toMatrix(const SVDcd& svd);
+
+Eigen::MatrixXd toEigen(Matrixd A);
+Eigen::MatrixXcd toEigen(Matrixcd A);
+Matrixd toQutree(Eigen::MatrixXd A);
+Matrixcd toQutree(Eigen::MatrixXcd A);
+
+template <typename T>
+Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2);
 

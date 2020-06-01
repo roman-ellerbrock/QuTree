@@ -87,10 +87,78 @@ namespace Tensor_Extension {
 		}
 		return M;
 	}
-
 	// @TODO:: Add mapping to and from Eigen
 
-	// Randomly occupy Tensors and Matrices
+	//////////////////////////////////////////////////////////////////////
+	/// Direct Sum + Product
+	//////////////////////////////////////////////////////////////////////
+
+/*	template<typename T>
+	Tensor<T> Merge(Tensor<T> A, const Tensor<T>& B) {
+		// Merge two Tensors into one.
+		const TensorShape& tdim1 = A.shape();
+		const TensorShape& tdim2 = B.shape();
+		size_t ntens1 = tdim1.lastDimension();
+		size_t ntens2 = tdim2.lastDimension();
+		A = A.AdjustStateDim(ntens1 + ntens2);
+		for (size_t n = 0; n < ntens2; ++n) {
+			for (size_t i = 0; i < tdim1.lastBefore(); ++i) {
+				A(i, ntens1 + n) = B(i, n);
+			}
+		}
+		return A;
+	}*/
+
+	void shiftIndices(vector<size_t>& Ibreak, const TensorShape& shift,
+		bool beforeLast, bool last) {
+		if (beforeLast) {
+			for (size_t k = 0; k < shift.lastIdx(); ++k) {
+				Ibreak[k] += shift[k];
+			}
+		}
+		if (last) {
+			size_t idx = shift.lastIdx();
+			Ibreak[idx] += shift[idx];
+		}
+	}
+
+	TensorShape DirectSum(const TensorShape& A, const TensorShape& B,
+		bool before, bool last) {
+		assert(A.order() == B.order());
+		vector<size_t> dims = A.dimensions();
+		shiftIndices(dims, B, before, last);
+		return TensorShape(dims);
+	}
+
+	template<typename T>
+	Tensor<T> DirectSum(const Tensor<T>& A, const Tensor<T>& B,
+		bool before, bool last) {
+
+		TensorShape Cshape = DirectSum(A.shape(), B.shape(), before, last);
+		const TensorShape& Ashape = A.shape();
+		const TensorShape& Bshape = B.shape();
+		Tensor<T> C(Cshape);
+		/// Place elements of A into C
+		for (size_t I = 0; I < Ashape.totalDimension(); ++I) {
+			auto Ibreak = indexMapping(I, Ashape);
+			auto L = indexMapping(Ibreak, Cshape);
+			C(L) = A(I);
+		}
+		/// Place elements of B into C
+		for (size_t I = 0; I < Bshape.totalDimension(); ++I) {
+			auto Ibreak = indexMapping(I, Bshape);
+			shiftIndices(Ibreak, Ashape, before, last);
+			auto L = indexMapping(Ibreak, Cshape);
+			C(L) = B(I);
+		}
+		return C;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	/// Random number routines for tensors
+	//////////////////////////////////////////////////////////////////////
+
+	/// Randomly occupy Tensors and Matrices
 	template<typename T>
 	void Generate_normal(T* A, size_t n, mt19937& gen) {
 		uniform_real_distribution<double> dist(-1., 1.);
@@ -120,22 +188,6 @@ namespace Tensor_Extension {
  * The following functions are excluded from the
  * Tensor class to keep it slim.
  */
-
-	template<typename T>
-	Tensor<T> Merge(Tensor<T> A, const Tensor<T>& B) {
-		// Merge two Tensors into one.
-		const TensorShape& tdim1 = A.shape();
-		const TensorShape& tdim2 = B.shape();
-		size_t ntens1 = tdim1.lastDimension();
-		size_t ntens2 = tdim2.lastDimension();
-		A = A.AdjustStateDim(ntens1 + ntens2);
-		for (size_t n = 0; n < ntens2; ++n) {
-			for (size_t i = 0; i < tdim1.lastBefore(); ++i) {
-				A(i, ntens1 + n) = B(i, n);
-			}
-		}
-		return A;
-	}
 
 	template<typename T>
 	void OuterProductAdd(Matrix<T>& M,
