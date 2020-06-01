@@ -49,7 +49,7 @@ jobs:
           # Select the mode of the action. There are three different modes: CMakeListsTxtBasic: Run CMake using a CMakeLists.txt - Basic configuration, CMakeListsTxtAdvanced: Run CMake using a CMakeLists.txt - Advanced configuration, CMakeSettingsJson: Run CMake using a CMakeSettings.json of Visual Studio.
           cmakeListsOrSettingsJson: CMakeListsTxtAdvanced # default is CMakeListsTxtBasic
           # Provides a mean to provide all the CMake arguments. This is required when using CMakeLists.txt in Advanced mode. For CMakeSettings.json, the arguments are already inferred, but you can append your arguments providing them here.  Used by CMakeListsTxtAdvanced and CMakeSettingsJson modes.
-          cmakeAppendedArgs: -G "Unix Makefiles" --config Debug -DCMAKE_C_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/gcc -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++
+          cmakeAppendedArgs: -G "Unix Makefiles" --clean-first --config Debug -DCMAKE_C_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/gcc -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++
           # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
           buildWithCMake: True # optional, default is true
           # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
@@ -60,7 +60,7 @@ jobs:
           # Select the mode of the action. There are three different modes: CMakeListsTxtBasic: Run CMake using a CMakeLists.txt - Basic configuration, CMakeListsTxtAdvanced: Run CMake using a CMakeLists.txt - Advanced configuration, CMakeSettingsJson: Run CMake using a CMakeSettings.json of Visual Studio.
           cmakeListsOrSettingsJson: CMakeListsTxtAdvanced # default is CMakeListsTxtBasic
           # Provides a mean to provide all the CMake arguments. This is required when using CMakeLists.txt in Advanced mode. For CMakeSettings.json, the arguments are already inferred, but you can append your arguments providing them here.  Used by CMakeListsTxtAdvanced and CMakeSettingsJson modes.
-          cmakeAppendedArgs: -G "Unix Makefiles" --config Release -DCMAKE_C_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/gcc -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++
+          cmakeAppendedArgs: -G "Unix Makefiles" --clean-first --config Release -DCMAKE_C_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/gcc -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++
           # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
           buildWithCMake: True # optional, default is true
           # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
