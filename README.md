@@ -10,7 +10,13 @@ brew tap sseritan/qu-tree
 brew install qu-tree
 ```
 
+Or to install the cutting-edge tip:
+```
+brew install --HEAD qu-tree
+```
+
 After installation, QuTree can be easily used in downstream CMake projects.
+If installed to non-standard locations, make sure to set `QuTree_DIR` to the location of `QuTreeConfig.cmake`.
 
 Example CMakeLists.txt:
 ```
