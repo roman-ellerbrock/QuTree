@@ -13,9 +13,6 @@ RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash -
 RUN yum install -y cmake3 devtoolset-7 nodejs rh-git218
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-# Entrypoint to enable devtoolset-7 and git 2.18
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENV BASH_ENV="/entrypoint.sh" \
-    ENV="/entrypoint.sh" \
-    PROMPT_COMMAND=". /entrypoint.sh"
+# Manually enable devtoolset-7 and git 2.18
+ENV PATH="/opt/rh/rh-git218/root/usr/bin:/opt/rh/devtoolset-7/root/usr/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/opt/rh/httpd24/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib:/opt/rh/devtoolset-7/root/usr/lib64/dyninst:/opt/rh/devtoolset-7/root/usr/lib/dyninst:/opt/rh/devtoolset-7/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib"
