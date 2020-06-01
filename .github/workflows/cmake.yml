@@ -38,7 +38,7 @@ jobs:
 
   build-centos:
     runs-on: ubuntu-latest
-    container: sseritan/centos7-gcc7-cmake3-node12:0.2
+    container: sseritan/centos7-gcc7-cmake3-node12:0.3
 
     steps:
       - name: Checkout push

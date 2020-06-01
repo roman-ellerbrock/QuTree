@@ -10,10 +10,11 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms
 RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash -
 
 # Cmake3, GCC 7, Node.js 12
-RUN yum install -y cmake3 devtoolset-7 nodejs git
+RUN yum install -y cmake3 devtoolset-7 nodejs rh-git218
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-# Entrypoint to enable devtoolset-7
+# Entrypoint to enable devtoolset-7 and git 2.18
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/bin/bash"]
