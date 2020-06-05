@@ -2,7 +2,7 @@
 
 A tensor tree linear algebra package in C++ designed for quantum dynamics and machine learning applications.
 
-## Installation
+## Getting Started
 
 Installation is easy using HomeBrew (on OS X) or LinuxBrew (on Linux):
 ```
@@ -25,6 +25,7 @@ For instructions on how to install from source, check out our [documentation](ht
 ## Using QuTree
 
 After installation, QuTree can be easily used in downstream CMake projects.
+If installed to non-standard locations, make sure to set `QuTree_DIR` to the location of `QuTreeConfig.cmake`.
 
 Example CMakeLists.txt:
 ```

@@ -3,8 +3,7 @@ name: C/C++ CMake CI
 on: [push]
 
 jobs:
-  build:
-
+  build-ubuntu:
     runs-on: ubuntu-latest
     
     steps:
@@ -36,3 +35,33 @@ jobs:
         buildWithCMake: True # optional, default is true
         # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
         buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is
+
+  build-centos:
+    runs-on: ubuntu-latest
+    container: sseritan/centos7-gcc7-cmake3-node12:0.3
+
+    steps:
+      - name: Checkout push
+        uses: actions/checkout@v2
+      - name: run-cmake-debug
+        uses: lukka/run-cmake@v1.4
+        with:
+          # Select the mode of the action. There are three different modes: CMakeListsTxtBasic: Run CMake using a CMakeLists.txt - Basic configuration, CMakeListsTxtAdvanced: Run CMake using a CMakeLists.txt - Advanced configuration, CMakeSettingsJson: Run CMake using a CMakeSettings.json of Visual Studio.
+          cmakeListsOrSettingsJson: CMakeListsTxtAdvanced # default is CMakeListsTxtBasic
+          # Provides a mean to provide all the CMake arguments. This is required when using CMakeLists.txt in Advanced mode. For CMakeSettings.json, the arguments are already inferred, but you can append your arguments providing them here.  Used by CMakeListsTxtAdvanced and CMakeSettingsJson modes.
+          cmakeAppendedArgs: -G "Unix Makefiles" --clean-first --config Debug -DCMAKE_C_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/gcc -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++
+          # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
+          buildWithCMake: True # optional, default is true
+          # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
+          buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is
+      - name: run-cmake-release
+        uses: lukka/run-cmake@v1.4
+        with:
+          # Select the mode of the action. There are three different modes: CMakeListsTxtBasic: Run CMake using a CMakeLists.txt - Basic configuration, CMakeListsTxtAdvanced: Run CMake using a CMakeLists.txt - Advanced configuration, CMakeSettingsJson: Run CMake using a CMakeSettings.json of Visual Studio.
+          cmakeListsOrSettingsJson: CMakeListsTxtAdvanced # default is CMakeListsTxtBasic
+          # Provides a mean to provide all the CMake arguments. This is required when using CMakeLists.txt in Advanced mode. For CMakeSettings.json, the arguments are already inferred, but you can append your arguments providing them here.  Used by CMakeListsTxtAdvanced and CMakeSettingsJson modes.
+          cmakeAppendedArgs: -G "Unix Makefiles" --clean-first --config Release -DCMAKE_C_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/gcc -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++
+          # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
+          buildWithCMake: True # optional, default is true
+          # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
+          buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is

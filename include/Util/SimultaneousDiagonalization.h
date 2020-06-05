@@ -9,7 +9,7 @@ using namespace JacobiRotationFramework;
 
 /**
  * \class SimultaneousDiagonalization
- * \ingroup Core
+ * \ingroup Util
  * \brief This class performs a simulatneous diagonalization.
  *
  * Attempts to diagonalize a set of, potentially not commuting, matrices.

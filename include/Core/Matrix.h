@@ -16,9 +16,11 @@ class Matrix {
  * simulations.
  *
  * Usage:
- * Matrixcd M(dim1_, dim2_);
+ * \code{.cpp}
+ * Matrixcd M(dim1, dim2);
  * Matrixcd A(M);
  * A = M * (A + M);
+ * \endcode
  *
  * */
 public:
@@ -26,116 +28,294 @@ public:
 	// Constructors
 	//////////////////////////////////////////////////////////////////////
 
+	/** \brief Zero constructor equivalent to Matrix(1,1);
+	 */
 	Matrix();
 
-	Matrix(size_t dim1_, size_t dim2_);
+	/** \brief Zero constructor
+	 *
+	 * @param dim1 Size of first dimension
+	 * @param dim2 Size of second dimension
+	 */
+	Matrix(size_t dim1, size_t dim2);
 
+	/** \brief Constructor from input stream
+	 *
+	 * @param is Input stream passed to Read()
+	 */
 	explicit Matrix(istream& is);
 
+	/** \brief Constructor from file
+	 *
+	 * @param filename File to load and pass to Read()
+	 */
 	explicit Matrix(const string& filename);
 
-	// Copy constructor
+	/** \brief Copy constructor
+	 *
+	 * @param old Matrix to be copied
+	 */
 	Matrix(const Matrix& old);
 
-	// Move constructor
+	/** \brief Move constructor
+	 *
+	 * @param old Matrix to be moved
+	 */
 	Matrix(Matrix&& old)noexcept;
 
-	// Copy Assignment Operator
+	/** \brief Copy assignment constructor
+	 *
+	 * @param other Matrix to copy
+	 * @return Copied matrix
+	 */
 	Matrix& operator=(const Matrix& other);
 
-	// Move Assignment Operator
+	/** \brief Move assignment constructor
+	 *
+	 * @param other Matrix to move
+	 * @return Moved Matrix
+	 */
 	Matrix& operator=(Matrix&& other)noexcept;
 
+	/** \brief Destructor
+	 */
 	~Matrix();
 
-	//////////////////////////////////////////////////////////////////////
-	/// Backet Operators
-	//////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
+	/** \name Bracket Operators
+	 * Group of functions for accessing Matrix elements
+	 */
+	///@{
 
+	/** \brief Two-indexed accessor
+	 *
+	 * @param i Row
+	 * @param j Column
+	 * @return Value
+	 */
     T& operator()(const size_t i, const size_t j)const;
 
+    /** \brief Two-indexed accessor
+     *
+     * @param i Row
+     * @param j Column
+     * @return Value
+     */
 	T& operator()(const size_t i, const size_t j);
 
+	/** \brief Compound-index accessor
+	 *
+	 * @param idx Compound index
+	 * @return Value
+	 */
 	inline T& operator[](const size_t idx) const {
 		return coeffs_[idx];
 	}
 
+    /** \brief Compound-index accessor
+     *
+     * @param idx Compound index
+     * @return Value
+     */
 	inline T& operator[](const size_t idx) {
 		return coeffs_[idx];
 	}
 
-	//////////////////////////////////////////////////////////////////////
-	/// Arithmetic
-	//////////////////////////////////////////////////////////////////////
+	///@} End Bracket Operators
 
+    /////////////////////////////////////////////////////////////////////////
+    /** \name Arithmetic Operators
+     * Group of functions and operator overloadings
+     * for performing arithmetic operations on Matrices
+     */
+    ///@{
+
+	/** \brief Scalar elementwise multiplication
+	 *
+	 * @tparam U Type for scalar
+	 * @param sca Scalar value
+	 * @param B Target Matrix
+	 * @return Scaled Matrix
+	 */
 	template<typename U>
 	friend Matrix operator*(const U sca, const Matrix& B) {
 		return multscalar(sca, B);
 	}
 
+	/** \brief Matrix-vector product
+	 *
+	 * @param A Matrix
+	 * @param v Vector
+	 * @return Result of A*v
+	 */
 	friend Vector<T> operator*(const Matrix& A, const Vector<T> v) {
 		return multAB(A, v);
 	}
 
+	/** \brief Matrix-matrix product
+	 *
+	 * @param A Left Matrix
+	 * @param B Right Matrix
+	 * @return Result of A*B
+	 */
 	friend Matrix operator*(const Matrix& A, const Matrix& B) {
 		return multAB(A, B);
 	}
 
+	/** \brief Elementwise matrix addition
+	 *
+	 * @param A Matrix
+	 * @param B Matrix
+	 * @return Result of A + B
+	 */
 	friend Matrix operator+(const Matrix& A, const Matrix& B) {
 		return addAB(A, B);
 	}
 
+	/** \brief Elementwise matrix subtraction
+	 *
+	 * @param A Matrix
+	 * @param B Matrix
+	 * @return Result of A - B
+	 */
 	friend Matrix operator-(const Matrix& A, const Matrix& B) {
 		return substAB(A, B);
 	}
 
+	/** \brief In-place elementwise matrix addition
+	 *
+	 * @param B Matrix of increments
+	 * @return Incremented Matrix
+	 */
 	Matrix& operator+=(const Matrix<T>& B);
 
+	/** \brief In-place elementwise matrix subtraction
+	 *
+	 * @param B Matrix of decrements
+	 * @return Decremented Matrix
+	 */
 	Matrix& operator-=(const Matrix<T>& B);
 
+	/** \brief In-place elementwise scalar matrix multiplication
+	 *
+	 * @param coeff Scalar
+	 * @return Scaled Matrix
+	 */
 	Matrix& operator*=(T coeff) noexcept;
+
+    /** \brief In-place elementwise scalar matrix division
+    *
+    * @param coeff Scalar
+    * @return Scaled Matrix
+    */
 	Matrix& operator/=(T coeff) noexcept;
 
 
+	/** \brief Matrix equality
+	 *
+	 * @param A Test Matrix
+	 * @return True if precisely equal, False otherwise
+	 */
 	bool operator==(const Matrix<T>& A)const;
+
+	/** \brief Matrix inequality
+	 *
+	 * @param A Test Matrix
+	 * @return True if not precisely equal, False otherwise
+	 */
 	bool operator!=(const Matrix<T>& A)const;
 
-	//////////////////////////////////////////////////////////////////////
-	/// More Math operators
-	//////////////////////////////////////////////////////////////////////
+    ///@} End Arithmetic Operators
 
-	// Calculate Frobenius Norm of Matrix
+    /////////////////////////////////////////////////////////////////////////
+    /** \name Math Operators
+     * Group of functions for common Matrix mathematical operations
+     */
+    ///@{
+
+	/**
+	 * @return Frobenius norm
+	 */
 	double FrobeniusNorm()const;
 
-	// Calculate the Trace
+	/**
+	 * @return Trace of matrix
+	 */
 	T Trace() const;
 
-	// Adjoint of a matrix
+    /**
+     * @return Adjoint of matrix
+     */
 	Matrix Adjoint() const;
 
-	// Transpose a matrix
+	/**
+	 * @return Transposed matrix
+	 */
 	Matrix Transpose() const;
 
-	// Inverts a complex matrix
+	/** \brief Invert a complex Matrix
+	 *
+	 * @return Inverted Matrix
+	 */
 	Matrix<complex<double> > cInv() const;
 
-	// Diagonalization
+	/** \brief Diagonalization of a real Matrix
+	 *
+	 * Uses Eigen to diagonalize the Matrix.
+	 * Phases eigenvectors s.t. first element is always positive.
+	 *
+	 * @param Transformation Matrix of eigenvectors
+	 * @param ev Vector of eigenvalues
+	 */
 	void rDiag(Matrix<double>& Transformation, Vector<double>& ev) const;
 
+	/** \brief Diagonalization of a real Matrix
+	 *
+	 * Exactly like `Matrix::rDiag(Matrixd&, Vectord&)` but returns copies instead of pass by reference
+	 *
+	 * @return Eigenvectors/value as a pair of <Matrixd, Vectord>
+	 */
 	pair<Matrix<double>, Vectord> rDiag()const;
 
+    /** \brief Diagonalization of a complex Matrix
+    *
+    * Uses Eigen to diagonalize the Matrix.
+    * Phases eigenvectors s.t. first element is always positive.
+    *
+    * @param Transformation Matrix of eigenvectors
+    * @param ev Vector of eigenvalues
+    */
 	void cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const;
 
+    /** \brief Diagonalization of a complex Matrix
+     *
+     * Exactly like `Matrix::cDiag(Matrixcd&, Vectord&)` but returns copies instead of pass by reference
+     *
+     * @return Eigenvectors/value as a pair of <Matrixcd, Vectord>
+     */
 	pair<Matrix<complex<double>>, Vectord> cDiag()const;
 
-	// Solve System of linear equations for Matrix<double>
-	Vectord SolveSLE(const Vectord& b_);
+	/** \brief Solve linear system of equations
+	 *
+	 * In the system of equations Ax=b, solve for x given A and b
+	 *
+	 * @param b RHS vector
+	 * @return x Vector
+	 */
+	Vectord SolveSLE(const Vectord& b);
 
+	/** \brief Zero out the Matrix
+	 *
+	 */
 	void Zero();
 
+	///@} End Math Operators
+
 	//////////////////////////////////////////////////////////////////////
-	// I/O
-	//////////////////////////////////////////////////////////////////////
+    /** \name I/O Operators
+     * Group of functions for input and output
+     */
+    ///@{
 
 	void print(ostream& os = cout) const;
 
@@ -147,10 +327,11 @@ public:
 
 	virtual void Read(istream& os);
 
+    ///@} End I/O Operators
 
-	//////////////////////////////////////////////////////////////////////
-	// Getter & Setter
-	//////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    /** \name Getters/Setters */
+    ///@{
 
 	Vector<T> row(size_t i);
 	Vector<T> col(size_t i);
@@ -162,6 +343,8 @@ public:
 	size_t Dim2() const { return dim2_; }
 
 	T *Coeffs() const { return coeffs_; }
+
+    ///@} End Getters/Setters
 
 protected:
 	double conjugate(const double d) const {
@@ -177,20 +360,35 @@ protected:
 	size_t dim2_;
 };
 
+/** \brief General typedef for complex matrices
+ * \ingroup Core
+ */
 typedef Matrix<complex<double>> Matrixcd;
+
+/** \brief General typedef for real matrices
+ * \ingroup Core
+ */
 typedef Matrix<double> Matrixd;
 
+/** \brief General typedef for Matrix<T>, Vectord pairs
+ * \ingroup Core
+ */
 template <typename T>
 using SpectralDecomposition = pair<Matrix<T>, Vectord>;
 
+/** \brief Specialization of SpectralDecomposition of Matrixcd
+ * \ingroup Core
+ */
 typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
 
+/** \brief Specialization of SpectralDecomposition of Matrixd
+ * \ingroup Core
+ */
 typedef SpectralDecomposition<double> SpectralDecompositiond;
 
 //////////////////////////////////////////////////////////////////////
 // Non-Member functions
 //////////////////////////////////////////////////////////////////////
-
 template<typename T, typename U>
 Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B);
 
