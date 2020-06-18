@@ -7,7 +7,7 @@
 TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 	const Tree& tree) : TensorOperatorTree(tree) {
 	Occupy(tree);
-	vector<size_t> idxs(tree.nLeaves());
+	vector<size_t> idxs(tree.nLeaves(), 0);
 
 	for (size_t k = 0; k < M.size(); ++k) {
 		size_t mode = M.Mode(k);
@@ -16,10 +16,18 @@ TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 
 		const shared_ptr<LeafOperatorcd>& h = M[k];
 		Matrixcd hmat = toMatrix(*h, leaf);
-		hmat.print();
+
 		setLeafOperator(hmat, idxs[mode], node);
 		idxs[mode]++;
 	}
+
+}
+
+TensorOperatorTree::TensorOperatorTree(const SOPcd& S,
+	const Tree& tree) : TensorOperatorTree(tree) {
+	Occupy(tree);
+	assert(S.size() > 0);
+
 
 }
 

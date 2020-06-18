@@ -26,6 +26,8 @@ SUITE (TensorOperatorTree) {
 		Tree optree_;
 		TensorTreecd Psi_;
 		TensorOperatorTree H_;
+		LeafMatrixcd leafI_;
+		LeafMatrixcd leafX_;
 
 		void Initialize() {
 			rng_ = mt19937(1990);
@@ -37,15 +39,15 @@ SUITE (TensorOperatorTree) {
 			Matrixcd X(2, 2);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;
-			LeafMatrixcd leafI(I);
-			LeafMatrixcd leafX(X);
+			leafI_ = LeafMatrixcd(I);
+			leafX_ = LeafMatrixcd(X);
 
 			H_ = TensorOperatorTree(optree_);
 			H_.Occupy(optree_);
 			for (const Node& node : optree_) {
 				if (node.isBottomlayer()) {
-					H_.setLeafOperator(leafI, 0, node);
-					H_.setLeafOperator(leafX, 1, node);
+					H_.setLeafOperator(leafI_, 0, node);
+					H_.setLeafOperator(leafX_, 1, node);
 				}
 			}
 		}
@@ -168,16 +170,25 @@ SUITE (TensorOperatorTree) {
 
 	TEST_FIXTURE (HelperFactory, MLOInit) {
 		MLOcd M;
-		Matrixcd X(2, 2);
-		X(0, 1) = 1.;
-		X(1, 0) = 1.;
-		LeafMatrixcd leafX(X);
-		M.push_back(leafX, 0);
-		M.push_back(leafX, 1);
-		M.push_back(leafX, tree_.nLeaves() - 1);
+		M.push_back(leafX_, 0);
+		M.push_back(leafX_, 1);
+		M.push_back(leafX_, tree_.nLeaves() - 1);
+		M.push_back(leafI_, tree_.nLeaves() - 1);
 
 		TensorOperatorTree H(M, optree_);
-		H.print(optree_);
+
+		const Leaf& leaf = tree_.GetLeaf(tree_.nLeaves() - 1);
+		const auto& node = (const Node&) leaf.Up();
+		const Tensorcd& Phi = H[node];
+			CHECK_CLOSE(0., abs(Phi(0)), eps);
+			CHECK_CLOSE(1., abs(Phi(1)), eps);
+			CHECK_CLOSE(1., abs(Phi(2)), eps);
+			CHECK_CLOSE(0., abs(Phi(3)), eps);
+
+			CHECK_CLOSE(1., abs(Phi(0, 1)), eps);
+			CHECK_CLOSE(0., abs(Phi(1, 1)), eps);
+			CHECK_CLOSE(0., abs(Phi(2, 1)), eps);
+			CHECK_CLOSE(1., abs(Phi(3, 1)), eps);
 	}
 }
 

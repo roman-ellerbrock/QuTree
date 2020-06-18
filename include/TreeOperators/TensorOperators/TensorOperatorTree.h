@@ -8,12 +8,14 @@
 #include "TreeClasses/TensorTree.h"
 #include "TreeOperators/LeafMatrix.h"
 #include "TreeOperators/MultiLeafOperator.h"
+#include "TreeOperators/SumOfProductsOperator.h"
 
 class TensorOperatorTree : public TensorTreecd {
 public:
 	TensorOperatorTree() = default;
 	explicit TensorOperatorTree(const Tree& tree);
 	TensorOperatorTree(const MLOcd& M, const Tree& tree);
+	TensorOperatorTree(const SOPcd& S, const Tree& tree);
 
 	~TensorOperatorTree() = default;
 
