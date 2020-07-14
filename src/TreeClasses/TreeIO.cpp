@@ -63,6 +63,7 @@ namespace TreeIO {
 			double norm = abs(rho_leaf.Trace());
 			for  (size_t i = 0; i < rho_leaf.Dim1(); ++i) {
 				os << abs(rho_leaf(i, i)) / norm << "\t";
+				if ((i+1)%8 == 0) { os << "\n"; }
 			}
 			os << "\n";
 		}

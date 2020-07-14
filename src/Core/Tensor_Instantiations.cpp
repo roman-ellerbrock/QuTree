@@ -4,10 +4,15 @@
 #include "Core/Tensor_Implementation.h"
 
 typedef complex<double> cd;
+typedef double doub;
+typedef double d;
 
 // Tensor instantiations
 template class Tensor<double>;
 template class Tensor<complex<double>>;
+
+template Tensor<cd> productElementwise(const Tensor<cd>& A, const Tensor<cd>& B);
+template Tensor<d> productElementwise(const Tensor<d>& A, const Tensor<d>& B);
 
 //template Matrix<cd> HoleProduct<cd>(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
 //template void HoleProduct<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
@@ -39,7 +44,6 @@ template ostream& operator<< <cd> (ostream&, const Tensor<cd>& );
 template istream& operator>> <cd> (istream&, Tensor<cd>& );
 template bool operator== <cd>(const Tensor<cd>& A, const Tensor<cd>& B);
 
-typedef double doub;
 //template Matrix<double> HoleProduct<double>(const Tensor<double>& A, const Tensor<double>& B, size_t k);
 //template void HoleProduct<doub>(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t k);
 template Tensor<double> MatrixTensor<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);

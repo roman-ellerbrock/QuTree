@@ -47,8 +47,7 @@ namespace WeightedSimultaneousDiagonalization {
 		}
 
 		if (!converged) {
-//			cout << "D_WSD: " <<
-//			MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo_) << endl;
+//			cout << "D_WSD: " << MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo) << endl;
 		}
 	}
 
@@ -104,7 +103,7 @@ namespace WeightedSimultaneousDiagonalization {
 
 		// Control parameters for RFO-Algorithm
 		int iter = 0;
-		int maxiter = 50;
+		int maxiter = 30;
 		// Convergence factor and starting distortion of angles
 		double eps = 1E-3;
 		// arbitrary starting value for rel. diff.

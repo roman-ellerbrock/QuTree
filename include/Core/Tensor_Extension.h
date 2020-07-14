@@ -29,6 +29,10 @@ namespace Tensor_Extension {
 	void WeightedOuterProductAdd(Matrix<T>& M, const Tensor<T>& A,
 		const Tensor<T>& B, const Matrix<T>& rho);
 
+	template<typename T>
+	Tensor<T> DoubleHoleContraction(const Tensor<T>& A, const Tensor<T>& B,
+		size_t k1, size_t k2);
+
 	//////////////////////////////////////////////////////////////////////
 	/// Direct Sum + Product
 	//////////////////////////////////////////////////////////////////////

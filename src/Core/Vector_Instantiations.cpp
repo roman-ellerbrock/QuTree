@@ -7,6 +7,7 @@ typedef complex<double> cd;
 typedef double d;
 
 // Vector instantiations
+template class Vector<int>;
 template class Vector<double>;
 template class Vector<complex<double>>;
 

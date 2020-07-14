@@ -163,8 +163,8 @@ namespace Tensor_Extension {
 		return TensorShape(dims);
 	}
 
-	size_t mergeIndex(size_t I, size_t J, const TensorShape& A, const TensorShape& B,
-		const TensorShape& C) {
+	size_t mergeIndex(size_t I, size_t J, const TensorShape& A,
+		const TensorShape& B, const TensorShape& C) {
 		auto Ibreak = indexMapping(I, A);
 		auto Jbreak = indexMapping(J, B);
 		auto Lbreak(Ibreak);
@@ -182,6 +182,37 @@ namespace Tensor_Extension {
 			for (size_t I = 0; I < A.shape().totalDimension(); ++I) {
 				J = mergeIndex(I, J, A.shape(), B.shape());
 				C(J) = A(I) * B(J);
+			}
+		}
+		return C;
+	}
+
+	template<typename T>
+	Tensor<T> DoubleHoleContraction(const Tensor<T>& A, const Tensor<T>& B,
+		size_t k1, size_t k2) {
+
+		const TensorShape& shape = A.shape();
+		assert(k1 < shape.order());
+		assert(k2 < shape.order());
+		size_t dim1 = shape[k1];
+		size_t dim2 = shape[k2];
+
+		TensorShape nshape({dim1, dim2, dim1, dim2});
+		Tensor<T> C(nshape);
+		vector<size_t> Lbreak({0, 0, 0, 0});
+		for (size_t I = 0; I < shape.totalDimension(); ++I) {
+			auto Ibreak = indexMapping(I, shape);
+			auto I2break = Ibreak;
+			for (size_t l1 = 0; l1 < dim1; ++l1) {
+				for (size_t l2 = 0; l2 < dim2; ++l2) {
+					Lbreak[0] = Ibreak[k1];
+					Lbreak[1] = Ibreak[k2];
+					Lbreak[2] = l1;
+					Lbreak[3] = l2;
+					I2break[k1] = l1;
+					I2break[k2] = l2;
+					C(Lbreak) += conj(A(Ibreak)) * B(I2break);
+				}
 			}
 		}
 		return C;

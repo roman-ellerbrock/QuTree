@@ -160,7 +160,7 @@ target_compile_features(QuTree PUBLIC cxx_std_14)
 #set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
 #set(FLAGS_VECTORIZE "-ftree-parallelize-loops=8 ${FLAGS_VECTORIZE}")
 set(QuTree_DEBUG_FLAGS "-g")
-set(QuTree_RELEASE_FLAGS "-O3 -ffast-math")
+set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")
@@ -179,7 +179,7 @@ separate_arguments(QuTree_RELEASE_FLAGS UNIX_COMMAND "${QuTree_RELEASE_FLAGS}")
 
 # Set debug/release flags: https://stackoverflow.com/a/23995391/3052876
 target_compile_options(QuTree PUBLIC "$<$<CONFIG:DEBUG>:${QuTree_DEBUG_FLAGS}>")
-target_compile_options(QuTree PUBLIC "$<$<CONFIG:RELEASE>:${QuTree_RELEASE_FLAGS}>")
+target_compile_options(QuTree PRIVATE "$<$<CONFIG:RELEASE>:${QuTree_RELEASE_FLAGS}>")
 
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)

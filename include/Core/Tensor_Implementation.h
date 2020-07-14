@@ -140,6 +140,16 @@ inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t l
 	return coeffs_[idx];
 }
 
+template<typename T>
+T& Tensor<T>::operator()(const vector<size_t>& dims) {
+	return operator()(indexMapping(dims, shape_));
+}
+
+template<typename T>
+const T& Tensor<T>::operator()(const vector<size_t>& dims) const {
+	return operator()(indexMapping(dims, shape_));
+}
+
 /*
 //////////////////////////////////////////////////////////
 template<typename T>
@@ -304,9 +314,9 @@ Tensor<T>& Tensor<T>::operator/=(T a) {
 }
 
 template<typename T>
-Tensor<T> Tensor<T>::coeffprod(const Tensor<T>& A, const Tensor<T>& B) {
+Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 	assert(A.shape().totalDimension() == B.shape().totalDimension());
-	Tensor C(A.shape());
+	Tensor<T> C(A.shape());
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
 		C(i) = A(i) * B(i);
 	}

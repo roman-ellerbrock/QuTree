@@ -31,7 +31,6 @@ public:
 		setLeafOperator(M.matrix(), operator_idx, node);
 	}
 
-private:
 };
 
 

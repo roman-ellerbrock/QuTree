@@ -189,6 +189,10 @@ Vector<T> Vector<T>::operator/(T coeff) const {
 	return C;
 }
 
+int conj(int a) {
+	return a;
+}
+
 template<typename T>
 T Vector<T>::operator*(const Vector<T> b) const {
 	assert(b.Dim() == dim_);

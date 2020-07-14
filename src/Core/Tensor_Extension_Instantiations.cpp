@@ -9,11 +9,19 @@ typedef double d;
 // Tensor-Extension instantiations
 template Matrix<cd> Tensor_Extension::OuterProduct(const Tensor<cd>& A, const Tensor<cd>& B);
 template void Tensor_Extension::OuterProductAdd(Matrixcd& M, const Tensor<cd>& A, const Tensor<cd>& B);
+
 template Matrix<cd> Tensor_Extension::WeightedOuterProduct(const Tensor<cd>& A, const Tensor<cd>& B,
 	const Matrix<cd>& m);
 template void Tensor_Extension::WeightedOuterProductAdd(Matrixcd& M, const Tensor<cd>& A, const Tensor<cd>& B,
 	const Matrix<cd>& rho);
+
 template Matrix<cd> Tensor_Extension::Map(const Tensor<cd>& A);
+template Matrix<d> Tensor_Extension::Map(const Tensor<d>& A);
+
+template Tensor<cd> Tensor_Extension::DoubleHoleContraction(const Tensor<cd>& A,
+	const Tensor<cd>& B, size_t k1, size_t k2);
+template Tensor<d> Tensor_Extension::DoubleHoleContraction(const Tensor<d>& A,
+	const Tensor<d>& B, size_t k1, size_t k2);
 
 ////////////////////////////////////////////////////////////
 /// Direct Sump

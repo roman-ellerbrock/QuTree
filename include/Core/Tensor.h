@@ -98,6 +98,10 @@ public:
 
 	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n)const;
 
+	T& operator()(const vector<size_t>& dims);
+
+	const T& operator()(const vector<size_t>& dims) const;
+
 	// double hole operator
 	T& operator()(size_t bef, size_t i, size_t mid, size_t j, size_t beh,
 		size_t mode1, size_t mode2, size_t n)const;
@@ -151,8 +155,6 @@ public:
         B *= a;
         return B;
     }
-
-	Tensor coeffprod(const Tensor& A, const Tensor& B);
 
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions
@@ -211,6 +213,9 @@ typedef Tensor<double> Tensord;
 //////////////////////////////////////////////////////////
 template<typename T>
 T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m);
+
+template<typename T>
+Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
 
 template<typename T>
 void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
