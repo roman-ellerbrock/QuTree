@@ -41,6 +41,9 @@ public:
 	// Constructor with TensorDim
 	explicit Tensor(const TensorShape& dim, bool InitZero = true);
 
+	// Construct from external memory
+	explicit Tensor(const TensorShape& dim, T* ptr, bool InitZero = true);
+
 	explicit Tensor(istream& is);
 
 	explicit Tensor(const string& filename);
@@ -86,7 +89,7 @@ public:
 
 	T& operator()(size_t i);
 
-	T& operator()(size_t i, size_t n)const;
+	const T& operator()(size_t i, size_t n)const;
 
 	T& operator()(size_t i, size_t n);
 
@@ -96,7 +99,7 @@ public:
 
 	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n);
 
-	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n)const;
+	const T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n)const;
 
 	T& operator()(const vector<size_t>& dims);
 
@@ -106,7 +109,7 @@ public:
 	T& operator()(size_t bef, size_t i, size_t mid, size_t j, size_t beh,
 		size_t mode1, size_t mode2, size_t n)const;
 
-	inline T& operator[](const size_t idx)const
+	inline const T& operator[](const size_t idx)const
 	{
 		// Fast bracket operator
 		return coeffs_[idx];

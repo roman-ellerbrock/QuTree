@@ -9,6 +9,12 @@ Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
 	:Tensor(TensorShape(dims), InitZero) {}
 
 template<typename T>
+Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool InitZero)
+	:shape_(dim), coeffs_(ptr) {
+	if (InitZero) { Zero(); }
+}
+
+template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_(new T[dim.totalDimension()]) {
 	if (InitZero) { Zero(); }

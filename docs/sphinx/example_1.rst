@@ -62,7 +62,56 @@ stored in B using the Dot-product routine::
 
 Here :code:`S` will be a 5x5 "overlap" matrix containing the dot-product values of a
 standard (Euclidean) dot-product.
-Note that the dot-product is equivalent to a tensor contraction leaving out the last index
-from the summation.
+Note that the dot-product is equivalent to a tensor contraction where the last index
+is excluded from the summation.
+
+Matrix Tensor Products
+======================
+
+Matix Tensor Products can be performed via::
+
+    Matrixcd M(3, 3);
+    Tensorcd C = MatrixTensor(M, A, 1);
+
+Here "1" indicates that the matrix is applied to the second index in A. The routine will check
+whether the dimensions of M matches that active index in A upon calling the routine.
+There also exist versions that allow to apply adjoint matrices (see :code:`multATB` function)
+or that change the order of M and A which is equivalent to applying a transpose matrix M
+to the Tensor A (see :code:`TensorMatrix(A, M, 1)`). Please refer to the source code for more
+information.
+
+Operators
+=========
+
+There exist various operator overloadings of tensors::
+
+    Tensorcd D = C - B;
+    D *= 0.5;
+    D += C;
+
+and so on.
+
+Reshaping and Re-interpretation
+===============================
+
+Tensors and Matrices can be reinterpreted without copying memory, simply by changing
+the dimensions. A commonly requested option is the Tensor reshaping::
+
+    TensorShape newshape({5,2,12});
+    A.Reshape(newshape);
+
+will reinterpret the linear memory, previously interpreted according to the dimensions
+2,3,4 and 5 now by 5,2,12. The reshaping only works if the total number of coefficients
+it the same in both shapes. If the number of coefficients is not the same, the :code:`adjust`
+function can be used to resize the tensor.
 
 
+
+More Examples
+=============
+
+There are various other functions of the :code:`Tensor` class. Giving a comprehensive overview
+overview would inflate this example section a lot. Instead, we refer the reader to the source code
+and the unit test section for more information. The :code:`Tensor.h` contains the
+most fundamental routines and :code:`Tensor_Extension` contains more routines that
+are sometimes used but not very frequently.
