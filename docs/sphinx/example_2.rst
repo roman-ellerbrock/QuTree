@@ -10,8 +10,10 @@ Fundamental Usage
 =================
 
 The following examples demonstrate how matrices are constructed
-and show some basic usage examples.
+and show some basic usage examples
 
+..code-block:: C++
+    :linenos:
     Matrixcd A(3, 3);
     A(0, 0) = 2;
     A(4) = 5;
@@ -22,8 +24,10 @@ and show some basic usage examples.
 Spectral Decompositions
 =======================
 
-Hermitian (or symmetric) matrices can be diagonalized using::
+Hermitian (or symmetric) matrices can be diagonalized using
 
+..code-block:: C++
+    :linenos:
     SpectralDecompositioncd spec = Diagonalize(D);
     Matrixcd U = spec.first;
     Vectord ev = spec.second;
