@@ -22,6 +22,7 @@ Welcome to QuTree's documentation!
    sphinx/example_3
    sphinx/example_4
 
+
 .. toctree::
    :maxdepth: 1
    :caption: API Reference
