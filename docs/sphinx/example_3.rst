@@ -129,7 +129,7 @@ Leaf Interfaces
 ===============
 
 :code:`LeafInterfaces` are used to map the library to a specific problem's implemenmtation.
-Typical examples of :code:`LeafInterface`s are primitive basis functions like
+Typical examples for :code:`LeafInterface` are primitive basis functions like
 Harmonic Oscillator or Legendre polynomials or FFT-grids, spin basis sets and so on.
 Bottomlayer nodes can grant access to the underlying :code:`Leaf` and the LeafInterface can
 grant access to the :code:`LeafInterface`::
