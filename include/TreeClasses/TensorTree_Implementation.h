@@ -88,7 +88,7 @@ void TensorTree<T>::Write(ostream& os) const {
 	for (const Tensor<T>& Phi : attributes_) {
 		os << Phi;
 	}
-	os << flush;
+	os.flush();
 }
 
 template<typename T>
@@ -100,11 +100,20 @@ void TensorTree<T>::Write(const string& filename) const {
 template<typename T>
 void TensorTree<T>::Read(istream& is) {
 
+	if (is.bad()) {
+		cerr << "Stream bad." << endl;
+		exit(2);
+	}
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
 	string s_key("TTre");
-	assert(s_check == s_key);
+	if (s_check != s_key) {
+		cerr << "Wrong keyword in wavefunction" << endl;
+		cerr << "Expected: " << s_key << endl;
+		cerr << "Actual: " << s_check << endl;
+		exit(2);
+	}
 
 	// Read number of nodes
 	int32_t nnodes;

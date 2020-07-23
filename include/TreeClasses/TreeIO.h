@@ -9,9 +9,13 @@
 #include "TreeClasses/SparseMatrixTree.h"
 
 namespace TreeIO {
+	void Status(size_t it, size_t max, size_t freq, size_t length);
 
-	template <typename T>
-	void Output(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);
+	void StatusTime(size_t it, size_t max, size_t freq, size_t length,
+		chrono::high_resolution_clock::time_point& t1, chrono::high_resolution_clock::time_point& t2,
+		chrono::microseconds& time);
+
+	void Output(const TensorTreecd& Psi, const Tree& tree, ostream& os = cout);
 
 	template <typename T>
 	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);

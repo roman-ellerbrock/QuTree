@@ -52,6 +52,7 @@ void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
 			leaf.Mode() = Map[leaf.Mode()];
 		}
 	}
+	Update();
 }
 
 void Tree::ExpandNode(Node& node) {

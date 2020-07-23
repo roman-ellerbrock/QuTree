@@ -74,7 +74,7 @@ void hole_product_tree() {
 }
 
 void tree_examples() {
-	Tree tree = TreeFactory::BalancedTree(3, 3, 2);
+	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
 	TensorTreecd Psi(tree);
 	Psi.print(tree);
 
