@@ -119,13 +119,13 @@ passing the pointer to the tensor contructor::
     Tensorcd E(shape, ptr, ownership, zero);
 
 By default, the ownership of the memory is transferred to the
-tensor and the elemtns are set to zero.
+tensor and the elements are set to zero.
 
 More Examples
 =============
 
 There are various other functions of the :code:`Tensor` class. Giving a comprehensive overview
-overview would inflate this example section a lot. Instead, we refer the reader to the source code
+would inflate this example section a lot. Instead, we refer the reader to the source code
 and the unit test section for more information. The :code:`Tensor.h` contains the
 most fundamental routines and :code:`Tensor_Extension` contains more routines that
-are sometimes used but not very frequently.
+are sometimes, but not very frequently, used.

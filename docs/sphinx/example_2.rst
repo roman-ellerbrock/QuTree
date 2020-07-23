@@ -1,5 +1,5 @@
 ===================================
-Example 2: Tensor/Matrix Operations
+Example 2: Matrix Class
 ===================================
 
 TODO: Diagonalization, orthogonalization, etc
