@@ -42,7 +42,7 @@ public:
 	explicit Tensor(const TensorShape& dim, bool InitZero = true);
 
 	// Construct from external memory
-	explicit Tensor(const TensorShape& dim, T* ptr, bool InitZero = true);
+	explicit Tensor(const TensorShape& dim, T* ptr, bool ownership = true, bool InitZero = true);
 
 	explicit Tensor(istream& is);
 
@@ -206,6 +206,7 @@ protected:
 
 	TensorShape shape_;
 	T* coeffs_;
+	bool ownership_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;

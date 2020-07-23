@@ -105,7 +105,21 @@ will reinterpret the linear memory, previously interpreted according to the dime
 it the same in both shapes. If the number of coefficients is not the same, the :code:`adjust`
 function can be used to resize the tensor.
 
+Creating Tensors from Externally Allocated Memory
+=================================================
 
+When using QuTree in existing frameworks the memory of tensors
+can be previously allocated. At some point one may wish to interpret
+a chunk of memory as a tensor from now on. This can be done by
+passing the pointer to the tensor contructor::
+
+    complex<double> *ptr = new complex<double>[120];
+    bool zero = true;
+    bool ownership = true;
+    Tensorcd E(shape, ptr, ownership, zero);
+
+By default, the ownership of the memory is transferred to the
+tensor and the elemtns are set to zero.
 
 More Examples
 =============

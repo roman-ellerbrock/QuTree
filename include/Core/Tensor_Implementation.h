@@ -9,14 +9,14 @@ Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
 	:Tensor(TensorShape(dims), InitZero) {}
 
 template<typename T>
-Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool InitZero)
-	:shape_(dim), coeffs_(ptr) {
+Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
+	:shape_(dim), coeffs_(ptr), ownership_(ownership) {
 	if (InitZero) { Zero(); }
 }
 
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
-	:shape_(dim), coeffs_(new T[dim.totalDimension()]) {
+	:shape_(dim), coeffs_(new T[dim.totalDimension()]), ownership_(true) {
 	if (InitZero) { Zero(); }
 }
 
@@ -54,8 +54,9 @@ Tensor<T>::Tensor(const Tensor& old, T factor)
 // Move constructor
 template<typename T>
 Tensor<T>::Tensor(Tensor&& old) noexcept
-	:shape_(old.shape_), coeffs_(old.coeffs_) {
+	:shape_(old.shape_), coeffs_(old.coeffs_), ownership_(old.ownership_) {
 	old.coeffs_ = nullptr;
+	old.ownership_ = false;
 }
 
 // Copy Assignment Operator
@@ -72,13 +73,15 @@ Tensor<T>& Tensor<T>::operator=(Tensor&& old) noexcept {
 	delete[] coeffs_;
 	shape_ = old.shape_;
 	coeffs_ = old.coeffs_;
+	ownership_ = old.ownership_;
 	old.coeffs_ = nullptr;
+	old.ownership_ = false;
 	return *this;
 }
 
 template<typename T>
 Tensor<T>::~Tensor() {
-	delete[] coeffs_;
+	if (ownership_) { delete[] coeffs_; }
 }
 
 //////////////////////////////////////////////////////////
@@ -103,7 +106,7 @@ inline T& Tensor<T>::operator()(const size_t i) {
 // Bracket Operators
 //////////////////////////////////////////////////////////
 template<typename T>
-inline T& Tensor<T>::operator()(const size_t i, const size_t n) const {
+inline const T& Tensor<T>::operator()(const size_t i, const size_t n) const {
 	size_t dimpart = shape_.lastBefore();
 	assert(i < dimpart);
 	assert(n < shape_.lastDimension());
