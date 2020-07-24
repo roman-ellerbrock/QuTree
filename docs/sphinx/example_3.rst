@@ -13,7 +13,9 @@ Tree Construction
 =================
 
 There are two common ways of generating trees: from text files or automatically by providing some
-superparameters. Close-to-balenced trees can be generated automatically::
+superparameters. Close-to-balenced trees can be generated automatically
+
+.. code-block:: C++
 
     size_t number_leaves = 7;
     size_t dim_leaves = 3;
@@ -25,7 +27,9 @@ bottomlayer of the tree and dim_nodes affects the Tensorshape at every node. The
 reads
 @TODO: include graphic
 
-A tree can also be generated from string or file via::
+A tree can also be generated from string or file via
+
+.. code-block:: C++
 
     1   -2
         2   -2
@@ -64,7 +68,9 @@ for a basis set that corresponds to the leafs and the third is a leaf-index.
 The block of doubles at the end of the definition encodes parameters for the basis set of the
 leaf.
 
-The :code:`Tree` can be inspected via::
+The :code:`Tree` can be inspected via
+
+.. code-block:: C++
 
     tree.info();
 
@@ -74,7 +80,9 @@ Tree Handling
 The most common way of accessing nodes in the tree is via so-called bottom-up or top-down swipes
 through the tree. In this notation the root node is considered the topnode and bottomlayer nodes are
 the ones over a leaf.
-A bottom-up swipe is performed by::
+A bottom-up swipe is performed by
+
+.. code-block:: C++
 
     for (const Node& node : tree) {
         // Do something, here just print some info
@@ -85,7 +93,9 @@ A bottom-up swipe is performed by::
         const Node& node = tree.getLeaf(i);
     }
 
-A top-down swipe is performed using the backwards iterator ::
+A top-down swipe is performed using the backwards iterator
+
+.. code-block:: C++
 
     for (const auto& it = tree.rbegin(); it != tree.rend(); ++it) {
         const Node& node = *it;
@@ -97,7 +107,9 @@ A top-down swipe is performed using the backwards iterator ::
 
 Node that in the last example we use an integer, since i can become negative.
 
-The location of the nodes in the tree can be accessed by::
+The location of the nodes in the tree can be accessed by
+
+.. code-block:: C++
 
     for (const Node& node : tree) {
         if (node.isToplayer()) {
@@ -109,7 +121,9 @@ The location of the nodes in the tree can be accessed by::
         }
     }
 
-Parents and children of a node can be accessed via::
+Parents and children of a node can be accessed via
+
+.. code-block:: C++
 
     for (const Node& node : tree) {
         if (!node.isToplayer()) {
@@ -132,7 +146,9 @@ Leaf Interfaces
 Typical examples for :code:`LeafInterface` are primitive basis functions like
 Harmonic Oscillator or Legendre polynomials or FFT-grids, spin basis sets and so on.
 Bottomlayer nodes can grant access to the underlying :code:`Leaf` and the LeafInterface can
-grant access to the :code:`LeafInterface`::
+grant access to the :code:`LeafInterface`
+
+.. code-block:: C++
 
     for (const Node& node : tree) {
         if (!node.isBottomlayer()) {

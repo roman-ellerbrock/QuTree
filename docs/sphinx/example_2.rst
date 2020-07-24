@@ -1,5 +1,5 @@
 ===================================
-Example 2: Matrix Class
+Example 2: Matrices
 ===================================
 
 The :code:`Matrix` class represents Matrices on and
@@ -12,8 +12,8 @@ Fundamental Usage
 The following examples demonstrate how matrices are constructed
 and show some basic usage examples
 
-..code-block:: C++
-    :linenos:
+.. code-block:: C++
+
     Matrixcd A(3, 3);
     A(0, 0) = 2;
     A(4) = 5;
@@ -26,8 +26,8 @@ Spectral Decompositions
 
 Hermitian (or symmetric) matrices can be diagonalized using
 
-..code-block:: C++
-    :linenos:
+.. code-block:: C++
+
     SpectralDecompositioncd spec = Diagonalize(D);
     Matrixcd U = spec.first;
     Vectord ev = spec.second;
@@ -36,14 +36,21 @@ Hermitian (or symmetric) matrices can be diagonalized using
     auto Dreg = Regularize(D, 1e-6);
 
 The decomposed matrix can be used to calculate squares, the inverse
-and so on::
+and so on
+
+.. code-block:: C++
 
     Matrixcd Dsq = sqrt(spec);
     Matrixcd Dinv = BuildInverse(spec);
 
-A singular value decomposition can be performed by::
+A singular value decomposition can be performed by
+
+.. code-block:: C++
 
     SVDcd svd_a = svd(A);
+    Matrixcd U = get<0>(svd_a);
+    Matrixcd V = get<1>(svd_a);
+    Vectord sigma = get<2>(svd_a);
     Matrixcd Anew = toMatrix(svd_a);
 
 Other high-level operations can be performed in a similar fashion, e.g. solving SLE or
@@ -52,7 +59,9 @@ QR-decomposition.
 Eigen Interface
 ===============
 
-QuTree provides an interface for :code:`Matrix` to Eigen's matrix class::
+QuTree provides an interface for :code:`Matrix` to Eigen's matrix class
+
+.. code-block:: C++
 
     Eigen::MatrixXcd Aeigen = toEigen(A);
     Matrixcd Aqutree = toQutree(Aeigen);

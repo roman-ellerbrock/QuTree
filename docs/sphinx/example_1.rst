@@ -4,14 +4,18 @@ Example 1: Tensors
 
 This example shows manipulation of the :code:`Tensor` class as shown in :code:`examples/examples_1.cpp`.
 
-The :code:`Tensor` is templated over data type, with two common typedefs provided::
+The :code:`Tensor` is templated over data type, with two common typedefs provided
+
+.. code-block:: C++
 
     typedef Tensor<complex<double>> Tensorcd;
     typedef Tensor<double> Tensord;
 
 Tensor Creation
 ===============
-The most basic construction of a :code:`Tensor` is from a :code:`TensorShape`::
+The most basic construction of a :code:`Tensor` is from a :code:`TensorShape`
+
+.. code-block:: C++
 
     TensorShape shape({2, 3, 4, 5});
     Tensorcd A(shape); // create tensor, all entries set to Zero
@@ -23,7 +27,9 @@ Assigning Elements and Inspection
 =================
 
 The elements of a :code:`Tensor` can be set and used via the bracket operators.The most common
-bracket operator addresses the tensor elements as linear memory::
+bracket operator addresses the tensor elements as linear memory
+
+.. code-block:: C++
 
     for (size_t i = 0; i < A.shape().totalDimension(); ++i) {
         A(i) = 3. * i;
@@ -40,7 +46,9 @@ Tensor Contractions
 
 A central Tensor operation is the Tensor :code:`Contraction`. A tensor contraction of
 two tensors A and B performs a summation over every index, except for a chosen index - the
-so-called hole-index. We can perform a contraction on tensors A and B via::
+so-called hole-index. We can perform a contraction on tensors A and B via
+
+.. code-block:: C++
 
     Matrixcd B = Contraction(A, B, 0);
 
@@ -55,7 +63,9 @@ vectors via the Tensor class. Let's say we have 5 vectors on a direct product
 vector space, each with the dimensions 2*3*4=24. We can then interpret the tensors A
 and B as the numerical representation of such vector elements.
 We can calculate the dot-product between the five vectors stored in A with the five vectors
-stored in B using the Dot-product routine::
+stored in B using the Dot-product routine
+
+.. code-block:: C++
 
     Matrixcd S = A.DotProduct(B);
     S.print();
@@ -68,7 +78,9 @@ is excluded from the summation.
 Matrix Tensor Products
 ======================
 
-Matix Tensor Products can be performed via::
+Matix Tensor Products can be performed via
+
+.. code-block:: C++
 
     Matrixcd M(3, 3);
     Tensorcd C = MatrixTensor(M, A, 1);
@@ -80,10 +92,12 @@ or that change the order of M and A which is equivalent to applying a transpose 
 to the Tensor A (see :code:`TensorMatrix(A, M, 1)`). Please refer to the source code for more
 information.
 
-Operators
-=========
+Operator Overloadings
+=====================
 
-There exist various operator overloadings of tensors::
+There exist various operator overloadings of tensors
+
+.. code-block:: C++
 
     Tensorcd D = C - B;
     D *= 0.5;
@@ -91,11 +105,13 @@ There exist various operator overloadings of tensors::
 
 and so on.
 
-Reshaping and Re-interpretation
-===============================
+Reshaping and Resizing
+======================
 
 Tensors and Matrices can be reinterpreted without copying memory, simply by changing
-the dimensions. A commonly requested option is the Tensor reshaping::
+the dimensions. A commonly requested option is the Tensor reshaping
+
+.. code-block:: C++
 
     TensorShape newshape({5,2,12});
     A.Reshape(newshape);
@@ -111,7 +127,9 @@ Creating Tensors from Externally Allocated Memory
 When using QuTree in existing frameworks the memory of tensors
 can be previously allocated. At some point one may wish to interpret
 a chunk of memory as a tensor from now on. This can be done by
-passing the pointer to the tensor contructor::
+passing the pointer to the tensor contructor
+
+.. code-block:: C++
 
     complex<double> *ptr = new complex<double>[120];
     bool zero = true;

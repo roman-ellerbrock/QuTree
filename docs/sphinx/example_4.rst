@@ -1,5 +1,5 @@
 =======================
-Example 4: TensorTree
+Example 4: TensorTrees
 =======================
 
 These examples will demonstrate usage of the the :code:`TensorTree` class.
@@ -12,7 +12,9 @@ node.
 TensorTree Contruction
 ======================
 
-A :code:`TensorTree` can be constructed using a :code:`Tree`::
+A :code:`TensorTree` can be constructed using a :code:`Tree`
+
+.. code-block:: C++
 
     // Create a TensorTree filled with zero coefficients
     Tree tree = TreeFactory::BalancedTree(8, 2, 2);
@@ -27,7 +29,9 @@ Tensor Tree Handling
 ====================
 
 The tensors in the :code:`TensorTree` can be directly addressed using
-a swipe over the tree::
+a swipe over the tree
+
+.. code-block:: C++
 
     for (const Node& node : tree) {
         const Tensorcd& Phi = Psi[node];
@@ -41,18 +45,24 @@ Dot-Products and Contractions
 =============================
 
 Similar to tensors, TensorTrees often represent vectors in high-dimensional
-vector spaces. Dot-products between :code:`TensorTree` objects can be calculated using::
+vector spaces. Dot-products between :code:`TensorTree` objects can be calculated using
 
-    MatrixTree S = DotProduct(Chi, Psi, tree);
+.. code-block:: C++
 
-Contractions of TensorTrees can be caluclated using::
+    MatrixTree S = TreeFunctions::DotProduct(Chi, Psi, tree);
 
-    MatrixTree q = Contraction(Chi, Psi, S, tree);
+Contractions of TensorTrees can be caluclated using
+
+.. code-block:: C++
+
+    MatrixTree q = TreeFunctions::Contraction(Chi, Psi, S, tree);
 
 If the TensorTree uses an orthonormal basis, the self-contraction can be performed more
-efficiently::
+efficiently
 
-    MatrixTree rho = Contraction(Psi, tree, true);
+.. code-block:: C++
+
+    MatrixTree rho = Treefunctions::Contraction(Psi, tree, true);
 
 where the flag "true" indicated whether the basis is orthogonal or not.
 

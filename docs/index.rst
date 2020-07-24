@@ -21,6 +21,8 @@ Welcome to QuTree's documentation!
    sphinx/example_2
    sphinx/example_3
    sphinx/example_4
+   sphinx/example_5
+   sphinx/example_6
 
 
 .. toctree::
