@@ -24,6 +24,12 @@ Welcome to QuTree's documentation!
    sphinx/example_5
    sphinx/example_6
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+
+   sphinx/tutorial_1
+   sphinx/tutorial_2
 
 .. toctree::
    :maxdepth: 1
