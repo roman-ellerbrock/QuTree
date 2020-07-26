@@ -28,16 +28,16 @@ For simplicitly you can use the base type complex<double>, i.e. the classes
 Tensorcd and Matrixcd.
 
 1.) Create a TensorsShape named *shape* with 5 indices. The upper (last) index' dimension
-    shall be 3. The lower indices' dimensions shall be 2, 3, 4 and 5.
+shall be 3. The lower indices' dimensions shall be 2, 3, 4 and 5.
 
 2.) Create 2 Tensors, A and B, with the dimensions given by *shape*. Initialize the
-    coefficients of the Tensor using varying values and use a Gram-Schmidt to orthonormalize
-    the entries.
+coefficients of the Tensor using varying values and use a Gram-Schmidt to orthonormalize
+the entries.
 
 3.) Create a Matrix named *mat* acting on an arbitrary index of A and B.
-    Fill it with entries (create, e.g., a unit-operator, null-operator, ..)
-    and apply it to A or B.
-    Investigate the resulting Tensors C = mat * A.
+Fill it with entries (create, e.g., a unit-operator, null-operator, ..)
+and apply it to A or B.
+Investigate the resulting Tensors C = mat * A.
 
 4.) Calculate and investigate the dot-product (A, C) = (A, mat * A).
 
@@ -47,7 +47,7 @@ the Tensor class, you can try to solve the following exercises:
 5.) Write a function that performs a product of a SPOcd and a Tensorcd.
 
 6.) Write a function that performs a Tensor-Hole product for a Tensorcd with a hole in
-    index k.
+index k.
 
 The functions "MatrixTensor" and "Contraction" in Tensor_Implementation.h perform
 the tasks 8.) and 9.), respectively. However, these functions are hard to read, because they
