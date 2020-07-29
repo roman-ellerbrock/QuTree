@@ -110,6 +110,13 @@ namespace TreeFunctions {
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
+				if (!parent.isToplayer()) {
+					if (!marker.Active(parent)) {
+						cerr << "Error in Contraction of operator representation:\n";
+						cerr << "Missing active node at parent.\n";
+						exit(1);
+					}
+				}
 				if (marker.Active(parent)) {
 					hKet = multStateAB(holes[parent], hKet);
 				}
@@ -122,8 +129,43 @@ namespace TreeFunctions {
 
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho,
+		const SparseTree& marker, const Tree& tree) {
+
+		// Swipe top-down_ but exclude topnode
+		int sub_topnode = marker.size() - 1;
+		for (int n = sub_topnode; n >= 0; --n) {
+			const Node& node = marker.MCTDHNode(n);
+			if (!node.isToplayer()) {
+				assert(holes.Active(node));
+
+				const Node& parent = node.parent();
+				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
+				if (!parent.isToplayer()) {
+					if (marker.Active(parent)) {
+						hKet = multStateAB(holes[parent], hKet);
+					} else {
+						hKet = multStateAB(rho[parent], hKet);
+					}
+				}
+				holes[node] = Contraction(Bra[parent], hKet, node.childIdx());
+			} else {
+				holes[node] = IdentityMatrix<T>(node.shape().lastDimension());
+			}
+		}
+	}
+
+
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
 		Contraction(holes, Bra, Ket, mats, holes.Active(), tree);
+	}
+
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho, const Tree& tree) {
+		Contraction(holes, Bra, Ket, mats, rho, holes.Active(), tree);
 	}
 
 	template<typename T>
@@ -138,6 +180,16 @@ namespace TreeFunctions {
 		assert(holes.size() == Mats.size());
 		for (size_t l = 0; l < holes.size(); ++l) {
 			Contraction(holes[l], Bra, Ket, Mats[l], tree);
+		}
+	}
+
+	template <typename T>
+	void Contraction(SparseMatrixTrees<T>& holes, const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket, const SparseMatrixTrees<T>& mats,
+		const MatrixTree<T>& rho, const Tree& tree) {
+		assert(holes.size() == Mats.size());
+		for (size_t l = 0; l < holes.size(); ++l) {
+			Contraction(holes[l], Bra, Ket, mats[l], rho, tree);
 		}
 	}
 

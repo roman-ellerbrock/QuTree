@@ -37,6 +37,12 @@ namespace TreeFunctions {
 	template void Contraction(vector<SparseMatrixTree<cd>>& holes, const SparseMatrixTrees<cd>& Mats,
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
 
+	template void Contraction(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
+		const SparseMatrixTree<cd>& mats, const MatrixTree<cd>& rho, const Tree& tree);
+
+	template void Contraction(SparseMatrixTrees<cd>& holes, const TensorTree<cd>& Bra,
+		const TensorTree<cd>& Ket, const SparseMatrixTrees<cd>& Mats,
+		const MatrixTree<cd>& rho, const Tree& tree);
 
 	template Tensor<cd> Apply(const SparseMatrixTree<cd>& mat, const Tensor<cd>& Phi, const MLO<cd>& M, const Node& node);
 

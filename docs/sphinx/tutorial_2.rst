@@ -1,5 +1,5 @@
 ================================
-Tutorial 1: Tensors and Matrices
+Tutorial 2: Tensors and Matrices
 ================================
 
 The aim of this exercise is to learn fundamental usage of QDlib.

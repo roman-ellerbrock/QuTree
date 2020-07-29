@@ -61,6 +61,9 @@ template Matrix<doub> IdentityMatrix(size_t dim);
 template double Residual(const Matrixcd& A, const Matrixcd& B);
 template double Residual(const Matrixd& A, const Matrixd& B);
 
+template Matrix<cd> Regularize(const Matrix<cd>& A, double eps);
+template Matrix<d> Regularize(const Matrix<d>& A, double eps);
+
 template Matrix<cd> Merge(const Matrix<cd>& A, const Matrix<cd>& B, const Matrix<cd>& AB);
 template Matrix<d> Merge(const Matrix<d>& A, const Matrix<d>& B, const Matrix<d>& AB);
 

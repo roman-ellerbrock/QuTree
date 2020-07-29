@@ -59,7 +59,18 @@ The following basis sets will be investigated:
     freedom, evaluate the number of coefficients and make a diagram. Compare it to the
     analytic equations to validate your results. In Ref. [1] a detailed study can be found.
 
-# References
+Inputs
+======
+nocl.in
+
+.. code-block:: YAML
+
+
+ch3.in
+.. code-block:: YAML
+
+References
+==========
 - [1] U. Manthe, J. Chem. Phys., 128, 164116 (2008)
 - [2] U. Manthe, H. D. Meyer, J. Chem. GetLeaf., 97, 3199 (1992)
 - [3] U. Manthe, J. Chem. GetLeaf, 130, 054109 (2009)

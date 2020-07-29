@@ -6,6 +6,7 @@
 #define SPARSEMATRIXTREEFUNCTIONS_H
 #include "TreeClasses/SparseMatrixTree.h"
 #include "TreeClasses/SOPMatrixTrees.h"
+#include "TreeClasses/MatrixTree.h"
 
 namespace TreeFunctions {
 /**
@@ -66,6 +67,15 @@ namespace TreeFunctions {
 		const Tree& tree);
 
 	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket, const SparseMatrixTree<T>& mats,
+		const MatrixTree<T>& rho, const SparseTree& marker, const Tree& tree);
+
+	template<typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho, const Tree& tree);
+
+	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const Tree& tree);
 
@@ -74,8 +84,21 @@ namespace TreeFunctions {
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
 	template <typename T>
+	void Contraction(SparseMatrixTrees<T>& holes, const SparseMatrixTrees<T>& mat,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+	template <typename T>
+	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho, const Tree& tree);
+
+	template <typename T>
 	void Contraction(vector<SparseMatrixTrees<T>>& holes, const vector<SparseMatrixTrees<T>>& mat,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+	template <typename T>
+	void Contraction(SparseMatrixTrees<T>& holes, const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket, const SparseMatrixTrees<T>& mats,
+		const MatrixTree<T>& rho, const Tree& tree);
 
 ////////////////////////////////////////////////////////////////////////
 /// Apply MatrixTree
