@@ -187,7 +187,7 @@ namespace TreeFunctions {
 	void Contraction(SparseMatrixTrees<T>& holes, const TensorTree<T>& Bra,
 		const TensorTree<T>& Ket, const SparseMatrixTrees<T>& mats,
 		const MatrixTree<T>& rho, const Tree& tree) {
-		assert(holes.size() == Mats.size());
+		assert(holes.size() == mats.size());
 		for (size_t l = 0; l < holes.size(); ++l) {
 			Contraction(holes[l], Bra, Ket, mats[l], rho, tree);
 		}
