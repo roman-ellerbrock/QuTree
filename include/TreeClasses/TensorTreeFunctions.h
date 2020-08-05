@@ -12,6 +12,9 @@ namespace TreeFunctions {
 	void Adjust(TensorTree<T>& Psi, Tree& tree,
 		const SpectralDecompositionTree<T>& X, double eps);
 
+	template <typename T>
+	void Adjust(TensorTree<T>& Psi, const Tree& newtree);
+
 	/// Perform a (generalized) sum of tensor trees. By default, a regular sum will be performed.
 	template <typename T>
 	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,

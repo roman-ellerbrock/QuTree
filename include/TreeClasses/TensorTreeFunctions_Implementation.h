@@ -49,6 +49,14 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
+	void Adjust(TensorTree<T>& Psi, const Tree& newtree) {
+		for (const Node& node : newtree) {
+			Tensor<T>& Phi = Psi[node];
+			Phi = Phi.AdjustDimensions(node.shape());
+		}
+	}
+
+	template<typename T>
 	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
 		bool sharedLeafs, bool sumToplayer) {
 		/**
