@@ -3,6 +3,7 @@
 //
 #include "Core/Matrix_Implementation.h"
 #include "Core/Matrix_Extension_Implementation.h"
+#include "Util/RandomProjector_Implementation.h"
 
 typedef complex<double> cd;
 typedef double doub;
@@ -97,3 +98,6 @@ template Matrixd BuildInverse(const SpectralDecompositiond& X, double eps);
 template SpectralDecomposition<double> reduceRank(const SpectralDecomposition<double>& x, size_t rank);
 template SpectralDecomposition<cd> reduceRank(const SpectralDecomposition<cd>& x, size_t rank);
 
+template SpectralDecomposition<cd>
+    Random::DiagonalizeRandom<cd, Matrixcd>(const Matrixcd& A,
+	size_t rank, size_t pow, mt19937& gen);

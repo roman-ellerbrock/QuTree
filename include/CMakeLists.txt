@@ -67,6 +67,8 @@ set(QuTree_INCLUDE_FILES
     include/Util/MultiIndex.h
     include/Util/QMConstants.h
     include/Util/RandomMatrices.h
+    include/Util/RandomProjector.h
+    include/Util/RandomProjector_Implementation.h
     include/Util/SimultaneousDiagonalization.h
     include/Util/string_ext.h
     include/Util/Tree.h

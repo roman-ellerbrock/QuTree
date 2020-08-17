@@ -9,6 +9,8 @@ set(QuTree_SOURCE_FILES
     src/Core/Vector_Instantiations.cpp
     src/Core/stdafx.cpp
 
+    src/Core/LA_lib.f
+
     src/TreeClasses/MatrixTree.cpp
     src/TreeClasses/MatrixTreeFunctions.cpp
     src/TreeClasses/TreeTransformations.cpp

@@ -38,7 +38,7 @@ namespace TreeFunctions {
 
 		if (node.isBottomlayer()) {
 			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf());
-		} else {
+		} else if (!node.isToplayer()) {
 			mats[node] = RepresentUpper(mats, Bra, Ket, node);
 		}
 	}
@@ -86,7 +86,7 @@ namespace TreeFunctions {
 		}
 	}
 
-	template <typename T>
+	template<typename T>
 	void Represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
 		Represent(mats.matrices_, sop, Bra, Ket, tree);
@@ -155,7 +155,6 @@ namespace TreeFunctions {
 		}
 	}
 
-
 	template<typename T>
 	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
@@ -183,7 +182,7 @@ namespace TreeFunctions {
 		}
 	}
 
-	template <typename T>
+	template<typename T>
 	void Contraction(SparseMatrixTrees<T>& holes, const TensorTree<T>& Bra,
 		const TensorTree<T>& Ket, const SparseMatrixTrees<T>& mats,
 		const MatrixTree<T>& rho, const Tree& tree) {
@@ -245,7 +244,6 @@ namespace TreeFunctions {
 		}
 		return Phi;
 	}
-
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

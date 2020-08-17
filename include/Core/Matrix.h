@@ -333,8 +333,8 @@ public:
     /** \name Getters/Setters */
     ///@{
 
-	Vector<T> row(size_t i);
-	Vector<T> col(size_t i);
+	Vector<T> row(size_t i) const;
+	Vector<T> col(size_t i) const;
 	Vector<T> diag() const;
 
 
@@ -536,6 +536,8 @@ typedef tuple<Matrixd, Matrixd, Vectord> SVDd;
 
 SVDcd svd(const Matrixcd& A);
 Matrixcd toMatrix(const SVDcd& svd);
+
+SVDd svd(const Matrixd& A);
 
 Eigen::MatrixXd toEigen(Matrixd A);
 Eigen::MatrixXcd toEigen(Matrixcd A);

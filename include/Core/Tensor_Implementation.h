@@ -479,9 +479,27 @@ T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 	return result;
 }
 
+extern "C" {
+// subroutine matvec (mulpsi, psi, matrix, a, b, c, add)
+// subroutine rhomat (bra,ket,matrix,a,b,c)
+void matvec_(double* C, double* B, double* mat,
+	int* a, int* b, int* c, int* add);
+void rhomat_(double* Bra, double* Ket, double* M,
+	int* a, int* b, int* c);
+}
+
 template<typename T>
 void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind) {
+
+	int a = active1;
+	int b = before;
+	int c = behind;
+
+	rhomat_((double*) &A[0], (double*) &B[0], (double*) &S[0],
+		&a, &b, &c);
+
+	/*
 	// Variables for precalculation of indices
 	size_t actbef1 = active1 * before;
 	size_t actbef2 = active2 * before;
@@ -492,6 +510,7 @@ void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t jpreidx = 0;
 	size_t npreidx1 = 0;
 	size_t npreidx2 = 0;
+	 */
 
 	// Avoid unnecessary thread launches
 	/*
@@ -502,6 +521,7 @@ void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	    }
 	}
 	*/
+	/*
 #pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
 	for (size_t n = 0; n < behind; n++) {
 		npreidx1 = n * actbef1;
@@ -522,6 +542,7 @@ void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 			}
 		}
 	}
+	*/
 }
 
 template<typename T>
@@ -558,7 +579,13 @@ template<typename T, typename U>
 void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
-	if (zero) { C.Zero(); }
+	int add = !zero;
+	int a = activeB;
+	int b = before;
+	int c = after;
+	matvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
+		&a, &b, &c, &add);
+/*	if (zero) { C.Zero(); }
 
 	// Variables to Precompute index values
 	size_t actbefB = activeB * before;
@@ -571,7 +598,7 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t lpreidx = 0;
 	size_t jpreidx = 0;
 	size_t lactive = 0;
-
+*/
 	// Avoid unnecessary thread launches
 	// TODO: this requires #inclue <omp.h>
 	/*
@@ -582,6 +609,7 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 		}
 	}
 	 */
+	/*
 	if (before == 1) {
 #pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
 		for (size_t k = 0; k < after; ++k) {
@@ -625,6 +653,7 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 			}
 		}
 	}
+	*/
 }
 
 template<typename T, typename U>

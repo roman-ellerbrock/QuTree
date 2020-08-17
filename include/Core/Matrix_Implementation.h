@@ -94,7 +94,7 @@ inline T& Matrix<T>::operator()(const size_t i, const size_t j) {
 //////////////////////////////////////////////////////////////////////
 
 template<typename T>
-Vector<T> Matrix<T>::row(size_t r) {
+Vector<T> Matrix<T>::row(size_t r) const {
 	assert(r < dim1_);
 	Vector<T> v(dim2_);
 	for (size_t c = 0; c < dim2_; ++c) {
@@ -104,7 +104,7 @@ Vector<T> Matrix<T>::row(size_t r) {
 }
 
 template<typename T>
-Vector<T> Matrix<T>::col(size_t c) {
+Vector<T> Matrix<T>::col(size_t c) const {
 	assert(c < dim2_);
 	Vector<T> v(dim2_);
 	for (size_t r = 0; r < dim1_; ++r) {
@@ -735,6 +735,16 @@ SVDcd svd(const Matrixcd& A) {
 	using namespace Eigen;
 	MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), A.Dim1(), A.Dim2());
 	JacobiSVD<MatrixXcd> svd(Am, ComputeThinU | ComputeThinV);
+	auto U = toQutree(svd.matrixU());
+	auto V = toQutree(svd.matrixV());
+	auto sigma = toQutree(svd.singularValues());
+	return {U, V, sigma};
+}
+
+SVDd svd(const Matrixd& A) {
+	using namespace Eigen;
+	MatrixXd Am = Eigen::Map<MatrixXd>((double *) &A(0, 0), A.Dim1(), A.Dim2());
+	JacobiSVD<MatrixXd> svd(Am, ComputeThinU | ComputeThinV);
 	auto U = toQutree(svd.matrixU());
 	auto V = toQutree(svd.matrixV());
 	auto sigma = toQutree(svd.singularValues());

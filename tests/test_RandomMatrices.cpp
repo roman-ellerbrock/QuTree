@@ -4,6 +4,7 @@
 #include "UnitTest++/UnitTest++.h"
 #include "Util/RandomMatrices.h"
 #include "Core/Matrix_Extension.h"
+#include "Util/RandomProjector.h"
 
 
 SUITE (RMT) {
@@ -269,6 +270,61 @@ SUITE (RMT) {
 			cout << "cross-entropy(PP* A,  A) = " << crossEntropy(PPA, A) << endl;
 			cout << "cross-entropy(Arr,  A) = " << crossEntropy(Arr, A) << endl;
 			cout << "cross-entropy-diff(PP* A,  A) = " << crossEntropyDifference(PPA, A) << endl;
+		}
+	}
+
+	TEST (DiagRandom) {
+
+		size_t dim = 200;
+		size_t rank = 25;
+//		uniform_real_distribution<double> dist(0., 1.);
+		normal_distribution<double> dist;
+		mt19937 gen(2343854);
+
+		/// Build a test matrix
+		Vectord ew(dim);
+		auto U1 = RandomMatrices::GUE(dim, gen);
+		for (size_t r = 0; r < dim; ++r) {
+			ew(r) = 1. / (r + 1.);
+//			ew(r) = dist(gen);
+		}
+		SpectralDecompositioncd preA(U1, ew);
+		auto A = toMatrix(preA);
+		auto x = Diagonalize(A);
+		cout << "eigenvalues:\n";
+		for (int i = x.second.Dim() - 1; i >= 0; --i) {
+			cout << x.second(i) << " ";
+		}
+		cout << endl;
+
+		cout << "randomDiag eigenvalues:\n";
+		vector<Vectord> ews;
+		for (size_t qq = 10; qq >= 1; --qq) {
+			auto y = Random::DiagonalizeRandom<complex<double>, Matrixcd>
+				(A, rank, qq, gen);
+			cout << "power: " << qq << endl;
+			ews.push_back(y.second);
+			for (int i = rank - 1; i >= 0; --i) {
+				size_t shift = x.second.Dim() - y.second.Dim();
+				cout << (x.second(i + shift) - y.second(i)) / x.second(i + shift) << " ";
+			}
+			cout << endl;
+		}
+
+		ofstream os("randomDiag."+to_string(rank)+".dat");
+		os << "# " << dim << "x" << dim << " Matrix with rank = " << rank << "\n";
+		size_t q = ews.size();
+		for (const auto& e : ews) {
+			os << q << " ";
+			q--;
+			for (size_t i = 0; i < rank; ++i) {
+				size_t last = rank - 1;
+				size_t lastfull = dim - 1;
+				double z = x.second(lastfull - i);
+				double zz = abs(e(last - i) - z) / z;
+				os << " " << zz;
+			}
+			os << endl;
 		}
 	}
 }

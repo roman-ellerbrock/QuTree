@@ -53,7 +53,9 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE (HelperFactory, Represent) {
 		SparseMatrixTreecd hmat = TreeFunctions::Represent(M_, Psi_, tree_);
-			CHECK_CLOSE(0.25, real(hmat[tree_.TopNode()](0, 0)), 0E-12);
+		const Node& top = tree_.TopNode();
+		const Node& child = top.child(0);
+			CHECK_CLOSE(0.25, real(hmat[child](0, 0)), 0E-12);
 	}
 
 	TEST_FIXTURE (HelperFactory, Contraction) {
