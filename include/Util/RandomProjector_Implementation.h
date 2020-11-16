@@ -96,7 +96,8 @@ namespace Random {
 		 */
 
 		auto Q = RandomQ<T, LinearOperator>(A, rank, gen);
-		for (size_t i = 1; i < power; ++i) {
+//		auto Q = RandomGauss<T>(rank, A.Dim1(), gen);
+		for (size_t i = 0; i < power; ++i) {
 			Matrix<T> Y = A * Q;
 			auto Q2 = QR(Y);
 			Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
@@ -110,7 +111,7 @@ namespace Random {
 		/// Build and Diagonalize Aprime = Q^* A Q = V ew V^*
 		auto B = Q.Adjoint() * Y;
 		auto x = Diagonalize(B);
-		const auto& V = x.first;
+		const Matrix<T>& V = x.first;
 		auto& ew = x.second;
 /*		if (power != 1) {
 			for (size_t i = 0; i < ew.Dim(); ++i) {

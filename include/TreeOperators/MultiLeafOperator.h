@@ -33,31 +33,31 @@ public:
 	/// Default destructor
 	~MultiLeafOperator() = default;
 
-	MultiLeafOperator(const shared_ptr<LeafOperator<T>>& h, size_t mode) {
-		push_back(h, mode);
+	MultiLeafOperator(const shared_ptr<LeafOperator<T>>& h, size_t leaf_id) {
+		push_back(h, leaf_id);
 	}
 
 	/// Construct a MLO from a single SPO
-	MultiLeafOperator(const LeafMatrix<T>& h, size_t mode_x)
+	MultiLeafOperator(const LeafMatrix<T>& h, size_t leaf_id)
 		: MultiLeafOperator() {
-		push_back(h, mode_x);
+		push_back(h, leaf_id);
 	}
 
-	MultiLeafOperator(const Matrix<T> h, size_t mode, size_t adjoint = false)
+	MultiLeafOperator(const Matrix<T> h, size_t leaf_id, size_t adjoint = false)
 		: MultiLeafOperator() {
-		push_back(h, mode, adjoint);
-	}
-
-	/// Construct a MLO from a single RefSPO
-	MultiLeafOperator(const LeafFunction<T>& h, size_t mode_x)
-		: MultiLeafOperator() {
-		push_back(h, mode_x);
+		push_back(h, leaf_id, adjoint);
 	}
 
 	/// Construct a MLO from a single RefSPO
-	MultiLeafOperator(const LeafFun<T>& h, size_t mode_x)
+	MultiLeafOperator(const LeafFunction<T>& h, size_t leaf_id)
 		: MultiLeafOperator() {
-		push_back(h, mode_x);
+		push_back(h, leaf_id);
+	}
+
+	/// Construct a MLO from a single RefSPO
+	MultiLeafOperator(const LeafFun<T>& h, size_t leaf_id)
+		: MultiLeafOperator() {
+		push_back(h, leaf_id);
 	}
 
 	/// This routine manages how to apply a MLO

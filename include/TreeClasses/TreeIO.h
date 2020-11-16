@@ -31,6 +31,9 @@ namespace TreeIO {
 	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree);
 
+	template <typename T>
+	void EntropyMap(const TensorTree<T>& Psi, const Tree& tree);
+
 	template <class A>
 	void print(const vector<A>& vec);
 }

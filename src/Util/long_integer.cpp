@@ -2,6 +2,7 @@
 // Created by Roman Ellerbrock on 2019-10-22.
 //
 #include "Util/long_integer.h"
+using namespace boost::multiprecision;
 
 vector<bool> padded(vector<bool> a, size_t n_bit) {
 	if (n_bit > a.size()) {
@@ -70,7 +71,7 @@ void long_integer::pad(size_t n_bit) {
 
 void long_integer::mod(const long_integer& N) {
 	while (!smaller_than_samesize(N)) {
-        subtract(N);
+		subtract(N);
 	}
 }
 
@@ -180,10 +181,28 @@ void long_integer::print() const {
 
 size_t long_integer::convert() const {
 	size_t a = 0;
-	size_t n_bit = min(32, (int) size());
+	if (sizeof(size_t) * 8 < size()) {
+		cerr << "Cannot convert long_integer to size_t.\n";
+		cerr << "(press enter to continue)\n";
+		getchar();
+//		exit(1);
+	}
+	size_t n_bit = min(8 * sizeof(size_t), size());
 	for (size_t i = 0; i < n_bit; ++i) {
 		if (bits[i]) {
 			a += (size_t) pow(2, i);
+		}
+	}
+	return a;
+}
+
+cpp_int long_integer::convert_cpp() const {
+	cpp_int a = 0;
+//	size_t n_bit = min(32, (int) size());
+	for (size_t i = 0; i < size(); ++i) {
+		if (bits[i]) {
+			auto x = (cpp_int) pow((cpp_int) 2, i);
+			a += x;
 		}
 	}
 	return a;
@@ -221,14 +240,14 @@ long_integer mult(long_integer a, long_integer b) {
 long_integer mult_mod(const long_integer& a, const long_integer& b, long_integer N) {
 	size_t original_nbit = a.size();
 	auto m = mult(a, b);
-	cout << "mult(a,a)=";
-	m.print();
-	m.print_4byte();
+//	cout << "mult(a,a)=";
+//	m.print();
+//	m.print_4byte();
 	align(m, N);
 	m.mod(N);
-	cout << "mult(a,a)%N=";
-	m.print();
-	m.print_4byte();
+//	cout << "mult(a,a)%N=";
+//	m.print();
+//	m.print_4byte();
 	m.cromp(original_nbit);
 	return m;
 }
@@ -241,6 +260,28 @@ void gcdx(size_t& g, size_t& x, size_t& y, size_t a, size_t b) {
 	while (a != 0) {
 		size_t q = b / a;
 		size_t tmp = a;
+		a = b % a;
+		b = tmp;
+		tmp = y0;
+		y0 = y1;
+		y1 = tmp - q * y1;
+		tmp = x0;
+		x0 = x1;
+		x1 = tmp - q * x1;
+	}
+	g = b;
+	x = x0;
+	y = y0;
+}
+
+void gcdx(cpp_int& g, cpp_int& x, cpp_int& y, cpp_int a, cpp_int b) {
+	cpp_int x0 = 0;
+	cpp_int x1 = 1;
+	cpp_int y0 = 1;
+	cpp_int y1 = 0;
+	while (a != 0) {
+		cpp_int q = b / a;
+		cpp_int tmp = a;
 		a = b % a;
 		b = tmp;
 		tmp = y0;
@@ -268,11 +309,42 @@ long_integer EuclidicInverse(const long_integer& a, const long_integer& N) {
 	max -= NN;
 	if (x > max) { x += NN; }
 	if (y > max) { y += NN; }
-	cout << "g = " << g << endl;
-	cout << "x_ = " << x << endl;
-	cout << "y = " << y << endl;
+//	cout << "g = " << g << endl;
+//	cout << "x_ = " << x << endl;
+//	cout << "y = " << y << endl;
 	if (g != 1) {
 		cerr << "gcd(a, N) is not 1!\nPlease choose valid numbers.\n";
 	}
 	return long_integer(x, a.size());
+}
+
+long_integer LargeEuclidicInverse(const long_integer& a, const long_integer& N) {
+	assert(a.size() <= 32);
+	assert(N.size() <= 32);
+	size_t aa = a.convert();
+	size_t NN = N.convert();
+	cout << "a, N: " << aa << " " << NN << endl;
+	cpp_int g = 0;
+	cpp_int x = 0;
+	cpp_int y = 0;
+	gcdx(g, x, y, aa, NN);
+	cpp_int max = 0;
+	max -= NN;
+	if (x > max) { x += NN; }
+	if (y > max) { y += NN; }
+//	cout << "g = " << g << endl;
+//	cout << "x_ = " << x << endl;
+//	cout << "y = " << y << endl;
+	if (g != 1) {
+		cerr << "gcd(a, N) is not 1!\nPlease choose valid numbers.\n";
+	}
+	size_t z = (size_t) x;
+	return long_integer(z, a.size());
+}
+
+long_integer pow_mod(long_integer a, size_t pow, const long_integer& N) {
+	for (size_t i = 0; i < pow; ++i) {
+		a = mult_mod(a, a, N);
+	}
+	return a;
 }

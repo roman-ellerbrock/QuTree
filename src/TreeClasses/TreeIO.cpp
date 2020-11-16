@@ -38,6 +38,7 @@ namespace TreeIO {
 			t2 = chrono::high_resolution_clock::now();
 			time += chrono::duration_cast<chrono::microseconds>(t2 - t1);
 			t1 = t2;
+			double ttot = time.count() / 1000000.;
 			string msg = "Total time: " + to_string(time.count() / 1000000.) + "s\t";
 			msg.append("Time per operation: " + to_string(time.count() / (it * 1000.)) + "ms\t");
 			msg.append("Progress : [");
@@ -48,6 +49,8 @@ namespace TreeIO {
 				msg.append(" ");
 			}
 			msg.append("]");
+			double project = ttot * length / (1. * num);
+			cout << " | " << project;
 			cout << "\r" << msg;
 			cout.flush();
 		}
@@ -197,6 +200,19 @@ namespace TreeIO {
 		}
 		os.flush();
 		os << defaultfloat;
+	}
+
+	template <typename T>
+	void EntropyMap(const TensorTree<T>& Psi, const Tree& tree) {
+		auto rho = TreeFunctions::Contraction(Psi, tree, true);
+		SpectralDecompositionTree<T> X = Diagonalize(rho);
+		for (const SpectralDecomposition<T>& x : X) {
+			const auto& occ = x.second;
+			double s = 0.;
+			for (size_t i = 0; i < occ.Dim(); ++i) {
+				s -= occ(i) * log(occ(i));
+			}
+		}
 	}
 
 	template<class A>

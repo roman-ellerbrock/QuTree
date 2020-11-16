@@ -5,6 +5,7 @@
 #ifndef LONG_INTEGER_H
 #define LONG_INTEGER_H
 #include "Core/stdafx.h"
+#include <boost/multiprecision/cpp_int.hpp>
 
 /**
  * \class long_integer
@@ -68,6 +69,7 @@ public:
 	void pad(size_t n_bit);
 	void cromp(size_t n_bit);
 	size_t convert() const;
+	boost::multiprecision::cpp_int convert_cpp() const;
 
 	void print() const;
 	void print_4byte() const;
@@ -87,10 +89,12 @@ bool subst(bool b, bool a, bool borrow);
 
 long_integer mult(long_integer a, long_integer b);
 long_integer mult_mod(const long_integer& a, const long_integer& b, long_integer N);
+long_integer pow_mod(long_integer a, size_t pow, const long_integer& N);
 
 size_t gcd(size_t a, size_t b);
 void gcdx(size_t& g, size_t& x, size_t& y, size_t a, size_t b);
 long_integer EuclidicInverse(const long_integer& a, const long_integer& N);
+long_integer LargeEuclidicInverse(const long_integer& a, const long_integer& N);
 
 void align(long_integer& a, long_integer& b);
 

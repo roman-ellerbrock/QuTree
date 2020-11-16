@@ -140,3 +140,19 @@ int main() {
 */
 
 }
+
+int paper_1() {
+	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
+	TensorTreecd Psi(tree);
+
+	using namespace TreeFunctions;
+	MatrixTreecd W = DotProduct(Psi, Psi, tree);
+	MatrixTreecd C = Contraction(Psi, Psi, W, tree);
+	MatrixTreecd Rho = Contraction(Psi, tree, true); /// Assume orthogonal basis
+
+	LeafFuncd x = &LeafInterface::applyX;
+	MultiLeafOperator<complex<double>> M(x, 0);
+	auto Mrep = TreeFunctions::Represent(M, Psi, tree);
+	auto Mcon = TreeFunctions::Contraction(Psi, Mrep, tree);
+
+}
