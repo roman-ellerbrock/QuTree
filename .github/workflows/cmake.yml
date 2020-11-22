@@ -11,6 +11,8 @@ jobs:
       uses: actions/checkout@v2
     - name: run-cmake-debug
       uses: lukka/run-cmake@v1.4
+    - run: |
+            echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
       with:
         # Select the mode of the action. There are three different modes: CMakeListsTxtBasic: Run CMake using a CMakeLists.txt - Basic configuration, CMakeListsTxtAdvanced: Run CMake using a CMakeLists.txt - Advanced configuration, CMakeSettingsJson: Run CMake using a CMakeSettings.json of Visual Studio.
         cmakeListsOrSettingsJson: CMakeListsTxtBasic # default is CMakeListsTxtBasic
@@ -45,6 +47,8 @@ jobs:
         uses: actions/checkout@v2
       - name: run-cmake-debug
         uses: lukka/run-cmake@v1.4
+      - run: |
+          echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
         with:
           # Select the mode of the action. There are three different modes: CMakeListsTxtBasic: Run CMake using a CMakeLists.txt - Basic configuration, CMakeListsTxtAdvanced: Run CMake using a CMakeLists.txt - Advanced configuration, CMakeSettingsJson: Run CMake using a CMakeSettings.json of Visual Studio.
           cmakeListsOrSettingsJson: CMakeListsTxtAdvanced # default is CMakeListsTxtBasic
