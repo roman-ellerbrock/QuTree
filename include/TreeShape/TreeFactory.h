@@ -7,7 +7,7 @@
 #include "TreeShape/Tree.h"
 
 namespace TreeFactory {
-	Tree BalancedTree(size_t num_leaves, size_t dim_leaves, size_t dim_nodes);
+	Tree BalancedTree(size_t num_leaves, size_t dim_leaves = 2, size_t dim_nodes = 2);
 	Tree UnbalancedTree(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType);
 	Tree OperatorTree(const Tree& tree);
 

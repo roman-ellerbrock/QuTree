@@ -30,6 +30,7 @@ Welcome to QuTree's documentation!
 
    sphinx/tutorial_1
    sphinx/tutorial_2
+   sphinx/tutorial_3
 
 .. toctree::
    :maxdepth: 1

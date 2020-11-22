@@ -1,5 +1,5 @@
 ================================
-Tutorial 1: Tensors and Matrices
+Tutorial 3: Trees
 ================================
 
 The aim of this exercise is to learn the fundamental usage of the Tree
@@ -24,7 +24,7 @@ Thus, it is useful to take a look at them before and during completing the exerc
 Exercise 3
 ===========
 
-We want to find out how many coefficients are required to
+We calcualte the number of coefficients are required to
 represent the multilayer-wavefunction of different chemical and model systems.
 The following basis sets will be investigated:
 

@@ -142,17 +142,20 @@ int main() {
 }
 
 int paper_1() {
+	/// Generate Tree and TensorTree
 	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
 	TensorTreecd Psi(tree);
 
+	/// Operations on Tensor Trees
 	using namespace TreeFunctions;
-	MatrixTreecd W = DotProduct(Psi, Psi, tree);
-	MatrixTreecd C = Contraction(Psi, Psi, W, tree);
+	MatrixTreecd W = DotProduct(Psi, Psi, tree); /// <Psi|Psi>_p
+	MatrixTreecd C = Contraction(Psi, Psi, W, tree); /// <Psi|Psi>_(p)
 	MatrixTreecd Rho = Contraction(Psi, tree, true); /// Assume orthogonal basis
 
+	/// Represent Operators
 	LeafFuncd x = &LeafInterface::applyX;
 	MultiLeafOperator<complex<double>> M(x, 0);
-	auto Mrep = TreeFunctions::Represent(M, Psi, tree);
-	auto Mcon = TreeFunctions::Contraction(Psi, Mrep, tree);
-
+	auto Mrep = TreeFunctions::Represent(M, Psi, tree); /// <Psi|M|Psi>_p
+	auto Mcon = TreeFunctions::Contraction(Psi, Mrep, tree); /// <Psi|M|Psi>_(p)
 }
+
