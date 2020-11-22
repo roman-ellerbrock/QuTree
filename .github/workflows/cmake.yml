@@ -9,8 +9,8 @@ jobs:
     steps:
     - name: Checkout push
       uses: actions/checkout@v2
-    - run: |
-        echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
+    - name: boost
+      run: sudo apt-get update && sudo apt-get install -yq libboost1.65-dev
     - name: run-cmake-debug
       uses: lukka/run-cmake@v1.4
       with:
@@ -45,8 +45,8 @@ jobs:
     steps:
       - name: Checkout push
         uses: actions/checkout@v2
-      - run: |
-          echo "::set-env name=BOOST_ROOT::$BOOST_ROOT_1_72_0"
+      - name: boost
+        run: sudo apt-get update && sudo apt-get install -yq libboost1.65-dev
       - name: run-cmake-debug
         uses: lukka/run-cmake@v1.4
         with:
