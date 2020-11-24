@@ -100,7 +100,7 @@ namespace TreeFunctions {
 	template<typename T>
 	SparseMatrixTree<T> Contraction(const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
-		SparseMatrixTree<T> Con(mats.Active);
+		SparseMatrixTree<T> Con(mats);
 		Contraction(Con, Psi, mats, tree);
 		return Con;
 	}

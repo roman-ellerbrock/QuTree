@@ -24,50 +24,61 @@ Thus, it is useful to take a look at them before and during completing the exerc
 Exercise 3
 ===========
 
-We calcualte the number of coefficients are required to
-represent the multilayer-wavefunction of different chemical and model systems.
+We calculate the number of coefficients that are required to
+represent the tree tensor network state of different chemical and model systems.
 The following basis sets will be investigated:
 
 - nocl.basis
-  + This basis can be used to calculate the photo-dissociation spectrum of NOCl[2].
+  + This basis is used to calculate the photo-dissociation spectrum of NOCl[2].
 - ch3.basis
-  + This basis can be used to calculate the lowest 36 vibrational eigenstates of methyl[3].
-- binary.constant.basis
-  + This is a model of a binary multilayer tree with a constant number of SPFs when accending
-    the tree. A standard model when investigating scaling in multilayer MCTDH.
-- binary.constant.basis
-  + This is another model of a binary multilayer tree. Here the number of SPFs grows linearly
-    with each layer. Another standard model to investigate scaling.
+  + This basis is used to calculate the lowest 36 vibrational eigenstates of methyl[3].
 
-1.) Write a tool that calculates the total number of coefficients for
-    a given basis representations. Test the program using the basis sets
-    supplied by "nocl.basis" and "ch3.basis".
+1.) Write a tool that calculates the total number of coefficients for a given basis representations. Test the program using the basis sets  supplied by "nocl.basis" and "ch3.basis".
 
-2.) The tool should now provide more detailed information and should tell
-    the number of toplayer, bottomLayer- and intermediate layer coefficients, respectively.
-    Adjust your tool accordingly.
+2.) The tool should now provide more detailed information and should tell the number of toplayer, bottomLayer- and intermediate layer coefficients, respectively. Adjust your tool accordingly.
 
-3.) Investigate how many coefficients are needed to represent wavefunctions corresponding
-    to the different basis sets. Study the relative number of toplayer, intermediate-layer and
-    bottomLayer coefficients for the different models.
+3.) Investigate how many coefficients are needed to represent wavefunctions corresponding to the different basis sets. Study the relative number of toplayer, intermediate-layer and bottomLayer coefficients for the different models.
 
-4.) Calculate the required memory space to save the wavefunction, if each coefficients is
-    saved as a complex<double> in binary format (see sizeof() function in cppreference.com).
-
-5.*) Investigate scaling of the number of coefficients with increases system size for the
-    binary tree model systems. Create basis files for systems with 8, 16, 32, 64 degrees of
-    freedom, evaluate the number of coefficients and make a diagram. Compare it to the
-    analytic equations to validate your results. In Ref. [1] a detailed study can be found.
+4.) Calculate the required memory space to save the wavefunction, if each coefficients is saved as a complex<double> in binary format.
 
 Inputs
 ======
 nocl.in
 
 .. code-block:: YAML
-
+      1       -2
+            3       -2
+                  3       -1
+                          24      0       0
+                  3       -1
+                          96     1       1
+            3       -1
+                    60      2       2
+      0.010006        249.24  251             0.008
+      583.54  1407.36 740.56  0.0027
+      1000.           0.              2.22            90.
 
 ch3.in
 .. code-block:: YAML
+      36      -6
+          2       -1
+              12      0       0
+          3       -1
+              12      0       1
+          3       -1
+              12      0       2
+          4       -1
+              36      0       3
+          3       -1
+              12      0       4
+          3       -1
+              12      0       5
+      0.014944        152.048124248   152.048124248   0.014944
+      334.5           0.955316664             0.955316664             334.5
+      229.5           0.785398                0.785398                229.5
+      152.5           1.57                    1.57                    152.5
+      86.05           1.047197616             1.047197616             86.05
+      28.29           3.141592633             3.141592633             28.29
 
 References
 ==========

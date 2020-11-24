@@ -114,34 +114,7 @@ void tree_examples() {
 	Beta.print(tree);
 }
 
-int main() {
-	tree_examples();
-
-/*    TensorTreecd T = create_tensor_tree();
-    TensorTreecd T2(T);
-    dot_product_tree();
-    hole_product_tree();
-
-    Tree tree(7, 2, 2);
-	Matrixcd X(2, 2);
-	X(0, 0) = 0.5;
-	X(1, 1) = 0.5;
-	LeafMatrixcd x(X);
-	MLOcd M(x, 0);
-	M.push_back(x, 3);
-
-	mt19937 gen(2020);
-	TensorTreecd Psi(tree, gen);
-
-	SparseMatrixTreecd hmats(M, tree);
-	SparseMatrixTreeFunctions::Represent(hmats, M, Psi, Psi, tree);
-	hmats.print();
-	// TODO: sparse versions of dot product and hole product (initialized with operators)
-*/
-
-}
-
-int paper_1() {
+void paper_1() {
 	/// Generate Tree and TensorTree
 	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
 	TensorTreecd Psi(tree);
@@ -153,9 +126,19 @@ int paper_1() {
 	MatrixTreecd Rho = Contraction(Psi, tree, true); /// Assume orthogonal basis
 
 	/// Represent Operators
-	LeafFuncd x = &LeafInterface::applyX;
+	auto x = &LeafInterface::applyX;
 	MultiLeafOperator<complex<double>> M(x, 0);
 	auto Mrep = TreeFunctions::Represent(M, Psi, tree); /// <Psi|M|Psi>_p
 	auto Mcon = TreeFunctions::Contraction(Psi, Mrep, tree); /// <Psi|M|Psi>_(p)
+	cout << "Hrep:" << endl;
+	Mrep.print();
+	cout << "Hcon:\n";
+	Mcon.print();
+}
+
+int main() {
+	tree_examples();
+	paper_1();
+	return EXIT_SUCCESS;
 }
 
