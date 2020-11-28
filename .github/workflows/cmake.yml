@@ -46,7 +46,7 @@ jobs:
       - name: Checkout push
         uses: actions/checkout@v2
       - name: boost
-        run: sudo apt-get update && sudo apt-get install -yq libboost1.65-dev
+        run: sudo yum install boost-devel
       - name: run-cmake-debug
         uses: lukka/run-cmake@v1.4
         with:
