@@ -38,7 +38,7 @@ namespace TreeFunctions {
 
 		if (node.isBottomlayer()) {
 			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf());
-		} else if (!node.isToplayer()) {
+		} else {
 			mats[node] = RepresentUpper(mats, Bra, Ket, node);
 		}
 	}
@@ -51,7 +51,9 @@ namespace TreeFunctions {
 		const SparseTree& active = hmat.Active();
 		for (size_t n = 0; n < active.size(); ++n) {
 			const Node& node = active.MCTDHNode(n);
-			RepresentLayer(hmat, Bra[node], Ket[node], M, node);
+			if (!node.isToplayer()) {
+				RepresentLayer(hmat, Bra[node], Ket[node], M, node);
+			}
 		}
 	}
 

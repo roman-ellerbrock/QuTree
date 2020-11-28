@@ -28,6 +28,10 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
+	Matrix<T> RepresentUpper(const SparseMatrixTree<T>& hmat,
+		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node);
+
+	template<typename T>
 	void RepresentLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node);
 

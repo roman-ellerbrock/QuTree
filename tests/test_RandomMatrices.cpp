@@ -275,6 +275,7 @@ SUITE (RMT) {
 
 	TEST (DiagRandom) {
 
+		/*
 		size_t dim = 200;
 		size_t rank = 25;
 //		uniform_real_distribution<double> dist(0., 1.);
@@ -326,6 +327,8 @@ SUITE (RMT) {
 			}
 			os << endl;
 		}
+		*/
 	}
+
 }
 

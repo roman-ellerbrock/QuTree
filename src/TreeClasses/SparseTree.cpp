@@ -77,6 +77,11 @@ void SparseTree::SparseInitialize(const vector<size_t>& modes,
 		}
 		n--;
 		/// Cut of tail
+		for (size_t l = n; l < nodes_.size(); ++l) {
+			const Node* node = nodes_[l];
+			size_t addr = node->Address();
+			co_address_.erase(addr);
+		}
 		nodes_ = vector<const Node *>(nodes_.begin(), nodes_.begin() + n);
 	}
 }

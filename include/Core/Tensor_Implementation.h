@@ -484,6 +484,8 @@ extern "C" {
 // subroutine rhomat (bra,ket,matrix,a,b,c)
 void matvec_(double* C, double* B, double* mat,
 	int* a, int* b, int* c, int* add);
+void rmatvec_(double* C, double* B, double* mat,
+	int* a, int* b, int* c, int* add);
 void rhomat_(double* Bra, double* Ket, double* M,
 	int* a, int* b, int* c);
 }
@@ -583,77 +585,83 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	int a = activeB;
 	int b = before;
 	int c = after;
-	matvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
-		&a, &b, &c, &add);
-/*	if (zero) { C.Zero(); }
+	typedef complex<double> cd;
+	typedef double d;
 
-	// Variables to Precompute index values
-	size_t actbefB = activeB * before;
-	size_t actbefC = activeC * before;
-	size_t Aidx = 0;
-	size_t Bidx = 0;
-	size_t Cidx = 0;
-	size_t kpreidxB = 0;
-	size_t kpreidxC = 0;
-	size_t lpreidx = 0;
-	size_t jpreidx = 0;
-	size_t lactive = 0;
-*/
-	// Avoid unnecessary thread launches
-	// TODO: this requires #inclue <omp.h>
-	/*
-	const char* threads = getenv("OMP_NUM_THREADS");
-	if (threads) {
-		if (after < atoi(threads)) {
-			omp_set_num_threads(after);
+	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
+		matvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
+		&a, &b, &c, &add);
+	} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
+		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
+			&a, &b, &c, &add);
+	} else {
+		if (zero) { C.Zero(); }
+
+		// Variables to Precompute index values
+		size_t actbefB = activeB * before;
+		size_t actbefC = activeC * before;
+		size_t Aidx = 0;
+		size_t Bidx = 0;
+		size_t Cidx = 0;
+		size_t kpreidxB = 0;
+		size_t kpreidxC = 0;
+		size_t lpreidx = 0;
+		size_t jpreidx = 0;
+		size_t lactive = 0;
+		// Avoid unnecessary thread launches
+		// TODO: this requires #inclue <omp.h>
+		/*
+		const char* threads = getenv("OMP_NUM_THREADS");
+		if (threads) {
+			if (after < atoi(threads)) {
+				omp_set_num_threads(after);
+			}
 		}
-	}
-	 */
-	/*
-	if (before == 1) {
+		 */
+		if (before == 1) {
 #pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
-		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				Bidx = l + kpreidxB;
-				for (size_t j = 0; j < activeC; ++j) {
-					Cidx = j + kpreidxC;
-					Aidx = l * activeB + j; //TODO: why is this declared twice?
-					Aidx = l * activeC + j;
+			for (size_t k = 0; k < after; ++k) {
+				kpreidxB = k * actbefB;
+				kpreidxC = k * actbefC;
+				for (size_t l = 0; l < activeB; ++l) {
+					Bidx = l + kpreidxB;
+					for (size_t j = 0; j < activeC; ++j) {
+						Cidx = j + kpreidxC;
+						Aidx = l * activeB + j; //TODO: why is this declared twice?
+						Aidx = l * activeC + j;
 //					assert(Cidx < C.shape().totalDimension());
 //					assert(Bidx < B.shape().totalDimension());
 //					assert(Aidx < A.Dim1()*A.Dim2());
-					/// C(1, j, k) += A(j, l) * B(1, l, k)
-					C[Cidx] += A[Aidx] * B[Bidx];
+						/// C(1, j, k) += A(j, l) * B(1, l, k)
+						C[Cidx] += A[Aidx] * B[Bidx];
+					}
 				}
 			}
-		}
-	} else {
+		} else {
 #pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
-		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				lpreidx = l * before + kpreidxB;
-				lactive = l * activeC;
-				for (size_t j = 0; j < activeC; ++j) {
-					Aidx = lactive + j;
-					jpreidx = j * before + kpreidxC;
-					for (size_t i = 0; i < before; ++i) {
-						Cidx = jpreidx + i;
-						Bidx = lpreidx + i;
+			for (size_t k = 0; k < after; ++k) {
+				kpreidxB = k * actbefB;
+				kpreidxC = k * actbefC;
+				for (size_t l = 0; l < activeB; ++l) {
+					lpreidx = l * before + kpreidxB;
+					lactive = l * activeC;
+					for (size_t j = 0; j < activeC; ++j) {
+						Aidx = lactive + j;
+						jpreidx = j * before + kpreidxC;
+						for (size_t i = 0; i < before; ++i) {
+							Cidx = jpreidx + i;
+							Bidx = lpreidx + i;
 //						assert(Cidx < C.shape().totalDimension());
 //						assert(Bidx < B.shape().totalDimension());
 //						assert(Aidx < A.Dim1()*A.Dim2());
-						/// C(i, j, k) += A(j, l) * B(i, l, k)
-						C[Cidx] += A[Aidx] * B[Bidx];
+							/// C(i, j, k) += A(j, l) * B(i, l, k)
+							C[Cidx] += A[Aidx] * B[Bidx];
+						}
 					}
 				}
 			}
 		}
 	}
-	*/
 }
 
 template<typename T, typename U>
