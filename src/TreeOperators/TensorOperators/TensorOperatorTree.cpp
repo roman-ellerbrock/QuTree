@@ -5,7 +5,8 @@
 #include "TreeOperators/TensorOperators/TensorOperatorTree.h"
 
 TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
-	const Tree& tree) : TensorOperatorTree(tree) {
+	const Tree& tree)
+	: TensorOperatorTree(tree) {
 	Occupy(tree);
 	vector<size_t> idxs(tree.nLeaves(), 0);
 
@@ -20,28 +21,31 @@ TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 		setLeafOperator(hmat, idxs[mode], node);
 		idxs[mode]++;
 	}
-
 }
 
 TensorOperatorTree::TensorOperatorTree(const SOPcd& S,
-	const Tree& tree) : TensorOperatorTree(tree) {
+	const Tree& tree)
+	: TensorOperatorTree(tree) {
 	Occupy(tree);
 	assert(S.size() > 0);
-
-
 }
 
-TensorOperatorTree::TensorOperatorTree(const Tree &tree) {
+TensorOperatorTree::TensorOperatorTree(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		if (node.isBottomlayer()) {
-			if (node.shape().order() != 3) {
-				cerr << "Error: Cannot initialize TensorOperatorTree from tree:\n";
-				cerr << "Order at bottomlayer does not equal 3." << endl;
-			}
+			vector<size_t> dim({2, 2, 1});
+			TensorShape shape(dim);
+			attributes_.emplace_back(Tensorcd(shape));
+		} else {
+			size_t f = node.nChildren() + 1;
+			vector<size_t> dim(node.nChildren() + 1);
+			for (size_t& x : dim) { x = 1; }
+			TensorShape shape(dim);
+			attributes_.emplace_back(Tensorcd(shape));
 		}
-		attributes_.emplace_back(Tensorcd(node.shape()));
 	}
+	Occupy(tree);
 }
 
 void TensorOperatorTree::Occupy(const Tree& tree) {
@@ -52,7 +56,11 @@ void TensorOperatorTree::Occupy(const Tree& tree) {
 			Phi(i, i) = 1.;
 		}
 		if (node.isBottomlayer()) {
-			size_t dim = sqrt(node.shape().lastBefore());
+			if (!(Phi.shape().order() == 3)) {
+				cerr << "Wrong order in tensor operator tree.\n";
+				exit(1);
+			}
+			size_t dim = sqrt(Phi.shape().lastBefore());
 			setLeafOperator(IdentityMatrixcd(dim), 0, node);
 		}
 	}

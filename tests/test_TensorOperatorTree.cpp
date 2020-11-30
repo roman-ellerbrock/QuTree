@@ -65,18 +65,19 @@ SUITE (TensorOperatorTree) {
 
 	TEST (TensorOperatorTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
-		Tree optree = TreeFactory::OperatorTree(tree);
-		TensorOperatorTree H(optree);
-		for (const Node node : optree) {
+//		Tree optree = TreeFactory::OperatorTree(tree);
+		TensorOperatorTree H(tree);
+		for (const Node node : tree) {
 			if (node.isBottomlayer()) {
 				Tensorcd& h = H[node];
-				h(0, 0) = 1.;
-				h(3, 0) = 1.;
-
-				h(1, 1) = 1.;
-				h(2, 1) = 1.;
+				CHECK_CLOSE(1., abs(h(0, 0)), 1e-7);
+				CHECK_CLOSE(0., abs(h(1, 0)), 1e-7);
+				CHECK_CLOSE(0., abs(h(2, 0)), 1e-7);
+				CHECK_CLOSE(1., abs(h(3, 0)), 1e-7);
 			}
 		}
+		H.print(tree);
+		getchar();
 	}
 
 	TEST (SetLeafOperator) {
