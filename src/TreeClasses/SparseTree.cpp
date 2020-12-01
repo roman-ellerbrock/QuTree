@@ -3,8 +3,8 @@
 //
 #include "TreeClasses/SparseTree.h"
 
-SparseTree::SparseTree(const MLOcd& M, const Tree& tree, bool inverse_tree)
-	:SparseTree(M.targetLeaves(), tree, true, inverse_tree) {}
+SparseTree::SparseTree(const MLOcd& M, const Tree& tree, bool tail, bool inverse_tree)
+	:SparseTree(M.targetLeaves(), tree, tail, inverse_tree) {}
 
 SparseTree::SparseTree(const vector<size_t>& modes,
 	const Tree& tree, bool tail, bool inverse_tree) {
@@ -17,17 +17,21 @@ SparseTree::SparseTree(const vector<size_t>& modes,
 	}
 }
 
-SparseTree::SparseTree(const SOPcd& sop, const Tree& tree) {
+SparseTree::SparseTree(const SOPcd& sop, const Tree& tree, bool tail) {
 	vector<size_t> actives;
 	for (const MLOcd& M : sop) {
 		for (size_t i = 0; i < M.size(); ++i) {
 			size_t k = M.Mode(i);
-			if (!count(actives.begin(), actives.end(), k)) {
+			if (count(actives.begin(), actives.end(), k) == 0) {
 				actives.push_back(k);
 			}
 		}
 	}
-	SparseInitialize(actives, tree);
+	for (auto x : actives) {
+		cout << x << "\t";
+	}
+	cout << endl;
+	SparseInitialize(actives, tree, tail);
 }
 
 void SparseTree::SparseInitialize(const vector<size_t>& modes,
@@ -67,22 +71,24 @@ void SparseTree::SparseInitialize(const vector<size_t>& modes,
 
 	if (!tail) {
 		/// Go top-down and look for first node with more than one active children
-		for (int n = nodes_.size() - 1; n > 0; --n) {
-			const Node& node = MCTDHNode(n);
+		int m = nodes_.size() - 1;
+		for (m = nodes_.size() - 1; m > 0; --m) {
+			const Node& node = MCTDHNode(m);
 			size_t NumActiveChildren = 0;
 			for (size_t k = 0; k < node.nChildren(); ++k) {
 				if (Active(node.child(k))) { NumActiveChildren++; }
 			}
 			if (NumActiveChildren > 1) { break; }
 		}
-		n--;
+		if (m < (nodes_.size())) { m++; }
 		/// Cut of tail
-		for (size_t l = n; l < nodes_.size(); ++l) {
+		for (size_t l = m; l < nodes_.size(); ++l) {
 			const Node* node = nodes_[l];
 			size_t addr = node->Address();
 			co_address_.erase(addr);
+
 		}
-		nodes_ = vector<const Node *>(nodes_.begin(), nodes_.begin() + n);
+		nodes_ = vector<const Node *>(nodes_.begin(), nodes_.begin() + m);
 	}
 }
 

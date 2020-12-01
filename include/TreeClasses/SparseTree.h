@@ -32,9 +32,9 @@ public:
 	SparseTree(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true, bool inverse_tree = false);
 
-	SparseTree(const MLOcd& M, const Tree& tree, bool inverse_tree = false);
+	SparseTree(const MLOcd& M, const Tree& tree, bool tail = true, bool inverse_tree = false);
 
-	SparseTree(const SOPcd& sop, const Tree& tree);
+	SparseTree(const SOPcd& sop, const Tree& tree, bool tail = true);
 
 	void SparseInitialize(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true);
