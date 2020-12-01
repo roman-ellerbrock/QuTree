@@ -46,7 +46,7 @@ jobs:
       - name: Checkout push
         uses: actions/checkout@v2
       - name: boost
-        run: sudo yum install boost-devel
+        run: yum install boost-devel
       - name: run-cmake-debug
         uses: lukka/run-cmake@v1.4
         with:

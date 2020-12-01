@@ -27,10 +27,6 @@ SparseTree::SparseTree(const SOPcd& sop, const Tree& tree, bool tail) {
 			}
 		}
 	}
-	for (auto x : actives) {
-		cout << x << "\t";
-	}
-	cout << endl;
 	SparseInitialize(actives, tree, tail);
 }
 
