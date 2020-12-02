@@ -49,7 +49,7 @@ namespace TreeFactory {
 		return tree;
 	}
 
-	vector<Node> Partition(const vector<Node>& nodes,
+	vector<Node> partition(const vector<Node>& nodes,
 		size_t n_partition, size_t dim_node) {
 		/// This is a helper function to create close-to balanced trees.
 		/// It adds a layer to a vector of nodes
@@ -58,11 +58,16 @@ namespace TreeFactory {
 		for (size_t k = 0; k < n_loop; ++k) {
 			Node p;
 			vector<size_t> dims;
+			size_t product = 1;
 			for (size_t l = 0; l < n_partition; ++l) {
-				p.push_back(nodes[k * n_partition + l]);
-				dims.push_back(dim_node);
+				const Node& child = nodes[k * n_partition + l];
+				p.push_back(child);
+				size_t dim_now = child.shape().lastDimension();
+				product *= dim_now;
+				dims.push_back(dim_now);
 			}
-			dims.push_back(dim_node);
+			size_t dim_parent = min(product, dim_node);
+			dims.push_back(dim_parent);
 			TensorShape tensordim(dims);
 			p.shape() = tensordim;
 			groups.emplace_back(p);
@@ -74,36 +79,72 @@ namespace TreeFactory {
 		return groups;
 	}
 
-	Tree BalancedTree(size_t num_leaves,
-		size_t dim_leaves, size_t dim_nodes) {
-		/// Create close-to-balanced Tree
+	vector<Node> bottomlayerNodes(size_t num_leaves, size_t dim_leaves, size_t dim_nodes) {
+		/// Hardcoded leaf-parameters
 		size_t leaf_type = 6;
 		size_t mode = 0;
 		size_t leaf_subtype = 0;
 		PhysPar par;
 		Leaf leaf(dim_leaves, mode, leaf_type, leaf_subtype, par);
 
-//		size_t dim_now = min(dim_nodes, dim_leaves);
-		size_t dim_now = dim_nodes;
+		/// Creat bottomlayer nodes manually
+		size_t dim_now = min(dim_nodes, dim_leaves);
 		Node bottom(leaf, dim_now);
 		vector<Node> nodes;
 		for (size_t k = 0; k < num_leaves; ++k) {
 			nodes.push_back(bottom);
 		}
+		return nodes;
+	}
+
+	Tree expandNodes(Tree tree) {
+		for (Node& node : tree) {
+			const TensorShape& shape = node.shape();
+			if ((!node.isBottomlayer()) && (!node.isToplayer())) {
+				if (shape.lastDimension() == shape.lastBefore()) {
+					/// expand
+					Node& parent = node.parent();
+					parent.expandChild(node.childIdx());
+					tree.Update();
+				}
+			}
+		}
+		return tree;
+	}
+
+	Tree BalancedTree(size_t num_leaves,
+		size_t dim_leaves, size_t dim_nodes) {
+		/**
+		 * \brief This functions creates a close-to-balanced Tree
+		 * \@param num_leaves number of leaves in the tree
+		 * \@param dim_leaves dimension of basis at leaves (primitive or physical basis)
+		 * \@param dim_nodes dimnesion at higher nodes, "virtual bond dimension" or "number of SPFs"
+		 * \@return the generated (close-to-)balanced tree
+		 */
+
+		/// Cover leaves in bottomlayer nodes
+		auto nodes = bottomlayerNodes(num_leaves, dim_leaves, dim_nodes);
+
+		/// Add layer after layer until only one node is left
 		size_t count = 0;
 		while (nodes.size() > 1) {
-			nodes = Partition(nodes, 2, dim_nodes);
+			nodes = partition(nodes, 2, dim_nodes);
 			count++;
 			if (count > 100) {
 				cerr << "Error while partitioning TensorTreeBasis in constructor.\n";
 				exit(1);
 			}
 		}
+		/// Set number of wavefunctions to 1 and asign root-node
 		auto& tdim = nodes.front().shape();
 		tdim.setDimension(1, tdim.lastIdx());
 		Tree tree;
 		tree.SetRoot(nodes.front());
 		tree.ResetLeafModes();
+
+		/// Expand nodes that perform no contraction
+		tree = expandNodes(tree);
+
 		return tree;
 	}
 
