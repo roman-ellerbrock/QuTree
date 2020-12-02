@@ -108,6 +108,10 @@ namespace TreeFunctions {
 		const TensorTree<T>& Ket, const SparseMatrixTrees<T>& mats,
 		const MatrixTree<T>& rho, const Tree& tree);
 
+	template<typename T>
+	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi,
+		const SparseTree& stree, bool orthogonal = true);
+
 ////////////////////////////////////////////////////////////////////////
 /// Apply MatrixTree
 ////////////////////////////////////////////////////////////////////////

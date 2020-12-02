@@ -71,7 +71,6 @@ namespace TreeFunctions {
 		const Tree& tree, const MatrixTree<T> *S_opt = nullptr) {
 		if (S_opt != nullptr) {
 			assert(S_opt->size() == tree.nNodes());
-
 		}
 		assert(Rho.size() == tree.nNodes());
 		assert(Psi.size() == tree.nNodes());

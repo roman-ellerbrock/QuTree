@@ -5,6 +5,7 @@
 #ifndef SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H
 #define SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
+#include "TreeClasses/MatrixTreeFunctions.h"
 
 namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
@@ -199,6 +200,23 @@ namespace TreeFunctions {
 		assert(holes.size() == mats.size());
 		for (size_t l = 0; l < holes.size(); ++l) {
 			Contraction(holes[l], Bra, Ket, mats[l], rho, tree);
+		}
+	}
+
+	template<typename T>
+	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi,
+		const SparseTree& stree, bool orthogonal) {
+		if (!orthogonal) {
+			cerr << "SparseTree contraction not implemented for non-orthogonal basis sets.\n";
+			exit(1);
+		}
+		for (int i = stree.size() - 1; i > 0; --i) {
+			const Node& node = stree.MCTDHNode(i);
+			if (!node.isToplayer()) {
+				const MatrixTree<T> *null = nullptr;
+				const Node& parent = node.parent();
+				ContractionLocal(Rho, Psi[parent], Psi[parent], node, null);
+			}
 		}
 	}
 
