@@ -12,7 +12,7 @@ Matrix<T>::Matrix()
 template<typename T>
 Matrix<T>::Matrix(size_t dim1, size_t dim2)
 	:dim1_(dim1), dim2_(dim2),
-     coeffs_(new T[dim1 * dim2]) {
+	 coeffs_(new T[dim1 * dim2]) {
 	assert(dim1 > 0);
 	assert(dim2 > 0);
 	Zero();
@@ -60,7 +60,7 @@ template<typename T>
 Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept {
 	//@TODO: copy dims??// seems to be done, but maybe check again
 	dim1_ = other.dim1_;
-    dim2_ = other.dim2_;
+	dim2_ = other.dim2_;
 	delete[] coeffs_;
 	coeffs_ = other.coeffs_;
 	other.coeffs_ = nullptr;
@@ -393,6 +393,7 @@ void Matrix<T>::Zero() {
 template<typename T, typename U>
 Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
 	assert(B.Dim() == A.Dim2());
+
 	Vector<T> C(A.Dim1());
 	for (size_t i = 0; i < A.Dim1(); i++) {
 		for (size_t j = 0; j < A.Dim2(); j++) {
@@ -414,15 +415,42 @@ Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
 	return C;
 }
 
+extern "C" {
+// subroutine matvec (mulpsi, psi, matrix, a, b, c, add)
+// subroutine rhomat (bra,ket,matrix,a,b,c)
+void tmatvec_(double *C, double *B, double *mat,
+	int *a, int *b, int *c, int *add);
+void trmatvec_(double *C, double *B, double *mat,
+	int *a, int *b, int *c, int *add);
+}
 
 template<typename T>
 Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 	assert(A.Dim2() == B.Dim1());
+	typedef complex<double> cd;
+	typedef double d;
+
 	Matrix<T> C(A.Dim1(), B.Dim2());
-	for (size_t j = 0; j < B.Dim2(); j++) {
-		for (size_t i = 0; i < A.Dim1(); i++) {
-			for (size_t k = 0; k < A.Dim2(); k++) {
-				C(i, j) += A(i, k) * B(k, j);
+//  mulpsi(i,j,k) = psi(i,l,k) * matrix(l,j)
+//        C(i, j) =   A(i,l,1) *      B(l,j);
+//		               (b,a,c) ->(A.Dim1(), A.Dim2(), 1)
+	int b = A.Dim1();
+	int a = A.Dim2();
+	int c = 1;
+	int add = false;
+
+	if (is_same<T, cd>::value && (B.Dim1() == B.Dim2())) {
+		tmatvec_((double *) &C[0], (double *) &A[0], (double *) &B[0],
+			&a, &b, &c, &add);
+	} else if (is_same<T, d>::value && (B.Dim1() == B.Dim2())) {
+		trmatvec_((double *) &C[0], (double *) &A[0], (double *) &B[0],
+			&a, &b, &c, &add);
+	} else {
+		for (size_t j = 0; j < B.Dim2(); j++) {
+			for (size_t i = 0; i < A.Dim1(); i++) {
+				for (size_t k = 0; k < A.Dim2(); k++) {
+					C(i, j) += A(i, k) * B(k, j);
+				}
 			}
 		}
 	}
@@ -503,7 +531,7 @@ Matrix<T> Re(const Matrix<T>& A) {
 /// operator overloadings
 //////////////////////////////////////////////////////////////////////
 
-template <typename T, typename U>
+template<typename T, typename U>
 Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
 	return multAB(A, v);
 }
@@ -513,7 +541,7 @@ Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
 //////////////////////////////////////////////////////////////////////
 
 template<typename T>
-void Diagonalize(Matrix<T>& trafo, Vector<double> & ev, const Matrix<T>& B) {
+void Diagonalize(Matrix<T>& trafo, Vector<double>& ev, const Matrix<T>& B) {
 	assert(B.Dim1() == B.Dim2());
 	assert(ev.Dim() == B.Dim1());
 	typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> EigenMatrix;
@@ -544,7 +572,7 @@ SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A) {
 	return A.cDiag();
 }
 
-void Diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A) {
+void Diagonalize(SpectralDecompositioncd& S, const Matrix<complex<double>>& A) {
 	A.cDiag(S.first, S.second);
 }
 
@@ -552,11 +580,11 @@ SpectralDecompositiond Diagonalize(const Matrix<double>& A) {
 	return A.rDiag();
 }
 
-void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A) {
+void Diagonalize(SpectralDecompositiond& S, const Matrix<double>& A) {
 	A.rDiag(S.first, S.second);
 }
 
-template <typename T>
+template<typename T>
 Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
@@ -572,13 +600,13 @@ Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	return mat * mat2.Adjoint();
 }
 
-template <typename T>
+template<typename T>
 Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
 	auto inv_vec = Inverse(X.second, eps);
 	return toMatrix<T>({X.first, inv_vec});
 }
 
-template <typename T>
+template<typename T>
 SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	Vectord& lambda = X.second;
 	for (size_t i = 0; i < lambda.Dim(); ++i) {
@@ -587,7 +615,7 @@ SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	return X;
 }
 
-template <typename T>
+template<typename T>
 SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps) {
 	X.second = Inverse(X.second, eps);
 	return X;
@@ -626,7 +654,7 @@ Vectord Matrix<T>::SolveSLE(const Vectord& b) {
 	// Re-organize b to Eigen-format
 	Eigen::VectorXd eb(dim1_);
 	for (size_t i = 0; i < dim1_; i++)
-        eb(i) = b(i);
+		eb(i) = b(i);
 
 	// Solve equations
 	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs_, dim1_, dim2_);
@@ -704,7 +732,7 @@ Eigen::MatrixXcd toEigen(Matrixcd A) {
 	return Eigen::MatrixXcd(Aeigen);
 }
 
-Matrixd toQutree(Eigen::MatrixXd A) {
+Matrixd toQutree(const Eigen::MatrixXd& A) {
 	Matrixd Aqutree(A.rows(), A.cols());
 	for (size_t r = 0; r < A.rows(); ++r) {
 		for (size_t c = 0; c < A.cols(); ++c) {
@@ -714,7 +742,7 @@ Matrixd toQutree(Eigen::MatrixXd A) {
 	return Aqutree;
 }
 
-Matrixcd toQutree(Eigen::MatrixXcd A) {
+Matrixcd toQutree(const Eigen::MatrixXcd& A) {
 	Matrixcd Aqutree(A.rows(), A.cols());
 	for (size_t r = 0; r < A.rows(); ++r) {
 		for (size_t c = 0; c < A.cols(); ++c) {
@@ -725,10 +753,16 @@ Matrixcd toQutree(Eigen::MatrixXcd A) {
 }
 
 Matrixcd QR(const Matrixcd& A) {
-	auto Aeigen = toEigen(A);
-	auto QR = Aeigen.householderQr();
-	Eigen::MatrixXcd Q = QR.householderQ();
-	return toQutree(Q);
+//	auto Aeigen = toEigen(A);
+	using namespace Eigen;
+	MatrixXcd Aeigen = Map<MatrixXcd>((complex<double> *) A.Coeffs(),
+		A.Dim1(), A.Dim2());
+//	auto& QR = Aeigen.householderQr();
+//	const Eigen::MatrixXcd& Q = QR.householderQ();
+//	return toQutree(Q);
+	HouseholderQR<MatrixXcd> qr(Aeigen);
+	MatrixXcd thinQ = qr.householderQ() * MatrixXcd::Identity(A.Dim1(), A.Dim2());
+	return toQutree(thinQ);
 }
 
 SVDcd svd(const Matrixcd& A) {
@@ -763,7 +797,7 @@ Matrixcd toMatrix(const SVDcd& svd) {
 	return U * V.Adjoint();
 }
 
-template <typename T>
+template<typename T>
 Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2) {
 	assert(dim1 <= A.Dim1());
 	assert(dim2 <= A.Dim2());

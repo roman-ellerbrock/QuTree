@@ -541,8 +541,8 @@ SVDd svd(const Matrixd& A);
 
 Eigen::MatrixXd toEigen(Matrixd A);
 Eigen::MatrixXcd toEigen(Matrixcd A);
-Matrixd toQutree(Eigen::MatrixXd A);
-Matrixcd toQutree(Eigen::MatrixXcd A);
+Matrixd toQutree(const Eigen::MatrixXd& A);
+Matrixcd toQutree(const Eigen::MatrixXcd& A);
 
 template <typename T>
 Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2);

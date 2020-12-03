@@ -98,13 +98,15 @@ namespace TreeFactory {
 	}
 
 	Tree expandNodes(Tree tree) {
-		for (Node& node : tree) {
+		for (auto it = tree.begin(); it != tree.end(); ++it) {
+			Node& node = *it;
 			const TensorShape& shape = node.shape();
 			if ((!node.isBottomlayer()) && (!node.isToplayer())) {
 				if (shape.lastDimension() == shape.lastBefore()) {
 					/// expand
 					Node& parent = node.parent();
 					parent.expandChild(node.childIdx());
+					it--;
 					tree.Update();
 				}
 			}

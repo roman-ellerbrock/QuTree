@@ -425,7 +425,8 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 	assert(tdima.lastBefore() == npart);
 
 	Matrix<T> S(mmax, nmax);
-#pragma omp parallel for
+	Contraction(S, *this, A, shape_.lastIdx());
+/*#pragma omp parallel for
 	for (size_t n = 0; n < nmax; n++) {
 		for (size_t m = 0; m < mmax; m++) {
 			for (size_t i = 0; i < npart; i++) {
@@ -435,6 +436,7 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 			}
 		}
 	}
+	*/
 	return S;
 }
 

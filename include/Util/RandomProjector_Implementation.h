@@ -99,6 +99,9 @@ namespace Random {
 //		auto Q = RandomGauss<T>(rank, A.Dim1(), gen);
 		for (size_t i = 0; i < power; ++i) {
 			Matrix<T> Y = A * Q;
+//			Tensor<T> ytemp({Y.Dim1(), Y.Dim2()}, Y.Coeffs(), false, false);
+//			GramSchmidt(ytemp);
+//			Q = Y;
 			auto Q2 = QR(Y);
 			Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
 		}
