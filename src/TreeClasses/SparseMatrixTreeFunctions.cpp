@@ -28,6 +28,11 @@ namespace TreeFunctions {
 	template void RepresentLayer(SparseMatrixTree<cd>& mats, const Tensor<cd>& Bra,
 		const Tensor<cd>& Ket, const MLO<cd>& M, const Node& node);
 
+	template SparseMatrixTrees<cd> Represent(const SOP<cd>& sop,
+		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
+		shared_ptr<SparseTree>& stree, const Tree& tree);
+
+
 	template void Contraction(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
 		const SparseMatrixTree<cd>& mats, const Tree& tree);
 
@@ -79,6 +84,10 @@ namespace TreeFunctions {
 
 	template void RepresentLayer(SparseMatrixTree<d>& mats, const Tensor<d>& Bra,
 		const Tensor<d>& Ket, const MLO<d>& M, const Node& node);
+
+	template SparseMatrixTrees<d> Represent(const SOP<d>& sop,
+		const TensorTree<d>& Bra, const TensorTree<d>& Ket,
+		shared_ptr<SparseTree>& stree, const Tree& tree);
 
 
 	template void Contraction(SparseMatrixTree<d>& holes, const TensorTree<d>& Bra, const TensorTree<d>& Ket,

@@ -55,10 +55,6 @@ SUITE (SparseMatrixTree) {
 		SparseMatrixTreecd hmat = TreeFunctions::Represent(M_, Psi_, tree_);
 		const Node& top = tree_.TopNode();
 		const Node& child = top.child(0);
-		tree_.print();
-		hmat.print();
-		hmat.Active().print(tree_);
-		getchar();
 			CHECK_CLOSE(0.25, real(hmat[child](0, 0)), 0E-12);
 	}
 

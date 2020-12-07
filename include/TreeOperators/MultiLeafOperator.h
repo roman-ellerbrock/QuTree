@@ -132,7 +132,10 @@ public:
 		return (targetLeaves_[part] == mode_x);
 	}
 
-	/// Apply a MLO to a wavefunction. This routine is not optimized for performance.
+	/// Apply a MLO to a wavefunction.
+	void ApplyReference(TensorTree<T>& Psi, const Tree& tree) const;
+
+	/// Apply a MLO to a wavefunction. Call-by-value-version. This routine is not optimized for performance.
 	TensorTree<T> Apply(TensorTree<T> Psi, const Tree& tree) const;
 
 	/// On which mode does the "part"-th SPO act?

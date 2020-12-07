@@ -57,6 +57,11 @@ namespace TreeFunctions {
 	void Represent(vector<SparseMatrixTree<T>>& Mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
+	template<typename T>
+	SparseMatrixTrees<T> Represent(const SOP<T>& sop,
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		shared_ptr<SparseTree>& stree, const Tree& tree);
+
 	template <typename T>
 	void Represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);

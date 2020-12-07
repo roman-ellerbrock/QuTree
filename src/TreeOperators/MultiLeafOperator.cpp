@@ -65,8 +65,14 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 
 template<typename T>
 TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
-	const Tree& basis) const {
-	for (const Node& node : basis) {
+	const Tree& tree) const {
+	ApplyReference(Psi, tree);
+	return Psi;
+}
+
+template<typename T>
+void MultiLeafOperator<T>::ApplyReference(TensorTree<T>& Psi, const Tree& tree) const {
+	for (const Node& node : tree) {
 		if (node.isBottomlayer()) {
 			const Leaf& phy = node.getLeaf();
 			const LeafInterface& grid = phy.PrimitiveGrid();
@@ -84,8 +90,8 @@ TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
 			Acoeff = ApplyBottomLayer(Acoeff, activelayerparts, grid);
 		}
 	}
-	return Psi;
 }
+
 
 template <typename T>
 void MultiLeafOperator<T>::SetV(const PotentialOperator& V_) {
