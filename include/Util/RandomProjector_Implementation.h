@@ -107,9 +107,6 @@ namespace Random {
 		}
 
 		auto Y = A * Q;
-/*		for (size_t i = 1; i < power; ++i) {
-			Y = A * Y;
-		}*/
 
 		/// Build and Diagonalize Aprime = Q^* A Q = V ew V^*
 		auto B = Q.Adjoint() * Y;

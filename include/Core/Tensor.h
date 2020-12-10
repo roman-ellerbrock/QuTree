@@ -126,9 +126,9 @@ public:
 	//////////////////////////////////////////////////////////
 	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B)
 	{
-		assert(A.shape().GetDimTot() == B.shape().GetDimTot());
+		assert(A.shape().totalDimension() == B.shape().totalDimension());
 		Tensor C(A.shape());
-		for (int i = 0; i < A.shape().GetDimTot(); i++)
+		for (int i = 0; i < A.shape().totalDimension(); i++)
 		{
 			C(i) = A(i) + B(i);
 		}

@@ -446,13 +446,17 @@ Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 		trmatvec_((double *) &C[0], (double *) &A[0], (double *) &B[0],
 			&a, &b, &c, &add);
 	} else {
-		for (size_t j = 0; j < B.Dim2(); j++) {
+		auto Ae = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) A.Coeffs(), A.Dim1(), A.Dim2());
+		auto Be = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) B.Coeffs(), B.Dim1(), B.Dim2());
+		auto Ce = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) C.Coeffs(), C.Dim1(), C.Dim2());
+		Ce = Ae * Be;
+/*		for (size_t j = 0; j < B.Dim2(); j++) {
 			for (size_t i = 0; i < A.Dim1(); i++) {
 				for (size_t k = 0; k < A.Dim2(); k++) {
 					C(i, j) += A(i, k) * B(k, j);
 				}
 			}
-		}
+		}*/
 	}
 	return C;
 }
