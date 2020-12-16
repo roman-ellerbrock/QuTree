@@ -57,8 +57,10 @@ SUITE (TensorOperatorTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 4);
 		Tree optree = TreeFactory::OperatorTree(tree);
 		for (const Node& node : optree) {
-			if (node.isBottomlayer()) {
+			if (!node.isToplayer()) {
 					CHECK_EQUAL(3, node.shape().order());
+					CHECK_EQUAL(2, node.shape().lastDimension());
+					CHECK_EQUAL(4, node.shape().lastBefore());
 			}
 		}
 	}
@@ -67,9 +69,12 @@ SUITE (TensorOperatorTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 //		Tree optree = TreeFactory::OperatorTree(tree);
 		TensorOperatorTree H(tree);
+		H.Occupy(tree);
 		for (const Node node : tree) {
 			if (node.isBottomlayer()) {
 				Tensorcd& h = H[node];
+				h.print();
+				getchar();
 				CHECK_CLOSE(1., abs(h(0, 0)), 1e-7);
 				CHECK_CLOSE(0., abs(h(1, 0)), 1e-7);
 				CHECK_CLOSE(0., abs(h(2, 0)), 1e-7);

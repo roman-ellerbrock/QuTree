@@ -272,6 +272,8 @@ void multAdd(Tensor<T>& A, const Tensor<T>& B, U coeff);
 template<typename T>
 void GramSchmidt(Tensor<T>& A);
 
+Tensorcd QR(const Tensorcd& A);
+
 //Projects B on A
 template<typename T>
 Tensor< complex<double> > Project(const Tensor< complex<double> >& A,

@@ -926,6 +926,13 @@ void GramSchmidt(Tensor<T>& A) {
 	}
 }
 
+Tensorcd QR(const Tensorcd& A) {
+	auto Amat = toMatrix(A);
+	auto Q = QR(Amat);
+	return toTensor(Q);
+}
+
+
 //Projects B on A
 template<typename T>
 Tensor<complex<double> > Project(const Tensor<complex<double> >& A,

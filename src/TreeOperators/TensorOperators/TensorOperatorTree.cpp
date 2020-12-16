@@ -33,15 +33,12 @@ TensorOperatorTree::TensorOperatorTree(const SOPcd& S,
 TensorOperatorTree::TensorOperatorTree(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
+		const TensorShape& shape = node.shape();
 		if (node.isBottomlayer()) {
-			vector<size_t> dim({2, 2, 1});
-			TensorShape shape(dim);
-			attributes_.emplace_back(Tensorcd(shape));
+			vector<size_t> dim({shape.lastBefore(), shape.lastBefore(), shape.lastDimension()});
+			TensorShape oshape(dim);
+			attributes_.emplace_back(Tensorcd(oshape));
 		} else {
-			size_t f = node.nChildren() + 1;
-			vector<size_t> dim(node.nChildren() + 1);
-			for (size_t& x : dim) { x = 1; }
-			TensorShape shape(dim);
 			attributes_.emplace_back(Tensorcd(shape));
 		}
 	}

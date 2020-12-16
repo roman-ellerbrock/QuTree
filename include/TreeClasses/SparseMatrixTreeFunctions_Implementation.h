@@ -219,6 +219,18 @@ namespace TreeFunctions {
 		}
 	}
 
+	template <typename T>
+	vector<SparseMatrixTree<T>> Contraction(const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket, const vector<SparseMatrixTree<T>>& mats,
+		const MatrixTree<T>& rho, shared_ptr<SparseTree>& stree, const Tree& tree) {
+		vector<SparseMatrixTree<T>> holes;
+		for (const auto& mat : mats) {
+			holes.emplace_back(SparseMatrixTree<T>(stree, tree));
+		}
+		Contraction(holes, Bra, Ket, mats, rho, tree);
+		return holes;
+	}
+
 	template<typename T>
 	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi,
 		const SparseTree& stree, bool orthogonal) {

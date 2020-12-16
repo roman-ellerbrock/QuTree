@@ -29,7 +29,7 @@ template<typename T>
 LeafMatrix<T>::LeafMatrix(Matrix<T> h, bool adjoint)
 : h_(move(h)) {
 	if (adjoint) {
-		h_ = h.Adjoint();
+		h_ = h_.Adjoint();
 	}
 }
 

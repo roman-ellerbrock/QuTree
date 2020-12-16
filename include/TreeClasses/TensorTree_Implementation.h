@@ -153,7 +153,7 @@ void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 			for (size_t j = 0; j < S.Dim1(); j++) {
 				for (size_t k = 0; k < S.Dim1(); k++) {
 					for (size_t l = 0; l < S.Dim1(); l++) {
-						SW(j, k) += trafo(k, l) * sqrt(eigenval(l))
+						SW(j, k) += trafo(k, l) * sqrt(max(eigenval(l), 0.))
 							* conj(trafo(j, l));
 					}
 				}
