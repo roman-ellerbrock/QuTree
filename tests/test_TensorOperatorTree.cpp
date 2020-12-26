@@ -50,11 +50,12 @@ SUITE (TensorOperatorTree) {
 					H_.setLeafOperator(leafX_, 1, node);
 				}
 			}
+			H_.print(tree_);
 		}
 	};
 
 	TEST (OperatorTree) {
-		Tree tree = TreeFactory::BalancedTree(12, 2, 4);
+		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		Tree optree = TreeFactory::OperatorTree(tree);
 		for (const Node& node : optree) {
 			if (!node.isToplayer()) {
@@ -67,7 +68,7 @@ SUITE (TensorOperatorTree) {
 
 	TEST (TensorOperatorTree) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
-//		Tree optree = TreeFactory::OperatorTree(tree);
+		Tree optree = TreeFactory::OperatorTree(tree);
 		TensorOperatorTree H(tree);
 		H.Occupy(tree);
 		for (const Node node : tree) {
@@ -82,9 +83,9 @@ SUITE (TensorOperatorTree) {
 			}
 		}
 		H.print(tree);
-		getchar();
 	}
 
+/*
 	TEST (SetLeafOperator) {
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		Tree optree = TreeFactory::OperatorTree(tree);
@@ -196,5 +197,5 @@ SUITE (TensorOperatorTree) {
 			CHECK_CLOSE(0., abs(Phi(2, 1)), eps);
 			CHECK_CLOSE(1., abs(Phi(3, 1)), eps);
 	}
+*/
 }
-

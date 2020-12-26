@@ -928,8 +928,10 @@ void GramSchmidt(Tensor<T>& A) {
 
 Tensorcd QR(const Tensorcd& A) {
 	auto Amat = toMatrix(A);
-	auto Q = QR(Amat);
-	return toTensor(Q);
+	auto Qmat = QR(Amat);
+	auto Q = toTensor(Qmat);
+	Q.Reshape(A.shape());
+	return Q;
 }
 
 

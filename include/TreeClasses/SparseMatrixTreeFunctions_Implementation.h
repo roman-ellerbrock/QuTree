@@ -94,7 +94,6 @@ namespace TreeFunctions {
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		shared_ptr<SparseTree>& stree, const Tree& tree) {
 
-		assert(Mats.size() == sop.size());
 		vector<SparseMatrixTree<T>> Mats;
 		for (size_t l = 0; l < sop.size(); ++l) {
 			SparseMatrixTree<T> M(stree, tree);
