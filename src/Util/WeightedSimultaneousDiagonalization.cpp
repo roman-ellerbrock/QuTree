@@ -257,25 +257,26 @@ namespace WeightedSimultaneousDiagonalization {
 		complex<double> c, complex<double> s) {
 		// Weight matrix contribution
 		// First rotation W*J^H
-		Vectord W_new = RotatedDiagonals(W, p, q, c, s);
+		auto W_new = RotatedDiagonals(W, p, q, c, s);
 
 		// Change of Xw-Matrix diagonals
-		Vectord x_old(2), x_new(2);
+//		Vectord x_old(2), x_new(2);
+		double xold0 = 0, xold1 = 0, xnew0 = 0, xnew1 = 0;
 		for (const Matrixcd& Xw : Xs) {
-			x_old(0) += pow(real(Xw(p, p)), 2);
-			x_old(1) += pow(real(Xw(q, q)), 2);
+			xold0 += pow(real(Xw(p, p)), 2);
+			xold1 += pow(real(Xw(q, q)), 2);
 		}
 
 		for (const Matrixcd& Xw : Xs) {
-			Vectord Xw_rot = RotatedDiagonals(Xw, p, q, c, s);
-			x_new(0) += pow(Xw_rot(0), 2);
-			x_new(1) += pow(Xw_rot(1), 2);
+			auto Xw_rot = RotatedDiagonals(Xw, p, q, c, s);
+			xnew0 += pow(Xw_rot.first, 2);
+			xnew1 += pow(Xw_rot.second, 2);
 		}
 
 		// Resulting change in the localization measure
 		double diff = 0;
-		diff += x_new(0) / W_new(0) - x_old(0) / real(W(p, p));
-		diff += x_new(1) / W_new(1) - x_old(1) / real(W(q, q));
+		diff += xnew0 / W_new.first - xold0 / real(W(p, p));
+		diff += xnew1 / W_new.second - xold1 / real(W(q, q));
 
 		return diff;
 	}

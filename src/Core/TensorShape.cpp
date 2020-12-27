@@ -57,6 +57,7 @@ void TensorShape::Initialize(const vector<size_t>& dim) {
 	for (size_t k = 0; k < dim.size(); ++k) {
 		this->operator[](k) = dim[k];
 	}
+
 	after_ = ContractDimensionsAfter(dim);
 	before_ = ContractDimensionsBefore(dim);
 	totalDimension_ = after_.front() * front();

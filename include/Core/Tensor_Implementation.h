@@ -62,8 +62,14 @@ Tensor<T>::Tensor(Tensor&& old) noexcept
 // Copy Assignment Operator
 template<typename T>
 Tensor<T>& Tensor<T>::operator=(const Tensor& old) {
-	Tensor tmp(old);
-	*this = move(tmp);
+	if (this == &old) {
+		return *this;
+	} else if (old.shape() == this->shape()) {
+		memcpy(coeffs_, old.coeffs_, shape().totalDimension() * sizeof(T));
+	} else {
+		Tensor tmp(old);
+		*this = move(tmp);
+	}
 	return *this;
 }
 
@@ -291,8 +297,9 @@ void Tensor<T>::Read(const string& filename) {
 template<typename T>
 Tensor<T>& Tensor<T>::operator+=(const Tensor& A) {
 	assert(A.shape().totalDimension() == shape().totalDimension());
+	T const * Ax = A.coeffs_;
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
-		(*this)(i) += A(i);
+		coeffs_[i] += Ax[i];
 	}
 	return *this;
 }
@@ -442,8 +449,9 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 
 template<typename T>
 void Tensor<T>::Zero() {
-	for (size_t i = 0; i < shape_.totalDimension(); i++)
-		coeffs_[i] = 0;
+	memset(coeffs_, 0, shape_.totalDimension() * sizeof(T));
+//	for (size_t i = 0; i < shape_.totalDimension(); i++)
+//		coeffs_[i] = 0;
 }
 
 template<typename T>
@@ -485,6 +493,8 @@ extern "C" {
 // subroutine matvec (mulpsi, psi, matrix, a, b, c, add)
 // subroutine rhomat (bra,ket,matrix,a,b,c)
 void matvec_(double* C, double* B, double* mat,
+	int* a, int* b, int* c, int* add);
+void ctmatvec_(double* C, double* B, double* mat,
 	int* a, int* b, int* c, int* add);
 void rmatvec_(double* C, double* B, double* mat,
 	int* a, int* b, int* c, int* add);
@@ -670,48 +680,62 @@ template<typename T, typename U>
 void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
-	if (zero) { C.Zero(); }
 
-	size_t actbefB = activeB * before;
-	size_t actbefC = activeC * before;
-	size_t Cidx = 0;
-	size_t Bidx = 0;
-	size_t Aidx = 0;
-	size_t kpreidxB = 0;
-	size_t kpreidxC = 0;
-	size_t Bpreidx = 0;
-	size_t Cpreidx = 0;
+	int add = !zero;
+	int a = activeB;
+	int b = before;
+	int c = after;
+	typedef complex<double> cd;
+	typedef double d;
+	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
+		ctmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
+			&a, &b, &c, &add);
+//	} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
+//		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
+//			&a, &b, &c, &add);
+	} else {
+		if (zero) { C.Zero(); }
+		size_t actbefB = activeB * before;
+		size_t actbefC = activeC * before;
+		size_t Cidx = 0;
+		size_t Bidx = 0;
+		size_t Aidx = 0;
+		size_t kpreidxB = 0;
+		size_t kpreidxC = 0;
+		size_t Bpreidx = 0;
+		size_t Cpreidx = 0;
 
-	if (before == 1) {
+		if (before == 1) {
 //#pragma omp parallel for
-		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				Bidx = l + kpreidxB;
-				for (size_t j = 0; j < activeC; ++j) {
-					Cidx = j + kpreidxC;
-					Aidx = j * activeB + l;
-					C[Cidx] += conj(A[Aidx]) * B[Bidx];
+			for (size_t k = 0; k < after; ++k) {
+				kpreidxB = k * actbefB;
+				kpreidxC = k * actbefC;
+				for (size_t l = 0; l < activeB; ++l) {
+					Bidx = l + kpreidxB;
+					for (size_t j = 0; j < activeC; ++j) {
+						Cidx = j + kpreidxC;
+						Aidx = j * activeB + l;
+						C[Cidx] += conj(A[Aidx]) * B[Bidx];
 //					C[Cidx] += conj(A[l, j]) * B[Bidx];
+					}
 				}
 			}
-		}
-	} else {
+		} else {
 //#pragma omp parallel for
-		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				Bpreidx = l * before + kpreidxB;
-				for (size_t j = 0; j < activeC; ++j) {
-					Aidx = j * activeB + l;
-					Cpreidx = j * before + kpreidxC;
-					for (size_t i = 0; i < before; ++i) {
-						Cidx = Cpreidx + i;
-						Bidx = Bpreidx + i;
-						C[Cidx] += conj(A[Aidx]) * B[Bidx];
+			for (size_t k = 0; k < after; ++k) {
+				kpreidxB = k * actbefB;
+				kpreidxC = k * actbefC;
+				for (size_t l = 0; l < activeB; ++l) {
+					Bpreidx = l * before + kpreidxB;
+					for (size_t j = 0; j < activeC; ++j) {
+						Aidx = j * activeB + l;
+						Cpreidx = j * before + kpreidxC;
+						for (size_t i = 0; i < before; ++i) {
+							Cidx = Cpreidx + i;
+							Bidx = Bpreidx + i;
+							C[Cidx] += conj(A[Aidx]) * B[Bidx];
 //						C[Cidx] += conj(A[l, j]) * B[Bidx];
+						}
 					}
 				}
 			}

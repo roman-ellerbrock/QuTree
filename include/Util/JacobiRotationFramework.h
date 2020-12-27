@@ -90,7 +90,7 @@ namespace JacobiRotationFramework
 	 * @param s sin of alpha_ in givens matrix
 	 * @return Change of diagonality-measure
 	 */
-	Vectord RotatedDiagonals(const Matrixcd& A, int p, int q,
+	pair<double,double> RotatedDiagonals(const Matrixcd& A, int p, int q,
 		complex<double> c, complex<double> s);
 
 	/**

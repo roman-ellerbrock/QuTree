@@ -126,20 +126,18 @@ Matrixd JacobiRotationFramework::RFO_BuildHessian(const Matrixd& preHessian,
 	return Hessian;
 }
 
-Vectord JacobiRotationFramework::RotatedDiagonals(const Matrixcd& A,
+pair<double,double> JacobiRotationFramework::RotatedDiagonals(const Matrixcd& A,
 	int p, int q, complex<double> c, complex<double> s) {
 	// First rotation W*J^H
-	Matrixcd copy(2, 2);
-	copy(0, 0) = c * A(p, p) + s * A(p, q);
-	copy(0, 1) = c * A(p, q) - conj(s) * A(p, p);
-	copy(1, 0) = c * A(q, p) + s * A(q, q);
-	copy(1, 1) = c * A(q, q) - conj(s) * A(q, p);
+	complex<double> c00 = c * A(p, p) + s * A(p, q);
+	complex<double> c01 = c * A(p, q) - conj(s) * A(p, p);
+	complex<double> c10 = c * A(q, p) + s * A(q, q);
+	complex<double> c11 = c * A(q, q) - conj(s) * A(q, p);
 	//Second rotation J*(A*J^H)
-	Vectord A_new(2);
-	A_new(0) = real(c * copy(0, 0) + conj(s) * copy(1, 0));
-	A_new(1) = real(c * copy(1, 1) - s * copy(0, 1));
+	double Anew0 = real(c * c00 + conj(s) * c10);
+	double Anew1 = real(c * c11 - s * c01);
 
-	return A_new;
+	return {Anew0, Anew1};
 }
 
 Matrixcd JacobiRotationFramework::Rotate(const Matrixcd& A,
