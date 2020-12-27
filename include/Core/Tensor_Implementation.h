@@ -37,9 +37,10 @@ Tensor<T>::Tensor(const string& filename)
 template<typename T>
 Tensor<T>::Tensor(const Tensor& old)
 	:Tensor(old.shape_, false) {
-	for (size_t i = 0; i < shape_.totalDimension(); i++) {
-		coeffs_[i] = old.coeffs_[i];
-	}
+	memcpy(coeffs_, old.coeffs_, shape().totalDimension() * sizeof(T));
+//	for (size_t i = 0; i < shape_.totalDimension(); i++) {
+//		coeffs_[i] = old.coeffs_[i];
+//	}
 }
 
 // Copy-Multyply constructor
