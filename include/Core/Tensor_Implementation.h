@@ -16,7 +16,8 @@ Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
 
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
-	:shape_(dim), coeffs_(new T[dim.totalDimension()]), ownership_(true) {
+	:shape_(dim), coeffs_((T*)malloc(dim.totalDimension()*sizeof(T)) ), ownership_(true) {
+//	:shape_(dim), coeffs_(new T[dim.totalDimension()]), ownership_(true) {
 	if (InitZero) { Zero(); }
 }
 

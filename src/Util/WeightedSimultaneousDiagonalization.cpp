@@ -34,15 +34,19 @@ namespace WeightedSimultaneousDiagonalization {
 		// Measure off-diagonal norm
 		double delta = MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo);
 //		cout << "Start : " << delta << endl;
+		double delta_last = 2 * delta;
 		while (!converged && iter < maxiter) {
 			// Rotation circle over all elements
 			WeightedJacobiRotations(Xs, XXs, W, trafo);
 
 			// Measure off-diagonal norm
+			delta_last = delta;
 			delta = MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo);
+			double change = abs(delta_last - delta);
+//			cout << iter << " " << delta << " " << change << endl;
 
 			// Check convergence
-			if (delta < eps) { converged = true; }
+			if (delta < eps || change < eps) { converged = true; }
 			iter++;
 		}
 

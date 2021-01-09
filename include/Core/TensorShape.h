@@ -68,6 +68,7 @@ protected:
 
 vector<size_t> indexMapping(size_t I, const TensorShape& shape);
 size_t indexMapping(const vector<size_t>& idxs, const TensorShape& shape);
+void indexMapping(vector<size_t>& idxs, size_t I, const TensorShape& shape);
 
 TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimension);
 

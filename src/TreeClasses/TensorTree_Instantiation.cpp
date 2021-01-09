@@ -27,6 +27,8 @@ template TensorTree<d> operator/(d c, TensorTree<d> R);
 template void Orthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
 template void Orthogonal<d>(TensorTree<d>& Psi, const Tree& tree);
 
+template void QROrthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
+
 template void Orthonormal<cd>(TensorTree<cd>& Psi, const Tree& tree);
 template void Orthonormal<d>(TensorTree<d>& Psi, const Tree& tree);
 

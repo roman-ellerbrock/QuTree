@@ -92,8 +92,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
 install(EXPORT QuTree-export
     FILE QuTreeTargets.cmake
     NAMESPACE QuTree::
-    DESTINATION ${QuTree_INSTALL_CMAKE_DIR}
-    )
+    DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
 
 # Exports for external find_package
 include(CMakePackageConfigHelpers)
@@ -102,7 +101,8 @@ write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
-)
+    )
+
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
@@ -151,7 +151,6 @@ if (openmp)
     endif (OPENMP_FOUND)
 endif ()
 
-
 #####################################################################
 # Set Compiler Flags
 #####################################################################
@@ -162,9 +161,15 @@ endif ()
 target_compile_features(QuTree PUBLIC cxx_std_14)
 
 #set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
+set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -loop-vectorize")
 #set(FLAGS_VECTORIZE "-ftree-parallelize-loops=8 ${FLAGS_VECTORIZE}")
-set(QuTree_DEBUG_FLAGS "-g")
 set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math")
+
+#include(vectorization.cmake)
+
+set(QuTree_DEBUG_FLAGS "-g")
+#set(QuTree_RELEASE_FLAGS " -O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")

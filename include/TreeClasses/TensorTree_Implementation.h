@@ -159,11 +159,30 @@ void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 				}
 			}
 
-			const Node& parent = (Node&) node.parent();
+			const Node& parent = node.parent();
 			Psi[parent] = MatrixTensor(SW, Psi[parent], node.childIdx());
 			GramSchmidt(Phi);
 		}
 	}
+}
+
+template <typename T>
+void QROrthogonal(TensorTree<T>& Psi, const Tree& tree) {
+
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			Tensor<T>& Phi = Psi[node];
+			Tensor<T> nPhi = QR(Phi);
+			auto S = nPhi.DotProduct(Phi);
+			node.info();
+			S.print();
+			const Node& parent = node.parent();
+			Psi[parent] = MatrixTensor(S, Psi[parent], node.childIdx());
+			Psi[node] = nPhi;
+		}
+	}
+	getchar();
+
 }
 
 template <typename T>

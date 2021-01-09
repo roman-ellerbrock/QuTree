@@ -547,3 +547,15 @@ Matrixcd toQutree(const Eigen::MatrixXcd& A);
 template <typename T>
 Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2);
 
+/**
+ * @TODOs:
+ * - move non-BLAS functions to matrix extension (Christoph)
+ * - matrix inherits from vector (Christoph)
+ * - general elementwise function for Vectors, matrices & tensors (Roman)
+ * - range operators for Vector & Matrix class (Roman)
+ * - scalar functions for Matrices (f(A)) sqrt(x), matrixfunction(A, sqrt); (Roman)
+ * - DiagonalMatrix class (inherit from Vector): add and multiply member-functions
+ * - Hermitisch & unitär-inheritance
+ * - extend Unit tests
+ **/
+
