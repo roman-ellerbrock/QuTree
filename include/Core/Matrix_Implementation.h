@@ -814,18 +814,3 @@ Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2) {
 	return B;
 }
 
-template<typename T>
-void elementwise(Matrix<T>& res, const Matrix<T>& A, const function<T(T)>& f) {
-	assert(A.Dim1() == res.Dim1());
-	assert(A.Dim2() == res.Dim2());
-	for (size_t i = 0; i < A.Dim1()*A.Dim2(); ++i) {
-		res[i] = f(A[i]);
-	}
-}
-
-template <typename T>
-Matrix<T> elementwise(const Matrix<T>& A, const function<T(T)>& f) {
-	Matrix<T> res(A.Dim1(), A.Dim2(), false);
-	elementwise(res, A, f);
-	return res;
-}

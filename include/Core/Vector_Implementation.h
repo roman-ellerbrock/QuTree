@@ -298,3 +298,18 @@ Vectorcd toQutree(const Eigen::VectorXcd& v) {
 	}
 	return vqutree;
 }
+
+template<typename T>
+void elementwise(Vector<T>& res, const Vector<T>& A, const function<T(T)>& f) {
+	assert(A.Dim() == res.Dim());
+	for (size_t i = 0; i < A.Dim1()*A.Dim2(); ++i) {
+		res[i] = f(A[i]);
+	}
+}
+
+template <typename T>
+Vector<T> elementwise(const Vector<T>& A, const function<T(T)>& f) {
+	Vector<T> res(A.Dim());
+	elementwise(res, A, f);
+	return res;
+}

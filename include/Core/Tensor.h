@@ -97,26 +97,16 @@ public:
 
 	const T& operator()(size_t bef, size_t j, size_t aft, size_t leaf)const;
 
-	T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n);
-
-	const T& operator()(size_t i, size_t j, size_t k, size_t f, size_t n)const;
-
 	T& operator()(const vector<size_t>& dims);
 
 	const T& operator()(const vector<size_t>& dims) const;
 
-	// double hole operator
-	T& operator()(size_t bef, size_t i, size_t mid, size_t j, size_t beh,
-		size_t mode1, size_t mode2, size_t n)const;
-
-	inline const T& operator[](const size_t idx)const
-	{
+	inline const T& operator[](const size_t idx)const {
 		// Fast bracket operator
 		return coeffs_[idx];
 	}
 
-	inline T& operator[](const size_t idx)
-	{
+	inline T& operator[](const size_t idx) {
 		// Fast bracket operator
 		return coeffs_[idx];
 	}
@@ -124,22 +114,18 @@ public:
 	//////////////////////////////////////////////////////////
 	// Math Operators
 	//////////////////////////////////////////////////////////
-	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B)
-	{
+	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B) {
 		assert(A.shape().totalDimension() == B.shape().totalDimension());
 		Tensor C(A.shape());
-		for (int i = 0; i < A.shape().totalDimension(); i++)
-		{
+		for (int i = 0; i < A.shape().totalDimension(); i++) {
 			C(i) = A(i) + B(i);
 		}
 		return C;
 	}
 
-	friend Tensor operator-(const Tensor& A, const Tensor& B)
-	{
+	friend Tensor operator-(const Tensor& A, const Tensor& B) {
 		Tensor C(A.shape());
-		for (int i = 0; i < A.shape().totalDimension(); i++)
-		{
+		for (int i = 0; i < A.shape().totalDimension(); i++) {
 			C(i) = A(i) - B(i);
 		}
 		return C;

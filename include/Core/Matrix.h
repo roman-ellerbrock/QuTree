@@ -547,12 +547,6 @@ Matrixcd toQutree(const Eigen::MatrixXcd& A);
 template <typename T>
 Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2);
 
-template <typename T>
-void elementwise(Matrix<T>& res, const Matrix<T>& A, const function<T(T)>& f);
-
-template <typename T>
-Matrix<T> elementwise(const Matrix<T>& A, const function<T(T)>& f);
-
 /**
  * @TODOs:
  * - move non-BLAS functions to matrix extension (Christoph)

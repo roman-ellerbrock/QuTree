@@ -123,3 +123,10 @@ typedef Vector<complex<double>> Vectorcd;
 Vectord toQutree(const Eigen::VectorXd& v);
 
 Vectorcd toQutree(const Eigen::VectorXcd& v);
+
+template <typename T>
+void elementwise(Vector<T>& res, const Vector<T>& A, const function<T(T)>& f);
+
+template <typename T>
+Vector<T> elementwise(const Vector<T>& A, const function<T(T)>& f);
+
