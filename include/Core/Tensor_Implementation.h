@@ -1072,3 +1072,19 @@ bool operator==(const Tensor<T>& A, const Tensor<T>& B) {
 	}
 	return true;
 }
+
+template<typename T>
+void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f) {
+	assert(A.Dim1() == res.Dim1());
+	assert(A.Dim2() == res.Dim2());
+	for (size_t i = 0; i < A.Dim1()*A.Dim2(); ++i) {
+		res[i] = f(A[i]);
+	}
+}
+
+template <typename T>
+Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f) {
+	Tensor<T> res(A.Dim1(), A.Dim2(), false);
+	elementwise(res, A, f);
+	return res;
+}

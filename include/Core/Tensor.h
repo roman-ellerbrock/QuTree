@@ -307,3 +307,8 @@ istream& operator>>(istream& is, Tensor<T>& A);
 template<typename T>
 bool operator==(const Tensor<T>& A, const Tensor<T>& B);
 
+template<typename T>
+Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f);
+
+template<typename T>
+void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f);
