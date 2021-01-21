@@ -11,6 +11,8 @@ set(QuTree_SOURCE_FILES
 
     src/Core/LA_lib.f
 
+    src/TreeClasses/MatrixTensorTree.cpp
+    src/TreeClasses/MatrixTensorTreeFunctions.cpp
     src/TreeClasses/MatrixTree.cpp
     src/TreeClasses/MatrixTreeFunctions.cpp
     src/TreeClasses/TreeTransformations.cpp

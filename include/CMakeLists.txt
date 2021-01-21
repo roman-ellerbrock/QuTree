@@ -13,6 +13,8 @@ set(QuTree_INCLUDE_FILES
     include/QuTree.h
 
     include/TreeClasses/EdgeAttribute.h
+    include/TreeClasses/MatrixTensorTree.h
+    include/TreeClasses/MatrixTensorTreeFunctions.h
     include/TreeClasses/MatrixTree.h
     include/TreeClasses/MatrixTreeFunctions.h
     include/TreeClasses/MatrixTreeFunctions_Implementation.h

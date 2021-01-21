@@ -2,15 +2,15 @@
 // Created by Roman Ellerbrock on 4/3/20.
 //
 
-#include "MatrixTensorTree.h"
+#include "TreeClasses/MatrixTensorTree.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
 
-MatrixTensorTree::MatrixTensorTree(const Wavefunction& Psi,
+MatrixTensorTree::MatrixTensorTree(const TensorTreecd& Psi,
 	const Tree& tree, bool orthogonal) {
 	Initialize(Psi, tree, orthogonal);
 }
 
-void MatrixTensorTree::Initialize(const Wavefunction& Psi,
+void MatrixTensorTree::Initialize(const TensorTreecd& Psi,
 	const Tree& tree, bool orthogonal) {
 
 	/// Note: Requires orthogonal wavefunction representation (typically given)
@@ -40,7 +40,7 @@ void MatrixTensorTree::buildNodes(TensorTreecd Psi, const Tree& tree) {
 }
 
 void MatrixTensorTree::buildEdges(const Tree& tree) {
-	Wavefunction& nodes_ = first;
+	TensorTreecd& nodes_ = first;
 	MatrixTreecd& edges_ = second;
 
 	/// Get edge matrices (B's)

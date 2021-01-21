@@ -4,18 +4,18 @@
 
 #ifndef MATRIXTENSORTREE_H
 #define MATRIXTENSORTREE_H
-#include "Core/Wavefunction.h"
+#include "TreeClasses/TensorTree.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
 
-class MatrixTensorTree : public pair<Wavefunction, MatrixTreecd> {
+class MatrixTensorTree : public pair<TensorTreecd, MatrixTreecd> {
 public:
 	MatrixTensorTree() = default;
-	MatrixTensorTree(const Wavefunction& Psi, const Tree& tree, bool orthogonal);
+	MatrixTensorTree(const TensorTreecd& Psi, const Tree& tree, bool orthogonal);
 	/**
 	 * \brief All-normalized wavefunction representation with A\tilde's and B_inv's.
 	 */
 
-	void Initialize(const Wavefunction& Psi,
+	void Initialize(const TensorTreecd& Psi,
 		const Tree& tree, bool orthogonal);
 
 	const TensorTreecd& nodes()const { return first; }
