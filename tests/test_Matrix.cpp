@@ -160,15 +160,4 @@ SUITE (Matrix) {
 		CHECK_CLOSE(0., Residual(A, B), 1e-8);
 	}
 
-	TEST(Toeph) {
-		Matrixcd A(5, 5);
-		Matrixcd B(5, 5);
-		double c = 2.;
-
-		auto C = (c * A) + B * (A + 2. * B);
-		C = A + B;
-		A *= c;
-		B += A;
-		Vectorcd v = A;
-	}
 }
