@@ -17,26 +17,16 @@ void MatrixTensorTree::Initialize(const TensorTreecd& Psi,
 	assert(orthogonal);
 
 	buildNodes(Psi, tree);
-
 	buildEdges(tree);
-//	/// Get edge matrices (B's)
-//	MatrixTreecd rho = TreeFunctions::Contraction(nodes_, tree, true);
-//	auto B = sqrt(rho, tree);
-//
-//	/// Build node representation (A^\tilde's)
-//	for (const Edge& e : tree.Edges()) {
-//		const Node& node = e.down();
-//		Tensorcd& A = nodes_[node];
-//		/// Basically like multiplying with sqrt(rho)'s
-//		A = MatrixTensor(B[e], A, node.nChildren());
-//	}
-//
-//	edges_ = inverse(B, tree);
 }
 
 void MatrixTensorTree::buildNodes(TensorTreecd Psi, const Tree& tree) {
-	Orthogonal(Psi, tree);
+	QROrthogonal(Psi, tree);
 	nodes() = Psi;
+}
+
+void MatrixTensorTree::buildEdgesQR(const Tree& tree) {
+
 }
 
 void MatrixTensorTree::buildEdges(const Tree& tree) {
@@ -91,6 +81,9 @@ TensorTreecd MatrixTensorTree::BottomUpNormalized(const Tree& tree) const {
 	}
 
 	return Psi;
+}
+
+void MatrixTensorTree::reWeight(const Tree& tree) {
 }
 
 bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double eps) {

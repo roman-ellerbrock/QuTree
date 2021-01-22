@@ -22,6 +22,7 @@ set(QuTree_tests
         test_GradientDescent.cpp
         test_Integrator.cpp
         test_Matrix.cpp
+        test_MatrixTensorTree.cpp
         test_Tensor.cpp
         tests.cpp
         test_TensorTree.cpp

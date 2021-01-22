@@ -30,7 +30,11 @@ public:
 
 	void buildEdges(const Tree& tree);
 
+	void buildEdgesQR(const Tree& tree);
+
 	void buildFromWeighted(const Tree& tree);
+
+	void reWeight(const Tree& tree);
 
 	TensorTreecd TopDownNormalized(const Tree& tree) const;
 

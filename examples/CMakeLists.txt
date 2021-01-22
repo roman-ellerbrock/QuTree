@@ -7,6 +7,9 @@ target_link_libraries(example_2 QuTree::QuTree)
 add_executable(example_3 example_3.cpp)
 target_link_libraries(example_3 QuTree)
 
+add_executable(example_4 multilayer_example.cpp)
+target_link_libraries(example_4 QuTree)
+
 add_executable(demo demo.cpp)
 target_link_libraries(demo QuTree)
 

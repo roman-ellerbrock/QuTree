@@ -33,6 +33,10 @@ namespace TreeFunctions {
 	Tensorcd symApply(Tensorcd Phi,
 		const SparseMatrixTreePairscd& hMatSet,
 		const SOPcd& H, const Node& node);
+
+	void symApply(MatrixTensorTree& Chi, const MatrixTensorTree& Psi,
+		const SparseMatrixTreePairscd& hMatSet,
+		const SOPcd& H, const Tree& tree);
 }
 
 #endif //MATRIXTENSORTREEFUNCTIONS_H

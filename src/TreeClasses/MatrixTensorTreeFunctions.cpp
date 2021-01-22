@@ -82,10 +82,13 @@ namespace TreeFunctions {
 		return hPhi;
 	}
 
-	void symApply(TensorTreecd& Chi, const TensorTreecd& Psi,
+	void symApply(MatrixTensorTree& Chi, const MatrixTensorTree& Psi,
 		const SparseMatrixTreePairscd& hMatSet,
 		const SOPcd& H, const Tree& tree) {
 
+		for (const Node& node : tree) {
+			Chi.first[node] = symApply(Psi.first[node], hMatSet, H, node);
+		}
 	}
 
 }
