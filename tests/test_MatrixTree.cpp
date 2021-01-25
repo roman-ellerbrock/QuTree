@@ -162,7 +162,7 @@ SUITE (MatrixTreeFunctions) {
 		rho = TreeFunctions::Contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
-			for (size_t j = 0; j < mat.Dim2(); j+j) {
+			for (size_t j = 0; j < mat.Dim2(); j++) {
 				for (size_t i = 0; i < mat.Dim1(); ++i) {
 					if (i != j) { off += abs(mat(i, j)); }
 				}
