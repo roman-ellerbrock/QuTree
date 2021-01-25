@@ -7,26 +7,19 @@
 
 MatrixTensorTree::MatrixTensorTree(const TensorTreecd& Psi,
 	const Tree& tree, bool orthogonal) {
-	Initialize(Psi, tree, orthogonal);
+	Initialize(Psi, tree);
 }
 
-void MatrixTensorTree::Initialize(const TensorTreecd& Psi,
-	const Tree& tree, bool orthogonal) {
+void MatrixTensorTree::Initialize(TensorTreecd Psi, const Tree& tree) {
 
 	/// Note: Requires orthogonal wavefunction representation (typically given)
-	assert(orthogonal);
-
+	QROrthogonal(Psi, tree);
 	buildNodes(Psi, tree);
 	buildEdges(tree);
 }
 
 void MatrixTensorTree::buildNodes(TensorTreecd Psi, const Tree& tree) {
-	QROrthogonal(Psi, tree);
 	nodes() = Psi;
-}
-
-void MatrixTensorTree::buildEdgesQR(const Tree& tree) {
-
 }
 
 void MatrixTensorTree::buildEdges(const Tree& tree) {
@@ -80,10 +73,8 @@ TensorTreecd MatrixTensorTree::BottomUpNormalized(const Tree& tree) const {
 		Psi[node] = MatrixTensor(edges()[e], Psi[node], node.nChildren());
 	}
 
+	QROrthogonal(Psi, tree);
 	return Psi;
-}
-
-void MatrixTensorTree::reWeight(const Tree& tree) {
 }
 
 bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double eps) {

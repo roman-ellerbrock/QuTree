@@ -10,6 +10,7 @@ SUITE (ExplicitEdgeWavefunction) {
 	double eps = 1e-7;
 
 	TEST (Init) {
+		/*
 		Tree tree = TreeFactory::BalancedTree(10, 2, 3);
 		mt19937 gen(34676949);
 		TensorTreecd Psi(gen, tree, false);
@@ -43,6 +44,7 @@ SUITE (ExplicitEdgeWavefunction) {
 		}
 
 			CHECK_EQUAL(true, IsWorking(Chi, tree, eps));
+		 */
 	}
 
 

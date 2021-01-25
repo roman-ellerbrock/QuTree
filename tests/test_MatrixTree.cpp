@@ -154,22 +154,15 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree, false);
 		auto rho = TreeFunctions::Contraction(Psi, tree, true);
-		cout << "rho1=\n";
-		rho.print(tree);
 		CanonicalTransformation(Psi, tree, true);
 		rho = TreeFunctions::Contraction(Psi, tree, true);
-		cout << "rho=\n";
-		rho.print(tree);
-		cout << "S=\n";
 
 		auto S = TreeFunctions::DotProduct(Psi, Psi, tree);
-		S.print(tree);
-		getchar();
 
 		rho = TreeFunctions::Contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
-			for (size_t j = 0; j < mat.Dim2(); ++j) {
+			for (size_t j = 0; j < mat.Dim2(); j+j) {
 				for (size_t i = 0; i < mat.Dim1(); ++i) {
 					if (i != j) { off += abs(mat(i, j)); }
 				}

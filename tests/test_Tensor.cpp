@@ -231,4 +231,21 @@ SUITE (Tensor) {
 				CHECK_CLOSE(B(I), C(L), eps);
 		}
 	}
+
+	TEST(QRTensor) {
+		TensorShape shape({2, 3, 4, 5});
+		mt19937 gen(1239);
+		Tensorcd A(shape);
+		Tensor_Extension::Generate(A, gen);
+
+		/// Test standard QR
+		Tensorcd Q = QR(A);
+		auto S = Q.DotProduct(Q);
+			CHECK_CLOSE(0., Residual(S, IdentityMatrixcd(S.Dim1())), eps);
+
+		/// Test QR for other than last mode
+		Tensorcd Q2 = QR(A, 1);
+		auto S1 = Contraction(Q2, Q2, 1);
+			CHECK_CLOSE(0., Residual(S1, IdentityMatrixcd(S1.Dim1())), eps);
+	}
 }

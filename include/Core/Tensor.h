@@ -260,6 +260,8 @@ void GramSchmidt(Tensor<T>& A);
 
 Tensorcd QR(const Tensorcd& A);
 
+Tensorcd QR(const Tensorcd& A, size_t mode);
+
 //Projects B on A
 template<typename T>
 Tensor< complex<double> > Project(const Tensor< complex<double> >& A,
@@ -280,6 +282,12 @@ double Residual(Tensor<T> A, const Tensor<T>& B);
 
 template<typename T>
 Matrix<T> toMatrix(const Tensor<T>& A);
+
+template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& A, size_t mode);
+
+template<typename T>
+Tensor<T> toTensor(const Matrix<T>& B, const TensorShape& shape, size_t mode);
 
 template<typename T>
 Tensor<T> toTensor(const Matrix<T>& B);

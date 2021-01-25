@@ -960,6 +960,12 @@ Tensorcd QR(const Tensorcd& A) {
 	return Q;
 }
 
+Tensorcd QR(const Tensorcd& A, size_t mode) {
+	auto Amat = toMatrix(A, mode);
+	auto Qmat = QR(Amat);
+	auto Q = toTensor(Qmat, A.shape(), mode);
+	return Q;
+}
 
 //Projects B on A
 template<typename T>
@@ -1038,6 +1044,47 @@ Matrix<T> toMatrix(const Tensor<T>& A) {
 		}
 	}
 	return B;
+}
+
+template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& A, size_t mode) {
+	const TensorShape& shape = A.shape();
+	size_t dimbef = shape.before(mode);
+	size_t dimaft = shape.after(mode);
+	size_t diml = dimbef * dimaft;
+	size_t dimr = shape[mode];
+	Matrix<T> B(diml, dimr);
+	TensorShape tmp({dimbef, dimr, dimaft});
+	for (size_t bef = 0; bef < dimbef; ++bef) {
+		for (size_t a = 0; a < dimr; ++a) {
+			for (size_t aft = 0; aft < dimaft; ++aft) {
+				size_t idxl = bef + aft * dimbef;
+				size_t I = indexMapping({bef, a, aft}, tmp);
+				B(idxl, a) = A(I);
+			}
+		}
+	}
+	return B;
+}
+
+template<typename T>
+Tensor<T> toTensor(const Matrix<T>& B, const TensorShape& shape, size_t mode) {
+	Tensor<T> A(shape);
+
+	size_t dimbef = shape.before(mode);
+	size_t dimaft = shape.after(mode);
+	size_t dimr = shape[mode];
+	TensorShape tmp({dimbef, dimr, dimaft});
+	for (size_t bef = 0; bef < dimbef; ++bef) {
+		for (size_t a = 0; a < dimr; ++a) {
+			for (size_t aft = 0; aft < dimaft; ++aft) {
+				size_t idxl = bef + aft * dimbef;
+				size_t I = indexMapping({bef, a, aft}, tmp);
+				A(I) = B(idxl, a);
+			}
+		}
+	}
+	return A;
 }
 
 template<typename T>

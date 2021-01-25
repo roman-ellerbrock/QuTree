@@ -32,6 +32,8 @@ template Tensor<cd> conj<cd>(Tensor<cd> A);
 template double Residual(Tensorcd A, const Tensorcd& B);
 template Matrix<cd> toMatrix(const Tensor<cd>& A);
 template Tensor<cd> toTensor(const Matrix<cd>& B);
+template Matrix<cd> toMatrix(const Tensor<cd>& A, size_t mode);
+template Tensor<cd> toTensor(const Matrix<cd>& B, const TensorShape& shape, size_t mode);
 template void TensorContraction<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t before, size_t active1, size_t active2, size_t behind);
 template void MatrixTensor<cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
 template Matrix<cd> Contraction(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
