@@ -10,7 +10,6 @@ SUITE (ExplicitEdgeWavefunction) {
 	double eps = 1e-7;
 
 	TEST (Init) {
-		/*
 		Tree tree = TreeFactory::BalancedTree(10, 2, 3);
 		mt19937 gen(34676949);
 		TensorTreecd Psi(gen, tree, false);
@@ -18,35 +17,30 @@ SUITE (ExplicitEdgeWavefunction) {
 		/// Transform to symmetric representation
 		MatrixTensorTree Chi(Psi, tree, true);
 
-		/// Check bottom-up
-		{
-			const TensorTreecd& Atilde = Chi.nodes();
-			auto rho = TreeFunctions::Contraction(Psi, tree, true);
-			for (const Node& node : tree) {
-				if (!node.isToplayer()) {
-					auto x = Contraction(Atilde[node], Atilde[node], node.nChildren());
-					auto r = Residual(x, rho[node]);
-						CHECK_CLOSE(0., r, eps);
-				}
-			}
-
-			/// Check top-down
-			for (const Node& node : tree) {
-				if (!node.isBottomlayer()) {
-					for (size_t k = 0; k < node.nChildren(); ++k) {
-						const Node& child = node.child(k);
-						auto x = Contraction(Atilde[node], Atilde[node], k);
-						auto r = Residual(x, rho[child]);
-							CHECK_CLOSE(0., r, eps);
-					}
-				}
-			}
+		/// Check re-obtaining wavefunction
+		TensorTreecd Psi2 = Chi.BottomUpNormalized(tree);
+		auto S = TreeFunctions::DotProduct(Psi, Psi2, tree);
+		for (const Node& node : tree) {
+			const auto& s = S[node];
+				CHECK_CLOSE(0., Residual(s * s, IdentityMatrixcd(s.Dim1())), eps);
 		}
 
+		/// Check top-down
+		const MatrixTreecd rho = TreeFunctions::Contraction(Psi, tree, true);
+		const MatrixTreecd T = TreeFunctions::Contraction(Psi2, Psi, S, tree);
+		const TensorTreecd& Atilde = Chi.nodes();
+		for (const Node& node : tree) {
+			if (!node.isToplayer()) {
+				const Node& parent = node.parent();
+				auto x = Contraction(Atilde[parent], Atilde[parent], node.childIdx());
+				auto v1 = Diagonalize(x).second;
+				auto v2 = Diagonalize(rho[node]).second;
+				auto r = Residual(v1, v2);
+					CHECK_CLOSE(0., r, eps);
+			}
+		}
+		/// @TODO: Add strong test for top-down.
 			CHECK_EQUAL(true, IsWorking(Chi, tree, eps));
-		 */
 	}
-
-
 }
 

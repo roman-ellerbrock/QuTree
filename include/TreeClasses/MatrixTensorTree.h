@@ -25,7 +25,7 @@ public:
 
 	const TensorTreecd& DensityWeighted() const { return nodes(); }
 
-	void buildNodes(TensorTreecd Psi, const Tree& tree);
+	void buildNodes(const TensorTreecd& Psi, const Tree& tree);
 
 	void buildEdges(const Tree& tree);
 

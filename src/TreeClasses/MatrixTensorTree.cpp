@@ -18,7 +18,7 @@ void MatrixTensorTree::Initialize(TensorTreecd Psi, const Tree& tree) {
 	buildEdges(tree);
 }
 
-void MatrixTensorTree::buildNodes(TensorTreecd Psi, const Tree& tree) {
+void MatrixTensorTree::buildNodes(const TensorTreecd& Psi, const Tree& tree) {
 	nodes() = Psi;
 }
 
