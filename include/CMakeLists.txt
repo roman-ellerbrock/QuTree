@@ -28,6 +28,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeClasses/SparseTree.h
     include/TreeClasses/SOPMatrixTrees.h
     include/TreeClasses/SpectralDecompositionTree.h
+    include/TreeClasses/SymTensorTree.h
     include/TreeClasses/TensorTree.h
     include/TreeClasses/TensorTree_Implementation.h
     include/TreeClasses/TreeIO.h

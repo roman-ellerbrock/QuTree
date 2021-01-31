@@ -20,7 +20,7 @@ namespace TreeFunctions {
 
 		Tensorcd hPhi = TreeFunctions::ApplyHole(hole, Phi, hchild);
 
-		if (!parent.isToplayer()) {
+		if (!parent.isToplayer() && hole.Active(parent)) {
 			hPhi = TensorMatrix(hPhi, hole[parent], parent.childIdx());
 		}
 		hole[hchild] = Contraction(Phi, hPhi, hchild.childIdx());
@@ -64,12 +64,34 @@ namespace TreeFunctions {
 		return TensorMatrix(Phi, hHole[node], node.parentIdx());
 	}
 
-	Tensorcd symApply(const Tensorcd& Phi,
+/*	Tensorcd symApply(const Tensorcd& Phi,
 		const SparseMatrixTreePaircd& mats, const MLOcd& M, const Node& node) {
 		Tensorcd hPhi = TreeFunctions::Apply(mats.first, Phi, M, node);
 		return symApplyDown(hPhi, mats.second, node);
 	}
 
+	void symApply(MatrixTensorTree& HPsi, const MatrixTensorTree& Psi,
+		const SparseMatrixTreePaircd& hpair, const MLOcd& M, complex<double> c, const Tree& tree) {
+		const SparseMatrixTreecd& hup = hpair.first;
+		const SparseTree& stree = hup.Active();
+		for (const Node* node_ptr : stree) {
+			const Node& node = *node_ptr;
+			HPsi.nodes()[node] += c * symApply(Psi.nodes()[node], hpair, M, node);
+		}
+	}
+
+	void symApply(MatrixTensorTree& HPsi, const MatrixTensorTree& Psi,
+		const SparseMatrixTreePairscd& hMats,
+		const SOPcd& H, const Tree& tree) {
+
+		for (size_t i = 0; i < H.size(); ++i) {
+			/// @TODO: Coefficients?
+			symApply(HPsi, Psi, hMats[i], H[i], H.Coeff(i), tree);
+		}
+	}
+ */
+
+/*
 	Tensorcd symApply(Tensorcd Phi,
 		const SparseMatrixTreePairscd& hMatSet,
 		const SOPcd& H, const Node& node) {
@@ -83,13 +105,19 @@ namespace TreeFunctions {
 	}
 
 	void symApply(MatrixTensorTree& Chi, const MatrixTensorTree& Psi,
-		const SparseMatrixTreePairscd& hMatSet,
+		const SparseMatrixTreePairscd& hMats,
 		const SOPcd& H, const Tree& tree) {
 
-		for (const Node& node : tree) {
-			Chi.first[node] = symApply(Psi.first[node], hMatSet, H, node);
+		if (hMats.empty()) {
+			cerr << "Cannot Apply h-Matrices: Empty Operator Representation\n";
+			exit(1);
+		}
+		const SparseTree& stree = hMats.front().first.Active();
+		for (const Node* node_ptr : stree) {
+			const Node& node = *node_ptr;
+			Chi.first[node] = symApply(Psi.first[node], hMats, H, node);
 		}
 	}
-
+*/
 }
 

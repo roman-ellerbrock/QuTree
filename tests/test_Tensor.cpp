@@ -244,8 +244,10 @@ SUITE (Tensor) {
 			CHECK_CLOSE(0., Residual(S, IdentityMatrixcd(S.Dim1())), eps);
 
 		/// Test QR for other than last mode
-		Tensorcd Q2 = QR(A, 1);
-		auto S1 = Contraction(Q2, Q2, 1);
-			CHECK_CLOSE(0., Residual(S1, IdentityMatrixcd(S1.Dim1())), eps);
+		for (size_t i = 0; i < shape.order(); ++i) {
+			Tensorcd Q2 = QR(A, i);
+			auto S1 = Contraction(Q2, Q2, i);
+				CHECK_CLOSE(0., Residual(S1, IdentityMatrixcd(S1.Dim1())), eps);
+		}
 	}
 }

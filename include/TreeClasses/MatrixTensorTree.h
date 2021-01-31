@@ -37,6 +37,8 @@ public:
 
 };
 
+void QROrthogonalDown(TensorTreecd& Psi, const Tree& tree);
+
 bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double eps);
 bool IsWorking_topdown(const MatrixTensorTree& Psi, const Tree& tree, double eps);
 bool IsWorking(const MatrixTensorTree& Psi, const Tree& tree, double eps = 1e-7);

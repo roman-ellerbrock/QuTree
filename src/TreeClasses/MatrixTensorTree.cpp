@@ -58,7 +58,6 @@ TensorTreecd MatrixTensorTree::TopDownNormalized(const Tree& tree) const {
 		const Node& parent = node.parent();
 		Psi[node] = MatrixTensor(edges()[e].Transpose(), Psi[parent], node.childIdx());
 	}
-
 	return Psi;
 }
 

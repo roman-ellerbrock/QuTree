@@ -182,6 +182,7 @@ void QROrthogonal(TensorTree<T>& Psi, const Tree& tree) {
 
 }
 
+
 template <typename T>
 void Orthonormal(TensorTree<T>& Psi, const Tree& tree) {
 	for (const Node& node : tree) {

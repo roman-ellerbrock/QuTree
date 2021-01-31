@@ -20,6 +20,7 @@ set(QuTree_SOURCE_FILES
     src/TreeClasses/SparseMatrixTreeFunctions.cpp
     src/TreeClasses/SparseTree.cpp
     src/TreeClasses/SpectralDecompositionTree.cpp
+    src/TreeClasses/SymTensorTree.cpp
     src/TreeClasses/TensorTree_Instantiation.cpp
     src/TreeClasses/TreeIO.cpp
 
