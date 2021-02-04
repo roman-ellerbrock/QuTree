@@ -52,7 +52,7 @@ SUITE(SymTensorTree) {
 		Tree tree = TreeFactory::BalancedTree(10, 2, 3);
 		mt19937 gen(34676949);
 		TensorTreecd Psi(gen, tree, false);
-/*
+
 		SymTensorTree sPsi(Psi, tree);
 		/// Check top-down against QR scheme
 		for (const Node& node : tree) {
@@ -73,7 +73,7 @@ SUITE(SymTensorTree) {
 			auto s = Anorm.DotProduct(sPsi.up_[node]);
 			s.print();
 		}
-		getchar();*/
+		getchar();
 	}
 
 
