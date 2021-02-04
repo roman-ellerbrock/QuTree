@@ -35,8 +35,8 @@ void SymTensorTree::rebuild(const Tree& tree) {
 }
 
 Tensorcd solveSLE(const Matrixcd& B, const Tensorcd& A, size_t idx) {
-	Matrixcd Aflat = toMatrix(A, idx).Transpose();
-	Matrixcd Bt = B.Transpose();
+	Matrixcd Aflat = toMatrix(A, idx).Adjoint();
+	Matrixcd Bt = B;
 	using namespace Eigen;
 	MatrixXcd Bm = Map<MatrixXcd>((complex<double> *) &Bt(0, 0), Bt.Dim1(), Bt.Dim2());
 	MatrixXcd Aflatm = Map<MatrixXcd>((complex<double> *) &Aflat(0, 0), Aflat.Dim1(), Aflat.Dim2());
@@ -52,7 +52,7 @@ Tensorcd solveSLE(const Matrixcd& B, const Tensorcd& A, size_t idx) {
 	}
 
 	Matrixcd Abarflat = toQutree(x);
-	Abarflat = Abarflat.Transpose();
+	Abarflat = Abarflat.Adjoint();
 	Tensorcd Abar = toTensor(Abarflat, A.shape(), idx);
 	return Abar;
 }
@@ -61,12 +61,12 @@ Tensorcd normalizedTensor(const Tensorcd& weighted, size_t k) {
 	Matrixcd rho = Contraction(weighted, weighted, k);
 	Matrixcd B = toMatrix(sqrt(Diagonalize(rho)));
 	Tensorcd Anorm = solveSLE(B, weighted, k);
-/*	auto A2 = MatrixTensor(B, Anorm, k);
+	auto A2 = MatrixTensor(B, Anorm, k);
 	if (Residual(weighted, A2) > 1e-7) {
 		cerr << "Failed finding normalized tensor!\n";
 		getchar();
 		exit(1);
-	}*/
+	}
 	return Anorm;
 }
 

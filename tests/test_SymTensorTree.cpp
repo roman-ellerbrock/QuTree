@@ -59,21 +59,18 @@ SUITE(SymTensorTree) {
 			/// Top-down normalized
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
-				parent.info();
 				const auto& w = sPsi.weighted_[parent];
 				auto Anorm = normalizedTensor(w, node.childIdx());
-				auto s = Anorm.DotProduct(sPsi.down_[node]);
-				s.print();
+				auto u = Contraction(Anorm, sPsi.down_[node], node.childIdx());
+				CHECK_CLOSE(0., Residual(u, IdentityMatrixcd(u.Dim1())), eps);
 			}
 		}
 		for (const Node& node : tree) {
-			node.info();
 			const auto& w = sPsi.weighted_[node];
 			auto Anorm = normalizedTensor(w, node.parentIdx());
 			auto s = Anorm.DotProduct(sPsi.up_[node]);
-			s.print();
+				CHECK_CLOSE(0., Residual(s, IdentityMatrixcd(s.Dim1())), eps);
 		}
-		getchar();
 	}
 
 
