@@ -770,6 +770,12 @@ Matrixcd QR(const Matrixcd& A) {
 }
 
 SVDcd svd(const Matrixcd& A) {
+	/**
+	 * Rationale:
+	 * - Perform a SVD of Matrix A
+	 * - Singular values come in descending order opposed to output of a
+	 *   diagonalization. This can cause trouble when combining outputs.
+	 */
 	using namespace Eigen;
 	MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), A.Dim1(), A.Dim2());
 	JacobiSVD<MatrixXcd> svd(Am, ComputeThinU | ComputeThinV);

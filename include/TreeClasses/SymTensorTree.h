@@ -19,7 +19,14 @@ public:
 
 	void initializeFromTT(const TensorTreecd& Psi, const Tree& tree);
 
-	void rebuild(const Tree& tree);
+	void normalize(const Tree& tree);
+
+	TensorTreecd bottomUpNormalized(const Tree& tree);
+	void normalizeUp(const Tree& tree);
+	void normalizeDown(const Tree& tree);
+	void canonicalRepresentation();
+	void normalizeCanonical(const Node& node);
+	void normalizeCanonical(const Tree& tree);
 
 	TensorTreecd weighted_;
 	TensorTreecd up_;
@@ -27,34 +34,33 @@ public:
 private:
 };
 
+Tensorcd canonicalTensor(Tensorcd w);
+Matrixcd calculateB(const Tensorcd& weighted, size_t k);
 Tensorcd solveSLE(const Matrixcd& B, const Tensorcd& A, size_t idx);
+Tensorcd normalizedTensorSVD(const Matrixcd& b, const Tensorcd& W, size_t k);
 
 Tensorcd normalizedTensor(const Tensorcd& weighted, size_t k);
 
 bool isWorking(const SymTensorTree& Psi, const Tree& tree);
 
 template<typename T>
-void QROrthogonalDown(TensorTree<T>& weighted, TensorTree<T>& down, const TensorTreecd& up, const Tree& tree);
+void createWeighted(TensorTree<T>& weighted, TensorTree<T>& down, const TensorTreecd& up, const Tree& tree);
 
 namespace TreeFunctions {
-	void symRepresent(SymMatrixTree& mat, const SymTensorTree& Psi,
+	void symContractionLocal(SparseMatrixTreecd& hole, const Tensorcd& Bra,
+		const Tensorcd& Ket, const SparseMatrixTreecd& mat, const Node& hchild);
+
+	void symContraction(SparseMatrixTreecd& hole, const TensorTreecd& Bra,
+		const TensorTreecd& Ket, const SparseMatrixTreecd& mat, const Tree& tree);
+
+	void symRepresent(SymMatrixTree& mat, const SymTensorTree& Bra,
+		const SymTensorTree& Ket,
 		const MLOcd& M, const Tree& tree);
 
-	void symRepresent(SymMatrixTrees& mat, const SymTensorTree& Psi,
-		const SOPcd& M, const Tree& tree);
+	void symRepresent(SymMatrixTrees& mats, const SymTensorTree& Bra,
+		const SymTensorTree& Ket, const SOPcd& S, const Tree& tree);
 
-/*	Tensorcd symApplyDown(const Tensorcd& Phi, const SparseMatrixTreecd& hHole,
-		const Node& node);
-
-	Tensorcd symApply(const Tensorcd& Phi,
-		const SparseMatrixTreePaircd& mats, const MLOcd& M, const Node& node);
-
-	Tensorcd symApply(Tensorcd Phi,
-	const SparseMatrixTreePairscd& hMatSet,
-	const SOPcd& H, const Node& node);
-*/
-
-	Tensorcd symApply(const Tensorcd& Phi,
+	Tensorcd symApply(const Tensorcd& Ket,
 		const SymMatrixTree& mats, const MLOcd& M, const Node& node);
 
 	void symApply(SymTensorTree& HPsi, const SymTensorTree& Psi,
