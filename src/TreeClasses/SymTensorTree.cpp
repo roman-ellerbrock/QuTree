@@ -16,37 +16,13 @@ void SymTensorTree::initializeFromTT(const TensorTreecd& Psi, const Tree& tree) 
 
 	down_ = up_;
 	normalizeCanonical(tree);
-
 }
 
-void SymTensorTree::normalizeUp(const Tree& tree) {
-
+void SymTensorTree::canonicalRepresentation(const Tree& tree) {
 	for (const Node& node : tree) {
-		if (!node.isBottomlayer()) {
-			up_[node] = normalizedTensor(weighted_[node], node.parentIdx());
-		}
-	}
-}
-
-void SymTensorTree::normalizeDown(const Tree& tree) {
-
-	for (const Node& node : tree) {
-		if (!node.isToplayer()) {
-			const Node& parent = node.parent();
-			down_[node] = normalizedTensor(weighted_[parent], node.childIdx());
-		}
-	}
-}
-
-void SymTensorTree::normalize(const Tree& tree) {
-	/// Build up- and down-normalized functions from weighted
-	normalizeUp(tree);
-	normalizeDown(tree);
-}
-
-void SymTensorTree::canonicalRepresentation() {
-	for (Tensorcd& w : weighted_) {
-		w = canonicalTensor(w);
+		bool up = !node.isToplayer();
+		bool down = !node.isBottomlayer();
+		weighted_[node] = canonicalTensor(weighted_[node], up, down);
 	}
 }
 
@@ -65,61 +41,45 @@ void SymTensorTree::normalizeCanonical(const Node& node) {
 		Matrixcd w = toMatrix(W);
 		SVDcd x = svd(w);
 		Matrixcd U = get<0>(x);
-//		U = U.Adjoint().Transpose();
 		up_[node] = toTensor(U, W.shape(), node.parentIdx());
 	}
 }
 
 void SymTensorTree::normalizeCanonical(const Tree& tree) {
-	canonicalRepresentation();
+	canonicalRepresentation(tree);
 	for (const Node& node : tree) {
 		normalizeCanonical(node);
 	}
 }
 
-Tensorcd canonicalTensor(Tensorcd w) {
-	for (size_t k = 0; k < w.shape().order(); ++k) {
-		auto rho = Contraction(w, w, k);
-		auto U = get<0>(svd(rho));
-//		auto U = Diagonalize(rho).first;
-		w = TensorMatrix(w, U, k);
+void SymTensorTree::print(const Tree& tree) {
+	for (const Node& node : tree) {
+		node.info();
+		weighted_[node].print();
 	}
-	return w;
 }
 
-Tensorcd normalizedTensorSVD(const Matrixcd& b, const Tensorcd& W, size_t k) {
-	/// Look for U: W = B * U;
-	Matrixcd w = toMatrix(W, k).Transpose();
-
-	SVDcd w_svd = svd(w);
-	Matrixcd V = get<1>(w_svd);
-
-	SVDcd b_svd = svd(b);
-	auto T = get<1>(b_svd);
-
-	auto U = T * V.Adjoint();
-
-	U = U.Transpose();
-	Tensorcd Anorm = toTensor(U, W.shape(), k);
-
-	/// Check
-	auto W2 = TensorMatrix(Anorm, b, k);
-/*	if (Residual(W, W2) > 1e-7) {
-		cerr << "Failed finding normalized tensor!\n";
-		getchar();
-	}*/
-	return Anorm;
+Tensorcd canonicalTensor(Tensorcd w, bool up, bool down) {
+	if (down) {
+		for (size_t k = 0; k < (w.shape().order() - 1); ++k) {
+			auto rho = Contraction(w, w, k);
+			auto U = get<0>(svd(rho));
+//		auto U = Diagonalize(rho).first;
+			w = TensorMatrix(w, U, k);
+		}
+	}
+	if (up) {
+		auto rho = Contraction(w, w, w.shape().lastIdx());
+		auto U = get<0>(svd(rho));
+//		auto U = Diagonalize(rho).first;
+		w = TensorMatrix(w, U, w.shape().lastIdx());
+	}
+	return w;
 }
 
 Matrixcd calculateB(const Tensorcd& weighted, size_t k) {
 	Matrixcd rho = Contraction(weighted, weighted, k);
 	return toMatrix(sqrt(Diagonalize(rho)));
-}
-
-Tensorcd normalizedTensor(const Tensorcd& weighted, size_t k) {
-	Matrixcd B = calculateB(weighted, k);
-	Tensorcd Anorm = normalizedTensorSVD(B, weighted, k);
-	return Anorm;
 }
 
 template<typename T>
@@ -138,7 +98,7 @@ void createWeighted(TensorTree<T>& weighted, TensorTree<T>& down,
 			const Node& parent = node.parent();
 
 			Matrixcd B = calculateB(weighted[parent], node.childIdx());
-			weighted[node] = TensorMatrix(weighted[node], B, node.nChildren());
+			weighted[node] = TensorMatrix(weighted[node], B, node.parentIdx());
 //			weighted[node] = MatrixTensor(B, weighted[node], node.nChildren());
 
 		}
@@ -261,34 +221,5 @@ bool isWorking(const SymTensorTree& Psi, const Tree& tree) {
 		works = false;
 	}
 	return works;
-}
-
-Tensorcd solveSLE(const Matrixcd& B, const Tensorcd& A, size_t idx) {
-	/**
-	 * DEPRICATED:
-	 * - Does solve SLE correctly
-	 * - Does not provide unitary output Tensor
-	 * - Refer to normalizedTensorSVD for same routine with unitary output
-	 */
-	Matrixcd Aflat = toMatrix(A, idx).Adjoint();
-	Matrixcd Bt = B;
-	using namespace Eigen;
-	MatrixXcd Bm = Map<MatrixXcd>((complex<double> *) &Bt(0, 0), Bt.Dim1(), Bt.Dim2());
-	MatrixXcd Aflatm = Map<MatrixXcd>((complex<double> *) &Aflat(0, 0), Aflat.Dim1(), Aflat.Dim2());
-
-	MatrixXcd x = Bm.colPivHouseholderQr().solve(Aflatm); // QR solver
-//	MatrixXcd x = Bm.ldlt().solve(Aflatm); // Alternative solver
-	auto r = (Aflatm - Bm * x).norm();
-//	cout << "residual:" << r << endl; // Check accuracy
-	if (r > 1e-10) {
-		cerr << "Normalization of Tensor failed.\n";
-		cerr << "Residual: " << r << endl;
-		exit(1);
-	}
-
-	Matrixcd Abarflat = toQutree(x);
-	Abarflat = Abarflat.Adjoint();
-	Tensorcd Abar = toTensor(Abarflat, A.shape(), idx);
-	return Abar;
 }
 

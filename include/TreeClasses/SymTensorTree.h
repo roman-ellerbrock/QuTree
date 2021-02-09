@@ -19,14 +19,12 @@ public:
 
 	void initializeFromTT(const TensorTreecd& Psi, const Tree& tree);
 
-	void normalize(const Tree& tree);
-
 	TensorTreecd bottomUpNormalized(const Tree& tree);
-	void normalizeUp(const Tree& tree);
-	void normalizeDown(const Tree& tree);
-	void canonicalRepresentation();
+	void canonicalRepresentation(const Tree& tree);
 	void normalizeCanonical(const Node& node);
 	void normalizeCanonical(const Tree& tree);
+
+	void print(const Tree& tree);
 
 	TensorTreecd weighted_;
 	TensorTreecd up_;
@@ -34,12 +32,8 @@ public:
 private:
 };
 
-Tensorcd canonicalTensor(Tensorcd w);
+Tensorcd canonicalTensor(Tensorcd w, bool up, bool down);
 Matrixcd calculateB(const Tensorcd& weighted, size_t k);
-Tensorcd solveSLE(const Matrixcd& B, const Tensorcd& A, size_t idx);
-Tensorcd normalizedTensorSVD(const Matrixcd& b, const Tensorcd& W, size_t k);
-
-Tensorcd normalizedTensor(const Tensorcd& weighted, size_t k);
 
 bool isWorking(const SymTensorTree& Psi, const Tree& tree);
 
