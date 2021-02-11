@@ -545,7 +545,7 @@ Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
 //////////////////////////////////////////////////////////////////////
 
 template<typename T>
-void Diagonalize(Matrix<T>& trafo, Vector<double>& ev, const Matrix<T>& B) {
+void diagonalize(Matrix<T>& trafo, Vector<double>& ev, const Matrix<T>& B) {
 	assert(B.dim1() == B.dim2());
 	assert(ev.Dim() == B.dim1());
 	typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> EigenMatrix;
@@ -673,7 +673,7 @@ Vectord Matrix<T>::solveSLE(const Vectord& b) {
 }
 
 template<typename T>
-Matrix<T> Regularize(const Matrix<T>& A, double eps) {
+Matrix<T> regularize(const Matrix<T>& A, double eps) {
 	Matrix<T> B(A);
 	size_t dim = min(A.dim1(), A.dim2());
 	for (size_t i = 0; i < dim; i++) {

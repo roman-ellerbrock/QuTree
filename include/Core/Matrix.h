@@ -519,7 +519,7 @@ template<typename T>
 double residual(const Matrix<T>& A, const Matrix<T>& B);
 
 template<typename T>
-Matrix<T> Regularize(const Matrix<T>& A, double eps);
+Matrix<T> regularize(const Matrix<T>& A, double eps);
 
 template<typename T>
 ostream& operator<<(ostream& os, const Matrix<T>& A);
