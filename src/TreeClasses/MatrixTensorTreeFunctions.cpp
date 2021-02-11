@@ -6,10 +6,10 @@
 
 namespace TreeFunctions {
 
-	void Represent(SparseMatrixTreecd& mat, const MatrixTensorTree& Psi, const MLOcd& M,
+	void represent(SparseMatrixTreecd& mat, const MatrixTensorTree& Psi, const MLOcd& M,
 		const Tree& tree) {
 
-		const TensorTreecd& Psi_up = Psi.BottomUpNormalized(tree);
+		const TensorTreecd& Psi_up = Psi.bottomUpNormalized(tree);
 		TreeFunctions::Represent(mat, M, Psi_up, tree);
 	}
 
@@ -26,10 +26,10 @@ namespace TreeFunctions {
 		hole[hchild] = contraction(Phi, hPhi, hchild.childIdx());
 	}
 
-	void Contraction(SparseMatrixTreecd& hole, const MatrixTensorTree& Psi,
+	void contraction(SparseMatrixTreecd& hole, const MatrixTensorTree& Psi,
 		const SparseMatrixTreecd& mat, const SparseTree& marker, const Tree& tree) {
 
-		const TensorTreecd& Psi_down = Psi.TopDownNormalized(tree);
+		const TensorTreecd& Psi_down = Psi.topDownNormalized(tree);
 		int sub_topnode = marker.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = marker.MCTDHNode(n);
@@ -40,20 +40,20 @@ namespace TreeFunctions {
 
 	}
 
-	void Represent(SparseMatrixTreePaircd& mats,
+	void represent(SparseMatrixTreePaircd& mats,
 		const MatrixTensorTree& Psi, const MLOcd& M,
 		const Tree& tree) {
 
-		Represent(mats.first, Psi, M, tree);
-		Contraction(mats.second, Psi, mats.first, mats.second.Active(), tree);
+		represent(mats.first, Psi, M, tree);
+		contraction(mats.second, Psi, mats.first, mats.second.Active(), tree);
 
 	}
 
-	void Represent(SparseMatrixTreePairscd& matset, const MatrixTensorTree& Psi,
+	void represent(SparseMatrixTreePairscd& matset, const MatrixTensorTree& Psi,
 		const SOPcd& H, const Tree& tree) {
 
 		for (size_t l = 0; l < H.size(); ++l) {
-			Represent(matset[l], Psi, H[l], tree);
+			represent(matset[l], Psi, H[l], tree);
 		}
 
 	}

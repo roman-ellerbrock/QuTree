@@ -12,16 +12,16 @@ typedef vector<SparseMatrixTreePaircd> SparseMatrixTreePairscd;
 
 namespace TreeFunctions {
 
-	void Represent(SparseMatrixTreecd& mat, const MatrixTensorTree& Psi,
+	void represent(SparseMatrixTreecd& mat, const MatrixTensorTree& Psi,
 		const MLOcd& M, const Tree& tree);
 
-	void Contraction(SparseMatrixTreecd& hole, const MatrixTensorTree& Psi,
+	void contraction(SparseMatrixTreecd& hole, const MatrixTensorTree& Psi,
 		const SparseMatrixTreecd& mat, const SparseTree& marker, const Tree& tree);
 
-	void Represent(SparseMatrixTreePaircd& mats, const MatrixTensorTree& Psi,
+	void represent(SparseMatrixTreePaircd& mats, const MatrixTensorTree& Psi,
 		const MLOcd& M, const Tree& tree);
 
-	void Represent(SparseMatrixTreePairscd& matset, const MatrixTensorTree& Psi,
+	void represent(SparseMatrixTreePairscd& matset, const MatrixTensorTree& Psi,
 		const SOPcd& H, const Tree& tree);
 
 	Tensorcd symApplyDown(const Tensorcd& Phi, const SparseMatrixTreecd& hHole,

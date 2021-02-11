@@ -30,7 +30,7 @@ SUITE (MatrixTree) {
 		}
 
 		string filename("MatrixTree.dat");
-		M.Write(filename);
+		M.write(filename);
 		MatrixTreecd Mread(filename);
 		for (const Node& node : tree) {
 			double delta = residual(M[node], Mread[node]);
@@ -44,11 +44,11 @@ SUITE (MatrixTreeFunctions) {
 
 	double eps = 1e-8;
 
-	TEST (DotProduct) {
+	TEST (dotProduct) {
 		mt19937 gen(1923);
 		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree);
-		MatrixTreecd S = DotProduct(Psi, Psi, tree);
+		MatrixTreecd S = dotProduct(Psi, Psi, tree);
 		for (const Node& node : tree) {
 			const Matrixcd& s = S[node];
 			Matrixcd Identity = identityMatrix<complex<double>>(s.dim1());
@@ -62,8 +62,8 @@ SUITE (MatrixTreeFunctions) {
 		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree, false);
 		TensorTreecd Chi(gen, tree, false);
-		MatrixTreecd S = DotProduct(Psi, Chi, tree);
-		MatrixTreecd Rho = Contraction(Psi, Chi, S, tree);
+		MatrixTreecd S = dotProduct(Psi, Chi, tree);
+		MatrixTreecd Rho = contraction(Psi, Chi, S, tree);
 			CHECK_EQUAL(tree.nNodes(), Rho.size());
 			CHECK_EQUAL(tree.nNodes(), S.size());
 	}
@@ -72,7 +72,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1923);
 		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree, true);
-		MatrixTreecd Rho = Contraction(Psi, tree, true);
+		MatrixTreecd Rho = contraction(Psi, tree, true);
 		for (const Node& node : tree) {
 			if (!node.isToplayer()) {
 				Matrixcd& rho = Rho[node];
@@ -94,7 +94,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
 		TensorTreecd Psi(gen, tree);
-		MatrixTreecd Rho = TreeFunctions::Contraction(Psi, tree, true);
+		MatrixTreecd Rho = TreeFunctions::contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 			CHECK_EQUAL(Rho.size(), X.size());
 		for (const Node& node : tree) {
@@ -136,7 +136,7 @@ SUITE (MatrixTreeFunctions) {
 		TensorTreecd Psi(gen, tree);
 
 		CanonicalTransformation(Psi, tree, true);
-		auto rho = TreeFunctions::Contraction(Psi, tree, true);
+		auto rho = TreeFunctions::contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
 			for (size_t j = 0; j < mat.dim2(); ++j) {
@@ -153,13 +153,13 @@ SUITE (MatrixTreeFunctions) {
 		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree, false);
-		auto rho = TreeFunctions::Contraction(Psi, tree, true);
+		auto rho = TreeFunctions::contraction(Psi, tree, true);
 		CanonicalTransformation(Psi, tree, true);
-		rho = TreeFunctions::Contraction(Psi, tree, true);
+		rho = TreeFunctions::contraction(Psi, tree, true);
 
-		auto S = TreeFunctions::DotProduct(Psi, Psi, tree);
+		auto S = TreeFunctions::dotProduct(Psi, Psi, tree);
 
-		rho = TreeFunctions::Contraction(Psi, tree, true);
+		rho = TreeFunctions::contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
 			for (size_t j = 0; j < mat.dim2(); j++) {
@@ -202,7 +202,7 @@ SUITE(TreeTransformations) {
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
 		CanonicalTransformation(Psi, tree, true);
-		MatrixTreecd Rho = TreeFunctions::Contraction(Psi, tree, true);
+		MatrixTreecd Rho = TreeFunctions::contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 
 		TreeFunctions::Adjust(Psi, tree, X, 1e-7);

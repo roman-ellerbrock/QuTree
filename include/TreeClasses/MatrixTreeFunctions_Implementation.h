@@ -12,7 +12,7 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	void DotProductLocal(MatrixTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket, const Node& node) {
+	void dotProductLocal(MatrixTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket, const Node& node) {
 		if (!node.isBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.child(k);
@@ -25,16 +25,16 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void DotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const Tree& tree) {
+	void dotProduct(MatrixTree<T>& S, const TensorTree<T>& Psi, const TensorTree<T>& Chi, const Tree& tree) {
 		for (const Node& node : tree) {
-			DotProductLocal(S, Psi[node], Chi[node], node);
+			dotProductLocal(S, Psi[node], Chi[node], node);
 		}
 	}
 
 	template<typename T>
-	MatrixTree<T> DotProduct(const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
+	MatrixTree<T> dotProduct(const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
 		MatrixTree<T> S(tree);
-		DotProduct(S, Bra, Ket, tree);
+		dotProduct(S, Bra, Ket, tree);
 		return S;
 	}
 
@@ -43,7 +43,7 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	void ContractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
+	void contractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
 		const Node& node, const MatrixTree<T> *S_opt) {
 		assert(!node.isToplayer());
 
@@ -67,7 +67,7 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+	void contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const Tree& tree, const MatrixTree<T> *S_opt = nullptr) {
 		if (S_opt != nullptr) {
 			assert(S_opt->size() == tree.nNodes());
@@ -76,12 +76,11 @@ namespace TreeFunctions {
 		assert(Psi.size() == tree.nNodes());
 		assert(Chi.size() == tree.nNodes());
 
-		// @TODO: Use reverse iterator
 		for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 			const Node& node = *it;
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
-				ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
+				contractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
 			} else {
 				Rho[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -89,33 +88,33 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+	void contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const MatrixTree<T>& S, const Tree& tree) {
-		Contraction(Rho, Psi, Chi, tree, &S);
+		contraction(Rho, Psi, Chi, tree, &S);
 	}
 
 	template<typename T>
-	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
+	MatrixTree<T> contraction(const TensorTree<T>& Psi, const TensorTree<T>& Chi,
 		const MatrixTree<T>& S, const Tree& tree) {
 		MatrixTree<T> Rho(tree);
-		Contraction(Rho, Psi, Chi, S, tree);
+		contraction(Rho, Psi, Chi, S, tree);
 		return Rho;
 	}
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
+	void contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
 		if (orthogonal) {
-			Contraction(Rho, Psi, Psi, tree);
+			contraction(Rho, Psi, Psi, tree);
 		} else {
-			MatrixTree<T> S = DotProduct(Psi, Psi, tree);
-			Contraction(Rho, Psi, Psi, S, tree);
+			MatrixTree<T> S = dotProduct(Psi, Psi, tree);
+			contraction(Rho, Psi, Psi, S, tree);
 		}
 	}
 
 	template<typename T>
-	MatrixTree<T> Contraction(const TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
+	MatrixTree<T> contraction(const TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
 		MatrixTree<T> Rho(tree);
-		Contraction(Rho, Psi, tree, orthogonal);
+		contraction(Rho, Psi, tree, orthogonal);
 		return Rho;
 	}
 

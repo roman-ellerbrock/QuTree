@@ -140,7 +140,7 @@ namespace TreeIO {
 
 	void Output(const TensorTreecd& Psi, const Tree& tree, ostream& os) {
 		MatrixTreecd Rho(tree);
-		TreeFunctions::Contraction(Rho, Psi, tree, true);
+		TreeFunctions::contraction(Rho, Psi, tree, true);
 		Occupancy(Psi, tree, os);
 		expectationValues(Psi, Rho, tree, os);
 		Leafs(Psi, Rho, tree, os);
@@ -149,7 +149,7 @@ namespace TreeIO {
 	template<typename T>
 	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
 		MatrixTree<T> Rho(tree);
-		TreeFunctions::Contraction(Rho, Psi, tree, true);
+		TreeFunctions::contraction(Rho, Psi, tree, true);
 		SpectralDecompositionTree<T> specs(Rho, tree);
 		specs.print(tree);
 	}
@@ -204,7 +204,7 @@ namespace TreeIO {
 
 	template <typename T>
 	void EntropyMap(const TensorTree<T>& Psi, const Tree& tree) {
-		auto rho = TreeFunctions::Contraction(Psi, tree, true);
+		auto rho = TreeFunctions::contraction(Psi, tree, true);
 		SpectralDecompositionTree<T> X = diagonalize(rho);
 		for (const SpectralDecomposition<T>& x : X) {
 			const auto& occ = x.second;

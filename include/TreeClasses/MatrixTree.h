@@ -30,12 +30,12 @@ public:
 	void print(ostream& os = cout) const;
 
 	/// read in binary format
-	void Read(istream& is);
-	void Read(const string& filename);
+	void read(istream& is);
+	void read(const string& filename);
 
 	/// Write in binary format
-	void Write(ostream& os) const;
-	void Write(const string& filename) const;
+	void write(ostream& os) const;
+	void write(const string& filename) const;
 };
 
 template<typename T>

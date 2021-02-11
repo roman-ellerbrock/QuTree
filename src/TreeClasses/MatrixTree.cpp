@@ -6,12 +6,12 @@
 
 template<typename T>
 MatrixTree<T>::MatrixTree(istream& is) {
-	Read(is);
+	read(is);
 }
 
 template<typename T>
 MatrixTree<T>::MatrixTree(const string& filename) {
-	Read(filename);
+	read(filename);
 }
 
 template<typename T>
@@ -30,7 +30,7 @@ void MatrixTree<T>::Initialize(const Tree& tree) {
 }
 
 template <typename T>
-void MatrixTree<T>::Write(ostream& os) const {
+void MatrixTree<T>::write(ostream& os) const {
 	os.write("MTre", 4);
 
 	// write number of nodes
@@ -45,13 +45,13 @@ void MatrixTree<T>::Write(ostream& os) const {
 }
 
 template <typename T>
-void MatrixTree<T>::Write(const string& filename) const  {
+void MatrixTree<T>::write(const string& filename) const  {
 	ofstream os(filename);
-	Write(os);
+	write(os);
 }
 
 template <typename T>
-void MatrixTree<T>::Read(istream& is) {
+void MatrixTree<T>::read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
@@ -70,9 +70,9 @@ void MatrixTree<T>::Read(istream& is) {
 }
 
 template <typename T>
-void MatrixTree<T>::Read(const string& filename) {
+void MatrixTree<T>::read(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 template<typename T>
@@ -92,12 +92,12 @@ void MatrixTree<T>::print(ostream& os) const {
 
 template<typename T>
 ostream& operator<<(ostream& os, const MatrixTree<T>& S) {
-	S.Write(os);
+	S.write(os);
 }
 
 template<typename T>
 istream& operator>>(istream& is, MatrixTree<T>& S) {
-	S.Read(is);
+	S.read(is);
 }
 
 template class MatrixTree<complex<double>>;

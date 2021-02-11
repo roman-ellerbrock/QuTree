@@ -50,7 +50,7 @@ namespace examples {
 
 		/// This calculates the overlap-matrices resulting from the overlap of
 		/// two wave functions <Psi|Chi>. Note: this is not displayed in Ref. 1.
-		MatrixTreecd S = TreeFunctions::DotProduct(Psi, Chi, tree);
+		MatrixTreecd S = TreeFunctions::dotProduct(Psi, Chi, tree);
 		/// The overlap of the two wave functions is the overlap matrix at the toplayer
 		Matrixcd braket_mat = S[tree.TopNode()];
 		/// Note:
@@ -61,12 +61,12 @@ namespace examples {
 		///     would only consist of identity matrices.
 
 		/// Reduced density matrices as displayed in Eq. (19) of Ref. 1 can be calculated by:
-		MatrixTreecd rho = TreeFunctions::Contraction(Psi, tree, true); /// true: SPF basis is orthogonal
+		MatrixTreecd rho = TreeFunctions::contraction(Psi, tree, true); /// true: SPF basis is orthogonal
 
 		/// The wave function is transformed to natural orbitals via
 		CanonicalTransformation(Psi, tree);
 		/// ...after re-calculating density matrices, they are diagonal.
-		rho = TreeFunctions::Contraction(Psi, tree, true);
+		rho = TreeFunctions::contraction(Psi, tree, true);
 
 
 		/// === Access information in Tree-Objects ===

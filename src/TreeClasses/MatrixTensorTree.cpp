@@ -7,10 +7,10 @@
 
 MatrixTensorTree::MatrixTensorTree(const TensorTreecd& Psi,
 	const Tree& tree, bool orthogonal) {
-	Initialize(Psi, tree);
+	initialize(Psi, tree);
 }
 
-void MatrixTensorTree::Initialize(TensorTreecd Psi, const Tree& tree) {
+void MatrixTensorTree::initialize(TensorTreecd Psi, const Tree& tree) {
 
 	/// Note: Requires orthogonal wavefunction representation (typically given)
 	QROrthogonal(Psi, tree);
@@ -27,7 +27,7 @@ void MatrixTensorTree::buildEdges(const Tree& tree) {
 	MatrixTreecd& edges_ = second;
 
 	/// Get edge matrices (B's)
-	MatrixTreecd rho = TreeFunctions::Contraction(nodes_, tree, true);
+	MatrixTreecd rho = TreeFunctions::contraction(nodes_, tree, true);
 	auto B = sqrt(rho, tree);
 
 	/// Build node representation (A^\tilde's)
@@ -43,12 +43,12 @@ void MatrixTensorTree::buildEdges(const Tree& tree) {
 
 void MatrixTensorTree::buildFromWeighted(const Tree& tree) {
 	/// re-orthonormalize bottom-up
-	buildNodes(BottomUpNormalized(tree), tree);
+	buildNodes(bottomUpNormalized(tree), tree);
 	/// TopDown Orthonormal
 	buildEdges(tree);
 }
 
-TensorTreecd MatrixTensorTree::TopDownNormalized(const Tree& tree) const {
+TensorTreecd MatrixTensorTree::topDownNormalized(const Tree& tree) const {
 	/// Contraction-normalized representation
 	/// Build A^{(p\circ k) p}
 	/// Note: Tensors get moved one layer down!
@@ -61,7 +61,7 @@ TensorTreecd MatrixTensorTree::TopDownNormalized(const Tree& tree) const {
 	return Psi;
 }
 
-TensorTreecd MatrixTensorTree::BottomUpNormalized(const Tree& tree) const {
+TensorTreecd MatrixTensorTree::bottomUpNormalized(const Tree& tree) const {
 	/// Dot-Product normalized reperesentation
 	/// Build A^{p\circ k (p)}
 	/// This is the conventional wavefunction representation.
@@ -77,7 +77,7 @@ TensorTreecd MatrixTensorTree::BottomUpNormalized(const Tree& tree) const {
 }
 
 bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double eps) {
-	auto bottomup = Psi.BottomUpNormalized(tree);
+	auto bottomup = Psi.bottomUpNormalized(tree);
 	for (const Node& node : tree) {
 		auto x = contraction(bottomup[node], bottomup[node], node.nChildren());
 		auto r = residual(x, identityMatrixcd(x.dim1()));
@@ -90,7 +90,7 @@ bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double ep
 }
 
 bool IsWorking_topdown(const MatrixTensorTree& Psi, const Tree& tree, double eps) {
-	auto topdown = Psi.TopDownNormalized(tree);
+	auto topdown = Psi.topDownNormalized(tree);
 	for (const Edge& e : tree.Edges()) {
 		const Node& node = e.down();
 		auto x = contraction(topdown[node], topdown[node], node.childIdx());

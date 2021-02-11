@@ -78,7 +78,7 @@ MatrixTree<T> to_matrixtree(const SpectralDecompositionTree<T>& X, const Tree& t
 template<typename T>
 void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal) {
 
-	auto rho = TreeFunctions::Contraction(Psi, tree, orthogonal);
+	auto rho = TreeFunctions::contraction(Psi, tree, orthogonal);
 	SpectralDecompositionTree<T> spec(rho, tree);
 
 	for (const Node& node : tree) {

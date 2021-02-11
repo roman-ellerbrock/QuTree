@@ -17,7 +17,7 @@ namespace benchmark {
 		for (size_t n = 0; n < nsample; ++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			Contraction(Rho, Psi, tree, true);
+			contraction(Rho, Psi, tree, true);
 //			Rho.Calculate(Psi, tree);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -42,7 +42,7 @@ namespace benchmark {
 		for (size_t n = 0;n<nsample;++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			DotProduct(fmat, Psi, Psi, tree);
+			dotProduct(fmat, Psi, Psi, tree);
 //			fmat.Calculate(Psi, Psi, tree);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());

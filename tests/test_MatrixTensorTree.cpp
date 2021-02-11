@@ -18,16 +18,16 @@ SUITE (ExplicitEdgeWavefunction) {
 		MatrixTensorTree Chi(Psi, tree, true);
 
 		/// Check re-obtaining wavefunction
-		TensorTreecd Psi2 = Chi.BottomUpNormalized(tree);
-		auto S = TreeFunctions::DotProduct(Psi, Psi2, tree);
+		TensorTreecd Psi2 = Chi.bottomUpNormalized(tree);
+		auto S = TreeFunctions::dotProduct(Psi, Psi2, tree);
 		for (const Node& node : tree) {
 			const auto& s = S[node];
 				CHECK_CLOSE(0., residual(s * s, identityMatrixcd(s.dim1())), eps);
 		}
 
 		/// Check top-down
-		const MatrixTreecd rho = TreeFunctions::Contraction(Psi, tree, true);
-		const MatrixTreecd T = TreeFunctions::Contraction(Psi2, Psi, S, tree);
+		const MatrixTreecd rho = TreeFunctions::contraction(Psi, tree, true);
+		const MatrixTreecd T = TreeFunctions::contraction(Psi2, Psi, S, tree);
 		const TensorTreecd& Atilde = Chi.nodes();
 		for (const Node& node : tree) {
 			if (!node.isToplayer()) {

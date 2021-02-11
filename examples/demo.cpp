@@ -35,8 +35,8 @@ namespace Demo {
 		{
 			Tree tree = TreeFactory::BalancedTree(251, 2, 2);
 			TensorTreecd Psi(RNG, tree);
-			MatrixTreecd Overlap = TreeFunctions::DotProduct(Psi, Psi, tree);
-			MatrixTreecd RDMs = TreeFunctions::Contraction(Psi, tree, true);
+			MatrixTreecd Overlap = TreeFunctions::dotProduct(Psi, Psi, tree);
+			MatrixTreecd RDMs = TreeFunctions::contraction(Psi, tree, true);
 		}
 
 

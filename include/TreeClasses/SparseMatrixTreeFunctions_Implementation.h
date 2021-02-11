@@ -242,7 +242,7 @@ namespace TreeFunctions {
 			if (!node.isToplayer()) {
 				const MatrixTree<T> *null = nullptr;
 				const Node& parent = node.parent();
-				ContractionLocal(Rho, Psi[parent], Psi[parent], node, null);
+				contractionLocal(Rho, Psi[parent], Psi[parent], node, null);
 			}
 		}
 	}

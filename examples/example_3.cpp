@@ -51,7 +51,7 @@ void dot_product_tree() {
     TensorTreecd Chi(Psi);
 
     /// Construct, allocate and calculate a factor matrix tree
-    MatrixTreecd w = TreeFunctions::DotProduct(Psi, Chi, tree);
+    MatrixTreecd w = TreeFunctions::dotProduct(Psi, Chi, tree);
     w.print();
 }
 
@@ -64,7 +64,7 @@ void hole_product_tree() {
     TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
 //    FactorMatrixTreecd w(Psi, Chi, tree);
-    MatrixTreecd w = TreeFunctions::DotProduct(Psi, Chi, tree);
+    MatrixTreecd w = TreeFunctions::dotProduct(Psi, Chi, tree);
 
     /// Construct, allocate and calculate a hole matrix tree
 //    HoleMatrixTreecd rho(Psi, Chi, w, tree);
@@ -84,16 +84,16 @@ void tree_examples() {
 
 	cout << "A MatrixTree from an overlap:\n";
 	using namespace TreeFunctions;
-	MatrixTreecd W = DotProduct( Psi, Psi, tree);
+	MatrixTreecd W = dotProduct(Psi, Psi, tree);
 	W.print(tree);
 
 	cout << "Density Matrix:\n";
-	MatrixTreecd Rho = Contraction(Psi, tree, true);
+	MatrixTreecd Rho = contraction(Psi, tree, true);
 	Rho.print(tree);
 
 	cout << "<Psi|Chi> MatrixTree:\n";
 	TensorTreecd Chi(gen, tree, false);
-	MatrixTreecd S = DotProduct(Psi, Chi, tree);
+	MatrixTreecd S = dotProduct(Psi, Chi, tree);
 	S.print(tree);
 
 	cout << "Contractions of Psi and Chi:\n";
@@ -121,9 +121,9 @@ void paper_1() {
 
 	/// Operations on Tensor Trees
 	using namespace TreeFunctions;
-	MatrixTreecd W = DotProduct(Psi, Psi, tree); /// <Psi|Psi>_p
+	MatrixTreecd W = dotProduct(Psi, Psi, tree); /// <Psi|Psi>_p
 	MatrixTreecd C = contraction(Psi, Psi, W, tree); /// <Psi|Psi>_(p)
-	MatrixTreecd Rho = Contraction(Psi, tree, true); /// Assume orthogonal basis
+	MatrixTreecd Rho = contraction(Psi, tree, true); /// Assume orthogonal basis
 
 	/// Represent Operators
 	auto x = &LeafInterface::applyX;

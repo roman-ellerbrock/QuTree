@@ -271,7 +271,7 @@ namespace TreeFunctions {
 		 *   (s_up, s_down). Use these to calculate overall overlaps S. If everything works correctly, all
 		 *   nodes should provide equal outputs abs(S[node_a]) == abs(S[node_b])
 		 */
-		MatrixTreecd s_up = TreeFunctions::DotProduct(Bra.up_, Ket.up_, tree);
+		MatrixTreecd s_up = TreeFunctions::dotProduct(Bra.up_, Ket.up_, tree);
 		MatrixTreecd s_down(tree);
 		symContraction(s_down, Bra, Ket, s_up, tree);
 		MatrixTreecd S(tree);

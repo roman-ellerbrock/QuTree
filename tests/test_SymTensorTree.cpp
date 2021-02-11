@@ -130,10 +130,10 @@ SUITE (SymTensorTree) {
 
 		for (auto psi : psis) {
 			CanonicalTransformation(psi, tree_, true);
-			auto rho = TreeFunctions::Contraction(psi, tree_, true);
+			auto rho = TreeFunctions::contraction(psi, tree_, true);
 			SymTensorTree sPsi(psi, tree_);
 			auto psiup = sPsi.bottomUpNormalized(tree_);
-			auto S = TreeFunctions::DotProduct(psi, psiup, tree_);
+			auto S = TreeFunctions::dotProduct(psi, psiup, tree_);
 			auto s = S[tree_.TopNode()];
 				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
@@ -143,10 +143,10 @@ SUITE (SymTensorTree) {
 		auto psis = {psi_, chi_};
 
 		for (const auto& psi : psis) {
-			auto rho = TreeFunctions::Contraction(psi, tree_, true);
+			auto rho = TreeFunctions::contraction(psi, tree_, true);
 			SymTensorTree sPsi(psi, tree_);
 			auto psiup = sPsi.bottomUpNormalized(tree_);
-			auto S = TreeFunctions::DotProduct(psi, psiup, tree_);
+			auto S = TreeFunctions::dotProduct(psi, psiup, tree_);
 			auto s = S[tree_.TopNode()];
 				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
@@ -177,7 +177,7 @@ SUITE (SymTensorTree) {
 
 //		auto hmat = TreeFunctions::Represent(I_, psi_, chi_, tree_);
 		SparseMatrixTreecd hmat(stree_, tree_);
-		auto S = TreeFunctions::DotProduct(psi_, chi_, tree_);
+		auto S = TreeFunctions::dotProduct(psi_, chi_, tree_);
 //		cout << "s:\n";
 //		S.print(tree_);
 //		getchar();

@@ -22,7 +22,7 @@ namespace TreeFunctions {
 	TensorTree<T> DirectionalInvarientRepresentation(TensorTree<T> Psi, const Tree& tree, bool orthogonal) {
 		/// Calculate contraction matrixtree
 		assert(orthogonal);
-		MatrixTree<T> rho = Contraction(Psi, tree, orthogonal);
+		MatrixTree<T> rho = contraction(Psi, tree, orthogonal);
 		auto B = sqrt(rho, tree);
 
 
@@ -41,7 +41,7 @@ namespace TreeFunctions {
 	TensorTree<T> ContractionNormalization(TensorTree<T> Psi, const Tree& tree, bool orthogonal) {
 		assert(orthogonal);
 		/// Transform to Directional-Invariant rep
-		MatrixTree<T> rho = Contraction(Psi, tree, orthogonal);
+		MatrixTree<T> rho = contraction(Psi, tree, orthogonal);
 		auto B = sqrt(rho, tree);
 		auto B_inv = inverse(B, tree);
 
