@@ -19,17 +19,17 @@ namespace TreeFunctions {
 		for (size_t l = 0; l < node.nChildren(); l++) {
 			const Node& child = node.child(l);
 			if (!hmat.Active(child)) { continue; }
-			hKet = MatrixTensor(hmat[child], hKet, child.childIdx());
+			hKet = matrixTensor(hmat[child], hKet, child.childIdx());
 		}
 
-		return Bra.DotProduct(hKet);
+		return Bra.dotProduct(hKet);
 	}
 
 	template<typename T>
 	Matrix<T> RepresentBottom(const Tensor<T>& Bra,
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& leaf) {
 		Tensor<T> MKet = M.ApplyBottomLayer(Ket, leaf);
-		return Bra.DotProduct(MKet);
+		return Bra.dotProduct(MKet);
 	}
 
 	template<typename T>
@@ -146,7 +146,7 @@ namespace TreeFunctions {
 				if (marker.Active(parent)) {
 					hKet = multStateAB(holes[parent], hKet);
 				}
-				holes[node] = Contraction(Bra[parent], hKet, node.childIdx());
+				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -174,7 +174,7 @@ namespace TreeFunctions {
 						hKet = multStateAB(rho[parent], hKet);
 					}
 				}
-				holes[node] = Contraction(Bra[parent], hKet, node.childIdx());
+				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -272,9 +272,9 @@ namespace TreeFunctions {
 			const Node& child = node.child(k);
 			if (!mat.Active(child)) { continue; }
 			if (switchbool) {
-				MatrixTensor(hPhi, mat[child], Phi, child.childIdx(), true);
+				matrixTensor(hPhi, mat[child], Phi, child.childIdx(), true);
 			} else {
-				MatrixTensor(Phi, mat[child], hPhi, child.childIdx(), true);
+				matrixTensor(Phi, mat[child], hPhi, child.childIdx(), true);
 			}
 			switchbool = !switchbool;
 		}
@@ -295,7 +295,7 @@ namespace TreeFunctions {
 			const Node& child = parent.child(k);
 			size_t childidx = child.childIdx();
 			if ((childidx == drop) || (!mats.Active(child))) { continue; }
-			Phi = MatrixTensor(mats[child], Phi, childidx);
+			Phi = matrixTensor(mats[child], Phi, childidx);
 		}
 		return Phi;
 	}

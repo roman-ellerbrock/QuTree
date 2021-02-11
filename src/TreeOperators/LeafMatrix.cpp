@@ -14,7 +14,7 @@ Matrixcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf) {
 		v(i, i) = 1.;
 	}
 	h.Apply(leaf.PrimitiveGrid(), hv, v);
-	Matrixcd mat = v.DotProduct(hv);
+	Matrixcd mat = v.dotProduct(hv);
 	return mat;
 }
 
@@ -22,7 +22,7 @@ Matrixcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf) {
 template<typename T>
 void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	const Tensor<T>& Acoeff) const {
-	MatrixTensor(hAcoeff, h_, Acoeff, 0, true);
+	matrixTensor(hAcoeff, h_, Acoeff, 0, true);
 }
 
 template<typename T>

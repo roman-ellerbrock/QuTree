@@ -54,7 +54,7 @@ void HO_Basis::InitSPF(Tensorcd& phi) const {
 		}
 	}
 	// orthonormalize
-	GramSchmidt(phi);
+	gramSchmidt(phi);
 }
 
 Matrixd HO_Basis::InitXmat() {

@@ -68,7 +68,7 @@ void hole_product_tree() {
 
     /// Construct, allocate and calculate a hole matrix tree
 //    HoleMatrixTreecd rho(Psi, Chi, w, tree);
-    MatrixTreecd rho = TreeFunctions::Contraction(Psi, Chi,  w, tree);
+    MatrixTreecd rho = TreeFunctions::contraction(Psi, Chi, w, tree);
     rho.print();
 
 }
@@ -97,7 +97,7 @@ void tree_examples() {
 	S.print(tree);
 
 	cout << "Contractions of Psi and Chi:\n";
-	MatrixTreecd C = Contraction(Psi, Chi, S, tree);
+	MatrixTreecd C = contraction(Psi, Chi, S, tree);
 	C.print(tree);
 
 	cout << "Add two tensor trees:\n";
@@ -122,7 +122,7 @@ void paper_1() {
 	/// Operations on Tensor Trees
 	using namespace TreeFunctions;
 	MatrixTreecd W = DotProduct(Psi, Psi, tree); /// <Psi|Psi>_p
-	MatrixTreecd C = Contraction(Psi, Psi, W, tree); /// <Psi|Psi>_(p)
+	MatrixTreecd C = contraction(Psi, Psi, W, tree); /// <Psi|Psi>_(p)
 	MatrixTreecd Rho = Contraction(Psi, tree, true); /// Assume orthogonal basis
 
 	/// Represent Operators

@@ -40,7 +40,7 @@ SUITE (Operators) {
 		Tensorcd xA(A.shape());
 		ho.applyX(xA, A);
 		string file("HO_Applyx.dat");
-		xA.Write(file);
+		xA.write(file);
 		Tensorcd B(file);
 			CHECK_EQUAL(xA, B);
 	}
@@ -52,7 +52,7 @@ SUITE (Operators) {
 		TensorShape tdim(vector<size_t>({2, 1}));
 		Tensorcd A(tdim);
 		A(0) = 1.;
-		Tensorcd XA = MatrixTensor(X, A, 0);
+		Tensorcd XA = matrixTensor(X, A, 0);
 		Tensorcd xA(tdim);
 		x.Apply(ho, xA, A);
 			CHECK_EQUAL(XA, xA);

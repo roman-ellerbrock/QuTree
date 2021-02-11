@@ -93,9 +93,9 @@ namespace TreeIO {
 				x(grid, xxhAcoeff, xhAcoeff);
 
 				// tr(rho*x)
-				Matrixcd xmat = Acoeff.DotProduct(xhAcoeff);
+				Matrixcd xmat = Acoeff.dotProduct(xhAcoeff);
 				double xexp = real(xmat.trace() / norm);
-				Matrixcd x2mat = Acoeff.DotProduct(xxhAcoeff);
+				Matrixcd x2mat = Acoeff.dotProduct(xxhAcoeff);
 				double x2exp = real(x2mat.trace() / norm);
 				double dx = sqrt(abs(x2exp - xexp * xexp));
 				// tr(rho)
@@ -112,9 +112,9 @@ namespace TreeIO {
 						n2Acoeff(i, n) *= i * i;
 					}
 				}
-				Matrixcd nmat = Acoeff.DotProduct(nAcoeff);
+				Matrixcd nmat = Acoeff.dotProduct(nAcoeff);
 				double nexp = real(nmat.trace() / norm);
-				Matrixcd n2mat = Acoeff.DotProduct(n2Acoeff);
+				Matrixcd n2mat = Acoeff.dotProduct(n2Acoeff);
 				double n2exp = real(n2mat.trace() / norm);
 				double dn = sqrt(abs(n2exp - nexp * nexp));
 //			cout << "<n>=" << nexp << "    <dn>=" << dn << endl;
@@ -126,9 +126,9 @@ namespace TreeIO {
 				p(grid, phAcoeff, hAcoeff);
 				p(grid, pphAcoeff, phAcoeff);
 				// tr(rho*x)
-				Matrixcd pmat = Acoeff.DotProduct(phAcoeff);
+				Matrixcd pmat = Acoeff.dotProduct(phAcoeff);
 				double pexp = real(pmat.trace() / norm);
-				Matrixcd p2mat = Acoeff.DotProduct(pphAcoeff);
+				Matrixcd p2mat = Acoeff.dotProduct(pphAcoeff);
 				double p2exp = real(p2mat.trace() / norm);
 				double dp = sqrt(abs(p2exp - pexp * pexp));
 				// tr(rho)
@@ -162,9 +162,9 @@ namespace TreeIO {
 		if (!node.isToplayer()) {
 			const auto& rho = Rho[node];
 			auto rhoPhi = multStateAB<T>(rho, Phi);
-			return Contraction(Phi, rhoPhi, 0);
+			return contraction(Phi, rhoPhi, 0);
 		} else {
-			return Contraction(Phi, Phi, 0);
+			return contraction(Phi, Phi, 0);
 		}
 	}
 
@@ -178,9 +178,9 @@ namespace TreeIO {
 		if (!node.isToplayer()) {
 			const auto& rho = Rho[node];
 			auto rhoPhi = multStateAB<T>(rho, Phi);
-			return Contraction(Phi, rhoPhi, 0);
+			return contraction(Phi, rhoPhi, 0);
 		} else {
-			return Contraction(Phi, Phi, 0);
+			return contraction(Phi, Phi, 0);
 		}
 	}
 

@@ -16,31 +16,31 @@ template Tensor<d> productElementwise(const Tensor<d>& A, const Tensor<d>& B);
 
 //template Matrix<cd> HoleProduct<cd>(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
 //template void HoleProduct<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
-template Tensor<cd> MatrixTensor<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode);
-template void MatrixTensor<cd, cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
+template Tensor<cd> matrixTensor<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode);
+template void matrixTensor<cd, cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 template Tensor<cd> multATB<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode);
 template Tensor<cd> multStateAB(const Matrix<cd>& A, const Tensor<cd>& B);
 template Tensor<cd> multStateArTB<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B);
 template void multStateArTB<cd, cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B);
-template void GramSchmidt<cd>(Tensor<cd>& A);
+template void gramSchmidt<cd>(Tensor<cd>& A);
 template void multStateAB<cd, cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, bool zero);
-template Tensor<cd> Project<cd>(const Tensor<cd>& A, const Tensor<cd>& B);
-template Tensor<cd> ProjectOut<cd>(const Tensor<cd>& A, const Tensor<cd>& B);
-template Tensor<cd> ProjectOrthogonal<cd>(const Tensor<cd>& A, const Tensor<cd>& B);
+template Tensor<cd> project<cd>(const Tensor<cd>& A, const Tensor<cd>& B);
+template Tensor<cd> projectOut<cd>(const Tensor<cd>& A, const Tensor<cd>& B);
+template Tensor<cd> projectOrthogonal<cd>(const Tensor<cd>& A, const Tensor<cd>& B);
 template void multAdd<cd, cd>(Tensor<cd>& A, const Tensor<cd>& B, cd coeff);
 template Tensor<cd> conj<cd>(Tensor<cd> A);
-template double Residual(Tensorcd A, const Tensorcd& B);
+template double residual(Tensorcd A, const Tensorcd& B);
 template Matrix<cd> toMatrix(const Tensor<cd>& A);
 template Tensor<cd> toTensor(const Matrix<cd>& B);
 template Matrix<cd> toMatrix(const Tensor<cd>& A, size_t mode);
 template Tensor<cd> toTensor(const Matrix<cd>& B, const TensorShape& shape, size_t mode);
-template void TensorContraction<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t before, size_t active1, size_t active2, size_t behind);
-template void MatrixTensor<cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
-template Matrix<cd> Contraction(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
-template void Contraction(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t k, bool zero);
+template void contraction<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t before, size_t active1, size_t active2, size_t behind);
+template void matrixTensor<cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
+template Matrix<cd> contraction(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
+template void contraction(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t k, bool zero);
 
-template void TensorMatrix(Tensor<cd>& C, const Tensor<cd>& B, const Matrix<cd>& A, size_t mode, bool zero);
-template Tensor<cd> TensorMatrix(const Tensor<cd>& B, const Matrix<cd>& A, size_t mode);
+template void tensorMatrix(Tensor<cd>& C, const Tensor<cd>& B, const Matrix<cd>& A, size_t mode, bool zero);
+template Tensor<cd> tensorMatrix(const Tensor<cd>& B, const Matrix<cd>& A, size_t mode);
 
 template ostream& operator<< <cd> (ostream&, const Tensor<cd>& );
 template istream& operator>> <cd> (istream&, Tensor<cd>& );
@@ -48,25 +48,25 @@ template bool operator== <cd>(const Tensor<cd>& A, const Tensor<cd>& B);
 
 //template Matrix<double> HoleProduct<double>(const Tensor<double>& A, const Tensor<double>& B, size_t k);
 //template void HoleProduct<doub>(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t k);
-template Tensor<double> MatrixTensor<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);
-template void MatrixTensor<doub, doub>(Tensor<double>& C, const Matrix<double>& A, const Tensor<double>& B, size_t mode, bool zero);
-template void TensorMatrix(Tensor<double>& C, const Tensor<double>& B, const Matrix<double>& A, size_t mode, bool zero);
-template Tensor<double> TensorMatrix(const Tensor<double>& B, const Matrix<double>& A, size_t mode);
+template Tensor<double> matrixTensor<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);
+template void matrixTensor<doub, doub>(Tensor<double>& C, const Matrix<double>& A, const Tensor<double>& B, size_t mode, bool zero);
+template void tensorMatrix(Tensor<double>& C, const Tensor<double>& B, const Matrix<double>& A, size_t mode, bool zero);
+template Tensor<double> tensorMatrix(const Tensor<double>& B, const Matrix<double>& A, size_t mode);
 template Tensor<double> multATB<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);
 template Tensor<double> multStateAB(const Matrix<double>& A, const Tensor<double>& B);
 template Tensor<double> multStateArTB<doub, doub>(const Matrix<double>& A, const Tensor<double>& B);
 template void multStateArTB<doub, doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>& B);
-template void GramSchmidt<double>(Tensor<double>& A);
+template void gramSchmidt<double>(Tensor<double>& A);
 template void multStateAB<doub, doub>(Tensor<double>& C, const Matrix<double>& A, const Tensor<double>& B, bool zero);
 template void multAdd<doub, doub>(Tensor<double>& A, const Tensor<double>& B, doub coeff);
 template Tensor<double> conj<double>(Tensor<double> A);
-template double Residual(Tensord A, const Tensord& B);
+template double residual(Tensord A, const Tensord& B);
 template Matrix<double> toMatrix(const Tensor<double>& A);
 template Tensor<double> toTensor(const Matrix<double>& B);
-template void TensorContraction<doub>(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t before, size_t active1, size_t active2, size_t behind);
-template void MatrixTensor<doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
-template Matrix<doub> Contraction(const Tensor<doub>& A, const Tensor<doub>& B, size_t k);
-template void Contraction(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t k, bool zero);
+template void contraction<doub>(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t before, size_t active1, size_t active2, size_t behind);
+template void matrixTensor<doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
+template Matrix<doub> contraction(const Tensor<doub>& A, const Tensor<doub>& B, size_t k);
+template void contraction(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t k, bool zero);
 
 template ostream& operator<< <doub> (ostream&, const Tensor<doub>& );
 template istream& operator>> <doub> (istream&, Tensor<doub>& );
@@ -74,7 +74,7 @@ template bool operator== <doub>(const Tensor<doub>& A, const Tensor<doub>& B);
 
 /// Mixed double/complex<double>
 template void multAdd<cd, double>(Tensor<cd>& A, const Tensor<cd>& B, double coeff);
-template Tensor<cd> MatrixTensor<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
+template Tensor<cd> matrixTensor<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
 template Tensor<cd> multATB<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
 
 

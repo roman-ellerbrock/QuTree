@@ -74,13 +74,13 @@ public:
 	//////////////////////////////////////////////////////////
 	void print(ostream& os = cout)const;
 
-	void Write(ostream& os)const;
+	void write(ostream& os)const;
 
-	void Write(const string& filename)const;
+	void write(const string& filename)const;
 
-	void Read(istream& is);
+	void read(istream& is);
 
-	void Read(const string& filename);
+	void read(const string& filename);
 
 	//////////////////////////////////////////////////////////
 	// Bracket Operators
@@ -149,16 +149,16 @@ public:
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
-	Tensor<T> AdjustDimensions(const TensorShape& newTDim)const;
+	Tensor<T> adjustDimensions(const TensorShape& newTDim)const;
 
 	// Adjust the number of the active_ mode
-	Tensor<T> AdjustActiveDim(size_t active, size_t mode)const;
+	Tensor<T> adjustActiveDim(size_t active, size_t mode)const;
 
 	// Adjust the number of Tensors
-	Tensor<T> AdjustStateDim(size_t n)const;
+	Tensor<T> adjustStateDim(size_t n)const;
 
 	// Reshape the tensor but keep the total size
-	void Reshape(const TensorShape& tdim);
+	void reshape(const TensorShape& tdim);
 
 	//////////////////////////////////////////////////////////
 	// Operations on Tensors
@@ -172,10 +172,10 @@ public:
 		the number of tensors.
 	 */
 
-	Matrix<T> DotProduct(const Tensor<T>& A)const;
+	Matrix<T> dotProduct(const Tensor<T>& A)const;
 
 	/// This function will fill the Tensor with Zero-entries
-	void Zero();
+	void zero();
 
 	// Getter for shape
 	const TensorShape& shape()const { return shape_; }
@@ -202,40 +202,40 @@ typedef Tensor<double> Tensord;
 // Non-member functions
 //////////////////////////////////////////////////////////
 template<typename T>
-T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m);
+T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m);
 
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
 
 template<typename T>
-void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind);
 
 template<typename T>
-void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero = true);
+void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero = true);
 
 template<typename T>
-Matrix<T> Contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k);
+Matrix<T> contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k);
 
 template <typename T, typename U>
-void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero = true);
 
 template <typename T, typename U>
-void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+void tMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero = true);
 
 template <typename T, typename U>
-void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
 
 template <typename T, typename U>
-Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
+Tensor<T> matrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
 
 template <typename T, typename U>
-void TensorMatrix(Tensor<T>& C, const Tensor<T>& B, const Matrix<U>& A, size_t mode, bool zero = true);
+void tensorMatrix(Tensor<T>& C, const Tensor<T>& B, const Matrix<U>& A, size_t mode, bool zero = true);
 
 template<typename T, typename U>
-Tensor<T> TensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode);
+Tensor<T> tensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode);
 
 template <typename T, typename U>
 Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
@@ -256,29 +256,29 @@ template <typename T, typename U>
 void multAdd(Tensor<T>& A, const Tensor<T>& B, U coeff);
 
 template<typename T>
-void GramSchmidt(Tensor<T>& A);
+void gramSchmidt(Tensor<T>& A);
 
-Tensorcd QR(const Tensorcd& A);
+Tensorcd qr(const Tensorcd& A);
 
-Tensorcd QR(const Tensorcd& A, size_t mode);
+Tensorcd qr(const Tensorcd& A, size_t mode);
 
 //Projects B on A
 template<typename T>
-Tensor< complex<double> > Project(const Tensor< complex<double> >& A,
+Tensor< complex<double> > project(const Tensor<complex<double> >& A,
 	const Tensor< T >& B);
 
 template<typename T>
-Tensor<T> ProjectOut(const Tensor<T>& A, const Tensor<T>& B);
+Tensor<T> projectOut(const Tensor<T>& A, const Tensor<T>& B);
 
 template<typename T>
-Tensor< complex<double> > ProjectOrthogonal(const Tensor< complex<double> >& A,
+Tensor< complex<double> > projectOrthogonal(const Tensor<complex<double> >& A,
 	const Tensor< T >& B);
 
 template<typename T>
 Tensor<T> conj(Tensor<T> A);
 
 template<typename T>
-double Residual(Tensor<T> A, const Tensor<T>& B);
+double residual(Tensor<T> A, const Tensor<T>& B);
 
 template<typename T>
 Matrix<T> toMatrix(const Tensor<T>& A);

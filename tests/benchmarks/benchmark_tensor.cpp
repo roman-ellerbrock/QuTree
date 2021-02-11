@@ -106,7 +106,7 @@ namespace benchmark {
 		for (size_t n = 0; n < nsample; ++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			MatrixTensor(B, S, A, bef, act, act, aft, true);
+			matrixTensor(B, S, A, bef, act, act, aft, true);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 		}

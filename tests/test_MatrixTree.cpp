@@ -57,7 +57,7 @@ SUITE (MatrixTreeFunctions) {
 		}
 	}
 
-	TEST (Contraction) {
+	TEST (contraction) {
 		mt19937 gen(1923);
 		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree, false);
@@ -190,7 +190,7 @@ SUITE(TreeTransformations) {
 
 		for (const Edge& e : tree.Edges()) {
 			auto phi = edgePsi[e];
-			Matrixcd deltaij = Contraction(phi, phi, e.upIdx());
+			Matrixcd deltaij = contraction(phi, phi, e.upIdx());
 			Matrixcd I = identityMatrix<complex<double>>(deltaij.dim1());
 			auto r = residual(deltaij, I);
 			CHECK_CLOSE(0., r, 1e-7);
@@ -217,7 +217,7 @@ SUITE(TreeTransformations) {
 			/// Check Tensor
 			Tensorcd Phiacc(shape);
 			Phiacc(0) = 1.;
-				CHECK_CLOSE(0., Residual(Psi[node], Phiacc), eps);
+				CHECK_CLOSE(0., residual(Psi[node], Phiacc), eps);
 		}
 	}
 }

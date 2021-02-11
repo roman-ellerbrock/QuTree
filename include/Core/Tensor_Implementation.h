@@ -11,27 +11,27 @@ Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
 	:shape_(dim), coeffs_(ptr), ownership_(ownership) {
-	if (InitZero) { Zero(); }
+	if (InitZero) { zero(); }
 }
 
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_((T*)malloc(dim.totalDimension()*sizeof(T)) ), ownership_(true) {
 //	:shape_(dim), coeffs_(new T[dim.totalDimension()]), ownership_(true) {
-	if (InitZero) { Zero(); }
+	if (InitZero) { zero(); }
 }
 
 template<typename T>
 Tensor<T>::Tensor(istream& is)
 	:Tensor() {
-	Read(is);
+	read(is);
 }
 
 template<typename T>
 Tensor<T>::Tensor(const string& filename)
 	: Tensor() {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 // Copy constructor
@@ -231,7 +231,7 @@ void Tensor<T>::print(ostream& os) const {
 }
 
 template<typename T>
-void Tensor<T>::Write(ostream& os) const {
+void Tensor<T>::write(ostream& os) const {
 	// Verification
 	os.write("TENS", 4);
 
@@ -251,13 +251,13 @@ void Tensor<T>::Write(ostream& os) const {
 }
 
 template<typename T>
-void Tensor<T>::Write(const string& file) const {
+void Tensor<T>::write(const string& file) const {
 	ofstream os(file);
-	Write(os);
+	write(os);
 }
 
 template<typename T>
-void Tensor<T>::Read(istream& is) {
+void Tensor<T>::read(istream& is) {
 	// Check if binary string contains a Tensor
 	char check[5];
 	is.read(check, 4);
@@ -287,9 +287,9 @@ void Tensor<T>::Read(istream& is) {
 }
 
 template<typename T>
-void Tensor<T>::Read(const string& filename) {
+void Tensor<T>::read(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 //////////////////////////////////////////////////////////
@@ -345,7 +345,7 @@ Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 // Adjust Dimensions
 //////////////////////////////////////////////////////////
 template<typename T>
-Tensor<T> Tensor<T>::AdjustDimensions(const TensorShape& newTDim) const {
+Tensor<T> Tensor<T>::adjustDimensions(const TensorShape& newTDim) const {
 	// Increase the dimensions of the Tensor from old TensorDim
 	// to new TensorDim 
 
@@ -354,18 +354,18 @@ Tensor<T> Tensor<T>::AdjustDimensions(const TensorShape& newTDim) const {
 	Tensor<T> Acoeff(*this);
 	for (size_t k = 0; k < shape_.order(); k++) {
 		size_t act = newTDim[k];
-		Acoeff = Acoeff.AdjustActiveDim(act, k);
+		Acoeff = Acoeff.adjustActiveDim(act, k);
 	}
 
 	// Increase the number of Tensors
 	size_t ntens = newTDim.lastDimension();
-	Acoeff = Acoeff.AdjustStateDim(ntens);
+	Acoeff = Acoeff.adjustStateDim(ntens);
 
 	return Acoeff;
 }
 
 template<typename T>
-Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
+Tensor<T> Tensor<T>::adjustActiveDim(size_t active, size_t mode) const {
 	// Adjust the active_ dimension in the coordinate "mode".
 	// If the new active_ is smaller, the norm of the tensors is
 	// not conserved.
@@ -399,12 +399,12 @@ Tensor<T> Tensor<T>::AdjustActiveDim(size_t active, size_t mode) const {
 
 // Adjust the size of Tensor 
 template<typename T>
-Tensor<T> Tensor<T>::AdjustStateDim(size_t n) const {
-	return AdjustActiveDim(n, shape().lastIdx());
+Tensor<T> Tensor<T>::adjustStateDim(size_t n) const {
+	return adjustActiveDim(n, shape().lastIdx());
 }
 
 template<typename T>
-void Tensor<T>::Reshape(const TensorShape& new_dim) {
+void Tensor<T>::reshape(const TensorShape& new_dim) {
 	/// Check that total size is the same
 	assert(shape_.totalDimension() == new_dim.totalDimension());
 	shape_ = new_dim;
@@ -424,7 +424,7 @@ T Tensor<T>::singleDotProduct(const Tensor& A, size_t n, size_t m) const {
 }
 
 template<typename T>
-Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
+Matrix<T> Tensor<T>::dotProduct(const Tensor<T>& A) const {
 	TensorShape tdima(A.shape());
 	// Every tensor can have different amount of states but same dimpart
 
@@ -434,7 +434,7 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 	assert(tdima.lastBefore() == npart);
 
 	Matrix<T> S(mmax, nmax);
-	Contraction(S, *this, A, shape_.lastIdx());
+	contraction(S, *this, A, shape_.lastIdx());
 /*#pragma omp parallel for
 	for (size_t n = 0; n < nmax; n++) {
 		for (size_t m = 0; m < mmax; m++) {
@@ -450,7 +450,7 @@ Matrix<T> Tensor<T>::DotProduct(const Tensor<T>& A) const {
 }
 
 template<typename T>
-void Tensor<T>::Zero() {
+void Tensor<T>::zero() {
 	memset(coeffs_, 0, shape_.totalDimension() * sizeof(T));
 //	for (size_t i = 0; i < shape_.totalDimension(); i++)
 //		coeffs_[i] = 0;
@@ -470,7 +470,7 @@ Tensor<T>::Tensor(const Matrix<T>& mat)
 // Non-member functions
 //////////////////////////////////////////////////////////
 template<typename T>
-T SingleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
+T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 	TensorShape tdima(A.shape());
 	TensorShape tdimb(B.shape());
 
@@ -505,7 +505,7 @@ void rhomat_(double* Bra, double* Ket, double* M,
 }
 
 template<typename T>
-void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind) {
 
 	int a = active1;
@@ -562,7 +562,7 @@ void TensorContraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 }
 
 template<typename T>
-Matrix<T> Contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+Matrix<T> contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	const TensorShape& tdim_a(A.shape());
 	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
@@ -570,12 +570,12 @@ Matrix<T> Contraction(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	Matrix<T> S(active1, active2);
-	Contraction(S, A, B, k);
+	contraction(S, A, B, k);
 	return S;
 }
 
 template<typename T>
-void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero) {
+void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k, bool zero) {
 	const TensorShape& tdim_a(A.shape());
 	const TensorShape& tdim_b(B.shape());
 	assert(k < tdim_a.order());
@@ -588,11 +588,11 @@ void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k,
 	size_t active2 = tdim_b[k];
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
 	if (zero) { S.zero(); }
-	TensorContraction(S, A, B, before, active1, active2, after);
+	contraction(S, A, B, before, active1, active2, after);
 }
 
 template<typename T, typename U>
-void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
 	int add = !zero;
@@ -609,7 +609,7 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
 			&a, &b, &c, &add);
 	} else {
-		if (zero) { C.Zero(); }
+		if (zero) { C.zero(); }
 
 		// Variables to Precompute index values
 		size_t actbefB = activeB * before;
@@ -679,7 +679,7 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 }
 
 template<typename T, typename U>
-void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+void tMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
 
@@ -696,7 +696,7 @@ void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 //		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
 //			&a, &b, &c, &add);
 	} else {
-		if (zero) { C.Zero(); }
+		if (zero) { C.zero(); }
 		size_t actbefB = activeB * before;
 		size_t actbefC = activeC * before;
 		size_t Cidx = 0;
@@ -746,7 +746,7 @@ void TMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 }
 
 template<typename T, typename U>
-void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
+void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
 	TensorShape tdim(B.shape());
 	TensorShape tdimC(C.shape());
 
@@ -759,11 +759,11 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t m
 	assert(A.dim2() == tdim[mode]);
 	assert(A.dim1() == tdimC[mode]);
 
-	MatrixTensor(C, A, B, before, active1, active2, after, zero);
+	matrixTensor(C, A, B, before, active1, active2, after, zero);
 }
 
 template<typename T, typename U>
-Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
+Tensor<T> matrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorShape& tdim(B.shape());
 	assert(mode < tdim.order());
 
@@ -772,7 +772,7 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t after = tdim.after(mode);
 		size_t active = tdim[mode];
 		size_t before = tdim.before(mode);
-		MatrixTensor(C, A, B, before, active, active, after, false);
+		matrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
 		TensorShape tdim(B.shape());
@@ -785,19 +785,19 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		assert(active1 == C.shape()[mode]);
 		assert(active2 == B.shape()[mode]);
 		cout << "non-quadratic mattensor implemented but tested only once so far.\n";
-		MatrixTensor(C, A, B, before, active1, active2, after, false);
+		matrixTensor(C, A, B, before, active1, active2, after, false);
 		return C;
 	}
 }
 
 template<typename T, typename U>
-void TensorMatrix(Tensor<T>& C, const Tensor<T>& B, const Matrix<U>& A, size_t mode, bool zero) {
-	TensorMatrix(C, B, A.transpose(), mode, zero);
+void tensorMatrix(Tensor<T>& C, const Tensor<T>& B, const Matrix<U>& A, size_t mode, bool zero) {
+	tensorMatrix(C, B, A.transpose(), mode, zero);
 }
 
 template<typename T, typename U>
-Tensor<T> TensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode) {
-	return MatrixTensor(A.transpose(), B, mode);
+Tensor<T> tensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode) {
+	return matrixTensor(A.transpose(), B, mode);
 }
 
 template<typename T, typename U>
@@ -812,7 +812,7 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t after = tdim.after(mode);
 		size_t active = tdim[mode];
 		size_t before = tdim.before(mode);
-		TMatrixTensor(C, A, B, before, active, active, after, false);
+		tMatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
 		size_t activeC = A.dim2();
@@ -823,7 +823,7 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		size_t before = tdim.before(mode);
 		Tensor<T> C(tdim);
 		cout << "non-quadratic mattensor implemented but not tested, yet.\n";
-		TMatrixTensor(C, A, B, before, activeC, activeB, after, false);
+		tMatrixTensor(C, A, B, before, activeC, activeB, after, false);
 		getchar();
 		return C;
 	}
@@ -843,7 +843,7 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 	assert(A.dim1() == active2);
 	assert(before == tdimC.lastBefore());
 
-	MatrixTensor(C, A, B, before, active1, active2, after, zero);
+	matrixTensor(C, A, B, before, active1, active2, after, zero);
 }
 
 template<typename T, typename U>
@@ -903,7 +903,7 @@ void multAdd(Tensor<T>& A, const Tensor<T>& B, U coeff) {
 }
 
 template<typename T>
-void GramSchmidt(Tensor<T>& A) {
+void gramSchmidt(Tensor<T>& A) {
 	// @TODO: Fill in auto-refill
 
 	// control parameters
@@ -924,7 +924,7 @@ void GramSchmidt(Tensor<T>& A) {
 			accumoverlap = 0;
 			for (size_t m = 0; m < n; m++) {
 				// orthogonalize
-				T overlap = SingleDotProd(A, A, m, n);
+				T overlap = singleDotProd(A, A, m, n);
 				accumoverlap += abs(overlap);
 				for (size_t i = 0; i < dimpart; i++) {
 					A(i, n) -= overlap * A(i, m);
@@ -932,7 +932,7 @@ void GramSchmidt(Tensor<T>& A) {
 			}
 
 			// renormalize
-			T norm = SingleDotProd(A, A, n, n);
+			T norm = singleDotProd(A, A, n, n);
 			if (abs(norm) != 0) {
 				norm = sqrt(real(norm));
 				for (size_t i = 0; i < dimpart; i++) {
@@ -952,15 +952,15 @@ void GramSchmidt(Tensor<T>& A) {
 	}
 }
 
-Tensorcd QR(const Tensorcd& A) {
+Tensorcd qr(const Tensorcd& A) {
 	auto Amat = toMatrix(A);
 	auto Qmat = qr(Amat);
 	auto Q = toTensor(Qmat);
-	Q.Reshape(A.shape());
+	Q.reshape(A.shape());
 	return Q;
 }
 
-Tensorcd QR(const Tensorcd& A, size_t mode) {
+Tensorcd qr(const Tensorcd& A, size_t mode) {
 	auto Amat = toMatrix(A, mode);
 	auto Qmat = qr(Amat);
 	auto Q = toTensor(Qmat, A.shape(), mode);
@@ -969,18 +969,18 @@ Tensorcd QR(const Tensorcd& A, size_t mode) {
 
 //Projects B on A
 template<typename T>
-Tensor<complex<double> > Project(const Tensor<complex<double> >& A,
+Tensor<complex<double> > project(const Tensor<complex<double> >& A,
 	const Tensor<T>& B) {
 	//calculates the overlap of A with it self
 	Tensor<complex<double> > Aperp(A);
 //	GramSchmidt(Aperp);
-	const Matrix<complex<double> > overlap = Aperp.DotProduct(Aperp);
+	const Matrix<complex<double> > overlap = Aperp.dotProduct(Aperp);
 
 	//invert the overlap
 	const Matrix<complex<double> > inverse_operlap = overlap.cInv();
 
 	//calculate the scalar product of A and B
-	const Matrix<complex<double> > dotproduct = Aperp.DotProduct(B);
+	const Matrix<complex<double> > dotproduct = Aperp.dotProduct(B);
 
 	//multiply the scalar product and the inverse_operlap
 	const Matrix<complex<double> > product = inverse_operlap * dotproduct;
@@ -996,9 +996,9 @@ Tensor<complex<double> > Project(const Tensor<complex<double> >& A,
  * projector onto B.
  */
 template<typename T>
-Tensor<T> ProjectOut(const Tensor<T>& A,
+Tensor<T> projectOut(const Tensor<T>& A,
 	const Tensor<T>& B) {
-	Tensorcd projector = Project(B, A);
+	Tensorcd projector = project(B, A);
 	Tensorcd perp_A(A);
 	const TensorShape& tdim = A.shape();
 	for (size_t i = 0; i < tdim.totalDimension(); ++i) {
@@ -1009,10 +1009,10 @@ Tensor<T> ProjectOut(const Tensor<T>& A,
 
 //Projects B on A
 template<typename T>
-Tensor<complex<double> > ProjectOrthogonal(const Tensor<complex<double> >& A,
+Tensor<complex<double> > projectOrthogonal(const Tensor<complex<double> >& A,
 	const Tensor<T>& B) {
 	// calculate the scalar product of A and B
-	const Matrix<complex<double> > dotproduct = A.DotProduct(B);
+	const Matrix<complex<double> > dotproduct = A.dotProduct(B);
 
 	return multStateArTB(dotproduct, A);
 }
@@ -1026,9 +1026,9 @@ Tensor<T> conj(Tensor<T> A) {
 }
 
 template<typename T>
-double Residual(Tensor<T> D, const Tensor<T>& B) {
-	D -= B;
-	auto S = D.DotProduct(D);
+double residual(Tensor<T> A, const Tensor<T>& B) {
+	A -= B;
+	auto S = A.dotProduct(A);
 	return S.frobeniusNorm();
 }
 
@@ -1101,13 +1101,13 @@ Tensor<T> toTensor(const Matrix<T>& B) {
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A) {
-	A.Write(os);
+	A.write(os);
 	return os;
 }
 
 template<typename T>
 istream& operator>>(istream& is, Tensor<T>& A) {
-	A.Read(is);
+	A.read(is);
 	return is;
 }
 

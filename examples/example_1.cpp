@@ -24,7 +24,7 @@ Tensorcd create_tensor() {
     Tensorcd C = A;
 
     // 4. Read from an istream or file
-    A.Write("tensor_A.dat");
+	A.write("tensor_A.dat");
     Tensorcd D("tensor_A.dat");
 
     return A;
@@ -60,7 +60,7 @@ Tensorcd fill_tensor(Tensorcd A){
 
 Matrixcd dot_product(Tensorcd A, Tensorcd B) {
     cout << "\ndot_product:\n" << endl;
-    Matrixcd w = A.DotProduct(B);
+    Matrixcd w = A.dotProduct(B);
     cout << "w=" << endl;
     w.print();
     cout << "(" << w.dim1() << "," << w.dim2() << ")\n";
@@ -70,12 +70,12 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
 void hole_product(Tensorcd A, const Tensorcd& B) {
     cout << "\nhole_product:\n" << endl;
     for (size_t k = 0; k < A.shape().order(); k++) {
-        Matrixcd h = Contraction(A, B, k);
+        Matrixcd h = contraction(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
         cout << "trace: " << h.trace() << endl;
         // Multiply
-		Tensorcd C = MatrixTensor(h, A, k);
+		Tensorcd C = matrixTensor(h, A, k);
 	}
 }
 
@@ -85,7 +85,7 @@ void reshape (Tensorcd A) {
 	A.shape().print();
     TensorShape tdim({4, 3, 2, 2});
     cout << "d = " << tdim.lastBefore() << endl;
-    A.Reshape(tdim);
+	A.reshape(tdim);
     cout << "A.shape() = " << endl;
 	A.shape().print();
 	assert(tdim == A.shape());

@@ -46,7 +46,7 @@ void DVRBasis::applyP(Tensorcd& uPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	uPhi = MatrixTensor(p_, phi, 0);
+	uPhi = matrixTensor(p_, phi, 0);
 }
 
 void DVRBasis::applyKin(Tensorcd& uPhi, const Tensorcd& phi) const {
@@ -54,7 +54,7 @@ void DVRBasis::applyKin(Tensorcd& uPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	uPhi = MatrixTensor(kin_, phi, 0);
+	uPhi = matrixTensor(kin_, phi, 0);
 }
 
 void DVRBasis::ToGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
@@ -70,5 +70,5 @@ void DVRBasis::FromGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	uPhi = MatrixTensor(trafo_, phi, 0);
+	uPhi = matrixTensor(trafo_, phi, 0);
 }

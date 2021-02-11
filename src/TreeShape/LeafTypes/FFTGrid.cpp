@@ -67,7 +67,7 @@ void FFTGrid::ToGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
 }
 
 void FFTGrid::FromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
-	uA = MatrixTensor(trafo_, Acoeffs, 0);
+	uA = matrixTensor(trafo_, Acoeffs, 0);
 }
 
 void FFTGrid::applyKin(Tensorcd& pA, const Tensorcd& Acoeffs) const {
@@ -93,5 +93,5 @@ void FFTGrid::InitSPF(Tensorcd& phi) const {
 	}
 
 	// orthonormalize
-	GramSchmidt(phi);
+	gramSchmidt(phi);
 }

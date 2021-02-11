@@ -32,7 +32,7 @@ SUITE (ExplicitEdgeWavefunction) {
 		for (const Node& node : tree) {
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
-				auto x = Contraction(Atilde[parent], Atilde[parent], node.childIdx());
+				auto x = contraction(Atilde[parent], Atilde[parent], node.childIdx());
 				auto v1 = diagonalize(x).second;
 				auto v2 = diagonalize(rho[node]).second;
 				auto r = Residual(v1, v2);

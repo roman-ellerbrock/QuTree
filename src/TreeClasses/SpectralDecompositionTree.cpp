@@ -85,10 +85,10 @@ void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogon
 		if (!node.isToplayer()) {
 			Matrix<T> p = spec[node].first;
 			p = p.adjoint();
-			Psi[node] = MatrixTensor(p, Psi[node], node.nChildren());
+			Psi[node] = matrixTensor(p, Psi[node], node.nChildren());
 //			Psi[node] = multATB(p, Psi[node], node.nChildren());
 			const Node& parent = node.parent();
-			Psi[parent] = TensorMatrix(Psi[parent], p.adjoint(), node.childIdx());
+			Psi[parent] = tensorMatrix(Psi[parent], p.adjoint(), node.childIdx());
 //			Psi[parent] = multATB(p, Psi[parent], node.childIdx());
 		}
 	}

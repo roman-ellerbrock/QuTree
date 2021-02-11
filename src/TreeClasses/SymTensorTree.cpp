@@ -47,7 +47,7 @@ void SymTensorTree::normalizeCanonical(const Node& node) {
 	}
 
 	/// Normalize
-	auto S = W.DotProduct(W);
+	auto S = W.dotProduct(W);
 	auto norm = sqrt(abs(S.trace()));
 	weighted_[node] /= norm;
 
@@ -70,23 +70,23 @@ void SymTensorTree::print(const Tree& tree) {
 Tensorcd canonicalTensor(Tensorcd w, bool up, bool down) {
 	if (down) {
 		for (size_t k = 0; k < (w.shape().order() - 1); ++k) {
-			auto rho = Contraction(w, w, k);
+			auto rho = contraction(w, w, k);
 			auto U = get<0>(svd(rho));
 //		auto U = Diagonalize(rho).first;
-			w = TensorMatrix(w, U, k);
+			w = tensorMatrix(w, U, k);
 		}
 	}
 	if (up) {
-		auto rho = Contraction(w, w, w.shape().lastIdx());
+		auto rho = contraction(w, w, w.shape().lastIdx());
 		auto U = get<0>(svd(rho));
 //		auto U = Diagonalize(rho).first;
-		w = TensorMatrix(w, U, w.shape().lastIdx());
+		w = tensorMatrix(w, U, w.shape().lastIdx());
 	}
 	return w;
 }
 
 Matrixcd calculateB(const Tensorcd& weighted, size_t k) {
-	Matrixcd rho = Contraction(weighted, weighted, k);
+	Matrixcd rho = contraction(weighted, weighted, k);
 	return toMatrix(sqrt(diagonalize(rho)));
 }
 
@@ -106,7 +106,7 @@ void createWeighted(TensorTree<T>& weighted, TensorTree<T>& down,
 			const Node& parent = node.parent();
 
 			Matrixcd B = calculateB(weighted[parent], node.childIdx());
-			weighted[node] = TensorMatrix(weighted[node], B, node.parentIdx());
+			weighted[node] = tensorMatrix(weighted[node], B, node.parentIdx());
 //			weighted[node] = MatrixTensor(B, weighted[node], node.nChildren());
 
 		}
@@ -151,7 +151,7 @@ namespace TreeFunctions {
 //			hKet = TensorMatrix(hKet, hole[parent], parent.childIdx());
 			hKet = multStateAB(hole[parent], hKet);
 		}
-		hole[hchild] = Contraction(Bra, hKet, hchild.childIdx());
+		hole[hchild] = contraction(Bra, hKet, hchild.childIdx());
 	}
 
 	void symContraction(SparseMatrixTreecd& hole, const TensorTreecd& Bra,
@@ -200,7 +200,7 @@ namespace TreeFunctions {
 	void symApply(Tensorcd& HPhi, const Tensorcd& Phi,
 		const SymMatrixTrees& hmats,
 		const SOPcd& H, const Node& node) {
-		HPhi.Zero();
+		HPhi.zero();
 		for (size_t l = 0; l < H.size(); ++l) {
 			HPhi += H.Coeff(l) * symApply(Phi, hmats[l], H[l], node);
 		}
@@ -230,13 +230,13 @@ namespace TreeFunctions {
 			for (size_t k = 0; k < parent.nChildren(); ++k) {
 				if (k != child_idx) {
 					const Node& child = parent.child(k);
-					ket = MatrixTensor(S[child], ket, k);
+					ket = matrixTensor(S[child], ket, k);
 				}
 			}
 			if (!parent.isToplayer()) {
 				ket = multStateAB(rho[parent], ket);
 			}
-			rho[node] = Contraction(bra, ket, node.childIdx());
+			rho[node] = contraction(bra, ket, node.childIdx());
 		}
 	}
 
@@ -245,14 +245,14 @@ namespace TreeFunctions {
 		if (!node.isBottomlayer()) {
 			for (size_t k = 0; k < node.nChildren(); ++k) {
 				const Node& child = node.child(k);
-				Ket = MatrixTensor(s_up[child], Ket, k);
+				Ket = matrixTensor(s_up[child], Ket, k);
 			}
 		}
 		if (!node.isToplayer()) {
 			Ket = multStateAB(s_down[node], Ket);
 //			Ket = MatrixTensor(s_down[node], Ket, node.parentIdx());
 		}
-		return Bra.DotProduct(Ket);
+		return Bra.dotProduct(Ket);
 	}
 
 	MatrixTreecd DotProduct(const TensorTreecd& wBra, const TensorTreecd& wKet,
@@ -288,7 +288,7 @@ double epsUpNormalization(const SymTensorTree& Psi, const Tree& tree) {
 	for (const Node& node : tree) {
 		if (node.isToplayer()) { continue; }
 		const auto& Phi = Psi.up_[node];
-		auto S = Phi.DotProduct(Phi);
+		auto S = Phi.dotProduct(Phi);
 		r += abs(residual(S, identityMatrixcd(S.dim1())));
 	}
 	return r;
@@ -300,7 +300,7 @@ double epsDownNormalization(const SymTensorTree& Psi, const Tree& tree) {
 	for (const Node& node : tree) {
 		if (node.isToplayer()) { continue; }
 		const auto& Phi = Psi.down_[node];
-		auto S = Contraction(Phi, Phi, node.childIdx());
+		auto S = contraction(Phi, Phi, node.childIdx());
 		r += abs(residual(S, identityMatrixcd(S.dim1())));
 	}
 	return r;

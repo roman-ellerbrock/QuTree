@@ -35,7 +35,7 @@ void MatrixTensorTree::buildEdges(const Tree& tree) {
 		const Node& node = e.down();
 		Tensorcd& A = nodes_[node];
 		/// Basically like multiplying with sqrt(rho)'s
-		A = MatrixTensor(B[e], A, node.nChildren());
+		A = matrixTensor(B[e], A, node.nChildren());
 	}
 
 	edges_ = inverse(B, tree);
@@ -56,7 +56,7 @@ TensorTreecd MatrixTensorTree::TopDownNormalized(const Tree& tree) const {
 	for (const Edge& e : tree.Edges()) {
 		const Node& node = e.down();
 		const Node& parent = node.parent();
-		Psi[node] = MatrixTensor(edges()[e].transpose(), Psi[parent], node.childIdx());
+		Psi[node] = matrixTensor(edges()[e].transpose(), Psi[parent], node.childIdx());
 	}
 	return Psi;
 }
@@ -69,7 +69,7 @@ TensorTreecd MatrixTensorTree::BottomUpNormalized(const Tree& tree) const {
 
 	for (const Edge& e : tree.Edges()) {
 		const Node& node = e.down();
-		Psi[node] = MatrixTensor(edges()[e], Psi[node], node.nChildren());
+		Psi[node] = matrixTensor(edges()[e], Psi[node], node.nChildren());
 	}
 
 	QROrthogonal(Psi, tree);
@@ -79,7 +79,7 @@ TensorTreecd MatrixTensorTree::BottomUpNormalized(const Tree& tree) const {
 bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double eps) {
 	auto bottomup = Psi.BottomUpNormalized(tree);
 	for (const Node& node : tree) {
-		auto x = Contraction(bottomup[node], bottomup[node], node.nChildren());
+		auto x = contraction(bottomup[node], bottomup[node], node.nChildren());
 		auto r = residual(x, identityMatrixcd(x.dim1()));
 		if (r > eps) {
 			cerr << "bottom-up normalization failed.\n";
@@ -93,7 +93,7 @@ bool IsWorking_topdown(const MatrixTensorTree& Psi, const Tree& tree, double eps
 	auto topdown = Psi.TopDownNormalized(tree);
 	for (const Edge& e : tree.Edges()) {
 		const Node& node = e.down();
-		auto x = Contraction(topdown[node], topdown[node], node.childIdx());
+		auto x = contraction(topdown[node], topdown[node], node.childIdx());
 		auto r = residual(x, identityMatrixcd(x.dim1()));
 		if (r > eps) {
 			cerr << "top-down normalization failed.\n";

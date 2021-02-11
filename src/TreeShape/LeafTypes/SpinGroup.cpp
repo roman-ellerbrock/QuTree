@@ -43,7 +43,7 @@ void SpinGroup::InitSPF(Tensorcd& A) const {
 		}
 	}
 
-	GramSchmidt(A);
+	gramSchmidt(A);
 }
 
 

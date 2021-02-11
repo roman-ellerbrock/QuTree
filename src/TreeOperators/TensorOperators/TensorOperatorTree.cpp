@@ -48,7 +48,7 @@ TensorOperatorTree::TensorOperatorTree(const Tree& tree) {
 void TensorOperatorTree::Occupy(const Tree& tree) {
 	for (const Node& node : tree) {
 		Tensorcd& Phi = operator[](node);
-		Phi.Zero();
+		Phi.zero();
 		for (size_t i = 0; i < Phi.shape().lastDimension(); ++i) {
 			Phi(i, i) = 1.;
 		}

@@ -63,7 +63,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	}
 
 	// orthonormalize
-	GramSchmidt(Phi);
+	gramSchmidt(Phi);
 }
 
 template<typename T>
@@ -141,7 +141,7 @@ void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
 			Tensor<T>& Phi = Psi[node];
-			Matrix<T> S = Phi.DotProduct(Phi);
+			Matrix<T> S = Phi.dotProduct(Phi);
 			auto spec = diagonalize(S);
 			const auto& trafo = spec.first;
 			const auto& eigenval = spec.second;
@@ -160,8 +160,8 @@ void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 			}
 
 			const Node& parent = node.parent();
-			Psi[parent] = MatrixTensor(SW, Psi[parent], node.childIdx());
-			GramSchmidt(Phi);
+			Psi[parent] = matrixTensor(SW, Psi[parent], node.childIdx());
+			gramSchmidt(Phi);
 		}
 	}
 }
@@ -172,10 +172,10 @@ void QROrthogonal(TensorTree<T>& Psi, const Tree& tree) {
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
 			Tensor<T>& Phi = Psi[node];
-			Tensor<T> nPhi = QR(Phi);
-			auto S = nPhi.DotProduct(Phi);
+			Tensor<T> nPhi = qr(Phi);
+			auto S = nPhi.dotProduct(Phi);
 			const Node& parent = node.parent();
-			Psi[parent] = MatrixTensor(S, Psi[parent], node.childIdx());
+			Psi[parent] = matrixTensor(S, Psi[parent], node.childIdx());
 			Psi[node] = nPhi;
 		}
 	}
@@ -186,7 +186,7 @@ void QROrthogonal(TensorTree<T>& Psi, const Tree& tree) {
 template <typename T>
 void Orthonormal(TensorTree<T>& Psi, const Tree& tree) {
 	for (const Node& node : tree) {
-		GramSchmidt(Psi[node]);
+		gramSchmidt(Psi[node]);
 	}
 }
 

@@ -55,7 +55,7 @@ SUITE (SymTensorTree) {
 		size_t k = 1;
 		auto Aflat = toMatrix(A, k);
 		auto A2 = toTensor(Aflat, A.shape(), k);
-		CHECK_CLOSE(0., Residual(A, A2), eps);
+		CHECK_CLOSE(0., residual(A, A2), eps);
 	}
 
 	TEST_FIXTURE(TTFactory, canonicalTensors) {
@@ -68,7 +68,7 @@ SUITE (SymTensorTree) {
 				const Tensorcd& w = sPsi.weighted_[node];
 				if (node.isBottomlayer()) { continue; }
 				for (size_t k = 0; k < node.nChildren(); ++k) {
-					auto rho = Contraction(w, w, k);
+					auto rho = contraction(w, w, k);
 					for (size_t l = 0; l < rho.dim1(); ++l) {
 						rho(l, l) = 0.;
 					}
@@ -85,14 +85,14 @@ SUITE (SymTensorTree) {
 		for (const Node& node : tree_) {
 			if (node.isToplayer()) { continue; }
 			const Tensorcd& phi = sPsi.up_[node];
-			auto s = phi.DotProduct(phi);
+			auto s = phi.dotProduct(phi);
 			CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim2())), eps);
 		}
 
 		for (const Node& node : tree_) {
 			if (node.isToplayer()) { continue; }
 			const Tensorcd& phi = sPsi.down_[node];
-			auto s = Contraction(phi, phi, node.childIdx());
+			auto s = contraction(phi, phi, node.childIdx());
 			CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim2())), eps);
 		}
 	}
@@ -106,11 +106,11 @@ SUITE (SymTensorTree) {
 			for (const Node& node : tree_) {
 				if (node.isToplayer()) { continue; }
 				const Tensorcd& w = sPsi.weighted_[node];
-				auto rho = Contraction(w, w, node.parentIdx());
+				auto rho = contraction(w, w, node.parentIdx());
 				auto B = calculateB(sPsi.weighted_[node], node.parentIdx());
 //				auto w2 = MBatrixTensor(B, sPsi.up_[node], node.parentIdx());
-				auto w2 = TensorMatrix(sPsi.up_[node], B, node.parentIdx());
-					CHECK_CLOSE(0., Residual(sPsi.weighted_[node], w2), eps);
+				auto w2 = tensorMatrix(sPsi.up_[node], B, node.parentIdx());
+					CHECK_CLOSE(0., residual(sPsi.weighted_[node], w2), eps);
 			}
 
 			/// Check downwards coherence: sqrt(rho)*down_ = weighted
@@ -119,8 +119,8 @@ SUITE (SymTensorTree) {
 				const Node& parent = node.parent();
 				auto B = calculateB(sPsi.weighted_[parent], node.childIdx());
 //				auto w2 = MatrixTensor(B, sPsi.down_[node], node.childIdx());
-				auto w2 = TensorMatrix(sPsi.down_[node], B, node.childIdx());
-				CHECK_CLOSE(0., Residual(sPsi.weighted_[parent], w2), eps);
+				auto w2 = tensorMatrix(sPsi.down_[node], B, node.childIdx());
+				CHECK_CLOSE(0., residual(sPsi.weighted_[parent], w2), eps);
 			}
 		}
 	}
@@ -213,7 +213,7 @@ SUITE (SymTensorTree) {
 		}
 
 		for (const Node& node : tree_) {
-			auto s = spsi_.weighted_[node].DotProduct(Hschi_.weighted_[node]);
+			auto s = spsi_.weighted_[node].dotProduct(Hschi_.weighted_[node]);
 			CHECK_CLOSE(0., residual(s, S[node]), eps);
 		}
 	}

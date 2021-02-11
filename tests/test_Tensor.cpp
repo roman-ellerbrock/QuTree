@@ -98,23 +98,23 @@ SUITE (Tensor) {
 		Tensorcd A(tdim);
 		Tensorcd B(tdim);
 		auto same = A - B;
-		auto s = same.DotProduct(same);
+		auto s = same.dotProduct(same);
 		auto delta = s.frobeniusNorm();
 			CHECK_CLOSE(delta, 0., eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_FileIO) {
 		/// Test Tensor I/O
-		A.Write("tensor1.dat");
+		A.write("tensor1.dat");
 		Tensorcd B("tensor1.dat");
 		Tensorcd C = A - B;
-		Matrixcd s = C.DotProduct(C);
+		Matrixcd s = C.dotProduct(C);
 		double residual = abs(s.trace());
 			CHECK_CLOSE(residual, 0., eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Product) {
-		Matrixcd x = Contraction(A, B, 0);
+		Matrixcd x = contraction(A, B, 0);
 		x.write("Tensor_Product.dat");
 		Matrixcd s("Tensor_Product.dat");
 		auto r = residual(s, x);
@@ -122,7 +122,7 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Matrix_Product) {
-		Matrixcd x = Contraction(A, B, 1);
+		Matrixcd x = contraction(A, B, 1);
 		x.write("Tensor_Product_0.dat");
 		Matrixcd s("Tensor_Product_0.dat");
 		auto r = residual(x, s);
@@ -133,56 +133,56 @@ SUITE (Tensor) {
 		{
 			// Copy asignment operator
 			auto Aca = A;
-				CHECK_CLOSE(0., Residual(A, Aca), eps);
+				CHECK_CLOSE(0., residual(A, Aca), eps);
 		}
 
 		{
 			// Copy constructor
 			auto Acc(A);
-				CHECK_CLOSE(0., Residual(A, Acc), eps);
+				CHECK_CLOSE(0., residual(A, Acc), eps);
 		}
 
 		{
 			// Move asignment operator
 			auto Ama = move(NewTensor());
-				CHECK_CLOSE(0., Residual(A, Ama), eps);
+				CHECK_CLOSE(0., residual(A, Ama), eps);
 		}
 
 		{
 			// Move constructor
 			auto Amc(NewTensor());
-				CHECK_CLOSE(0., Residual(A, Amc), eps);
+				CHECK_CLOSE(0., residual(A, Amc), eps);
 		}
 	}
 
 	TEST_FIXTURE (TensorFactory, AdjustDimension_inc) {
-		GramSchmidt(A);
+		gramSchmidt(A);
 		size_t leaf = 1;
 		size_t dim = A.shape()[leaf];
 		size_t inc_dim = dim + 1;
 
-		auto C = A.AdjustActiveDim(inc_dim, leaf);
-		A = A.AdjustActiveDim(inc_dim, leaf);
-		auto s = Contraction(C, A, C.shape().lastIdx());
+		auto C = A.adjustActiveDim(inc_dim, leaf);
+		A = A.adjustActiveDim(inc_dim, leaf);
+		auto s = contraction(C, A, C.shape().lastIdx());
 		auto res = residual(s, identityMatrix<complex<double>>(2));
 			CHECK_CLOSE(0., res, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, AdjustDimension_inc_dec) {
-		GramSchmidt(A);
+		gramSchmidt(A);
 		size_t leaf = 1;
 		size_t dim = A.shape()[leaf];
 		size_t inc_dim = dim + 1;
 
-		auto C = A.AdjustActiveDim(inc_dim, leaf);
-		C = C.AdjustActiveDim(dim, leaf);
-		auto s = Contraction(C, A, C.shape().lastIdx());
+		auto C = A.adjustActiveDim(inc_dim, leaf);
+		C = C.adjustActiveDim(dim, leaf);
+		auto s = contraction(C, A, C.shape().lastIdx());
 		auto res = residual(s, identityMatrix<complex<double>>(2));
 			CHECK_CLOSE(0., res, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, HoleProduct) {
-		Matrixcd s = Contraction(C_, C_, 1);
+		Matrixcd s = contraction(C_, C_, 1);
 			CHECK_EQUAL(shape_c_[1], s.dim1());
 			CHECK_EQUAL(shape_c_[1], s.dim2());
 		double dim = shape_c_.before(1) * shape_c_.after(1);
@@ -194,7 +194,7 @@ SUITE (Tensor) {
 	}
 
 	TEST_FIXTURE (TensorFactory, DotProduct) {
-		Matrixcd s = C2_.DotProduct(C2_);
+		Matrixcd s = C2_.dotProduct(C2_);
 			CHECK_EQUAL(shape_c_[2], s.dim1());
 			CHECK_EQUAL(shape_c_[2], s.dim2());
 		for (size_t i = 0; i < shape_c_[2]; ++i) {
@@ -239,14 +239,14 @@ SUITE (Tensor) {
 		Tensor_Extension::Generate(A, gen);
 
 		/// Test standard QR
-		Tensorcd Q = QR(A);
-		auto S = Q.DotProduct(Q);
+		Tensorcd Q = qr(A);
+		auto S = Q.dotProduct(Q);
 			CHECK_CLOSE(0., residual(S, identityMatrixcd(S.dim1())), eps);
 
 		/// Test QR for other than last mode
 		for (size_t i = 0; i < shape.order(); ++i) {
-			Tensorcd Q2 = QR(A, i);
-			auto S1 = Contraction(Q2, Q2, i);
+			Tensorcd Q2 = qr(A, i);
+			auto S1 = contraction(Q2, Q2, i);
 				CHECK_CLOSE(0., residual(S1, identityMatrixcd(S1.dim1())), eps);
 		}
 	}

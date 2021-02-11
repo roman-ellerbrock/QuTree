@@ -16,11 +16,11 @@ namespace TreeFunctions {
 		if (!node.isBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.child(k);
-				Ket = MatrixTensor(S[child], Ket, k);
+				Ket = matrixTensor(S[child], Ket, k);
 			}
 		}
 		size_t last = node.shape().lastIdx();
-		Contraction(S[node], Bra, Ket, last);
+		contraction(S[node], Bra, Ket, last);
 
 	}
 
@@ -56,14 +56,14 @@ namespace TreeFunctions {
 			for (size_t k = 0; k < parent.nChildren(); ++k) {
 				if (k != child_idx) {
 					const Node& child = parent.child(k);
-					Ket = MatrixTensor(S[child], Ket, k);
+					Ket = matrixTensor(S[child], Ket, k);
 				}
 			}
 		}
 
 		Ket = multStateAB(Rho[parent], Ket);
 
-		Contraction(Rho[node], Bra, Ket, child_idx);
+		contraction(Rho[node], Bra, Ket, child_idx);
 	}
 
 	template<typename T>

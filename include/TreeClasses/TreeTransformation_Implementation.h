@@ -34,7 +34,7 @@ namespace TreeFunctions {
 	template <typename T>
 	void TransformEdgeDown(TensorTree<T>& Chi, const TensorTree<T>& Psi, const Matrix<T>& M, const Edge& e) {
 		const Node& node = e.down();
-		Chi[node] = TensorMatrix(Psi[node], M, e.downIdx());
+		Chi[node] = tensorMatrix(Psi[node], M, e.downIdx());
 	}
 
 	template <typename T>
@@ -53,7 +53,7 @@ namespace TreeFunctions {
 
 		for (const Edge& e : tree.Edges()) {
 			const Node& parent = e.up();
-			Chi[e] = MatrixTensor(B_inv[e], Psi[parent], e.upIdx());
+			Chi[e] = matrixTensor(B_inv[e], Psi[parent], e.upIdx());
 		}
 
 		return Chi;
@@ -62,7 +62,7 @@ namespace TreeFunctions {
 	template <typename T>
 	void TransformEdgeUp(TensorTree<T>& Chi, const TensorTree<T>& Psi, const Matrix<T>& Mi, const Edge& e) {
 		const Node& parent = e.up();
-		Chi[parent] = MatrixTensor(Mi, Psi[parent], e.upIdx());
+		Chi[parent] = matrixTensor(Mi, Psi[parent], e.upIdx());
 	}
 
 	template <typename T>
@@ -70,10 +70,10 @@ namespace TreeFunctions {
 		const Matrix<T>& M_inv, const Edge& e) {
 
 		const Node& node = e.down();
-		Chi[node] = TensorMatrix(Psi[node], M, node.parentIdx());
+		Chi[node] = tensorMatrix(Psi[node], M, node.parentIdx());
 
 		const Node& parent = e.up();
-		Chi[parent] = MatrixTensor(M_inv, Psi[parent], node.childIdx());
+		Chi[parent] = matrixTensor(M_inv, Psi[parent], node.childIdx());
 	}
 
 	template <typename T>
@@ -83,7 +83,7 @@ namespace TreeFunctions {
 		for (const Edge& e : tree.Edges()) {
 			TransformEdgeUp(Chi, Psi, M_inv[e], e);
 			const Node& node = e.down();
-			auto x = Contraction(Chi[node], Chi[node], node.childIdx());
+			auto x = contraction(Chi[node], Chi[node], node.childIdx());
 			node.info();
 			x.print();
 		}

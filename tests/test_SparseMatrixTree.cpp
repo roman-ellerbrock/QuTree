@@ -58,7 +58,7 @@ SUITE (SparseMatrixTree) {
 			CHECK_CLOSE(0.25, real(hmat[child](0, 0)), 0E-12);
 	}
 
-	TEST_FIXTURE (HelperFactory, Contraction) {
+	TEST_FIXTURE (HelperFactory, contraction) {
 		SparseMatrixTreecd mats = TreeFunctions::Represent(M_, Psi_, tree_);
 		SparseMatrixTreecd holes(M_, tree_);
 		TreeFunctions::Contraction(holes, Psi_, Psi_, mats, tree_);

@@ -27,14 +27,14 @@ namespace TreeFunctions {
 		/// do not switch to node.ChildIdx here:
 		/// This does not work with TensorOperators
 		shape.setDimension(n_occ, shape.lastIdx());
-		Phi = Phi.AdjustDimensions(shape);
+		Phi = Phi.adjustDimensions(shape);
 
 		/// Adjust parent content
 		TensorShape& pshape = parent.shape();
 		size_t k = node.childIdx();
-		Phi = Phi.AdjustDimensions(shape);
+		Phi = Phi.adjustDimensions(shape);
 		pshape.setDimension(n_occ, k);
-		A = A.AdjustDimensions(pshape);
+		A = A.adjustDimensions(pshape);
 	}
 
 	template<typename T>
@@ -52,7 +52,7 @@ namespace TreeFunctions {
 	void Adjust(TensorTree<T>& Psi, const Tree& newtree) {
 		for (const Node& node : newtree) {
 			Tensor<T>& Phi = Psi[node];
-			Phi = Phi.AdjustDimensions(node.shape());
+			Phi = Phi.adjustDimensions(node.shape());
 		}
 	}
 

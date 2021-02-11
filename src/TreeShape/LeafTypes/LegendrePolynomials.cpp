@@ -48,7 +48,7 @@ void LegendrePolynomials::InitSPF(Tensorcd& phi) const {
 		}
 
 	// orthonormalize
-	GramSchmidt(phi);
+	gramSchmidt(phi);
 }
 
 Matrixd LegendrePolynomials::InitXmat() {

@@ -28,8 +28,8 @@ namespace TreeFunctions {
 		size_t l0 = Bshape.lastDimension();
 		for (size_t l = 0; l < l0; ++l) {
 			auto mat = subMatrix(B, l);
-			auto C = MatrixTensor(mat, Phi, 0);
-			auto h = Contraction(Phi, C, shape.lastIdx());
+			auto C = matrixTensor(mat, Phi, 0);
+			auto h = contraction(Phi, C, shape.lastIdx());
 			hs.emplace_back(h);
 		}
 		return hs;
@@ -56,12 +56,12 @@ namespace TreeFunctions {
 					const Node& child = node.child(k);
 					const MatrixList& subhs = H[child];
 					const Matrixcd& subh = subhs[Lbreak[k]];
-					Atilde = MatrixTensor(subh, Atilde, k);
+					Atilde = matrixTensor(subh, Atilde, k);
 				}
 				Atilde *= B(Ltot);
 				C += Atilde;
 			}
-			hs.emplace_back(Contraction(Phi, C, shape.lastIdx()));
+			hs.emplace_back(contraction(Phi, C, shape.lastIdx()));
 		}
 
 		return hs;
@@ -111,17 +111,17 @@ namespace TreeFunctions {
 				if (o != k) {
 					const MatrixList& hs = Hrep[otherchild];
 					size_t idx = Lbreak[o];
-					Atilde = MatrixTensor(hs[idx], Atilde, o);
+					Atilde = matrixTensor(hs[idx], Atilde, o);
 				}
 			}
 			if (!node.isToplayer()) {
 				const MatrixList& rho = Hmean[node];
 				size_t idx = Lbreak.back();
-				Atilde = MatrixTensor(rho[idx], Atilde, node.parentIdx());
+				Atilde = matrixTensor(rho[idx], Atilde, node.parentIdx());
 			}
 			Atilde *= B[L];
 			size_t lkidx = Lbreak[k];
-			hmeans[lkidx] += Contraction(Phi, Atilde, k);
+			hmeans[lkidx] += contraction(Phi, Atilde, k);
 		}
 
 		return hmeans;
