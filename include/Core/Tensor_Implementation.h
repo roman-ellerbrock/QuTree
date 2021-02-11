@@ -236,7 +236,7 @@ void Tensor<T>::write(ostream& os) const {
 	os.write("TENS", 4);
 
 	// Write the TensorDim
-	shape_.Write(os);
+	shape_.write(os);
 
 	// Write the size
 	int32_t size = sizeof(T);
@@ -267,7 +267,7 @@ void Tensor<T>::read(istream& is) {
 
 	// Read the TensorDim
 	TensorShape newtdim;
-	newtdim.ReadDim(is);
+	newtdim.readDim(is);
 
 	// Resize the Tensor
 	(*this) = Tensor<T>(newtdim, false);

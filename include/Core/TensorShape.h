@@ -33,13 +33,13 @@ public:
 
 	~TensorShape() = default;
 
-	void Initialize(const vector<size_t>& dim);
+	void initialize(const vector<size_t>& dim);
 
-	void Write(ostream& os) const;
+	void write(ostream& os) const;
 
-	void Write(const string& filename) const;
+	void write(const string& filename) const;
 
-	void ReadDim(istream& is);
+	void readDim(istream& is);
 
 	inline size_t order() const { return size(); }
 

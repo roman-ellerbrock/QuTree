@@ -78,7 +78,7 @@ SUITE (Tensor) {
 	TEST (TensorDim_FileIO) {
 		/// Create a TensorDim, write to file, read in again
 		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
-		tdim.Write("tdim.dat");
+		tdim.write("tdim.dat");
 		TensorShape odim("tdim.dat");
 		bool same = odim == tdim;
 			CHECK_EQUAL(same, true);

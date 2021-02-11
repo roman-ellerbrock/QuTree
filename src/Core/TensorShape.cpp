@@ -34,7 +34,7 @@ vector<size_t> ContractDimensionsAfter(const vector<size_t>& dim) {
 
 TensorShape::TensorShape(const vector<size_t>& dim)
 	: TensorShape() {
-	Initialize(dim);
+	initialize(dim);
 }
 
 TensorShape::TensorShape(const initializer_list<size_t>& dims)
@@ -42,16 +42,16 @@ TensorShape::TensorShape(const initializer_list<size_t>& dims)
 
 TensorShape::TensorShape(istream& is)
 	: TensorShape() {
-	ReadDim(is);
+	readDim(is);
 }
 
 TensorShape::TensorShape(const string& file)
 	: TensorShape() {
 	ifstream is(file);
-	ReadDim(is);
+	readDim(is);
 }
 
-void TensorShape::Initialize(const vector<size_t>& dim) {
+void TensorShape::initialize(const vector<size_t>& dim) {
 	assert(!dim.empty());
 	resize(dim.size());
 	for (size_t k = 0; k < dim.size(); ++k) {
@@ -63,7 +63,7 @@ void TensorShape::Initialize(const vector<size_t>& dim) {
 	totalDimension_ = after_.front() * front();
 }
 
-void TensorShape::Write(ostream& os) const {
+void TensorShape::write(ostream& os) const {
 	// Write marker
 	os.write("TDIM", 4);
 
@@ -78,12 +78,12 @@ void TensorShape::Write(ostream& os) const {
 	}
 }
 
-void TensorShape::Write(const string& filename) const {
+void TensorShape::write(const string& filename) const {
 	ofstream os(filename);
-	Write(os);
+	write(os);
 }
 
-void TensorShape::ReadDim(istream& is) {
+void TensorShape::readDim(istream& is) {
 	// Check if binary string contains a shape
 	char check[5];
 	is.read(check, 4);
@@ -130,7 +130,7 @@ void TensorShape::setDimension(size_t act, size_t k) {
 	vector<size_t> dim = dimensions();
 	assert(k < dim.size());
 	dim[k] = act;
-	Initialize(dim);
+	initialize(dim);
 }
 
 void TensorShape::print(ostream& os) const {
@@ -150,7 +150,7 @@ ostream& operator<<(ostream& os, const TensorShape& tdim) {
 }
 
 istream& operator>>(istream& is, TensorShape& tdim) {
-	tdim.ReadDim(is);
+	tdim.readDim(is);
 	return is;
 }
 
@@ -169,7 +169,7 @@ bool operator!=(const TensorShape& tdima, const TensorShape& tdimb) {
 TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimension) {
 	shape[target] = new_dimension;
 	auto dims = shape.dimensions();
-	shape.Initialize(dims);
+	shape.initialize(dims);
 	return shape;
 }
 
