@@ -13,20 +13,32 @@ SUITE (SymTensorTree) {
 
 	class TTFactory {
 		public:
-		TTFactory()
-		{
+		TTFactory() {
 			tree_ = TreeFactory::BalancedTree(10, 2, 3);
 			mt19937 gen(34676949);
 			psi_ = TensorTreecd(gen, tree_, true);
 			chi_ = TensorTreecd(gen, tree_, false);
+			spsi_ = SymTensorTree(psi_, tree_);
+			schi_ = SymTensorTree(chi_, tree_);
+
+			/// Operator initialization
+			auto I = &LeafInterface::Identity;
+			for (size_t l = 0; l < tree_.nLeaves(); ++l) { I_.push_back(I, l); }
+			stree_ = make_shared<SparseTree>(SparseTree(I_, tree_, false));
+			SparseMatrixTreecd x1(stree_, tree_);
+			SparseMatrixTreecd x2(stree_, tree_);
 		}
 
-		~TTFactory() =
-		default;
+		~TTFactory() = default;
 
 		Tree tree_;
 		TensorTreecd psi_;
 		TensorTreecd chi_;
+		SymTensorTree spsi_;
+		SymTensorTree schi_;
+
+		MLOcd I_;
+		shared_ptr<SparseTree> stree_;
 	};
 
 	TEST (TensorFlatten) {
@@ -137,6 +149,74 @@ SUITE (SymTensorTree) {
 			auto S = TreeFunctions::DotProduct(psi, psiup, tree_);
 			auto s = S[tree_.TopNode()];
 				CHECK_CLOSE(0., Residual(s, IdentityMatrixcd(s.Dim1())), eps);
+		}
+	}
+
+	TEST_FIXTURE(TTFactory, symOverlap) {
+		SymTensorTree spsi(psi_, tree_);
+		SymTensorTree schi(chi_, tree_);
+		auto S = TreeFunctions::symDotProduct(spsi, schi, tree_);
+		auto s_top = S[tree_.TopNode()].Trace();
+			CHECK_CLOSE(-0.00557989, real(s_top), eps);
+			CHECK_CLOSE(0., imag(s_top), eps);
+		for (const Node& node : tree_) {
+			CHECK_CLOSE(0., abs(s_top - S[node].Trace()), eps);
+		}
+	}
+
+	TEST_FIXTURE(TTFactory, symRepresent) {
+		/**
+		 * Rationale:
+		 * - Represent operator using sym-routine and compare
+		 *   to standard represent.
+		 */
+		SparseMatrixTreecd x1(stree_, tree_);
+		SparseMatrixTreecd x2(stree_, tree_);
+		SymMatrixTree mat({x1, x2});
+//		TreeFunctions::symRepresent(mat, spsi_, schi_, I_, tree_);
+
+		psi_.print(tree_);
+		chi_.print(tree_);
+//		auto hmat = TreeFunctions::Represent(I_, psi_, chi_, tree_);
+		SparseMatrixTreecd hmat(stree_, tree_);
+		auto S = TreeFunctions::DotProduct(psi_, chi_, tree_);
+		cout << "s:\n";
+		S.print(tree_);
+		getchar();
+		TreeFunctions::Represent(hmat, I_, psi_, chi_, tree_);
+//		SparseMatrixTreecd hhole(stree_, tree_);
+//		TreeFunctions::Contraction(hhole, psi_, chi_, hmat, tree_);
+
+		for (const Node* node_ptr : *stree_) {
+			const Node& node = *node_ptr;
+			node.info();
+			mat.first[node].print();
+			hmat[node].print();
+			CHECK_CLOSE(0., Residual(mat.first[node], hmat[node]), eps);
+		}
+	}
+
+	TEST_FIXTURE(TTFactory, symRepresentOverlap) {
+		/**
+		 * Rationale:
+		 * - Calculate overlap via representing identity-operators and
+		 *   Applying them to wavefunction, then calculating overlap
+		 */
+		auto S = TreeFunctions::symDotProduct(spsi_, schi_, tree_);
+		SparseMatrixTreecd x1(stree_, tree_);
+		SparseMatrixTreecd x2(stree_, tree_);
+		SymMatrixTree mat({x1, x2});
+		TreeFunctions::symRepresent(mat, spsi_, schi_, I_, tree_);
+
+		auto Hschi_ = schi_;
+		for (const Node& node : tree_) {
+			Hschi_.weighted_[node] = TreeFunctions::symApply(
+				schi_.weighted_[node], mat, I_, node);
+		}
+
+		for (const Node& node : tree_) {
+			auto s = spsi_.weighted_[node].DotProduct(Hschi_.weighted_[node]);
+			CHECK_CLOSE(0., Residual(s, S[node]), eps);
 		}
 	}
 

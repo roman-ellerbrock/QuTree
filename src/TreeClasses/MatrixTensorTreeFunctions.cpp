@@ -62,6 +62,7 @@ namespace TreeFunctions {
 		const Node& node) {
 		if (node.isToplayer() || !hHole.Active(node)) { return Phi; }
 		return TensorMatrix(Phi, hHole[node], node.parentIdx());
+		/// @TODO: WAS THIS USED?? For Applying operators, this is wrong!
 	}
 
 /*	Tensorcd symApply(const Tensorcd& Phi,
