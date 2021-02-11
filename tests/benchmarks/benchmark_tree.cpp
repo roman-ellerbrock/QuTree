@@ -66,7 +66,7 @@ auto sparse_factormatrixtree_sample(SparseMatrixTreecd& fmat, const MLOcd& M,
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		TreeFunctions::Represent(fmat, M, Psi, tree);
+		TreeFunctions::represent(fmat, M, Psi, tree);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
@@ -115,7 +115,7 @@ pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nlea
 	MLOcd M(x, 0);
 	M.push_back(x, nleaves - 1);
 	SparseMatrixTreecd fmat(M, tree);
-	TreeFunctions::Represent(fmat, M, Psi, tree);
+	TreeFunctions::represent(fmat, M, Psi, tree);
 	SparseMatrixTreecd hole(M, tree);
 	return sparse_holematrixtree_sample(hole, fmat, M, Psi, tree, nsample);
 }

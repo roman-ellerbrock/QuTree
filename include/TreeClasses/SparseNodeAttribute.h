@@ -25,24 +25,24 @@ public:
 	SparseNodeAttribute(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true, bool inverse = false)
 		: active_(make_shared<SparseTree>(modes, tree, tail, inverse)) {
-		SparseNodeAttribute::Initialize(tree);
+		SparseNodeAttribute::initialize(tree);
 	}
 
 	/// Construct obejct for previously marked active_ nodes
 	SparseNodeAttribute(shared_ptr<SparseTree>& active_,
 		const Tree& tree)
 		: active_(active_) {
-		SparseNodeAttribute::Initialize(tree);
+		SparseNodeAttribute::initialize(tree);
 	}
 
 	/// Construct obejct for previously marked active_ nodes
 	SparseNodeAttribute(const SparseTree& stree, const Tree& tree)
 		: active_(make_shared<SparseTree>(stree)) {
-		SparseNodeAttribute::Initialize(tree);
+		SparseNodeAttribute::initialize(tree);
 	}
 
 	/// Allocate memory. Call only after initializing TreeMarker. Requires default constructor.
-	virtual void Initialize(const Tree& tree) {
+	virtual void initialize(const Tree& tree) {
 		attributes_.resize(Active().size());
 	}
 

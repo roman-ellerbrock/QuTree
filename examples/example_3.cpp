@@ -128,8 +128,8 @@ void paper_1() {
 	/// Represent Operators
 	auto x = &LeafInterface::applyX;
 	MultiLeafOperator<complex<double>> M(x, 0);
-	auto Mrep = TreeFunctions::Represent(M, Psi, tree); /// <Psi|M|Psi>_p
-	auto Mcon = TreeFunctions::Contraction(Psi, Mrep, tree); /// <Psi|M|Psi>_(p)
+	auto Mrep = TreeFunctions::represent(M, Psi, tree); /// <Psi|M|Psi>_p
+	auto Mcon = TreeFunctions::contraction(Psi, Mrep, tree); /// <Psi|M|Psi>_(p)
 	cout << "Hrep:" << endl;
 	Mrep.print();
 	cout << "Hcon:\n";

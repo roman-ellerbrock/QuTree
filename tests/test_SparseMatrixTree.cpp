@@ -52,16 +52,16 @@ SUITE (SparseMatrixTree) {
 	}
 
 	TEST_FIXTURE (HelperFactory, Represent) {
-		SparseMatrixTreecd hmat = TreeFunctions::Represent(M_, Psi_, tree_);
+		SparseMatrixTreecd hmat = TreeFunctions::represent(M_, Psi_, tree_);
 		const Node& top = tree_.TopNode();
 		const Node& child = top.child(0);
 			CHECK_CLOSE(0.25, real(hmat[child](0, 0)), 0E-12);
 	}
 
 	TEST_FIXTURE (HelperFactory, contraction) {
-		SparseMatrixTreecd mats = TreeFunctions::Represent(M_, Psi_, tree_);
+		SparseMatrixTreecd mats = TreeFunctions::represent(M_, Psi_, tree_);
 		SparseMatrixTreecd holes(M_, tree_);
-		TreeFunctions::Contraction(holes, Psi_, Psi_, mats, tree_);
+		TreeFunctions::contraction(holes, Psi_, Psi_, mats, tree_);
 		for (const Node& node : tree_) {
 
 		}
@@ -74,9 +74,9 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE (HelperFactory, IO) {
 		SparseMatrixTreecd hmat(M_, tree_);
-		hmat.Write("SparseMatrixTree.dat");
+		hmat.write("SparseMatrixTree.dat");
 		SparseMatrixTreecd gmat(M_, tree_);
-		gmat.Read("SparseMatrixTree.dat");
+		gmat.read("SparseMatrixTree.dat");
 		const SparseTree& marker = gmat.Active();
 			CHECK_EQUAL(hmat.Size(), gmat.Size());
 		for (size_t i = 0; i < marker.size(); ++i) {

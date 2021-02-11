@@ -181,7 +181,7 @@ SUITE (SymTensorTree) {
 //		cout << "s:\n";
 //		S.print(tree_);
 //		getchar();
-		TreeFunctions::Represent(hmat, I_, psi_, chi_, tree_);
+		TreeFunctions::represent(hmat, I_, psi_, chi_, tree_);
 //		SparseMatrixTreecd hhole(stree_, tree_);
 //		TreeFunctions::Contraction(hhole, psi_, chi_, hmat, tree_);
 

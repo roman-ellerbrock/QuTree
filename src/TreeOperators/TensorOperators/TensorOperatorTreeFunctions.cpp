@@ -51,7 +51,7 @@ namespace TreeFunctions {
 				vector<size_t> Lbreak = indexMapping(Ltot, Bshape);
 
 				Tensorcd Atilde = Phi;
-				/// Apply hs from below
+				/// apply hs from below
 				for (size_t k = 0; k < node.nChildren(); ++k) {
 					const Node& child = node.child(k);
 					const MatrixList& subhs = H[child];

@@ -101,10 +101,10 @@ namespace examples {
 		/// This is a single summand in Eq. (28) of Ref. 1.
 
 		/// The matrix elements of this operator (Eqs. (32) & (33)) are obtained by
-		SparseMatrixTreecd hmat = TreeFunctions::Represent(product_operator, Psi, Psi, tree);
+		SparseMatrixTreecd hmat = TreeFunctions::represent(product_operator, Psi, Psi, tree);
 		/// h-matrices are only required for a subset of nodes and therefore stored as a SparseMatrixTree.
 		/// The contraction of h-matrices (hole matrices, Eqs. (36)) are obtained by
-		SparseMatrixTreecd hhole = TreeFunctions::Contraction(Psi, hmat, tree);
+		SparseMatrixTreecd hhole = TreeFunctions::contraction(Psi, hmat, tree);
 
 		/// There is a lot more about operators, including overloadings, functions of operators, etc.
 		/// However, I will not go into more detail here.

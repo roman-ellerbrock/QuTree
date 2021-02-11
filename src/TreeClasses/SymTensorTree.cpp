@@ -145,7 +145,7 @@ namespace TreeFunctions {
 		assert(!hchild.isToplayer());
 		const Node& parent = hchild.parent();
 
-		Tensorcd hKet = TreeFunctions::ApplyHole(mat, Ket, hchild);
+		Tensorcd hKet = TreeFunctions::applyHole(mat, Ket, hchild);
 
 		if (!parent.isToplayer() && hole.Active(parent)) {
 //			hKet = TensorMatrix(hKet, hole[parent], parent.childIdx());
@@ -169,7 +169,7 @@ namespace TreeFunctions {
 
 	void symRepresent(SymMatrixTree& mat, const SymTensorTree& Bra,
 		const SymTensorTree& Ket, const MLOcd& M, const Tree& tree) {
-		TreeFunctions::Represent(mat.first, M, Bra.up_, Ket.up_, tree);
+		TreeFunctions::represent(mat.first, M, Bra.up_, Ket.up_, tree);
 		TreeFunctions::symContraction(mat.second, Bra.down_, Ket.down_, mat.first, tree);
 	}
 
@@ -181,7 +181,7 @@ namespace TreeFunctions {
 	}
 
 	////////////////////////////////////////////////////////////////////////
-	/// Apply Operators
+	/// apply Operators
 	////////////////////////////////////////////////////////////////////////
 
 	Tensorcd symApplyDownNew(const Tensorcd& Phi, const SparseMatrixTreecd& hHole,
@@ -193,7 +193,7 @@ namespace TreeFunctions {
 
 	Tensorcd symApply(const Tensorcd& Ket,
 		const SymMatrixTree& mats, const MLOcd& M, const Node& node) {
-		Tensorcd hKet = TreeFunctions::Apply(mats.first, Ket, M, node);
+		Tensorcd hKet = TreeFunctions::apply(mats.first, Ket, M, node);
 		return symApplyDownNew(hKet, mats.second, node);
 	}
 
@@ -226,7 +226,7 @@ namespace TreeFunctions {
 			auto ket = Ket.down_[node];
 			const Node& parent = node.parent();
 			size_t child_idx = node.childIdx();
-			/// Apply S with hole in childidx
+			/// apply S with hole in childidx
 			for (size_t k = 0; k < parent.nChildren(); ++k) {
 				if (k != child_idx) {
 					const Node& child = parent.child(k);

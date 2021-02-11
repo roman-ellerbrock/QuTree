@@ -5,7 +5,7 @@
 #include "TreeClasses/SparseMatrixTree.h"
 
 template<typename T>
-void SparseMatrixTree<T>::Initialize(const Tree& tree) {
+void SparseMatrixTree<T>::initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node *const node_ptr : Active()) {
 		const Node& node = *node_ptr;
@@ -24,7 +24,7 @@ void SparseMatrixTree<T>::print(ostream& os) const {
 }
 
 template<typename T>
-void SparseMatrixTree<T>::Write(ostream& os) const {
+void SparseMatrixTree<T>::write(ostream& os) const {
 	os.write("SMTr", 4);
 
 	// write number of nodes
@@ -39,13 +39,13 @@ void SparseMatrixTree<T>::Write(ostream& os) const {
 }
 
 template<typename T>
-void SparseMatrixTree<T>::Write(const string& filename) const {
+void SparseMatrixTree<T>::write(const string& filename) const {
 	ofstream os(filename);
-	Write(os);
+	write(os);
 }
 
 template<typename T>
-void SparseMatrixTree<T>::Read(istream& is) {
+void SparseMatrixTree<T>::read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
@@ -64,19 +64,19 @@ void SparseMatrixTree<T>::Read(istream& is) {
 }
 
 template<typename T>
-void SparseMatrixTree<T>::Read(const string& filename) {
+void SparseMatrixTree<T>::read(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 template<typename T>
 ostream& operator>>(ostream& os, const SparseMatrixTree<T>& hmat) {
-	hmat.Write(os);
+	hmat.write(os);
 }
 
 template<typename T>
 istream& operator<<(istream& is, SparseMatrixTree<T>& hmat) {
-	hmat.Read(is);
+	hmat.read(is);
 }
 
 template class SparseMatrixTree<complex<double>>;

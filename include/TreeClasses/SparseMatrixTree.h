@@ -23,38 +23,38 @@ class SparseMatrixTree : public SparseNodeAttribute<Matrix<T>>{
 public:
 	using SparseNodeAttribute<Matrix<T>>::Active;
 	using SparseNodeAttribute<Matrix<T>>::operator[];
-	using SparseNodeAttribute<Matrix<T>>::Initialize;
+	using SparseNodeAttribute<Matrix<T>>::initialize;
 	using SparseNodeAttribute<Matrix<T>>::Size;
 
 	/// Create HoleMatrixTree for a given tree-marker
 	SparseMatrixTree(shared_ptr<SparseTree>& active_, const Tree& tree)
 	: SparseNodeAttribute<Matrix<T>>(active_, tree) {
-		Initialize(tree);
+		initialize(tree);
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseMatrixTree(const MLO<T>& M, const Tree& tree, bool tail = true, bool inverse_tree = false)
 		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree, tail, inverse_tree) {
-		Initialize(tree);
+		initialize(tree);
 	}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseMatrixTree(const vector<size_t>& targets, const Tree& tree, bool tail = true, bool inverse_tree = false)
 		: SparseNodeAttribute<Matrix<T>>(targets, tree, tail, inverse_tree) {
-		Initialize(tree);
+		initialize(tree);
 	}
 
 	~SparseMatrixTree() = default;
 
 	/// Create Matrices for active_ nodes in the tree
-	void Initialize(const Tree& tree) override;
+	void initialize(const Tree& tree) override;
 
 	/// I/O
 	void print(ostream& os = cout) const;
-	void Write(ostream& os) const;
-	void Write(const string& filename) const;
-	void Read(istream& is);
-	void Read(const string& filename);
+	void write(ostream& os) const;
+	void write(const string& filename) const;
+	void read(istream& is);
+	void read(const string& filename);
 };
 
 template<typename T>

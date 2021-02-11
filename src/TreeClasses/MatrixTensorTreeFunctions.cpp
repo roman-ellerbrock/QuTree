@@ -10,7 +10,7 @@ namespace TreeFunctions {
 		const Tree& tree) {
 
 		const TensorTreecd& Psi_up = Psi.bottomUpNormalized(tree);
-		TreeFunctions::Represent(mat, M, Psi_up, tree);
+		TreeFunctions::represent(mat, M, Psi_up, tree);
 	}
 
 	void ContractionLocal(SparseMatrixTreecd& hole, const Tensorcd& Phi,
@@ -18,7 +18,7 @@ namespace TreeFunctions {
 		assert(!hchild.isToplayer());
 		const Node& parent = hchild.parent();
 
-		Tensorcd hPhi = TreeFunctions::ApplyHole(hole, Phi, hchild);
+		Tensorcd hPhi = TreeFunctions::applyHole(hole, Phi, hchild);
 
 		if (!parent.isToplayer() && hole.Active(parent)) {
 			hPhi = tensorMatrix(hPhi, hole[parent], parent.childIdx());

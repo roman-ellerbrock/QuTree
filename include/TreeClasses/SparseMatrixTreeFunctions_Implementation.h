@@ -13,7 +13,7 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	Matrix<T> RepresentUpper(const SparseMatrixTree<T>& hmat,
+	Matrix<T> representUpper(const SparseMatrixTree<T>& hmat,
 		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node) {
 		Tensor<T> hKet(Ket);
 		for (size_t l = 0; l < node.nChildren(); l++) {
@@ -33,19 +33,19 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void RepresentLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
+	void representLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node) {
 		if (!mats.Active(node)) { return; }
 
 		if (node.isBottomlayer()) {
 			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf());
 		} else {
-			mats[node] = RepresentUpper(mats, Bra, Ket, node);
+			mats[node] = representUpper(mats, Bra, Ket, node);
 		}
 	}
 
 	template<typename T>
-	void Represent(SparseMatrixTree<T>& hmat,
+	void represent(SparseMatrixTree<T>& hmat,
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const Tree& tree) {
 		assert(Bra.size() == Ket.size());
@@ -53,51 +53,51 @@ namespace TreeFunctions {
 		for (size_t n = 0; n < active.size(); ++n) {
 			const Node& node = active.MCTDHNode(n);
 			if (!node.isToplayer()) {
-				RepresentLayer(hmat, Bra[node], Ket[node], M, node);
+				representLayer(hmat, Bra[node], Ket[node], M, node);
 			}
 		}
 	}
 
 	template<typename T>
-	void Represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
+	void represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
 		const TensorTree<T>& Psi, const Tree& tree) {
-		Represent(hmat, M, Psi, Psi, tree);
+		represent(hmat, M, Psi, Psi, tree);
 	}
 
 	template<typename T>
-	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Bra,
+	SparseMatrixTree<T> represent(const MLO<T>& M, const TensorTree<T>& Bra,
 		const TensorTree<T>& Ket, const Tree& tree) {
 		SparseMatrixTree<T> hmat(M, tree);
-		Represent(hmat, M, Bra, Ket, tree);
+		represent(hmat, M, Bra, Ket, tree);
 		return hmat;
 	}
 
 	template<typename T>
-	SparseMatrixTree<T> Represent(const MLO<T>& M, const TensorTree<T>& Psi,
+	SparseMatrixTree<T> represent(const MLO<T>& M, const TensorTree<T>& Psi,
 		const Tree& tree) {
 		SparseMatrixTree<T> hmat(M, tree);
-		Represent(hmat, M, Psi, tree);
+		represent(hmat, M, Psi, tree);
 		return hmat;
 	}
 
 	template<typename T>
-	void Represent(SparseMatrixTrees<T>& Mats, const SOP<T>& sop,
+	void represent(SparseMatrixTrees<T>& Mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
 		assert(Mats.size() == sop.size());
 		for (size_t l = 0; l < sop.size(); ++l) {
-			Represent(Mats[l], sop[l], Bra, Ket, tree);
+			represent(Mats[l], sop[l], Bra, Ket, tree);
 		}
 	}
 
 	template<typename T>
-	SparseMatrixTrees<T> Represent(const SOP<T>& sop,
+	SparseMatrixTrees<T> represent(const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		shared_ptr<SparseTree>& stree, const Tree& tree) {
 
 		vector<SparseMatrixTree<T>> Mats;
 		for (size_t l = 0; l < sop.size(); ++l) {
 			SparseMatrixTree<T> M(stree, tree);
-			Represent(M, sop[l], Bra, Ket, tree);
+			represent(M, sop[l], Bra, Ket, tree);
 			Mats.push_back(M);
 		}
 		return Mats;
@@ -105,10 +105,10 @@ namespace TreeFunctions {
 
 
 	template<typename T>
-	void Represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
+	void represent(SOPMatrixTrees<T>& mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
-		Represent(mats.matrices_, sop, Bra, Ket, tree);
-		Contraction(mats.contractions_, mats.matrices_, Bra, Ket, tree);
+		represent(mats.matrices_, sop, Bra, Ket, tree);
+		contraction(mats.contractions_, mats.matrices_, Bra, Ket, tree);
 	}
 
 ////////////////////////////////////////////////////////////////////////
@@ -116,10 +116,10 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	SparseMatrixTree<T> Contraction(const TensorTree<T>& Psi,
+	SparseMatrixTree<T> contraction(const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
 		SparseMatrixTree<T> Con(mats);
-		Contraction(Con, Psi, mats, tree);
+		contraction(Con, Psi, mats, tree);
 		return Con;
 	}
 
@@ -135,7 +135,7 @@ namespace TreeFunctions {
 				assert(holes.Active(node));
 
 				const Node& parent = node.parent();
-				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
+				Tensor<T> hKet = applyHole(mats, Ket[parent], node);
 				if (!parent.isToplayer()) {
 					if (!marker.Active(parent)) {
 						cerr << "Error in Contraction of operator representation:\n";
@@ -154,7 +154,7 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho,
 		const SparseTree& marker, const Tree& tree) {
 
@@ -166,7 +166,7 @@ namespace TreeFunctions {
 				assert(holes.Active(node));
 
 				const Node& parent = node.parent();
-				Tensor<T> hKet = ApplyHole(mats, Ket[parent], node);
+				Tensor<T> hKet = applyHole(mats, Ket[parent], node);
 				if (!parent.isToplayer()) {
 					if (marker.Active(parent)) {
 						hKet = multStateAB(holes[parent], hKet);
@@ -182,56 +182,56 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
 		Contraction(holes, Bra, Ket, mats, holes.Active(), tree);
 	}
 
 	template<typename T>
-	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho, const Tree& tree) {
-		Contraction(holes, Bra, Ket, mats, rho, holes.Active(), tree);
+		contraction(holes, Bra, Ket, mats, rho, holes.Active(), tree);
 	}
 
 	template<typename T>
-	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
+	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Psi,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
-		Contraction(holes, Psi, Psi, mats, tree);
+		contraction(holes, Psi, Psi, mats, tree);
 	}
 
 	template<typename T>
-	void Contraction(vector<SparseMatrixTree<T>>& holes, const SparseMatrixTrees<T>& Mats,
+	void contraction(vector<SparseMatrixTree<T>>& holes, const SparseMatrixTrees<T>& Mats,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
 		assert(holes.size() == Mats.size());
 		for (size_t l = 0; l < holes.size(); ++l) {
-			Contraction(holes[l], Bra, Ket, Mats[l], tree);
+			contraction(holes[l], Bra, Ket, Mats[l], tree);
 		}
 	}
 
 	template<typename T>
-	void Contraction(SparseMatrixTrees<T>& holes, const TensorTree<T>& Bra,
+	void contraction(SparseMatrixTrees<T>& holes, const TensorTree<T>& Bra,
 		const TensorTree<T>& Ket, const SparseMatrixTrees<T>& mats,
 		const MatrixTree<T>& rho, const Tree& tree) {
 		assert(holes.size() == mats.size());
 		for (size_t l = 0; l < holes.size(); ++l) {
-			Contraction(holes[l], Bra, Ket, mats[l], rho, tree);
+			contraction(holes[l], Bra, Ket, mats[l], rho, tree);
 		}
 	}
 
 	template <typename T>
-	vector<SparseMatrixTree<T>> Contraction(const TensorTree<T>& Bra,
+	vector<SparseMatrixTree<T>> contraction(const TensorTree<T>& Bra,
 		const TensorTree<T>& Ket, const vector<SparseMatrixTree<T>>& mats,
 		const MatrixTree<T>& rho, shared_ptr<SparseTree>& stree, const Tree& tree) {
 		vector<SparseMatrixTree<T>> holes;
 		for (const auto& mat : mats) {
 			holes.emplace_back(SparseMatrixTree<T>(stree, tree));
 		}
-		Contraction(holes, Bra, Ket, mats, rho, tree);
+		contraction(holes, Bra, Ket, mats, rho, tree);
 		return holes;
 	}
 
 	template<typename T>
-	void Contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi,
+	void contraction(MatrixTree<T>& Rho, const TensorTree<T>& Psi,
 		const SparseTree& stree, bool orthogonal) {
 		if (!orthogonal) {
 			cerr << "SparseTree contraction not implemented for non-orthogonal basis sets.\n";
@@ -248,24 +248,24 @@ namespace TreeFunctions {
 	}
 
 ////////////////////////////////////////////////////////////////////////
-/// Apply SparseMatrixTree to tensor tree
+/// apply SparseMatrixTree to tensor tree
 ////////////////////////////////////////////////////////////////////////
 
-	/// Apply factor matrices locally
+	/// apply factor matrices locally
 	template<typename T>
-	Tensor<T> Apply(const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
+	Tensor<T> apply(const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
 		const MLO<T>& M, const Node& node) {
 		if (!mats.Active(node)) { return Phi; }
 		if (node.isBottomlayer()) {
 			const Leaf& phys = node.getLeaf();
 			return M.ApplyBottomLayer(Phi, phys);
 		} else {
-			return ApplyUpper(mats, Phi, node);
+			return applyUpper(mats, Phi, node);
 		}
 	}
 
 	template<typename T>
-	Tensor<T> ApplyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
+	Tensor<T> applyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
 		Tensor<T> hPhi(Phi.shape());
 		bool switchbool = true;
 		for (size_t k = 0; k < node.nChildren(); ++k) {
@@ -286,7 +286,7 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	Tensor<T> ApplyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
+	Tensor<T> applyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
 		assert(!hole_node.isToplayer());
 		const Node& parent = hole_node.parent();
 		size_t drop = hole_node.childIdx();
