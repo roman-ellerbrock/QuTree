@@ -147,7 +147,7 @@ namespace TreeFunctions {
 
 		Tensorcd hKet = TreeFunctions::applyHole(mat, Ket, hchild);
 
-		if (!parent.isToplayer() && hole.Active(parent)) {
+		if (!parent.isToplayer() && hole.isActive(parent)) {
 //			hKet = TensorMatrix(hKet, hole[parent], parent.childIdx());
 			hKet = multStateAB(hole[parent], hKet);
 		}
@@ -157,9 +157,9 @@ namespace TreeFunctions {
 	void symContraction(SparseMatrixTreecd& hole, const TensorTreecd& Bra,
 		const TensorTreecd& Ket, const SparseMatrixTreecd& mat, const Tree& tree) {
 
-		int sub_topnode = mat.Active().size() - 1;
+		int sub_topnode = mat.sparseTree().size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
-			const Node& node = mat.Active().MCTDHNode(n);
+			const Node& node = mat.sparseTree().MCTDHNode(n);
 			if (!node.isToplayer()) {
 				/// Use Bra/Ket[node] instead of [parent] since Trensors are moved down
 				symContractionLocal(hole, Bra[node], Ket[node], mat, node);
@@ -186,7 +186,7 @@ namespace TreeFunctions {
 
 	Tensorcd symApplyDownNew(const Tensorcd& Phi, const SparseMatrixTreecd& hHole,
 		const Node& node) {
-		if (node.isToplayer() || !hHole.Active(node)) { return Phi; }
+		if (node.isToplayer() || !hHole.isActive(node)) { return Phi; }
 //		return TensorMatrix(Phi, hHole[node], node.parentIdx()); @TODO: Check if this is correct
 		return multStateAB(hHole[node], Phi);
 	}
@@ -209,7 +209,7 @@ namespace TreeFunctions {
 	void symApply(SymTensorTree& HPsi, const SymTensorTree& Psi,
 		const SymMatrixTrees& hmats,
 		const SOPcd& H, const Tree& tree) {
-		const SparseTree& stree = hmats[0].first.Active();
+		const SparseTree& stree = hmats[0].first.sparseTree();
 
 		for (const Node* node_ptr : stree) {
 			const Node& node = *node_ptr;

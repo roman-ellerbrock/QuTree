@@ -21,10 +21,10 @@ class SparseMatrixTree : public SparseNodeAttribute<Matrix<T>>{
  * */
 	using SparseNodeAttribute<Matrix<T>>::attributes_;
 public:
-	using SparseNodeAttribute<Matrix<T>>::Active;
+	using SparseNodeAttribute<Matrix<T>>::sparseTree;
 	using SparseNodeAttribute<Matrix<T>>::operator[];
 	using SparseNodeAttribute<Matrix<T>>::initialize;
-	using SparseNodeAttribute<Matrix<T>>::Size;
+	using SparseNodeAttribute<Matrix<T>>::size;
 
 	/// Create HoleMatrixTree for a given tree-marker
 	SparseMatrixTree(shared_ptr<SparseTree>& active_, const Tree& tree)

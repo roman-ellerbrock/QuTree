@@ -309,7 +309,7 @@ namespace Tensor_Extension {
 		TensorShape tdim(B.shape());
 		assert(mode < tdim.order());
 		assert(A.dim1() == A.dim2());
-		assert(A.dim1() == B.shape().Active(mode));
+		assert(A.dim1() == B.shape().sparseTree(mode));
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.lastDimension(); n++)

@@ -18,7 +18,7 @@ namespace TreeFunctions {
 		Tensor<T> hKet(Ket);
 		for (size_t l = 0; l < node.nChildren(); l++) {
 			const Node& child = node.child(l);
-			if (!hmat.Active(child)) { continue; }
+			if (!hmat.isActive(child)) { continue; }
 			hKet = matrixTensor(hmat[child], hKet, child.childIdx());
 		}
 
@@ -35,7 +35,7 @@ namespace TreeFunctions {
 	template<typename T>
 	void representLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node) {
-		if (!mats.Active(node)) { return; }
+		if (!mats.isActive(node)) { return; }
 
 		if (node.isBottomlayer()) {
 			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf());
@@ -49,7 +49,7 @@ namespace TreeFunctions {
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const Tree& tree) {
 		assert(Bra.size() == Ket.size());
-		const SparseTree& active = hmat.Active();
+		const SparseTree& active = hmat.sparseTree();
 		for (size_t n = 0; n < active.size(); ++n) {
 			const Node& node = active.MCTDHNode(n);
 			if (!node.isToplayer()) {
@@ -132,7 +132,7 @@ namespace TreeFunctions {
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = marker.MCTDHNode(n);
 			if (!node.isToplayer()) {
-				assert(holes.Active(node));
+				assert(holes.isActive(node));
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = applyHole(mats, Ket[parent], node);
@@ -163,7 +163,7 @@ namespace TreeFunctions {
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = marker.MCTDHNode(n);
 			if (!node.isToplayer()) {
-				assert(holes.Active(node));
+				assert(holes.isActive(node));
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = applyHole(mats, Ket[parent], node);
@@ -184,13 +184,13 @@ namespace TreeFunctions {
 	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
-		Contraction(holes, Bra, Ket, mats, holes.Active(), tree);
+		Contraction(holes, Bra, Ket, mats, holes.sparseTree(), tree);
 	}
 
 	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho, const Tree& tree) {
-		contraction(holes, Bra, Ket, mats, rho, holes.Active(), tree);
+		contraction(holes, Bra, Ket, mats, rho, holes.sparseTree(), tree);
 	}
 
 	template<typename T>
@@ -255,7 +255,7 @@ namespace TreeFunctions {
 	template<typename T>
 	Tensor<T> apply(const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
 		const MLO<T>& M, const Node& node) {
-		if (!mats.Active(node)) { return Phi; }
+		if (!mats.isActive(node)) { return Phi; }
 		if (node.isBottomlayer()) {
 			const Leaf& phys = node.getLeaf();
 			return M.ApplyBottomLayer(Phi, phys);
@@ -270,7 +270,7 @@ namespace TreeFunctions {
 		bool switchbool = true;
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
-			if (!mat.Active(child)) { continue; }
+			if (!mat.isActive(child)) { continue; }
 			if (switchbool) {
 				matrixTensor(hPhi, mat[child], Phi, child.childIdx(), true);
 			} else {
@@ -294,7 +294,7 @@ namespace TreeFunctions {
 		for (size_t k = 0; k < parent.nChildren(); ++k) {
 			const Node& child = parent.child(k);
 			size_t childidx = child.childIdx();
-			if ((childidx == drop) || (!mats.Active(child))) { continue; }
+			if ((childidx == drop) || (!mats.isActive(child))) { continue; }
 			Phi = matrixTensor(mats[child], Phi, childidx);
 		}
 		return Phi;

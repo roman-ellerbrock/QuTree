@@ -20,7 +20,7 @@ namespace TreeFunctions {
 
 		Tensorcd hPhi = TreeFunctions::applyHole(hole, Phi, hchild);
 
-		if (!parent.isToplayer() && hole.Active(parent)) {
+		if (!parent.isToplayer() && hole.isActive(parent)) {
 			hPhi = tensorMatrix(hPhi, hole[parent], parent.childIdx());
 		}
 		hole[hchild] = contraction(Phi, hPhi, hchild.childIdx());
@@ -45,7 +45,7 @@ namespace TreeFunctions {
 		const Tree& tree) {
 
 		represent(mats.first, Psi, M, tree);
-		contraction(mats.second, Psi, mats.first, mats.second.Active(), tree);
+		contraction(mats.second, Psi, mats.first, mats.second.sparseTree(), tree);
 
 	}
 
@@ -60,7 +60,7 @@ namespace TreeFunctions {
 
 	Tensorcd symApplyDown(const Tensorcd& Phi, const SparseMatrixTreecd& hHole,
 		const Node& node) {
-		if (node.isToplayer() || !hHole.Active(node)) { return Phi; }
+		if (node.isToplayer() || !hHole.isActive(node)) { return Phi; }
 		return tensorMatrix(Phi, hHole[node], node.parentIdx());
 		/// @TODO: WAS THIS USED?? For Applying operators, this is wrong!
 	}

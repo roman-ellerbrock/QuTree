@@ -7,7 +7,6 @@
 #include "SparseTree.h"
 #include "NodeAttribute.h"
 
-
 template<class A>
 class SparseNodeAttribute
 /**
@@ -43,22 +42,22 @@ public:
 
 	/// Allocate memory. Call only after initializing TreeMarker. Requires default constructor.
 	virtual void initialize(const Tree& tree) {
-		attributes_.resize(Active().size());
+		attributes_.resize(sparseTree().size());
 	}
 
 	/// Getter for the attribute at an active_ node. Crashes if called for inactive nodes.
 	A& operator[](const Node& node) {
-		size_t address = Active().SparseAddress(node);
+		size_t address = sparseTree().SparseAddress(node);
 		assert(address < attributes_.size());
-		assert(Active(node));
+		assert(isActive(node));
 		return attributes_[address];
 	}
 
 	/// Getter for the attribute at an active_ node. Crashes if called for inactive nodes.
 	const A& operator[](const Node& node) const {
-		size_t address = Active().SparseAddress(node);
+		size_t address = sparseTree().SparseAddress(node);
 		assert(address < attributes_.size());
-		assert(Active(node));
+		assert(isActive(node));
 		return attributes_[address];
 	}
 
@@ -73,13 +72,13 @@ public:
 	}
 
 	/// Number of active_ nodes
-	size_t Size() const { return attributes_.size(); }
+	size_t size() const { return attributes_.size(); }
 
 	/// Getter to TreeMarker
-	const SparseTree& Active() const { return *active_.get(); }
+	const SparseTree& sparseTree() const { return *active_.get(); }
 
 	/// Check whether node is active_
-	size_t Active(const Node& node) const {
+	size_t isActive(const Node& node) const {
 		return active_->Active(node);
 	}
 

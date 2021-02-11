@@ -172,7 +172,7 @@ namespace TreeIO {
 	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree) {
 		const auto& node = (const Node&) leaf.Up();
-		const SparseTree& stree = Rho.Active();
+		const SparseTree& stree = Rho.sparseTree();
 		assert(stree.Active(node));
 		const auto& Phi = Psi[node];
 		if (!node.isToplayer()) {

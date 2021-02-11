@@ -7,7 +7,7 @@
 template<typename T>
 void SparseMatrixTree<T>::initialize(const Tree& tree) {
 	attributes_.clear();
-	for (const Node *const node_ptr : Active()) {
+	for (const Node *const node_ptr : sparseTree()) {
 		const Node& node = *node_ptr;
 		size_t dim = node.shape().lastDimension();
 		attributes_.emplace_back(Matrix<T>(dim, dim));
@@ -16,7 +16,7 @@ void SparseMatrixTree<T>::initialize(const Tree& tree) {
 
 template<typename T>
 void SparseMatrixTree<T>::print(ostream& os) const {
-	for (const Node *node_ptr : Active()) {
+	for (const Node *node_ptr : sparseTree()) {
 		const Node& node = *node_ptr;
 		node.info(os);
 		this->operator[](node).print();

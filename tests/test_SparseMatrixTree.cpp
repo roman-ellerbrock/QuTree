@@ -69,7 +69,7 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE (HelperFactory, Constructor) {
 		SparseMatrixTreecd hmat(M_, tree_);
-			CHECK_EQUAL(6, hmat.Size());
+			CHECK_EQUAL(6, hmat.size());
 	}
 
 	TEST_FIXTURE (HelperFactory, IO) {
@@ -77,8 +77,8 @@ SUITE (SparseMatrixTree) {
 		hmat.write("SparseMatrixTree.dat");
 		SparseMatrixTreecd gmat(M_, tree_);
 		gmat.read("SparseMatrixTree.dat");
-		const SparseTree& marker = gmat.Active();
-			CHECK_EQUAL(hmat.Size(), gmat.Size());
+		const SparseTree& marker = gmat.sparseTree();
+			CHECK_EQUAL(hmat.size(), gmat.size());
 		for (size_t i = 0; i < marker.size(); ++i) {
 			const Node& node = marker.MCTDHNode(i);
 			double r = residual(hmat[node], gmat[node]);

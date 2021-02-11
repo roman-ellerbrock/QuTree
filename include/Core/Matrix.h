@@ -34,8 +34,8 @@ public:
 
 	/** \brief Zero constructor
 	 *
-	 * @param dim1 Size of first dimension
-	 * @param dim2 Size of second dimension
+	 * @param dim1 size of first dimension
+	 * @param dim2 size of second dimension
 	 */
 	Matrix(size_t dim1, size_t dim2);
 
