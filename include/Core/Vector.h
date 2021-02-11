@@ -45,11 +45,11 @@ public:
 	~Vector();
 
 	// I/O
-	void Write(const string& filename) const;
-	void Write(ostream& os) const;
+	void write(const string& filename) const;
+	void write(ostream& os) const;
 
-	void Read(const string& filename);
-	void Read(istream& is);
+	void read(const string& filename);
+	void read(istream& is);
 
 	void print(ostream& os = cout) const;
 
@@ -83,12 +83,12 @@ public:
 	Vector operator/(T coeff)const;
 
 	// Math Operators
-	double Norm() const;
+	double norm() const;
 
-	void Zero();
+	void zero();
 
 	// Setter & Getter
-	inline size_t Dim() const { return dim_; }
+	inline size_t dim() const { return dim_; }
 
 protected:
 	T *coeffs_;
@@ -102,7 +102,7 @@ template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b);
 
 template<typename T>
-double Residual(const Vector<T>& A, const Vector<T>& B);
+double residual(const Vector<T>& A, const Vector<T>& B);
 
 template<typename T>
 Vector<T> reverse(const Vector<T>& A);
@@ -111,10 +111,10 @@ template<typename T>
 T sum(const Vector<T>& A);
 
 template<typename T>
-Vector<T> Regularize(Vector<T> A, double eps);
+Vector<T> regularize(Vector<T> A, double eps);
 
 template<typename T>
-Vector<T> Inverse(Vector<T> A, double eps = 1e-7);
+Vector<T> inverse(Vector<T> A, double eps = 1e-7);
 
 typedef Vector<double> Vectord;
 

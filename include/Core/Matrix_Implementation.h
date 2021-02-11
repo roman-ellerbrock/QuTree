@@ -235,7 +235,7 @@ SpectralDecompositiond Matrix<T>::rDiag() const {
 template<typename T>
 void Matrix<T>::rDiag(Matrix<double>& Transformation, Vector<double>& ev) const {
 	assert(dim1_ == dim2_);
-	assert(ev.Dim() == dim1_);
+	assert(ev.dim() == dim1_);
 	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double *) coeffs_, dim1_, dim2_);
 
 	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver;
@@ -269,7 +269,7 @@ SpectralDecompositioncd Matrix<T>::cDiag() const {
 template<typename T>
 void Matrix<T>::cDiag(Matrix<complex<double>>& Transformation, Vector<double>& ev) const {
 	assert(dim1_ == dim2_);
-	assert(ev.Dim() == dim1_);
+	assert(ev.dim() == dim1_);
 	Eigen::MatrixXcd A = Eigen::Map<Eigen::MatrixXcd>((complex<double> *) coeffs_, dim1_, dim2_);
 
 	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXcd> solver;
@@ -392,7 +392,7 @@ void Matrix<T>::zero() {
 
 template<typename T, typename U>
 Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.dim2());
+	assert(B.dim() == A.dim2());
 
 	Vector<T> C(A.dim1());
 	for (size_t i = 0; i < A.dim1(); i++) {
@@ -405,7 +405,7 @@ Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
 
 template<typename T, typename U>
 Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.dim2());
+	assert(B.dim() == A.dim2());
 	Vector<T> C(A.dim1());
 	for (size_t i = 0; i < A.dim1(); i++) {
 		for (size_t j = 0; j < A.dim2(); j++) {
@@ -547,7 +547,7 @@ Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
 template<typename T>
 void diagonalize(Matrix<T>& trafo, Vector<double>& ev, const Matrix<T>& B) {
 	assert(B.dim1() == B.dim2());
-	assert(ev.Dim() == B.dim1());
+	assert(ev.dim() == B.dim1());
 	typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> EigenMatrix;
 
 	EigenMatrix A = EigenMatrix((T *) B.ptr(), B.dim1(), B.dim2());
@@ -592,9 +592,9 @@ template<typename T>
 Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
-	assert(vec.Dim() > 0);
-	assert(mat.dim2() == vec.Dim());
-	size_t dim = vec.Dim();
+	assert(vec.dim() > 0);
+	assert(mat.dim2() == vec.dim());
+	size_t dim = vec.dim();
 	auto mat2(mat);
 	for (size_t i = 0; i < mat2.dim1(); ++i) {
 		for (size_t k = 0; k < mat2.dim2(); ++k) {
@@ -607,7 +607,7 @@ Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 template<typename T>
 SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	Vectord& lambda = X.second;
-	for (size_t i = 0; i < lambda.Dim(); ++i) {
+	for (size_t i = 0; i < lambda.dim(); ++i) {
 		lambda(i) = sqrt(lambda(i));
 	}
 	return X;
@@ -615,7 +615,7 @@ SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 
 template<typename T>
 SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps) {
-	X.second = Inverse(X.second, eps);
+	X.second = inverse(X.second, eps);
 	return X;
 }
 

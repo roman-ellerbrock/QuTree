@@ -93,7 +93,7 @@ namespace RandomMatrices {
 		auto P = RandomRealGauss(dim1, dim2, gen);
 //		P /= sqrt((double) dim2);
 		for (size_t i = 0; i < P.dim1(); ++i) {
-			double norm = P.row(i).Norm();
+			double norm = P.row(i).norm();
 			for (size_t j = 0; j < P.dim2(); ++j) {
 				P(i, j) /= norm;
 			}
@@ -193,7 +193,7 @@ namespace RandomMatrices {
 
 	double entropy(const Vectord& p) {
 		double S = 0;
-		for (size_t i = 0; i < p.Dim(); ++i) {
+		for (size_t i = 0; i < p.dim(); ++i) {
 			S -= p(i) * log(p(i));
 		}
 		return S;
@@ -201,7 +201,7 @@ namespace RandomMatrices {
 
 	double crossEntropy(const Vectord& p, const Vectord& q) {
 		double H = 0;
-		for (size_t i = 0; i < p.Dim(); ++i) {
+		for (size_t i = 0; i < p.dim(); ++i) {
 			H -= p(i) * log(q(i));
 		}
 		return H;
@@ -245,7 +245,7 @@ namespace RandomMatrices {
 
 	Matrixcd toMatrix(const vector<Vectorcd>& x) {
 		assert(!x.empty());
-		size_t dim1 = x.front().Dim();
+		size_t dim1 = x.front().dim();
 		size_t dim2 = x.size();
 		Matrixcd y(dim1, dim2);
 		for (size_t j = 0; j < dim2; ++j) {

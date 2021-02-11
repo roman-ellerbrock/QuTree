@@ -12,7 +12,7 @@ SUITE (RMT) {
 
 	Matrixcd BuildRankReduced(const SpectralDecompositioncd& x, size_t rank) {
 		auto ew = x.second;
-		for (size_t i = rank; i < ew.Dim(); ++i) {
+		for (size_t i = rank; i < ew.dim(); ++i) {
 			ew(i) = 0.;
 		}
 		return toMatrix(SpectralDecompositioncd({x.first, ew}));
@@ -42,7 +42,7 @@ SUITE (RMT) {
 
 		Vectord ew_acc = reverse(x2.second);
 		Vectord ew_approx = reverse(x3.second);
-		auto r = Residual(ew_approx, ew_acc);
+		auto r = residual(ew_approx, ew_acc);
 			CHECK_CLOSE(0., r, 1e-12);
 	}
 
@@ -86,7 +86,7 @@ SUITE (RMT) {
 		double S_app = entropy(ew_app);
 		double S_svd = entropy(ew_svd);
 
-		auto r = Residual(ew_app, ew_acc);
+		auto r = residual(ew_app, ew_acc);
 //			CHECK_CLOSE(0., r, 1e-3);
 	}
 
@@ -186,7 +186,7 @@ SUITE (RMT) {
 		for (size_t r = 0.; r < A.dim1(); ++r) {
 			auto ui = A.row(r);
 			auto vi = B.row(r);
-			double contr = (ui.Norm() - vi.Norm()) / ui.Norm();
+			double contr = (ui.norm() - vi.norm()) / ui.norm();
 			avg += contr;
 		}
 		avg /= 1. * A.dim1();
@@ -251,7 +251,7 @@ SUITE (RMT) {
 			auto PPy = y;
 			PPy = PP * PPy;
 			normalize(PPy);
-			double res = Residual(y, PPy);
+			double res = residual(y, PPy);
 				CHECK_CLOSE(0., res, 1e-8);
 			y = A * y;
 		}

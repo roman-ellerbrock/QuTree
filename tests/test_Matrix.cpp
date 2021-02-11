@@ -87,12 +87,12 @@ SUITE (Matrix) {
 		const Matrixcd& Ua = x.first;
 		const Vectord& la = x.second;
 		Ua.write("matrix_cdiag_trafo.dat");
-		la.Write("matrix_cdiag_ev.dat");
+		la.write("matrix_cdiag_ev.dat");
 
 		Matrixcd U("matrix_cdiag_trafo.dat");
 		Vectord lambda("matrix_cdiag_ev.dat");
 		auto residual_U = residual(U, x.first);
-		auto residual_L = Residual(lambda, x.second);
+		auto residual_L = residual(lambda, x.second);
 			CHECK_CLOSE(residual_U, 0., eps);
 			CHECK_CLOSE(residual_L, 0., eps);
 	}

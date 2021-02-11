@@ -48,7 +48,7 @@ namespace Demo {
 		}
 		{
 
-			/// Dim 200
+			/// dim 200
 			TensorShape shape({200, 200, 200});
 
 									 /// Number Leaves 1024

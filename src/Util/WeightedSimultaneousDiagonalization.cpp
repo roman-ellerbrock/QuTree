@@ -290,7 +290,7 @@ namespace WeightedSimultaneousDiagonalization {
 		const vector<Matrixcd>& Xs, const vector<Matrixcd>& XXs,
 		const Matrixcd& W, size_t p, size_t q, double delta) {
 		assert(delta > 0);
-		assert(grad.Dim() == 2);
+		assert(grad.dim() == 2);
 		assert(preHessian.dim1() == 2);
 		assert(preHessian.dim2() == 2);
 		Vectord s(2), x(2);

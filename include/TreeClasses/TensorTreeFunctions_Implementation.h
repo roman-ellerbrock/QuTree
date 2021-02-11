@@ -9,7 +9,7 @@
 namespace TreeFunctions {
 	size_t nOccupied(const Vectord& p, double eps) {
 		size_t n = 0;
-		for (size_t i = 0; i < p.Dim(); ++i) {
+		for (size_t i = 0; i < p.dim(); ++i) {
 			if (p(i) > eps) { n++; }
 		}
 		if (n == 0) { n = 1; }

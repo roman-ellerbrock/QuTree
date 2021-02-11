@@ -37,8 +37,8 @@ SUITE(Integrators) {
 
 		auto y_correct = y;
 		RungeKutta4::Integrate<HOInterface, Vectord, double>(t, t_end, h, y, I);
-		auto residual = Residual(y_correct, y);
-		CHECK_CLOSE(0., residual, 10. * h);
+		auto res = residual(y_correct, y);
+		CHECK_CLOSE(0., res, 10. * h);
 	}
 
 }

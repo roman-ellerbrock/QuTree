@@ -35,7 +35,7 @@ SUITE (ExplicitEdgeWavefunction) {
 				auto x = contraction(Atilde[parent], Atilde[parent], node.childIdx());
 				auto v1 = diagonalize(x).second;
 				auto v2 = diagonalize(rho[node]).second;
-				auto r = Residual(v1, v2);
+				auto r = residual(v1, v2);
 					CHECK_CLOSE(0., r, eps);
 			}
 		}

@@ -10,19 +10,19 @@ template<typename T>
 Vector<T>::Vector(size_t dim)
 	:dim_(dim), coeffs_(new T[dim]) {
 	assert(dim > 0);
-	Zero();
+	zero();
 }
 
 template<typename T>
 Vector<T>::Vector(const string& filename)
 	:Vector() {
-	Read(filename);
+	read(filename);
 }
 
 template<typename T>
 Vector<T>::Vector(istream& is)
 	:Vector() {
-	Read(is);
+	read(is);
 }
 
 // Copy constructor
@@ -68,7 +68,7 @@ Vector<T>::~Vector() {
 // File I/O
 //////////////////////////////////////////////////////////////////////
 template<typename T>
-void Vector<T>::Write(ostream& os) const {
+void Vector<T>::write(ostream& os) const {
 	// Verification
 	os.write("VECT", 4);
 	os.write((char *) &dim_, sizeof(dim_));
@@ -83,7 +83,7 @@ void Vector<T>::Write(ostream& os) const {
 }
 
 template<typename T>
-void Vector<T>::Read(istream& is) {
+void Vector<T>::read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
@@ -108,15 +108,15 @@ void Vector<T>::Read(istream& is) {
 }
 
 template<typename T>
-void Vector<T>::Write(const string& filename) const {
+void Vector<T>::write(const string& filename) const {
 	ofstream os(filename);
-	Write(os);
+	write(os);
 }
 
 template<typename T>
-void Vector<T>::Read(const string& filename) {
+void Vector<T>::read(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 template<typename T>
@@ -131,7 +131,7 @@ void Vector<T>::print(ostream& os) const {
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 Vector<T> Vector<T>::operator+=(Vector b) {
-	assert(b.Dim() == Dim());
+	assert(b.dim() == dim());
 	for (size_t i = 0; i < dim_; i++)
 		coeffs_[i] += b[i];
 	return *this;
@@ -139,7 +139,7 @@ Vector<T> Vector<T>::operator+=(Vector b) {
 
 template<typename T>
 Vector<T> Vector<T>::operator-=(Vector b) {
-	assert(b.Dim() == Dim());
+	assert(b.dim() == dim());
 	for (size_t i = 0; i < dim_; i++)
 		coeffs_[i] -= b[i];
 	return *this;
@@ -195,7 +195,7 @@ int conj(int a) {
 
 template<typename T>
 T Vector<T>::operator*(const Vector<T> b) const {
-	assert(b.Dim() == dim_);
+	assert(b.dim() == dim_);
 	T res = 0;
 	for (size_t i = 0; i < dim_; i++)
 		res += conj(operator()(i)) * b(i);
@@ -203,7 +203,7 @@ T Vector<T>::operator*(const Vector<T> b) const {
 }
 
 template<typename T>
-double Vector<T>::Norm() const {
+double Vector<T>::norm() const {
 	double norm = 0;
 	for (size_t i = 0; i < dim_; i++) {
 		norm += pow(abs(operator()(i)), 2);
@@ -213,7 +213,7 @@ double Vector<T>::Norm() const {
 }
 
 template<typename T>
-void Vector<T>::Zero() {
+void Vector<T>::zero() {
 	for (size_t i = 0; i < dim_; i++)
 		coeffs_[i] = 0;
 }
@@ -221,7 +221,7 @@ void Vector<T>::Zero() {
 template<typename T>
 T Sum(Vector<T>& a) {
 	T sum = 0.;
-	for (size_t i = 0; i < a.Dim();++i) {
+	for (size_t i = 0; i < a.dim(); ++i) {
 		sum += a(i);
 	}
 	return sum;
@@ -229,14 +229,14 @@ T Sum(Vector<T>& a) {
 
 template <typename T>
 void normalize(Vector<T>& a) {
-	double norm = a.Norm();
+	double norm = a.norm();
 	a /= (norm);
 }
 
 template<typename T>
 double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
 	double distance = 0;
-	for (size_t i = 0; i < a.Dim(); ++i) {
+	for (size_t i = 0; i < a.dim(); ++i) {
 		T d = a(i) - b(i);
 		distance += pow(abs(d), 2);
 	}
@@ -244,15 +244,15 @@ double euclidean_distance(const Vector<T>& a, const Vector<T>& b) {
 }
 
 template<typename T>
-double Residual(const Vector<T>& A, const Vector<T>& B) {
+double residual(const Vector<T>& A, const Vector<T>& B) {
 	return euclidean_distance(A, B);
 }
 
 template<typename T>
 Vector<T> reverse(const Vector<T>& A) {
-	Vector<T> B(A.Dim());
-	for (size_t i = 0; i < A.Dim(); ++i) {
-		B(A.Dim() - 1 - i) = A(i);
+	Vector<T> B(A.dim());
+	for (size_t i = 0; i < A.dim(); ++i) {
+		B(A.dim() - 1 - i) = A(i);
 	}
 	return B;
 }
@@ -260,24 +260,24 @@ Vector<T> reverse(const Vector<T>& A) {
 template<typename T>
 T sum(const Vector<T>& A) {
 	T s = 0.;
-	for (size_t i = 0; i < A.Dim(); ++i) {
+	for (size_t i = 0; i < A.dim(); ++i) {
 		s+= A(i);
 	}
 	return s;
 }
 
 template<typename T>
-Vector<T> Regularize(Vector<T> A, double eps) {
-	for (size_t i = 0; i < A.Dim(); ++i) {
+Vector<T> regularize(Vector<T> A, double eps) {
+	for (size_t i = 0; i < A.dim(); ++i) {
 		A(i) += eps * exp(-A(i) / eps);
 	}
 	return A;
 }
 
 template<typename T>
-Vector<T> Inverse(Vector<T> A, double eps) {
-	A = Regularize(A, eps);
-	for (size_t i = 0; i < A.Dim(); ++i) {
+Vector<T> inverse(Vector<T> A, double eps) {
+	A = regularize(A, eps);
+	for (size_t i = 0; i < A.dim(); ++i) {
 		A(i) = 1. / A(i);
 	}
 	return A;
@@ -285,7 +285,7 @@ Vector<T> Inverse(Vector<T> A, double eps) {
 
 Vectord toQutree(const Eigen::VectorXd& v) {
 	Vectord vqutree(v.rows());
-	for (size_t i = 0; i < vqutree.Dim();++i) {
+	for (size_t i = 0; i < vqutree.dim(); ++i) {
 		vqutree(i) = v(i);
 	}
 	return vqutree;
@@ -293,7 +293,7 @@ Vectord toQutree(const Eigen::VectorXd& v) {
 
 Vectorcd toQutree(const Eigen::VectorXcd& v) {
 	Vectorcd vqutree(v.rows());
-	for (size_t i = 0; i < vqutree.Dim();++i) {
+	for (size_t i = 0; i < vqutree.dim(); ++i) {
 		vqutree(i) = v(i);
 	}
 	return vqutree;
@@ -301,7 +301,7 @@ Vectorcd toQutree(const Eigen::VectorXcd& v) {
 
 template<typename T>
 void elementwise(Vector<T>& res, const Vector<T>& A, const function<T(T)>& f) {
-	assert(A.Dim() == res.Dim());
+	assert(A.dim() == res.dim());
 	for (size_t i = 0; i < A.Dim1()*A.Dim2(); ++i) {
 		res[i] = f(A[i]);
 	}
@@ -309,7 +309,7 @@ void elementwise(Vector<T>& res, const Vector<T>& A, const function<T(T)>& f) {
 
 template <typename T>
 Vector<T> elementwise(const Vector<T>& A, const function<T(T)>& f) {
-	Vector<T> res(A.Dim());
+	Vector<T> res(A.dim());
 	elementwise(res, A, f);
 	return res;
 }

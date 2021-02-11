@@ -209,7 +209,7 @@ namespace TreeIO {
 		for (const SpectralDecomposition<T>& x : X) {
 			const auto& occ = x.second;
 			double s = 0.;
-			for (size_t i = 0; i < occ.Dim(); ++i) {
+			for (size_t i = 0; i < occ.dim(); ++i) {
 				s -= occ(i) * log(occ(i));
 			}
 		}

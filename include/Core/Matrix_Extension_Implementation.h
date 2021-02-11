@@ -10,7 +10,7 @@
 template <typename T>
 SpectralDecomposition<T> reduceRank(const SpectralDecomposition<T>& x,
 	size_t rank) {
-	size_t dim = x.second.Dim();
+	size_t dim = x.second.dim();
 	assert(rank <= dim);
 	Matrix<T> U(dim, rank);
 	Vector<double> ew(rank);

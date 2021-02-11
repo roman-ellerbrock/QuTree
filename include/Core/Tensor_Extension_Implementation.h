@@ -243,7 +243,7 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	void generate(Vector<T>& A, mt19937& gen) {
-		generateNormal(&A[0], A.Dim(), gen);
+		generateNormal(&A[0], A.dim(), gen);
 	}
 
 /* //////////////////////////////////////////////
