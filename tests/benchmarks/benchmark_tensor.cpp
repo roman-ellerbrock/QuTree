@@ -51,9 +51,9 @@ namespace benchmark {
 			Tensorcd A(tdim, false);
 			Tensorcd B(tdim, false);
 			Matrixcd Su(dim, dim);
-			Tensor_Extension::Generate(A, gen);
-			Tensor_Extension::Generate(B, gen);
-			Tensor_Extension::Generate(Su, gen);
+			Tensor_Extension::generate(A, gen);
+			Tensor_Extension::generate(B, gen);
+			Tensor_Extension::generate(Su, gen);
 			As.emplace_back(A);
 			Bs.emplace_back(B);
 			Sus.emplace_back(Su);
@@ -89,8 +89,8 @@ namespace benchmark {
 		auto tdim = make_TensorDim(order, dim);
 		Tensorcd A(tdim, false);
 		Tensorcd B(tdim, false);
-		Tensor_Extension::Generate(A, gen);
-		Tensor_Extension::Generate(B, gen);
+		Tensor_Extension::generate(A, gen);
+		Tensor_Extension::generate(B, gen);
 		Matrixcd S(dim, dim);
 		size_t aft = tdim.after(mode);
 		size_t act = tdim[mode];
@@ -120,8 +120,8 @@ namespace benchmark {
 		auto tdim = make_TensorDim(order, dim);
 		Tensorcd A(tdim, false);
 		Matrixcd S(dim, dim);
-		Tensor_Extension::Generate(A, gen);
-		Tensor_Extension::Generate(S, gen);
+		Tensor_Extension::generate(A, gen);
+		Tensor_Extension::generate(S, gen);
 		Tensorcd B(tdim, true);
 		size_t aft = tdim.after(mode);
 		size_t act = tdim[mode];

@@ -41,7 +41,7 @@ namespace examples {
 
 
 		/// === Wave Function Generation & Basic Operations (mostly Sec. II A.) ===
-		/// Generate a random wave function as introduced in Sec. II A.
+		/// generate a random wave function as introduced in Sec. II A.
 		mt19937 gen(92349);
 		bool HartreeProduct = false; /// true: generate a Hartree Product, false: generate random tensors
 		TensorTreecd Psi(gen, tree, HartreeProduct);

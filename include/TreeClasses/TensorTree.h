@@ -53,7 +53,7 @@ public:
 	/// Create Tensors for all nodes
 	virtual void Initialize(const Tree& tree);
 
-	/// Generate TTs
+	/// generate TTs
 	void FillRandom(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// (File) I/O

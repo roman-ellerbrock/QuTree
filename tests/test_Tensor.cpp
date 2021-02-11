@@ -215,7 +215,7 @@ SUITE (Tensor) {
 		for (size_t I = 0; I < Bshape.totalDimension(); ++I) {
 			B(I) = I + 1;
 		}
-		Tensord C = Tensor_Extension::DirectSum(A, B, true, true);
+		Tensord C = Tensor_Extension::directSum(A, B, true, true);
 		for (size_t I = 0; I < Ashape.totalDimension(); ++I) {
 			auto Ibreak = indexMapping(I, Ashape);
 			size_t L = indexMapping(Ibreak, C.shape());
@@ -236,7 +236,7 @@ SUITE (Tensor) {
 		TensorShape shape({2, 3, 4, 5});
 		mt19937 gen(1239);
 		Tensorcd A(shape);
-		Tensor_Extension::Generate(A, gen);
+		Tensor_Extension::generate(A, gen);
 
 		/// Test standard QR
 		Tensorcd Q = qr(A);

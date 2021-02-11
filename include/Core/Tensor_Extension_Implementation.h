@@ -75,7 +75,7 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	Matrix<T> Map(const Tensor<T>& A) {
+	Matrix<T> map(const Tensor<T>& A) {
 		const TensorShape& tdim = A.shape();
 		size_t ntensor = tdim.lastDimension();
 		size_t dimpart = tdim.lastBefore();
@@ -122,7 +122,7 @@ namespace Tensor_Extension {
 		}
 	}
 
-	TensorShape DirectSum(const TensorShape& A, const TensorShape& B,
+	TensorShape directSum(const TensorShape& A, const TensorShape& B,
 		bool before, bool last) {
 		assert(A.order() == B.order());
 		vector<size_t> dims = A.dimensions();
@@ -131,10 +131,10 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	Tensor<T> DirectSum(const Tensor<T>& A, const Tensor<T>& B,
+	Tensor<T> directSum(const Tensor<T>& A, const Tensor<T>& B,
 		bool before, bool last) {
 
-		TensorShape Cshape = DirectSum(A.shape(), B.shape(), before, last);
+		TensorShape Cshape = directSum(A.shape(), B.shape(), before, last);
 		const TensorShape& Ashape = A.shape();
 		const TensorShape& Bshape = B.shape();
 		Tensor<T> C(Cshape);
@@ -175,8 +175,8 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	Tensor<T> DirectProduct(const Tensor<T>& A, const Tensor<T>& B) {
-		TensorShape shape = DirectProduct(A.shape(), B.shape());
+	Tensor<T> directProduct(const Tensor<T>& A, const Tensor<T>& B) {
+		TensorShape shape = directProduct(A.shape(), B.shape());
 		Tensor<T> C(shape);
 		for (size_t J = 0; J < B.shape().totalDimension(); ++J) {
 			for (size_t I = 0; I < A.shape().totalDimension(); ++I) {
@@ -188,7 +188,7 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	Tensor<T> DoubleHoleContraction(const Tensor<T>& A, const Tensor<T>& B,
+	Tensor<T> doubleHoleContraction(const Tensor<T>& A, const Tensor<T>& B,
 		size_t k1, size_t k2) {
 
 		const TensorShape& shape = A.shape();
@@ -224,7 +224,7 @@ namespace Tensor_Extension {
 
 	/// Randomly occupy Tensors and Matrices
 	template<typename T>
-	void Generate_normal(T* A, size_t n, mt19937& gen) {
+	void generateNormal(T* A, size_t n, mt19937& gen) {
 		uniform_real_distribution<double> dist(-1., 1.);
 		for (size_t i = 0; i < n; ++i) {
 			A[i] = dist(gen);
@@ -232,18 +232,18 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	void Generate(Tensor<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.shape().totalDimension(), gen);
+	void generate(Tensor<T>& A, mt19937& gen) {
+		generateNormal(&A[0], A.shape().totalDimension(), gen);
 	}
 
 	template<typename T>
-	void Generate(Matrix<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.dim1()* A.dim2(), gen);
+	void generate(Matrix<T>& A, mt19937& gen) {
+		generateNormal(&A[0], A.dim1() * A.dim2(), gen);
 	}
 
 	template<typename T>
-	void Generate(Vector<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.Dim(), gen);
+	void generate(Vector<T>& A, mt19937& gen) {
+		generateNormal(&A[0], A.Dim(), gen);
 	}
 
 /* //////////////////////////////////////////////
@@ -271,7 +271,7 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	Matrix<T> OuterProduct(const Tensor<T>& A, const Tensor<T>& B) {
+	Matrix<T> outerProduct(const Tensor<T>& A, const Tensor<T>& B) {
 
 		const TensorShape& tdim = A.shape();
 		size_t dimpart = tdim.lastBefore();
@@ -281,18 +281,18 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	void WeightedOuterProductAdd(Matrix<T>& M, const Tensor<T>& A,
+	void weightedOuterProductAdd(Matrix<T>& M, const Tensor<T>& A,
 		const Tensor<T>& B, const Matrix<T>& rho) {
 		Tensor<T> mA = multStateArTB(rho, A);
 		OuterProductAdd(M, mA, B);
 	}
 
 	template<typename T>
-	Matrix<T> WeightedOuterProduct(const Tensor<T>& A, const Tensor<T>& B,
+	Matrix<T> weightedOuterProduct(const Tensor<T>& A, const Tensor<T>& B,
 		const Matrix<T>& m) {
 		Tensor<T> mA = multStateAB(m, A);
 //		Tensor<T> mB = multStateAB(m, B);
-		return OuterProduct(mA, B);
+		return outerProduct(mA, B);
 	}
 
 /* //////////////////////////////////////////////
@@ -305,7 +305,7 @@ namespace Tensor_Extension {
  * the lack of optimizing opertunity
  */
 	template<typename T, typename U>
-	Tensor<T> OldmultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
+	Tensor<T> oldMultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorShape tdim(B.shape());
 		assert(mode < tdim.order());
 		assert(A.dim1() == A.dim2());
@@ -323,7 +323,7 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T>
-	Matrix<T> OldStateAveragedHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
+	Matrix<T> oldStateAveragedHoleProduct(const Tensor<T>& A, const Tensor<T>& B, size_t k) {
 		TensorShape tdim(A.shape());
 		// check wether tensordims are equal
 		assert(tdim == B.shape());
@@ -355,7 +355,7 @@ namespace Tensor_Extension {
 	}
 
 	template<typename T, typename U>
-	Tensor<T> OldmultStateAB(const Matrix<U>& A, const Tensor<T>& B) {
+	Tensor<T> oldmultStateAb(const Matrix<U>& A, const Tensor<T>& B) {
 		TensorShape tdim(B.shape());
 		assert(A.dim1() == A.dim2());
 		assert(A.dim2() == B.shape().getntensor());

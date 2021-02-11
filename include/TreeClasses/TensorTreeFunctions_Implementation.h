@@ -77,7 +77,7 @@ namespace TreeFunctions {
 		for (Node& node : tree) {
 			bool before = !(node.isBottomlayer() && sharedLeafs);
 			bool last = !(node.isToplayer() && sumToplayer);
-			Psi[node] = Tensor_Extension::DirectSum(Psi[node], Chi[node],
+			Psi[node] = Tensor_Extension::directSum(Psi[node], Chi[node],
 				before, last);
 			node.shape() = Psi[node].shape();
 		}
@@ -86,7 +86,7 @@ namespace TreeFunctions {
 	template <typename T>
 	void Product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi) {
 		for (Node& node : tree) {
-			Psi[node] = Tensor_Extension::DirectProduct(Psi[node], Chi[node]);
+			Psi[node] = Tensor_Extension::directProduct(Psi[node], Chi[node]);
 			node.shape() = Psi[node].shape();
 		}
 	}

@@ -53,7 +53,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 	mt19937& gen, const Node& node, bool delta_lowest) {
 
 	assert(Phi.shape().totalDimension() > 0);
-	Tensor_Extension::Generate(Phi, gen);
+	Tensor_Extension::generate(Phi, gen);
 	// Set ground-state to "Hartree-Product" if flag is set
 	if (delta_lowest) {
 		for (size_t i = 0; i < Phi.shape().lastBefore(); ++i) {

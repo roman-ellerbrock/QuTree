@@ -115,7 +115,7 @@ void tree_examples() {
 }
 
 void paper_1() {
-	/// Generate Tree and TensorTree
+	/// generate Tree and TensorTree
 	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
 	TensorTreecd Psi(tree);
 
