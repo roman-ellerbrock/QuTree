@@ -15,19 +15,19 @@ Matrix<T>::Matrix(size_t dim1, size_t dim2)
 	 coeffs_(new T[dim1 * dim2]) {
 	assert(dim1 > 0);
 	assert(dim2 > 0);
-	Zero();
+	zero();
 }
 
 template<typename T>
 Matrix<T>::Matrix(istream& is)
 	:Matrix<T>() {
-	Read(is);
+	read(is);
 }
 
 template<typename T>
 Matrix<T>::Matrix(const string& filename)
 	:Matrix<T>() {
-	Read(filename);
+	read(filename);
 }
 
 // Copy constructor
@@ -118,20 +118,20 @@ Vector<T> Matrix<T>::col(size_t c) const {
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& B) {
-	assert(Dim1() == B.Dim1());
-	assert(Dim2() == B.Dim2());
-	for (size_t j = 0; j < Dim2(); j++)
-		for (size_t i = 0; i < Dim1(); i++)
+	assert(dim1() == B.dim1());
+	assert(dim2() == B.dim2());
+	for (size_t j = 0; j < dim2(); j++)
+		for (size_t i = 0; i < dim1(); i++)
 			operator()(i, j) += B(i, j);
 	return (*this);
 }
 
 template<typename T>
 Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& B) {
-	assert(Dim1() == B.Dim1());
-	assert(Dim2() == B.Dim2());
-	for (size_t j = 0; j < Dim2(); j++)
-		for (size_t i = 0; i < Dim1(); i++)
+	assert(dim1() == B.dim1());
+	assert(dim2() == B.dim2());
+	for (size_t j = 0; j < dim2(); j++)
+		for (size_t i = 0; i < dim1(); i++)
 			operator()(i, j) -= B(i, j);
 	return (*this);
 }
@@ -158,8 +158,8 @@ bool Matrix<T>::operator==(const Matrix<T>& A) const {
 	/// Note: The routine should not be used to check for approximate
 	/// equivalence!
 	bool result = true;
-	if (dim1_ != A.Dim1()) { result = false; }
-	if (dim2_ != A.Dim2()) { result = false; }
+	if (dim1_ != A.dim1()) { result = false; }
+	if (dim2_ != A.dim2()) { result = false; }
 	for (size_t i = 0; i < dim1_ * dim2_; ++i) {
 		if (operator[](i) != A[i]) { result = false; }
 	}
@@ -176,7 +176,7 @@ bool Matrix<T>::operator!=(const Matrix<T>& A) const {
 //////////////////////////////////////////////////////////////////////
 
 template<typename T>
-double Matrix<T>::FrobeniusNorm() const {
+double Matrix<T>::frobeniusNorm() const {
 	double norm = 0;
 	for (size_t i = 0; i < dim2_; ++i) {
 		for (size_t j = 0; j < dim1_; ++j) {
@@ -187,7 +187,7 @@ double Matrix<T>::FrobeniusNorm() const {
 }
 
 template<typename T>
-T Matrix<T>::Trace() const {
+T Matrix<T>::trace() const {
 	assert(dim1_ == dim2_);
 	T norm = 0;
 	for (size_t i = 0; i < dim1_; i++) {
@@ -197,7 +197,7 @@ T Matrix<T>::Trace() const {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Adjoint() const {
+Matrix<T> Matrix<T>::adjoint() const {
 	Matrix B(dim2_, dim1_);
 	for (size_t i = 0; i < dim2_; i++)
 		for (size_t j = 0; j < dim1_; j++)
@@ -206,7 +206,7 @@ Matrix<T> Matrix<T>::Adjoint() const {
 }
 
 template<typename T>
-Matrix<T> Matrix<T>::Transpose() const {
+Matrix<T> Matrix<T>::transpose() const {
 	Matrix B(dim2_, dim1_);
 	for (size_t i = 0; i < dim2_; i++)
 		for (size_t j = 0; j < dim1_; j++)
@@ -327,7 +327,7 @@ void Matrix<T>::print(ostream& os) const {
 }
 
 template<typename T>
-void Matrix<T>::Write(ostream& os) const {
+void Matrix<T>::write(ostream& os) const {
 	// Verification
 	os.write("MATR", 4);
 	os.write((char *) &dim1_, sizeof(dim1_));
@@ -343,13 +343,13 @@ void Matrix<T>::Write(ostream& os) const {
 }
 
 template<typename T>
-void Matrix<T>::Write(const string& filename) const {
+void Matrix<T>::write(const string& filename) const {
 	ofstream os(filename);
-	Write(os);
+	write(os);
 }
 
 template<typename T>
-void Matrix<T>::Read(istream& is) {
+void Matrix<T>::read(istream& is) {
 	char check[5];
 	is.read(check, 4);
 	string s_check(check, 4);
@@ -375,13 +375,13 @@ void Matrix<T>::Read(istream& is) {
 }
 
 template<typename T>
-void Matrix<T>::Read(const string& filename) {
+void Matrix<T>::read(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 template<typename T>
-void Matrix<T>::Zero() {
+void Matrix<T>::zero() {
 	for (size_t i = 0; i < dim1_ * dim2_; i++)
 		coeffs_[i] = 0;
 }
@@ -392,11 +392,11 @@ void Matrix<T>::Zero() {
 
 template<typename T, typename U>
 Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.Dim2());
+	assert(B.Dim() == A.dim2());
 
-	Vector<T> C(A.Dim1());
-	for (size_t i = 0; i < A.Dim1(); i++) {
-		for (size_t j = 0; j < A.Dim2(); j++) {
+	Vector<T> C(A.dim1());
+	for (size_t i = 0; i < A.dim1(); i++) {
+		for (size_t j = 0; j < A.dim2(); j++) {
 			C(i) += A(i, j) * B(j);
 		}
 	}
@@ -405,10 +405,10 @@ Vector<T> multAB(const Matrix<U>& A, const Vector<T>& B) {
 
 template<typename T, typename U>
 Vector<T> multATB(const Matrix<U>& A, const Vector<T>& B) {
-	assert(B.Dim() == A.Dim2());
-	Vector<T> C(A.Dim1());
-	for (size_t i = 0; i < A.Dim1(); i++) {
-		for (size_t j = 0; j < A.Dim2(); j++) {
+	assert(B.Dim() == A.dim2());
+	Vector<T> C(A.dim1());
+	for (size_t i = 0; i < A.dim1(); i++) {
+		for (size_t j = 0; j < A.dim2(); j++) {
 			C(i) += conj(A(j, i)) * B(j);
 		}
 	}
@@ -426,29 +426,29 @@ void trmatvec_(double *C, double *B, double *mat,
 
 template<typename T>
 Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
-	assert(A.Dim2() == B.Dim1());
+	assert(A.dim2() == B.dim1());
 	typedef complex<double> cd;
 	typedef double d;
 
-	Matrix<T> C(A.Dim1(), B.Dim2());
+	Matrix<T> C(A.dim1(), B.dim2());
 //  mulpsi(i,j,k) = psi(i,l,k) * matrix(l,j)
 //        C(i, j) =   A(i,l,1) *      B(l,j);
 //		               (b,a,c) ->(A.Dim1(), A.Dim2(), 1)
-	int b = A.Dim1();
-	int a = A.Dim2();
+	int b = A.dim1();
+	int a = A.dim2();
 	int c = 1;
 	int add = false;
 
-	if (is_same<T, cd>::value && (B.Dim1() == B.Dim2())) {
+	if (is_same<T, cd>::value && (B.dim1() == B.dim2())) {
 		tmatvec_((double *) &C[0], (double *) &A[0], (double *) &B[0],
 			&a, &b, &c, &add);
-	} else if (is_same<T, d>::value && (B.Dim1() == B.Dim2())) {
+	} else if (is_same<T, d>::value && (B.dim1() == B.dim2())) {
 		trmatvec_((double *) &C[0], (double *) &A[0], (double *) &B[0],
 			&a, &b, &c, &add);
 	} else {
-		auto Ae = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) A.Coeffs(), A.Dim1(), A.Dim2());
-		auto Be = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) B.Coeffs(), B.Dim1(), B.Dim2());
-		auto Ce = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) C.Coeffs(), C.Dim1(), C.Dim2());
+		auto Ae = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) A.ptr(), A.dim1(), A.dim2());
+		auto Be = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) B.ptr(), B.dim1(), B.dim2());
+		auto Ce = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) C.ptr(), C.dim1(), C.dim2());
 		Ce = Ae * Be;
 /*		for (size_t j = 0; j < B.Dim2(); j++) {
 			for (size_t i = 0; i < A.Dim1(); i++) {
@@ -463,11 +463,11 @@ Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 
 template<typename T>
 Matrix<T> multATB(const Matrix<double>& A, const Matrix<T>& B) {
-	assert(A.Dim1() == B.Dim1());
-	Matrix<T> C(A.Dim2(), B.Dim2());
-	for (size_t j = 0; j < B.Dim2(); j++) {
-		for (size_t i = 0; i < A.Dim2(); i++) {
-			for (size_t k = 0; k < A.Dim1(); k++) {
+	assert(A.dim1() == B.dim1());
+	Matrix<T> C(A.dim2(), B.dim2());
+	for (size_t j = 0; j < B.dim2(); j++) {
+		for (size_t i = 0; i < A.dim2(); i++) {
+			for (size_t k = 0; k < A.dim1(); k++) {
 				// C(i, j) += A(i, k)^T * B(k, j)
 				C(i, j) += A(k, i) * B(k, j);
 			}
@@ -478,11 +478,11 @@ Matrix<T> multATB(const Matrix<double>& A, const Matrix<T>& B) {
 
 template<typename T>
 Matrix<complex<double>> multATB(const Matrix<complex<double>>& A, const Matrix<T>& B) {
-	assert(A.Dim2() == B.Dim1());
-	Matrix<T> C(A.Dim1(), B.Dim2());
-	for (size_t j = 0; j < B.Dim2(); j++) {
-		for (size_t i = 0; i < A.Dim1(); i++) {
-			for (size_t k = 0; k < A.Dim2(); k++) {
+	assert(A.dim2() == B.dim1());
+	Matrix<T> C(A.dim1(), B.dim2());
+	for (size_t j = 0; j < B.dim2(); j++) {
+		for (size_t i = 0; i < A.dim1(); i++) {
+			for (size_t k = 0; k < A.dim2(); k++) {
 				C(i, j) += conj(A(k, i)) * B(k, j);
 			}
 		}
@@ -492,39 +492,39 @@ Matrix<complex<double>> multATB(const Matrix<complex<double>>& A, const Matrix<T
 
 template<typename T>
 Matrix<T> addAB(const Matrix<T>& A, const Matrix<T>& B) {
-	assert(A.Dim1() == B.Dim1());
-	assert(A.Dim2() == B.Dim2());
-	Matrix<T> C(A.Dim1(), B.Dim2());
-	for (size_t j = 0; j < A.Dim2(); j++)
-		for (size_t i = 0; i < A.Dim1(); i++)
+	assert(A.dim1() == B.dim1());
+	assert(A.dim2() == B.dim2());
+	Matrix<T> C(A.dim1(), B.dim2());
+	for (size_t j = 0; j < A.dim2(); j++)
+		for (size_t i = 0; i < A.dim1(); i++)
 			C(i, j) = A(i, j) + B(i, j);
 	return C;
 }
 
 template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B) {
-	Matrix<T> C(B.Dim1(), B.Dim2());
-	for (size_t i = 0; i < B.Dim2(); i++)
-		for (size_t j = 0; j < B.Dim1(); j++)
+	Matrix<T> C(B.dim1(), B.dim2());
+	for (size_t i = 0; i < B.dim2(); i++)
+		for (size_t j = 0; j < B.dim1(); j++)
 			C(j, i) = sca * B(j, i);
 	return C;
 }
 
 template<typename T>
 Matrix<T> substAB(const Matrix<T>& A, const Matrix<T>& B) {
-	assert(A.Dim1() == B.Dim1());
-	assert(A.Dim2() == B.Dim2());
-	Matrix<T> C(A.Dim1(), B.Dim2());
-	for (size_t j = 0; j < A.Dim2(); j++)
-		for (size_t i = 0; i < A.Dim1(); i++)
+	assert(A.dim1() == B.dim1());
+	assert(A.dim2() == B.dim2());
+	Matrix<T> C(A.dim1(), B.dim2());
+	for (size_t j = 0; j < A.dim2(); j++)
+		for (size_t i = 0; i < A.dim1(); i++)
 			C(i, j) = A(i, j) - B(i, j);
 	return C;
 }
 
 template<typename T>
-Matrix<T> Re(const Matrix<T>& A) {
-	for (size_t j = 0; j < A.Dim2(); ++j) {
-		for (size_t i = 0; i < A.Dim1(); ++i) {
+Matrix<T> re(const Matrix<T>& A) {
+	for (size_t j = 0; j < A.dim2(); ++j) {
+		for (size_t i = 0; i < A.dim1(); ++i) {
 			A(i, j) = real(A(i, j));
 		}
 	}
@@ -546,45 +546,45 @@ Vector<U> operator*(const Matrix<T>& A, const Vector<U>& v) {
 
 template<typename T>
 void Diagonalize(Matrix<T>& trafo, Vector<double>& ev, const Matrix<T>& B) {
-	assert(B.Dim1() == B.Dim2());
-	assert(ev.Dim() == B.Dim1());
+	assert(B.dim1() == B.dim2());
+	assert(ev.Dim() == B.dim1());
 	typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> EigenMatrix;
 
-	EigenMatrix A = EigenMatrix((T *) B.Coeffs(), B.Dim1(), B.Dim2());
+	EigenMatrix A = EigenMatrix((T *) B.ptr(), B.dim1(), B.dim2());
 	Eigen::SelfAdjointEigenSolver<EigenMatrix> solver;
 	solver.compute(A);
 	EigenMatrix vectors = solver.eigenvectors();
 	// typedef Eigen::Matrix<U, Eigen::Dynamic, 1> EigenVector; auto in next line should be this template
 	auto eigenv = solver.eigenvalues();
-	for (size_t i = 0; i < B.Dim1(); i++)
+	for (size_t i = 0; i < B.dim1(); i++)
 		ev(i) = eigenv(i);
-	for (size_t i = 0; i < B.Dim1(); i++)
-		for (size_t j = 0; j < B.Dim2(); j++)
+	for (size_t i = 0; i < B.dim1(); i++)
+		for (size_t j = 0; j < B.dim2(); j++)
 			trafo(j, i) = vectors(j, i);
 
 	// Set phase convention
-	for (size_t i = 0; i < B.Dim1(); i++) {
+	for (size_t i = 0; i < B.dim1(); i++) {
 		if (real(trafo(0, i)) < 0) {
-			for (size_t j = 0; j < B.Dim1(); j++) {
+			for (size_t j = 0; j < B.dim1(); j++) {
 				trafo(j, i) *= -1;
 			}
 		}
 	}
 }
 
-SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A) {
+SpectralDecompositioncd diagonalize(const Matrix<complex<double>>& A) {
 	return A.cDiag();
 }
 
-void Diagonalize(SpectralDecompositioncd& S, const Matrix<complex<double>>& A) {
+void diagonalize(SpectralDecompositioncd& S, const Matrix<complex<double>>& A) {
 	A.cDiag(S.first, S.second);
 }
 
-SpectralDecompositiond Diagonalize(const Matrix<double>& A) {
+SpectralDecompositiond diagonalize(const Matrix<double>& A) {
 	return A.rDiag();
 }
 
-void Diagonalize(SpectralDecompositiond& S, const Matrix<double>& A) {
+void diagonalize(SpectralDecompositiond& S, const Matrix<double>& A) {
 	A.rDiag(S.first, S.second);
 }
 
@@ -593,22 +593,22 @@ Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	const auto& mat = X.first;
 	const auto& vec = X.second;
 	assert(vec.Dim() > 0);
-	assert(mat.Dim2() == vec.Dim());
+	assert(mat.dim2() == vec.Dim());
 	size_t dim = vec.Dim();
 	auto mat2(mat);
-	for (size_t i = 0; i < mat2.Dim1(); ++i) {
-		for (size_t k = 0; k < mat2.Dim2(); ++k) {
+	for (size_t i = 0; i < mat2.dim1(); ++i) {
+		for (size_t k = 0; k < mat2.dim2(); ++k) {
 			mat2(i, k) *= vec(k);
 		}
 	}
-	return mat * mat2.Adjoint();
+	return mat * mat2.adjoint();
 }
 
-template<typename T>
-Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps) {
+/*template<typename T>
+Matrix<T> inverse(const SpectralDecomposition<T>& X, double eps) {
 	auto inv_vec = Inverse(X.second, eps);
 	return toMatrix<T>({X.first, inv_vec});
-}
+}*/
 
 template<typename T>
 SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
@@ -626,7 +626,7 @@ SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps) {
 }
 
 template<typename T>
-Matrix<T> IdentityMatrix(size_t dim) {
+Matrix<T> identityMatrix(size_t dim) {
 	Matrix<T> I(dim, dim);
 	for (size_t i = 0; i < dim; ++i) {
 		I(i, i) = 1.;
@@ -634,27 +634,27 @@ Matrix<T> IdentityMatrix(size_t dim) {
 	return I;
 }
 
-Matrixcd IdentityMatrixcd(size_t dim) {
-	return IdentityMatrix<complex<double>>(dim);
+Matrixcd identityMatrixcd(size_t dim) {
+	return identityMatrix<complex<double>>(dim);
 }
 
-Matrixd IdentityMatrixd(size_t dim) {
-	return IdentityMatrix<double>(dim);
+Matrixd identityMatrixd(size_t dim) {
+	return identityMatrix<double>(dim);
 }
 
 template<typename T>
-Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
+Matrix<T> unitarySimilarityTrafo(const Matrix<T>& A,
 	const Matrix<T>& B) {
 	// C=B^T*A*B
-	assert(A.Dim1() == B.Dim1());
-	assert(A.Dim2() == B.Dim2());
-	assert(A.Dim1() == A.Dim2());
+	assert(A.dim1() == B.dim1());
+	assert(A.dim2() == B.dim2());
+	assert(A.dim1() == A.dim2());
 	Matrix<T> C(multAB(A, B));
 	return multATB(B, C);
 }
 
 template<typename T>
-Vectord Matrix<T>::SolveSLE(const Vectord& b) {
+Vectord Matrix<T>::solveSLE(const Vectord& b) {
 	// Re-organize b to Eigen-format
 	Eigen::VectorXd eb(dim1_);
 	for (size_t i = 0; i < dim1_; i++)
@@ -675,7 +675,7 @@ Vectord Matrix<T>::SolveSLE(const Vectord& b) {
 template<typename T>
 Matrix<T> Regularize(const Matrix<T>& A, double eps) {
 	Matrix<T> B(A);
-	size_t dim = min(A.Dim1(), A.Dim2());
+	size_t dim = min(A.dim1(), A.dim2());
 	for (size_t i = 0; i < dim; i++) {
 		B(i, i) += eps * exp(-B(i, i) / eps);
 	}
@@ -683,23 +683,11 @@ Matrix<T> Regularize(const Matrix<T>& A, double eps) {
 }
 
 template<typename T>
-Matrix<T> RealSymmetrize(const Matrix<T>& A) {
-	assert(A.Dim1() == A.Dim2());
-	Matrix<T> Asym(A.Dim1(), A.Dim2());
-	for (size_t i = 0; i < A.Dim1(); ++i) {
-		for (size_t j = 0; j < A.Dim2(); ++j) {
-			Asym(j, i) = (A(j, i) + A(i, j)) / 2.;
-		}
-	}
-	return Asym;
-}
-
-template<typename T>
-Matrix<T> EuclideanDistance(const Matrix<T>& A) {
+Matrix<T> euclideanDistance(const Matrix<T>& A) {
 	auto G = multATB(A, A);
-	Matrix<T> D(G.Dim1(), G.Dim2());
-	for (size_t j = 0; j < G.Dim1(); ++j) {
-		for (size_t i = 0; i < G.Dim2(); ++i) {
+	Matrix<T> D(G.dim1(), G.dim2());
+	for (size_t j = 0; j < G.dim1(); ++j) {
+		for (size_t i = 0; i < G.dim2(); ++i) {
 			D(i, j) = G(i, i) + G(j, j) - 2. * G(i, j);
 		}
 	}
@@ -707,32 +695,32 @@ Matrix<T> EuclideanDistance(const Matrix<T>& A) {
 }
 
 template<typename T>
-double Residual(const Matrix<T>& A, const Matrix<T>& B) {
+double residual(const Matrix<T>& A, const Matrix<T>& B) {
 	Matrix<T> D = A - B;
-	return D.FrobeniusNorm();
+	return D.frobeniusNorm();
 }
 
 template<typename T>
 ostream& operator<<(ostream& os, const Matrix<T>& A) {
-	A.Write(os);
+	A.write(os);
 	return os;
 }
 
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A) {
-	A.Read(is);
+	A.read(is);
 	return is;
 }
 
 Eigen::MatrixXd toEigen(Matrixd A) {
-	Eigen::MatrixXd Aeigen = Eigen::Map<Eigen::MatrixXd>((double *) A.Coeffs(),
-		A.Dim1(), A.Dim2());
+	Eigen::MatrixXd Aeigen = Eigen::Map<Eigen::MatrixXd>((double *) A.ptr(),
+		A.dim1(), A.dim2());
 	return Eigen::MatrixXd(Aeigen);
 }
 
 Eigen::MatrixXcd toEigen(Matrixcd A) {
 	Eigen::MatrixXcd Aeigen = Eigen::Map<Eigen::MatrixXcd>((complex<double> *)
-		A.Coeffs(), A.Dim1(), A.Dim2());
+		A.ptr(), A.dim1(), A.dim2());
 	return Eigen::MatrixXcd(Aeigen);
 }
 
@@ -756,16 +744,16 @@ Matrixcd toQutree(const Eigen::MatrixXcd& A) {
 	return Aqutree;
 }
 
-Matrixcd QR(const Matrixcd& A) {
+Matrixcd qr(const Matrixcd& A) {
 //	auto Aeigen = toEigen(A);
 	using namespace Eigen;
-	MatrixXcd Aeigen = Map<MatrixXcd>((complex<double> *) A.Coeffs(),
-		A.Dim1(), A.Dim2());
+	MatrixXcd Aeigen = Map<MatrixXcd>((complex<double> *) A.ptr(),
+		A.dim1(), A.dim2());
 //	auto& QR = Aeigen.householderQr();
 //	const Eigen::MatrixXcd& Q = QR.householderQ();
 //	return toQutree(Q);
 	HouseholderQR<MatrixXcd> qr(Aeigen);
-	MatrixXcd thinQ = qr.householderQ() * MatrixXcd::Identity(A.Dim1(), A.Dim2());
+	MatrixXcd thinQ = qr.householderQ() * MatrixXcd::Identity(A.dim1(), A.dim2());
 	return toQutree(thinQ);
 }
 
@@ -777,7 +765,7 @@ SVDcd svd(const Matrixcd& A) {
 	 *   diagonalization. This can cause trouble when combining outputs.
 	 */
 	using namespace Eigen;
-	MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), A.Dim1(), A.Dim2());
+	MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), A.dim1(), A.dim2());
 	JacobiSVD<MatrixXcd> svd(Am, ComputeThinU | ComputeThinV);
 	auto U = toQutree(svd.matrixU());
 	auto V = toQutree(svd.matrixV());
@@ -787,7 +775,7 @@ SVDcd svd(const Matrixcd& A) {
 
 SVDd svd(const Matrixd& A) {
 	using namespace Eigen;
-	MatrixXd Am = Eigen::Map<MatrixXd>((double *) &A(0, 0), A.Dim1(), A.Dim2());
+	MatrixXd Am = Eigen::Map<MatrixXd>((double *) &A(0, 0), A.dim1(), A.dim2());
 	JacobiSVD<MatrixXd> svd(Am, ComputeThinU | ComputeThinV);
 	auto U = toQutree(svd.matrixU());
 	auto V = toQutree(svd.matrixV());
@@ -799,18 +787,18 @@ Matrixcd toMatrix(const SVDcd& svd) {
 	const auto& U = get<0>(svd);
 	auto V = get<1>(svd);
 	const auto& sigma = get<2>(svd);
-	for (size_t i = 0; i < V.Dim1(); ++i) {
-		for (size_t j = 0; j < V.Dim2(); ++j) {
+	for (size_t i = 0; i < V.dim1(); ++i) {
+		for (size_t j = 0; j < V.dim2(); ++j) {
 			V(i, j) *= sigma(j);
 		}
 	}
-	return U * V.Adjoint();
+	return U * V.adjoint();
 }
 
 template<typename T>
-Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2) {
-	assert(dim1 <= A.Dim1());
-	assert(dim2 <= A.Dim2());
+Matrix<T> subMatrix(const Matrix<T> A, size_t dim1, size_t dim2) {
+	assert(dim1 <= A.dim1());
+	assert(dim2 <= A.dim2());
 	Matrix<T> B(dim1, dim2);
 	for (size_t j = 0; j < dim2; ++j) {
 		for (size_t i = 0; i < dim1; ++i) {

@@ -42,7 +42,7 @@ void MatrixTensorTree::buildEdges(const Tree& tree) {
 }
 
 void MatrixTensorTree::buildFromWeighted(const Tree& tree) {
-	/// Re-orthonormalize bottom-up
+	/// re-orthonormalize bottom-up
 	buildNodes(BottomUpNormalized(tree), tree);
 	/// TopDown Orthonormal
 	buildEdges(tree);
@@ -56,7 +56,7 @@ TensorTreecd MatrixTensorTree::TopDownNormalized(const Tree& tree) const {
 	for (const Edge& e : tree.Edges()) {
 		const Node& node = e.down();
 		const Node& parent = node.parent();
-		Psi[node] = MatrixTensor(edges()[e].Transpose(), Psi[parent], node.childIdx());
+		Psi[node] = MatrixTensor(edges()[e].transpose(), Psi[parent], node.childIdx());
 	}
 	return Psi;
 }
@@ -80,7 +80,7 @@ bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double ep
 	auto bottomup = Psi.BottomUpNormalized(tree);
 	for (const Node& node : tree) {
 		auto x = Contraction(bottomup[node], bottomup[node], node.nChildren());
-		auto r = Residual(x, IdentityMatrixcd(x.Dim1()));
+		auto r = residual(x, identityMatrixcd(x.dim1()));
 		if (r > eps) {
 			cerr << "bottom-up normalization failed.\n";
 			return false;
@@ -94,7 +94,7 @@ bool IsWorking_topdown(const MatrixTensorTree& Psi, const Tree& tree, double eps
 	for (const Edge& e : tree.Edges()) {
 		const Node& node = e.down();
 		auto x = Contraction(topdown[node], topdown[node], node.childIdx());
-		auto r = Residual(x, IdentityMatrixcd(x.Dim1()));
+		auto r = residual(x, identityMatrixcd(x.dim1()));
 		if (r > eps) {
 			cerr << "top-down normalization failed.\n";
 			return false;

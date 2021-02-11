@@ -58,7 +58,7 @@ void TensorOperatorTree::Occupy(const Tree& tree) {
 				exit(1);
 			}
 			size_t dim = sqrt(Phi.shape().lastBefore());
-			setLeafOperator(IdentityMatrixcd(dim), 0, node);
+			setLeafOperator(identityMatrixcd(dim), 0, node);
 		}
 	}
 }
@@ -74,7 +74,7 @@ void TensorOperatorTree::setLeafOperator(const Matrixcd& m,
 	size_t operator_idx, const Node& node) {
 
 	const TensorShape& shape = node.shape();
-	assert(m.Dim1() * m.Dim2() == shape.lastBefore());
+	assert(m.dim1() * m.dim2() == shape.lastBefore());
 	assert(operator_idx < shape.lastDimension());
 
 	Tensorcd& h = operator[](node);

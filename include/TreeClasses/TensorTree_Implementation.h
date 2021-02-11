@@ -142,17 +142,17 @@ void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 		if (!node.isToplayer()) {
 			Tensor<T>& Phi = Psi[node];
 			Matrix<T> S = Phi.DotProduct(Phi);
-			auto spec = Diagonalize(S);
+			auto spec = diagonalize(S);
 			const auto& trafo = spec.first;
 			const auto& eigenval = spec.second;
 
-			for (size_t j = 0; j < S.Dim1(); j++)
+			for (size_t j = 0; j < S.dim1(); j++)
 				assert(eigenval(j) >= -1e-12);
 
-			Matrix<T> SW(S.Dim1(), S.Dim2());
-			for (size_t j = 0; j < S.Dim1(); j++) {
-				for (size_t k = 0; k < S.Dim1(); k++) {
-					for (size_t l = 0; l < S.Dim1(); l++) {
+			Matrix<T> SW(S.dim1(), S.dim2());
+			for (size_t j = 0; j < S.dim1(); j++) {
+				for (size_t k = 0; k < S.dim1(); k++) {
+					for (size_t l = 0; l < S.dim1(); l++) {
 						SW(j, k) += trafo(k, l) * sqrt(max(eigenval(l), 0.))
 							* conj(trafo(j, l));
 					}

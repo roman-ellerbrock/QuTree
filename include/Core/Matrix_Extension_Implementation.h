@@ -30,15 +30,15 @@ SpectralDecomposition<T> reduceRank(const SpectralDecomposition<T>& x,
 }
 
 template<typename T>
-Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
+Matrix<T> merge(const Matrix<T>& A, const Matrix<T>& B,
 	const Matrix<T>& AB) {
 	// Merge Block matrices into one matrix
 	// 	C =	(	A	AB	)
 	// 		(	AB	B	)
-	size_t n = A.Dim1();
-	size_t m = B.Dim1();
-	assert(n == AB.Dim1());
-	assert(m == AB.Dim2());
+	size_t n = A.dim1();
+	size_t m = B.dim1();
+	assert(n == AB.dim1());
+	assert(m == AB.dim2());
 	size_t N = m + n;
 
 	Matrix<T> C(N, N);

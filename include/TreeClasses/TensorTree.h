@@ -57,7 +57,7 @@ public:
 	void FillRandom(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// (File) I/O
-	/// Read TensorTree from stream (binary format)
+	/// read TensorTree from stream (binary format)
 	void Read(istream& is);
 
 	/// Write TensorTree to stream (binary format)

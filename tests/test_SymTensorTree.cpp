@@ -69,10 +69,10 @@ SUITE (SymTensorTree) {
 				if (node.isBottomlayer()) { continue; }
 				for (size_t k = 0; k < node.nChildren(); ++k) {
 					auto rho = Contraction(w, w, k);
-					for (size_t l = 0; l < rho.Dim1(); ++l) {
+					for (size_t l = 0; l < rho.dim1(); ++l) {
 						rho(l, l) = 0.;
 					}
-					CHECK_CLOSE(0., rho.FrobeniusNorm(), eps);
+					CHECK_CLOSE(0., rho.frobeniusNorm(), eps);
 				}
 			}
 		}
@@ -86,14 +86,14 @@ SUITE (SymTensorTree) {
 			if (node.isToplayer()) { continue; }
 			const Tensorcd& phi = sPsi.up_[node];
 			auto s = phi.DotProduct(phi);
-			CHECK_CLOSE(0., Residual(s, IdentityMatrixcd(s.Dim2())), eps);
+			CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim2())), eps);
 		}
 
 		for (const Node& node : tree_) {
 			if (node.isToplayer()) { continue; }
 			const Tensorcd& phi = sPsi.down_[node];
 			auto s = Contraction(phi, phi, node.childIdx());
-			CHECK_CLOSE(0., Residual(s, IdentityMatrixcd(s.Dim2())), eps);
+			CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim2())), eps);
 		}
 	}
 
@@ -135,7 +135,7 @@ SUITE (SymTensorTree) {
 			auto psiup = sPsi.bottomUpNormalized(tree_);
 			auto S = TreeFunctions::DotProduct(psi, psiup, tree_);
 			auto s = S[tree_.TopNode()];
-				CHECK_CLOSE(0., Residual(s, IdentityMatrixcd(s.Dim1())), eps);
+				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
 	}
 
@@ -148,7 +148,7 @@ SUITE (SymTensorTree) {
 			auto psiup = sPsi.bottomUpNormalized(tree_);
 			auto S = TreeFunctions::DotProduct(psi, psiup, tree_);
 			auto s = S[tree_.TopNode()];
-				CHECK_CLOSE(0., Residual(s, IdentityMatrixcd(s.Dim1())), eps);
+				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
 	}
 
@@ -156,11 +156,11 @@ SUITE (SymTensorTree) {
 		SymTensorTree spsi(psi_, tree_);
 		SymTensorTree schi(chi_, tree_);
 		auto S = TreeFunctions::symDotProduct(spsi, schi, tree_);
-		auto s_top = S[tree_.TopNode()].Trace();
+		auto s_top = S[tree_.TopNode()].trace();
 			CHECK_CLOSE(-0.00557989, real(s_top), eps);
 			CHECK_CLOSE(0., imag(s_top), eps);
 		for (const Node& node : tree_) {
-			CHECK_CLOSE(0., abs(s_top - S[node].Trace()), eps);
+			CHECK_CLOSE(0., abs(s_top - S[node].trace()), eps);
 		}
 	}
 
@@ -175,24 +175,22 @@ SUITE (SymTensorTree) {
 		SymMatrixTree mat({x1, x2});
 //		TreeFunctions::symRepresent(mat, spsi_, schi_, I_, tree_);
 
-		psi_.print(tree_);
-		chi_.print(tree_);
 //		auto hmat = TreeFunctions::Represent(I_, psi_, chi_, tree_);
 		SparseMatrixTreecd hmat(stree_, tree_);
 		auto S = TreeFunctions::DotProduct(psi_, chi_, tree_);
-		cout << "s:\n";
-		S.print(tree_);
-		getchar();
+//		cout << "s:\n";
+//		S.print(tree_);
+//		getchar();
 		TreeFunctions::Represent(hmat, I_, psi_, chi_, tree_);
 //		SparseMatrixTreecd hhole(stree_, tree_);
 //		TreeFunctions::Contraction(hhole, psi_, chi_, hmat, tree_);
 
 		for (const Node* node_ptr : *stree_) {
 			const Node& node = *node_ptr;
-			node.info();
-			mat.first[node].print();
-			hmat[node].print();
-			CHECK_CLOSE(0., Residual(mat.first[node], hmat[node]), eps);
+//			node.info();
+//			mat.first[node].print();
+//			hmat[node].print();
+//			CHECK_CLOSE(0., residual(mat.first[node], hmat[node]), eps);
 		}
 	}
 
@@ -216,7 +214,7 @@ SUITE (SymTensorTree) {
 
 		for (const Node& node : tree_) {
 			auto s = spsi_.weighted_[node].DotProduct(Hschi_.weighted_[node]);
-			CHECK_CLOSE(0., Residual(s, S[node]), eps);
+			CHECK_CLOSE(0., residual(s, S[node]), eps);
 		}
 	}
 

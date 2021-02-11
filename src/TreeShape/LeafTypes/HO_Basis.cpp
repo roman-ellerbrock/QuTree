@@ -21,16 +21,16 @@ void HO_Basis::Initialize(double omega, double r0, double wfr0, double wfomega) 
 
 	// Init kinetic Energy in FBR and transform operator to DVR
 	kin_ = InitKin();
-	kin_ = UnitarySimilarityTrafo(kin_, trafo_);
+	kin_ = unitarySimilarityTrafo(kin_, trafo_);
 
 	// Init momentum
 	p_ = InitPmat();
 	Matrixcd trafocd(dim_, dim_);
-	for (int i = 0; i < trafocd.Dim1(); i++)
-		for (int j = 0; j < trafocd.Dim2(); j++)
+	for (int i = 0; i < trafocd.dim1(); i++)
+		for (int j = 0; j < trafocd.dim2(); j++)
 			trafocd(j, i) = trafo_(j, i);
 
-	p_ = UnitarySimilarityTrafo(p_, trafocd);
+	p_ = unitarySimilarityTrafo(p_, trafocd);
 }
 
 void HO_Basis::InitSPF(Tensorcd& phi) const {

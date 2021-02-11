@@ -31,7 +31,7 @@ void SpectralDecompositionTree<T>::Calculate(const MatrixTree<T>& H,
 	const Tree& tree) {
 	for (const Node& node : tree) {
 		const Matrix<T>& mat = H[node];
-		auto y = Diagonalize(mat);
+		auto y = diagonalize(mat);
 		this->operator[](node) = y;
 	}
 }
@@ -42,7 +42,7 @@ MatrixTree<T> SpectralDecompositionTree<T>::Invert(const Tree& tree, double eps)
 	MatrixTree<T> Inv_Hole(tree);
 	for (const Node& node : tree) {
 		const auto& x = this->operator[](node);
-		Inv_Hole[node] = BuildInverse(x, eps);
+		Inv_Hole[node] = toMatrix(inverse(x, eps));
 	}
 	return Inv_Hole;
 }
@@ -84,11 +84,11 @@ void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogon
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
 			Matrix<T> p = spec[node].first;
-			p = p.Adjoint();
+			p = p.adjoint();
 			Psi[node] = MatrixTensor(p, Psi[node], node.nChildren());
 //			Psi[node] = multATB(p, Psi[node], node.nChildren());
 			const Node& parent = node.parent();
-			Psi[parent] = TensorMatrix(Psi[parent], p.Adjoint(), node.childIdx());
+			Psi[parent] = TensorMatrix(Psi[parent], p.adjoint(), node.childIdx());
 //			Psi[parent] = multATB(p, Psi[parent], node.childIdx());
 		}
 	}
@@ -111,7 +111,7 @@ MatrixTree<T> sqrt(MatrixTree<T> X, const Tree& tree) {
 
 template<typename T>
 SpectralDecompositionTree<T> inverse(SpectralDecompositionTree<T> X, double eps) {
-	for (auto& x : X) {
+	for (SpectralDecomposition<T>& x : X) {
 		x = inverse(x, eps);
 	}
 	return X;

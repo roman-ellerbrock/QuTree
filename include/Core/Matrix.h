@@ -41,13 +41,13 @@ public:
 
 	/** \brief Constructor from input stream
 	 *
-	 * @param is Input stream passed to Read()
+	 * @param is Input stream passed to read()
 	 */
 	explicit Matrix(istream& is);
 
 	/** \brief Constructor from file
 	 *
-	 * @param filename File to load and pass to Read()
+	 * @param filename File to load and pass to read()
 	 */
 	explicit Matrix(const string& filename);
 
@@ -236,22 +236,22 @@ public:
 	/**
 	 * @return Frobenius norm
 	 */
-	double FrobeniusNorm()const;
+	double frobeniusNorm()const;
 
 	/**
-	 * @return Trace of matrix
+	 * @return trace of matrix
 	 */
-	T Trace() const;
+	T trace() const;
 
     /**
      * @return Adjoint of matrix
      */
-	Matrix Adjoint() const;
+	Matrix adjoint() const;
 
 	/**
 	 * @return Transposed matrix
 	 */
-	Matrix Transpose() const;
+	Matrix transpose() const;
 
 	/** \brief Invert a complex Matrix
 	 *
@@ -302,12 +302,12 @@ public:
 	 * @param b RHS vector
 	 * @return x Vector
 	 */
-	Vectord SolveSLE(const Vectord& b);
+	Vectord solveSLE(const Vectord& b);
 
 	/** \brief Zero out the Matrix
 	 *
 	 */
-	void Zero();
+	void zero();
 
 	///@} End Math Operators
 
@@ -319,13 +319,13 @@ public:
 
 	void print(ostream& os = cout) const;
 
-	void Write(const string& filename) const;
+	void write(const string& filename) const;
 
-	virtual void Write(ostream& os) const;
+	virtual void write(ostream& os) const;
 
-	void Read(const string& filename);
+	void read(const string& filename);
 
-	virtual void Read(istream& os);
+	virtual void read(istream& os);
 
     ///@} End I/O Operators
 
@@ -338,11 +338,11 @@ public:
 	Vector<T> diag() const;
 
 
-	size_t Dim1() const { return dim1_; }
+	size_t dim1() const { return dim1_; }
 
-	size_t Dim2() const { return dim2_; }
+	size_t dim2() const { return dim2_; }
 
-	T *Coeffs() const { return coeffs_; }
+	T* ptr() const { return coeffs_; }
 
     ///@} End Getters/Setters
 
@@ -402,7 +402,7 @@ template<typename T>
 Matrix<T> multATB(const Matrix<double>& A, const Matrix<T>& B);
 
 template<typename T>
-Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
+Matrix<T> merge(const Matrix<T>& A, const Matrix<T>& B,
 		const Matrix<T>& AB);
 
 template<typename T>
@@ -418,7 +418,7 @@ template<typename T, typename U>
 Matrix<T> multscalar(const U sca, const Matrix<T>& B);
 
 template<typename T>
-Matrix<T> Re(const Matrix<T>& A);
+Matrix<T> re(const Matrix<T>& A);
 
 
 //////////////////////////////////////////////////////////////////////
@@ -437,42 +437,42 @@ Vector<T> operator*(const Matrix<T>& A, const Vector<T>& v);
  * @param A Matrix to be diagonalized
  * @return Decomposed matrix
  */
-SpectralDecompositioncd Diagonalize(const Matrix<complex<double>>& A);
+SpectralDecompositioncd diagonalize(const Matrix<complex<double>>& A);
 
 /**
  * \brief Diagonalize a complex double martrix
  * @param S Decomposed matrix (call-by-reference)
  * @param A Matrix to be diagonalized
  */
-void Diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A);
+void diagonalize(SpectralDecompositioncd& S,const Matrix<complex<double>>& A);
 
 /**
  * \brief Diagonalize a double matrix
  * @param A Matrix to be diagonalized
  * @return Decomposed matrix
  */
-SpectralDecompositiond Diagonalize(const Matrix<double>& A);
+SpectralDecompositiond diagonalize(const Matrix<double>& A);
 
 /**
  * \brief Diagonalize a double martrix
  * @param S Decomposed matrix (call-by-reference)
  * @param A Matrix to be diagonalized
  */
-void Diagonalize(SpectralDecompositiond& S,const Matrix<double>& A);
+void diagonalize(SpectralDecompositiond& S,const Matrix<double>& A);
 
 /**
  * \brief Diagonalization routine for remaining types (Eigenvector always double; not generally applicable)
  * @tparam T
- * @param B
+ * @param A
  * @return
  */
 template<typename T>
-pair<Matrix<T>, Vectord> Diagonalize(const Matrix<T>& B);
+pair<Matrix<T>, Vectord> diagonalize(const Matrix<T>& A);
 
 /**
  * \brief Construct matrix from its decomposition
  * @param X Decomposed matrix
- * @return Re-constructed matrix
+ * @return re-constructed matrix
  */
 template <typename T>
 Matrix<T> toMatrix(const SpectralDecomposition<T>& X);
@@ -482,8 +482,8 @@ Matrix<T> toMatrix(const SpectralDecomposition<T>& X);
  * @param X Decomposed matrix
  * @return Inverse matrix
  */
-template <typename T>
-Matrix<T> BuildInverse(const SpectralDecomposition<T>& X, double eps = 1e-7);
+//template <typename T>
+//Matrix<T> inverse(const SpectralDecomposition<T>& X, double eps = 1e-7);
 
 template <typename T>
 SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps = 1e-7);
@@ -503,23 +503,20 @@ SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X);
  * @return Identity-matrix
  */
 template<typename T>
-Matrix<T> IdentityMatrix(size_t dim);
+Matrix<T> identityMatrix(size_t dim);
 
-Matrixcd IdentityMatrixcd(size_t dim);
-Matrixd IdentityMatrixd(size_t dim);
+Matrixcd identityMatrixcd(size_t dim);
+Matrixd identityMatrixd(size_t dim);
 
 template<typename T>
-Matrix<T> UnitarySimilarityTrafo(const Matrix<T>& A,
+Matrix<T> unitarySimilarityTrafo(const Matrix<T>& A,
 		const Matrix<T>& B);
 
 template<typename T>
-Matrix<T> EuclideanDistance(const Matrix<T>& A);
+Matrix<T> euclideanDistance(const Matrix<T>& A);
 
 template<typename T>
-double Residual(const Matrix<T>& A, const Matrix<T>& B);
-
-template<typename T>
-Matrix<T> RealSymmetrize(const Matrix<T>& A);
+double residual(const Matrix<T>& A, const Matrix<T>& B);
 
 template<typename T>
 Matrix<T> Regularize(const Matrix<T>& A, double eps);
@@ -529,7 +526,8 @@ ostream& operator<<(ostream& os, const Matrix<T>& A);
 template<typename T>
 istream& operator>>(istream& is, Matrix<T>& A);
 
-Matrixcd QR(const Matrixcd& A);
+/// @TODO: Return Q & R matrix and adjust name convention
+Matrixcd qr(const Matrixcd& A);
 
 typedef tuple<Matrixcd, Matrixcd, Vectord> SVDcd;
 typedef tuple<Matrixd, Matrixd, Vectord> SVDd;
@@ -545,7 +543,7 @@ Matrixd toQutree(const Eigen::MatrixXd& A);
 Matrixcd toQutree(const Eigen::MatrixXcd& A);
 
 template <typename T>
-Matrix<T> Submatrix(const Matrix<T> A, size_t dim1, size_t dim2);
+Matrix<T> subMatrix(const Matrix<T> A, size_t dim1, size_t dim2);
 
 /**
  * @TODOs:

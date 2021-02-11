@@ -35,7 +35,7 @@ SUITE (TensorOperatorTree) {
 			optree_ = TreeFactory::OperatorTree(tree_);
 			Psi_ = TensorTreecd(rng_, tree_);
 
-			Matrixcd I = IdentityMatrixcd(2);
+			Matrixcd I = identityMatrixcd(2);
 			Matrixcd X(2, 2);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;

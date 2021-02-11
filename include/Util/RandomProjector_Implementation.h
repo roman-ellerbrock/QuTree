@@ -24,20 +24,20 @@ namespace Random {
 	template <typename T>
 	Matrix<T> GUE(size_t dim, mt19937& gen) {
 		Matrix<T> r = RandomGauss<T>(dim, dim, gen);
-		return 0.5 * (r + r.Adjoint());
+		return 0.5 * (r + r.adjoint());
 	}
 
 	template <typename T, class LinearOperator>
 	Matrix<T> RandomQ(const LinearOperator& A, size_t k_plus_p, mt19937& gen) {
-		assert(k_plus_p <= A.Dim2());
-		Matrix<T> Omega = RandomGauss<T>(k_plus_p, A.Dim1(), gen);
+		assert(k_plus_p <= A.dim2());
+		Matrix<T> Omega = RandomGauss<T>(k_plus_p, A.dim1(), gen);
 //		Matrix<T> Omega = GUE<T>(k_plus_p, A.Dim1(), gen);
-		Matrix<T> Y = A * Omega.Adjoint();
+		Matrix<T> Y = A * Omega.adjoint();
 		/// Y = QR
 		/// YY^ = QRR^Q^
-		auto Q2 = QR(Y);
+		auto Q2 = qr(Y);
 
-		auto Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
+		auto Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 		return Q;
 	}
 
@@ -102,15 +102,15 @@ namespace Random {
 //			Tensor<T> ytemp({Y.Dim1(), Y.Dim2()}, Y.Coeffs(), false, false);
 //			GramSchmidt(ytemp);
 //			Q = Y;
-			auto Q2 = QR(Y);
-			Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
+			auto Q2 = qr(Y);
+			Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 		}
 
 		auto Y = A * Q;
 
 		/// Build and Diagonalize Aprime = Q^* A Q = V ew V^*
-		auto B = Q.Adjoint() * Y;
-		auto x = Diagonalize(B);
+		auto B = Q.adjoint() * Y;
+		auto x = diagonalize(B);
 		const Matrix<T>& V = x.first;
 		auto& ew = x.second;
 /*		if (power != 1) {

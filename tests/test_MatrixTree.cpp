@@ -26,14 +26,14 @@ SUITE (MatrixTree) {
 		mt19937 gen(1988);
 		for (const Node& node : tree) {
 			Matrixcd& m = M[node];
-			m = RandomMatrices::GUE(m.Dim1(), gen);
+			m = RandomMatrices::GUE(m.dim1(), gen);
 		}
 
 		string filename("MatrixTree.dat");
 		M.Write(filename);
 		MatrixTreecd Mread(filename);
 		for (const Node& node : tree) {
-			double delta = Residual(M[node], Mread[node]);
+			double delta = residual(M[node], Mread[node]);
 				CHECK_CLOSE(0., delta, eps);
 		}
 	}
@@ -51,8 +51,8 @@ SUITE (MatrixTreeFunctions) {
 		MatrixTreecd S = DotProduct(Psi, Psi, tree);
 		for (const Node& node : tree) {
 			const Matrixcd& s = S[node];
-			Matrixcd Identity = IdentityMatrix<complex<double>>(s.Dim1());
-			double r = Residual(Identity, s);
+			Matrixcd Identity = identityMatrix<complex<double>>(s.dim1());
+			double r = residual(Identity, s);
 				CHECK_CLOSE(0., r, eps);
 		}
 	}
@@ -76,9 +76,9 @@ SUITE (MatrixTreeFunctions) {
 		for (const Node& node : tree) {
 			if (!node.isToplayer()) {
 				Matrixcd& rho = Rho[node];
-					CHECK_EQUAL(rho.Dim2(), rho.Dim1());
-				for (size_t j = 0; j < rho.Dim2(); ++j) {
-					for (size_t i = 0; i < rho.Dim1(); ++i) {
+					CHECK_EQUAL(rho.dim2(), rho.dim1());
+				for (size_t j = 0; j < rho.dim2(); ++j) {
+					for (size_t i = 0; i < rho.dim1(); ++i) {
 						if (j == 0 && i == 0) {
 								CHECK_CLOSE(1., abs(rho(j, i)), eps);
 						} else {
@@ -111,7 +111,7 @@ SUITE (MatrixTreeFunctions) {
 		for (const Node& node : tree) {
 			const TensorShape& dim = node.shape();
 			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
-			auto mat_dagger = mat.Adjoint();
+			auto mat_dagger = mat.adjoint();
 			H[node] = mat * mat_dagger;
 		}
 
@@ -124,7 +124,7 @@ SUITE (MatrixTreeFunctions) {
 		}
 		for (const Node& node : tree) {
 			const Matrixcd& I_test = Identity[node];
-			auto r = Residual(I_test, IdentityMatrix<complex<double>>(I_test.Dim1()));
+			auto r = residual(I_test, identityMatrix<complex<double>>(I_test.dim1()));
 				CHECK_CLOSE(0., r, eps);
 		}
 	}
@@ -139,8 +139,8 @@ SUITE (MatrixTreeFunctions) {
 		auto rho = TreeFunctions::Contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
-			for (size_t j = 0; j < mat.Dim2(); ++j) {
-				for (size_t i = 0; i < mat.Dim1(); ++i) {
+			for (size_t j = 0; j < mat.dim2(); ++j) {
+				for (size_t i = 0; i < mat.dim1(); ++i) {
 					if (i != j) { off += abs(mat(i, j)); }
 				}
 			}
@@ -162,8 +162,8 @@ SUITE (MatrixTreeFunctions) {
 		rho = TreeFunctions::Contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
-			for (size_t j = 0; j < mat.Dim2(); j++) {
-				for (size_t i = 0; i < mat.Dim1(); ++i) {
+			for (size_t j = 0; j < mat.dim2(); j++) {
+				for (size_t i = 0; i < mat.dim1(); ++i) {
 					if (i != j) { off += abs(mat(i, j)); }
 				}
 			}
@@ -191,8 +191,8 @@ SUITE(TreeTransformations) {
 		for (const Edge& e : tree.Edges()) {
 			auto phi = edgePsi[e];
 			Matrixcd deltaij = Contraction(phi, phi, e.upIdx());
-			Matrixcd I = IdentityMatrix<complex<double>>(deltaij.Dim1());
-			auto r = Residual(deltaij, I);
+			Matrixcd I = identityMatrix<complex<double>>(deltaij.dim1());
+			auto r = residual(deltaij, I);
 			CHECK_CLOSE(0., r, 1e-7);
 		}
 	}

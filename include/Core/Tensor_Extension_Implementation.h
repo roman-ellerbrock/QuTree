@@ -37,8 +37,8 @@ namespace Tensor_Extension {
 	}
 
 	tuple<Matrixcd, Matrixcd, Vectord> SVD(const Matrixcd& A) {
-		size_t dim1 = A.Dim1();
-		size_t dim2 = A.Dim2();
+		size_t dim1 = A.dim1();
+		size_t dim2 = A.dim2();
 
 		using namespace Eigen;
 		MatrixXcd Am = Eigen::Map<MatrixXcd>((complex<double> *) &A(0, 0), dim1, dim2);
@@ -238,7 +238,7 @@ namespace Tensor_Extension {
 
 	template<typename T>
 	void Generate(Matrix<T>& A, mt19937& gen) {
-		Generate_normal(&A[0], A.Dim1()*A.Dim2(), gen);
+		Generate_normal(&A[0], A.dim1()* A.dim2(), gen);
 	}
 
 	template<typename T>
@@ -308,8 +308,8 @@ namespace Tensor_Extension {
 	Tensor<T> OldmultAB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TensorShape tdim(B.shape());
 		assert(mode < tdim.order());
-		assert(A.Dim1() == A.Dim2());
-		assert(A.Dim1() == B.shape().Active(mode));
+		assert(A.dim1() == A.dim2());
+		assert(A.dim1() == B.shape().Active(mode));
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.lastDimension(); n++)
@@ -357,8 +357,8 @@ namespace Tensor_Extension {
 	template<typename T, typename U>
 	Tensor<T> OldmultStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 		TensorShape tdim(B.shape());
-		assert(A.Dim1() == A.Dim2());
-		assert(A.Dim2() == B.shape().getntensor());
+		assert(A.dim1() == A.dim2());
+		assert(A.dim2() == B.shape().getntensor());
 
 		Tensor<T> C(tdim);
 		for (size_t n = 0; n < tdim.lastDimension(); n++)

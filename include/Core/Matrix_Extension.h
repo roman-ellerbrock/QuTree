@@ -10,7 +10,7 @@ template <typename T>
 SpectralDecomposition<T> reduceRank(const SpectralDecomposition<T>& x, size_t rank);
 
 template <typename T>
-Matrix<T> Merge(const Matrix<T>& A, const Matrix<T>& B,
+Matrix<T> merge(const Matrix<T>& A, const Matrix<T>& B,
 	const Matrix<T>& AB);
 
 #endif //MATRIX_EXTENSION_H

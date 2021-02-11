@@ -63,7 +63,7 @@ Matrixcd dot_product(Tensorcd A, Tensorcd B) {
     Matrixcd w = A.DotProduct(B);
     cout << "w=" << endl;
     w.print();
-    cout << "(" << w.Dim1() << "," << w.Dim2() << ")\n";
+    cout << "(" << w.dim1() << "," << w.dim2() << ")\n";
     return w;
 }
 
@@ -73,7 +73,7 @@ void hole_product(Tensorcd A, const Tensorcd& B) {
         Matrixcd h = Contraction(A, B, k);
         cout << "\nk = " << k << ":\n h =" << endl;
         h.print();
-        cout << "Trace: " << h.Trace() << endl;
+        cout << "trace: " << h.trace() << endl;
         // Multiply
 		Tensorcd C = MatrixTensor(h, A, k);
 	}

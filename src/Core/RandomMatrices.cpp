@@ -57,12 +57,12 @@ namespace RandomMatrices {
 
 	Matrixcd GUE(size_t dim, mt19937& gen) {
 		Matrixcd r = RandomGauss(dim, dim, gen);
-		return 0.5 * (r + r.Adjoint());
+		return 0.5 * (r + r.adjoint());
 	}
 
 	SpectralDecompositioncd GUE_diag(size_t dim, mt19937& gen) {
 		auto A = GUE(dim, gen);
-		return Diagonalize(A);
+		return diagonalize(A);
 	}
 
 	Matrixd GOE(size_t dim, mt19937& gen) {
@@ -73,18 +73,18 @@ namespace RandomMatrices {
 				r(j, i) = dist(gen);
 			}
 		}
-		return 0.5 * (r + r.Adjoint());
+		return 0.5 * (r + r.adjoint());
 	}
 
 	SpectralDecompositiond GOE_diag(size_t dim, mt19937& gen) {
 		auto A = GOE(dim, gen);
-		return Diagonalize(A);
+		return diagonalize(A);
 	}
 
 	Matrixcd GUE(size_t dim1, size_t dim2, mt19937& gen) {
 		size_t dim = max(dim1, dim2);
 		auto G = GUE(dim, gen);
-		auto Grect = Submatrix(G, dim1, dim2);
+		auto Grect = subMatrix(G, dim1, dim2);
 		return Grect;
 	}
 
@@ -92,9 +92,9 @@ namespace RandomMatrices {
 		/// Right hand side projector
 		auto P = RandomRealGauss(dim1, dim2, gen);
 //		P /= sqrt((double) dim2);
-		for (size_t i = 0; i < P.Dim1(); ++i) {
+		for (size_t i = 0; i < P.dim1(); ++i) {
 			double norm = P.row(i).Norm();
-			for (size_t j = 0; j < P.Dim2(); ++j) {
+			for (size_t j = 0; j < P.dim2(); ++j) {
 				P(i, j) /= norm;
 			}
 		}
@@ -104,28 +104,28 @@ namespace RandomMatrices {
 	/// Build AP
 	Matrixcd GUEProjector(size_t dim1, size_t dim2, mt19937& gen) {
 		auto G = GUE(dim1, dim2, gen);
-		auto Q = QR(G);
-		return Submatrix(Q, dim1, dim2);
+		auto Q = qr(G);
+		return subMatrix(Q, dim1, dim2);
 	}
 
 	Matrixcd RandomQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen) {
-		assert(k_plus_p <= A.Dim2());
-		Matrixcd Omega = randomSparse(k_plus_p, A.Dim1(), gen);
+		assert(k_plus_p <= A.dim2());
+		Matrixcd Omega = randomSparse(k_plus_p, A.dim1(), gen);
 //		Matrixcd Omega = GUE(k_plus_p, A.Dim1(), gen);
-		Matrixcd Y = A * Omega.Adjoint();
+		Matrixcd Y = A * Omega.adjoint();
 		/// Y = QR
 		/// YY^ = QRR^Q^
-		auto Q2 = QR(Y);
+		auto Q2 = qr(Y);
 
-		auto Q = Submatrix(Q2, Y.Dim1(), Y.Dim2());
+		auto Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 		return Q;
 	}
 
 	Matrixcd RandomProjection(const Matrixcd& A,
 		size_t rdim, mt19937& gen) {
-		assert(A.Dim1() == A.Dim2());
+		assert(A.dim1() == A.dim2());
 		Matrixcd Q = RandomQ(A, rdim, gen);
-		return Q.Adjoint() * A * Q;
+		return Q.adjoint() * A * Q;
 	}
 
 	SpectralDecompositioncd DiagonalizeRandom(const Matrixcd& A,
@@ -147,8 +147,8 @@ namespace RandomMatrices {
 		Matrixcd Q = RandomQ(A, rank + p, gen);
 
 		/// Build and Diagonalize Aprime = Q^* A Q = V ew V^*
-		auto Aprime = Q.Adjoint() * A * Q;
-		auto x = Diagonalize(Aprime);
+		auto Aprime = Q.adjoint() * A * Q;
+		auto x = diagonalize(Aprime);
 		const Matrixcd& V = x.first;
 		const Vectord& ew = x.second;
 
@@ -169,7 +169,7 @@ namespace RandomMatrices {
 		 *
 		 * */
 		auto Q = RandomQ(A, rank, gen);
-		auto B = Q.Adjoint() * A;
+		auto B = Q.adjoint() * A;
 		SVDcd Bsvd = svd(B);
 		auto& U = get<0>(Bsvd);
 		U = Q * U;
@@ -182,7 +182,7 @@ namespace RandomMatrices {
 
 	Vectord probabilitiyDist(const Matrixcd& A) {
 		auto tmp = A.diag();
-		size_t dim = min(A.Dim1(), A.Dim2());
+		size_t dim = min(A.dim1(), A.dim2());
 		Vectord p(dim);
 		for (size_t i = 0; i < dim; ++i) {
 			p(i) = pow(abs(tmp(i)), 2);

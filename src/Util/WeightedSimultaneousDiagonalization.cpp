@@ -6,10 +6,10 @@ namespace WeightedSimultaneousDiagonalization {
 		Matrixcd& W, Matrixcd& trafo, double eps) {
 		// Checks
 		for (const Matrixcd& x : Xs) {
-			assert(W.Dim1() == x.Dim1());
+			assert(W.dim1() == x.dim1());
 		}
 		for (const Matrixcd& x : XXs) {
-			assert(W.Dim1() == x.Dim1());
+			assert(W.dim1() == x.dim1());
 		}
 		assert(Xs.size() > 0);
 
@@ -21,8 +21,8 @@ namespace WeightedSimultaneousDiagonalization {
 		// Initialize the Diagonalization by rotating to the diagonal
 		// representation of one of the matrices in Xs. This
 		// avoids stationary points during the optimization process.
-		trafo.Zero();
-		for (size_t i = 0; i < trafo.Dim1(); i++)
+		trafo.zero();
+		for (size_t i = 0; i < trafo.dim1(); i++)
 			trafo(i, i) = 1.;
 
 		// Initial transformation of the matrices
@@ -61,7 +61,7 @@ namespace WeightedSimultaneousDiagonalization {
 		double loc = 0;
 		for (const Matrixcd& X : A) {
 			// loc += - Xwii**2/Wii
-			for (size_t i = 0; i < X.Dim1(); i++) {
+			for (size_t i = 0; i < X.dim1(); i++) {
 				double wdiag = real(W(i, i));
 				double xdiag = real(X(i, i));
 				loc += xdiag * xdiag / wdiag;
@@ -76,8 +76,8 @@ namespace WeightedSimultaneousDiagonalization {
 		complex<double> c, s = 0;
 
 		// Swipe over the matrix-dimensions and perform jacobi-rotations
-		for (size_t i = 0; i < W.Dim1() - 1; i++) {
-			for (size_t j = i + 1; j < W.Dim1(); j++) {
+		for (size_t i = 0; i < W.dim1() - 1; i++) {
+			for (size_t j = i + 1; j < W.dim1(); j++) {
 				// Calculate Angles c and s for the elements i and j
 				CalculateWeightedAngles(c, s, i, j, Xs, XXs, W);
 //			cout << "c, s = " << c << " " << s << endl;
@@ -291,8 +291,8 @@ namespace WeightedSimultaneousDiagonalization {
 		const Matrixcd& W, size_t p, size_t q, double delta) {
 		assert(delta > 0);
 		assert(grad.Dim() == 2);
-		assert(preHessian.Dim1() == 2);
-		assert(preHessian.Dim2() == 2);
+		assert(preHessian.dim1() == 2);
+		assert(preHessian.dim2() == 2);
 		Vectord s(2), x(2);
 		s(0) = real(s_in);
 		s(1) = imag(s_in);
@@ -329,14 +329,14 @@ namespace WeightedSimultaneousDiagonalization {
 		for (size_t k = 0; k < Xws.size(); k++) {
 			const Matrixcd& Xw = Xws[k];
 			const Matrixcd& X = Xs[k];
-			Matrixcd X_diag(Xw.Dim1(), Xw.Dim2());
+			Matrixcd X_diag(Xw.dim1(), Xw.dim2());
 
-			for (size_t i = 0; i < Xw.Dim1(); i++) {
+			for (size_t i = 0; i < Xw.dim1(); i++) {
 				X_diag(i, i) = real(Xw(i, i) / W(i, i));
 			}
 
 			// Xd = trafo_^A * Xd * trafo_
-			Matrixcd X_trafo = UnitarySimilarityTrafo(X, trafo);
+			Matrixcd X_trafo = unitarySimilarityTrafo(X, trafo);
 
 			// X-Xtrafo
 			X_diag = X_diag - X_trafo;
@@ -345,7 +345,7 @@ namespace WeightedSimultaneousDiagonalization {
 			// Weight with density matrix
 			X_diag = W * X_diag;
 
-			loc += real(X_diag.Trace());
+			loc += real(X_diag.trace());
 		}
 		return loc;
 	}
@@ -353,8 +353,8 @@ namespace WeightedSimultaneousDiagonalization {
 	vector<Vectord> GetDiagonals(const vector<Matrixcd>& Xws, const Matrixcd& W) {
 		vector<Vectord> x_evs;
 		for (const Matrixcd& x : Xws) {
-			Vectord x_ev(x.Dim1());
-			for (size_t i = 0; i < x.Dim1(); i++) {
+			Vectord x_ev(x.dim1());
+			for (size_t i = 0; i < x.dim1(); i++) {
 				x_ev(i) = real(x(i, i) / W(i, i));
 			}
 			x_evs.emplace_back(x_ev);
@@ -365,7 +365,7 @@ namespace WeightedSimultaneousDiagonalization {
 
 	pair<Matrixcd, vector<Vectord>>
 	Calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps) {
-		auto trafo = IdentityMatrix<complex<double>>(W.Dim1());
+		auto trafo = identityMatrix<complex<double>>(W.dim1());
 		vector<Matrixcd> XXs;
 
 		Calculate(Xs, XXs, W, trafo, eps);

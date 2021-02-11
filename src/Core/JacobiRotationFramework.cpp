@@ -5,7 +5,7 @@ void JacobiRotationFramework::GivensRotation(Matrixcd& B,
 	complex<double> c, complex<double> s, int i, int j) {
 
 	// Perform a Givens-Rotation: R*A*R^H with R= {{c, s}, {-s*, c}}
-	int dim = B.Dim1();
+	int dim = B.dim1();
 	Matrixcd Ccopy(dim, 2);
 
 	for (int n = 0; n < dim; n++) {
@@ -39,7 +39,7 @@ void JacobiRotationFramework::RotateMatrices(vector<Matrixcd>& As,
 
 void JacobiRotationFramework::GivensTrafoRotation(Matrixcd& trafo,
 	complex<double> c, complex<double> s, int i, int j) {
-	int dim = trafo.Dim1();
+	int dim = trafo.dim1();
 	Matrixcd copy(dim, 2);
 
 	for (int n = 0; n < dim; n++) {

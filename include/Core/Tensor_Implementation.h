@@ -458,10 +458,10 @@ void Tensor<T>::Zero() {
 
 template<typename T>
 Tensor<T>::Tensor(const Matrix<T>& mat)
-	: Tensor<T>({mat.Dim1(), mat.Dim2()}) {
+	: Tensor<T>({mat.dim1(), mat.dim2()}) {
 
-	for (size_t i = 0; i < mat.Dim2(); ++i) {
-		for (size_t k = 0; k < mat.Dim1(); ++k) {
+	for (size_t i = 0; i < mat.dim2(); ++i) {
+		for (size_t k = 0; k < mat.dim1(); ++k) {
 			this->operator[](indexMapping({k, i}, shape_)) = mat(k, i);
 		}
 	}
@@ -587,7 +587,7 @@ void Contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k,
 	size_t active1 = tdim_a[k];
 	size_t active2 = tdim_b[k];
 	assert(tdim_a.totalDimension() / active1 == tdim_b.totalDimension() / active2);
-	if (zero) { S.Zero(); }
+	if (zero) { S.zero(); }
 	TensorContraction(S, A, B, before, active1, active2, after);
 }
 
@@ -752,12 +752,12 @@ void MatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t m
 
 	size_t after = tdim.after(mode);
 	size_t before = tdim.before(mode);
-	size_t active1 = A.Dim1();
-	size_t active2 = A.Dim2();
+	size_t active1 = A.dim1();
+	size_t active2 = A.dim2();
 
 	assert(mode < tdim.order());
-	assert(A.Dim2() == tdim[mode]);
-	assert(A.Dim1() == tdimC[mode]);
+	assert(A.dim2() == tdim[mode]);
+	assert(A.dim1() == tdimC[mode]);
 
 	MatrixTensor(C, A, B, before, active1, active2, after, zero);
 }
@@ -767,7 +767,7 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorShape& tdim(B.shape());
 	assert(mode < tdim.order());
 
-	if (A.Dim1() == A.Dim2()) {
+	if (A.dim1() == A.dim2()) {
 		Tensor<T> C(tdim);
 		size_t after = tdim.after(mode);
 		size_t active = tdim[mode];
@@ -776,8 +776,8 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		return C;
 	} else {
 		TensorShape tdim(B.shape());
-		size_t active1 = A.Dim1();
-		size_t active2 = A.Dim2();
+		size_t active1 = A.dim1();
+		size_t active2 = A.dim2();
 		tdim = replaceDimension(tdim, mode, active1);
 		Tensor<T> C(tdim);
 		size_t after = tdim.after(mode);
@@ -792,12 +792,12 @@ Tensor<T> MatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 
 template<typename T, typename U>
 void TensorMatrix(Tensor<T>& C, const Tensor<T>& B, const Matrix<U>& A, size_t mode, bool zero) {
-	TensorMatrix(C, B, A.Transpose(), mode, zero);
+	TensorMatrix(C, B, A.transpose(), mode, zero);
 }
 
 template<typename T, typename U>
 Tensor<T> TensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode) {
-	return MatrixTensor(A.Transpose(), B, mode);
+	return MatrixTensor(A.transpose(), B, mode);
 }
 
 template<typename T, typename U>
@@ -805,9 +805,9 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 	const TensorShape& tdim(B.shape());
 	assert(mode < tdim.order());
 	assert(mode >= 0);
-	assert(A.Dim1() == B.shape()[mode]);
+	assert(A.dim1() == B.shape()[mode]);
 
-	if (A.Dim1() == A.Dim2()) {
+	if (A.dim1() == A.dim2()) {
 		Tensor<T> C(tdim);
 		size_t after = tdim.after(mode);
 		size_t active = tdim[mode];
@@ -815,10 +815,10 @@ Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		TMatrixTensor(C, A, B, before, active, active, after, false);
 		return C;
 	} else {
-		size_t activeC = A.Dim2();
-		size_t activeB = A.Dim1();
+		size_t activeC = A.dim2();
+		size_t activeB = A.dim1();
 		TensorShape tdim(B.shape());
-		tdim = replaceDimension(tdim, mode, A.Dim2());
+		tdim = replaceDimension(tdim, mode, A.dim2());
 		size_t after = tdim.after(mode);
 		size_t before = tdim.before(mode);
 		Tensor<T> C(tdim);
@@ -839,8 +839,8 @@ void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero
 	const size_t active2 = tdimC.lastDimension();
 	const size_t after = 1;
 
-	assert(A.Dim2() == active1);
-	assert(A.Dim1() == active2);
+	assert(A.dim2() == active1);
+	assert(A.dim1() == active2);
 	assert(before == tdimC.lastBefore());
 
 	MatrixTensor(C, A, B, before, active1, active2, after, zero);
@@ -850,10 +850,10 @@ template<typename T, typename U>
 Tensor<T> multStateAB(const Matrix<U>& A, const Tensor<T>& B) {
 	const TensorShape& tdim_b(B.shape());
 	size_t ntensor = tdim_b.lastDimension();
-	assert(A.Dim2() == ntensor);
+	assert(A.dim2() == ntensor);
 
 	TensorShape tdim_c(tdim_b);
-	tdim_c.setDimension(A.Dim1(), tdim_c.lastIdx());
+	tdim_c.setDimension(A.dim1(), tdim_c.lastIdx());
 	Tensor<T> C(tdim_c);
 	multStateAB(C, A, B);
 	return C;
@@ -882,8 +882,8 @@ Tensor<T> multStateArTB(const Matrix<U>& A, const Tensor<T>& B) {
 	const TensorShape& tdim(B.shape());
 	size_t dimpart = tdim.lastBefore();
 	size_t ntensor = tdim.lastDimension();
-	assert(A.Dim1() == A.Dim2());
-	assert(A.Dim2() == ntensor);
+	assert(A.dim1() == A.dim2());
+	assert(A.dim2() == ntensor);
 
 	Tensor<T> C(tdim);
 	multStateArTB(C, A, B);
@@ -954,7 +954,7 @@ void GramSchmidt(Tensor<T>& A) {
 
 Tensorcd QR(const Tensorcd& A) {
 	auto Amat = toMatrix(A);
-	auto Qmat = QR(Amat);
+	auto Qmat = qr(Amat);
 	auto Q = toTensor(Qmat);
 	Q.Reshape(A.shape());
 	return Q;
@@ -962,7 +962,7 @@ Tensorcd QR(const Tensorcd& A) {
 
 Tensorcd QR(const Tensorcd& A, size_t mode) {
 	auto Amat = toMatrix(A, mode);
-	auto Qmat = QR(Amat);
+	auto Qmat = qr(Amat);
 	auto Q = toTensor(Qmat, A.shape(), mode);
 	return Q;
 }
@@ -1029,7 +1029,7 @@ template<typename T>
 double Residual(Tensor<T> D, const Tensor<T>& B) {
 	D -= B;
 	auto S = D.DotProduct(D);
-	return S.FrobeniusNorm();
+	return S.frobeniusNorm();
 }
 
 template<typename T>
@@ -1089,10 +1089,10 @@ Tensor<T> toTensor(const Matrix<T>& B, const TensorShape& shape, size_t mode) {
 
 template<typename T>
 Tensor<T> toTensor(const Matrix<T>& B) {
-	TensorShape shape({B.Dim1(), B.Dim2()});
+	TensorShape shape({B.dim1(), B.dim2()});
 	Tensor<T> A(shape);
-	for (size_t j = 0; j < B.Dim2(); ++j) {
-		for (size_t i = 0; i < B.Dim1(); ++i) {
+	for (size_t j = 0; j < B.dim2(); ++j) {
+		for (size_t i = 0; i < B.dim1(); ++i) {
 			A(i, j) = B(i, j);
 		}
 	}

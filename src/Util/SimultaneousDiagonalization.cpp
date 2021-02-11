@@ -8,13 +8,13 @@ void SimultaneousDiagonalization::Initialization(vector<Matrixcd>& A,
 
 	// Dimension of matrices
 	Matrixcd& B = A[0];
-    dim_ = B.Dim1();
+    dim_ = B.dim1();
 
 	// Dimension check
 	for (size_t k = 0; k < nmat_; k++) {
 		Matrixcd& B = A[k];
-		assert(B.Dim1() == dim_);
-		assert(B.Dim2() == dim_);
+		assert(B.dim1() == dim_);
+		assert(B.dim2() == dim_);
 	}
 
 	// Set convergence parameter
@@ -30,7 +30,7 @@ void SimultaneousDiagonalization::Calculate(vector<Matrixcd>& A,
 	// Initialize the Diagonalization by rotating to the diagonal
 	// representation of one of the matrices in A. This
 	// avoids stationary points during the optimization process.
-	trafo.Zero();
+	trafo.zero();
 	for (size_t i = 0; i < dim_; i++)
 		trafo(i, i) = 1.;
 
@@ -91,11 +91,11 @@ double SimultaneousDiagonalization::MeasureOffDiagonals(const vector<Matrixcd>& 
 	for (size_t k = 0; k < A.size(); k++) {
 		Matrixcd B(A[k]);
 
-		for (int n = 0; n < B.Dim1(); n++)
+		for (int n = 0; n < B.dim1(); n++)
 			B(n, n) = 0;
 
 		B = B * B;
-		eps += real(B.Trace());
+		eps += real(B.trace());
 	}
 
 	return sqrt(eps);
@@ -121,10 +121,10 @@ double SimultaneousDiagonalization::MeasureDiagonality(vector<Matrixcd>& A) {
 void SimultaneousDiagonalization::InitialTransformation(vector<Matrixcd>& A,
 	Matrixcd& trafo) {
 	Matrixcd& B = A[0];
-	Vectord ev(B.Dim1());
+	Vectord ev(B.dim1());
 	B.cDiag(trafo, ev);
 
 	for (size_t k = 0; k < A.size(); k++) {
-		A[k] = UnitarySimilarityTrafo(A[k], trafo);
+		A[k] = unitarySimilarityTrafo(A[k], trafo);
 	}
 }

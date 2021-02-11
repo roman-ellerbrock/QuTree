@@ -83,7 +83,7 @@ namespace TreeFunctions {
 				const Node& parent = node.parent();
 				ContractionLocal(Rho, Psi[parent], Chi[parent], node, S_opt);
 			} else {
-				Rho[node] = IdentityMatrix<T>(node.shape().lastDimension());
+				Rho[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
 		}
 	}

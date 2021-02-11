@@ -81,7 +81,7 @@ SUITE (SparseMatrixTree) {
 			CHECK_EQUAL(hmat.Size(), gmat.Size());
 		for (size_t i = 0; i < marker.size(); ++i) {
 			const Node& node = marker.MCTDHNode(i);
-			double r = Residual(hmat[node], gmat[node]);
+			double r = residual(hmat[node], gmat[node]);
 				CHECK_CLOSE(0., r, eps);
 		}
 	}

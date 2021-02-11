@@ -10,8 +10,8 @@ void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, doubl
 	//
 	Matrixd xmat = InitXmat();
 	// @TODO: temporary test until proven!!!
-	for (size_t i = 0; i < p_.Dim2(); i++)
-		for (size_t j = 0; j < p_.Dim1(); j++)
+	for (size_t i = 0; i < p_.dim2(); i++)
+		for (size_t j = 0; j < p_.dim1(); j++)
 			p_(j, i) = xmat(j, i);
 	xmat.rDiag(trafo_, x_);
 
@@ -29,7 +29,7 @@ void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, doubl
 
 	//
 	kin_ = InitKin();
-	kin_ = UnitarySimilarityTrafo(kin_, trafo_);
+	kin_ = unitarySimilarityTrafo(kin_, trafo_);
 }
 
 void LegendrePolynomials::InitSPF(Tensorcd& phi) const {

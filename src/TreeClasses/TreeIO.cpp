@@ -82,7 +82,7 @@ namespace TreeIO {
 
 			// state-multiply with single-particle density matrix
 			const Matrixcd& dens = rho[node];
-			double norm = abs(real(dens.Trace()));
+			double norm = abs(real(dens.trace()));
 			Tensorcd hAcoeff = multStateAB(dens, Acoeff);
 
 			// Calculate <x>
@@ -94,9 +94,9 @@ namespace TreeIO {
 
 				// tr(rho*x)
 				Matrixcd xmat = Acoeff.DotProduct(xhAcoeff);
-				double xexp = real(xmat.Trace() / norm);
+				double xexp = real(xmat.trace() / norm);
 				Matrixcd x2mat = Acoeff.DotProduct(xxhAcoeff);
-				double x2exp = real(x2mat.Trace() / norm);
+				double x2exp = real(x2mat.trace() / norm);
 				double dx = sqrt(abs(x2exp - xexp * xexp));
 				// tr(rho)
 				cout << "<x>=" << xexp << "    ";
@@ -113,9 +113,9 @@ namespace TreeIO {
 					}
 				}
 				Matrixcd nmat = Acoeff.DotProduct(nAcoeff);
-				double nexp = real(nmat.Trace() / norm);
+				double nexp = real(nmat.trace() / norm);
 				Matrixcd n2mat = Acoeff.DotProduct(n2Acoeff);
-				double n2exp = real(n2mat.Trace() / norm);
+				double n2exp = real(n2mat.trace() / norm);
 				double dn = sqrt(abs(n2exp - nexp * nexp));
 //			cout << "<n>=" << nexp << "    <dn>=" << dn << endl;
 			}
@@ -127,9 +127,9 @@ namespace TreeIO {
 				p(grid, pphAcoeff, phAcoeff);
 				// tr(rho*x)
 				Matrixcd pmat = Acoeff.DotProduct(phAcoeff);
-				double pexp = real(pmat.Trace() / norm);
+				double pexp = real(pmat.trace() / norm);
 				Matrixcd p2mat = Acoeff.DotProduct(pphAcoeff);
-				double p2exp = real(p2mat.Trace() / norm);
+				double p2exp = real(p2mat.trace() / norm);
 				double dp = sqrt(abs(p2exp - pexp * pexp));
 				// tr(rho)
 				cout << "<p>=" << pexp << "    ";
@@ -191,8 +191,8 @@ namespace TreeIO {
 			const Leaf& leaf = tree.GetLeaf(l);
 			auto rho_leaf = LeafDensity(Psi, Rho, leaf, tree);
 			cout << "Leaf: " << l << "\n";
-			double norm = abs(rho_leaf.Trace());
-			for (size_t i = 0; i < rho_leaf.Dim1(); ++i) {
+			double norm = abs(rho_leaf.trace());
+			for (size_t i = 0; i < rho_leaf.dim1(); ++i) {
 				os << abs(rho_leaf(i, i)) / norm << "\t";
 				if ((i + 1) % 8 == 0) { os << "\n"; }
 			}
@@ -205,7 +205,7 @@ namespace TreeIO {
 	template <typename T>
 	void EntropyMap(const TensorTree<T>& Psi, const Tree& tree) {
 		auto rho = TreeFunctions::Contraction(Psi, tree, true);
-		SpectralDecompositionTree<T> X = Diagonalize(rho);
+		SpectralDecompositionTree<T> X = diagonalize(rho);
 		for (const SpectralDecomposition<T>& x : X) {
 			const auto& occ = x.second;
 			double s = 0.;

@@ -29,7 +29,7 @@ public:
 	void print(const Tree& tree, ostream& os = cout) const;
 	void print(ostream& os = cout) const;
 
-	/// Read in binary format
+	/// read in binary format
 	void Read(istream& is);
 	void Read(const string& filename);
 

@@ -99,7 +99,7 @@ SUITE (Tensor) {
 		Tensorcd B(tdim);
 		auto same = A - B;
 		auto s = same.DotProduct(same);
-		auto delta = s.FrobeniusNorm();
+		auto delta = s.frobeniusNorm();
 			CHECK_CLOSE(delta, 0., eps);
 	}
 
@@ -109,23 +109,23 @@ SUITE (Tensor) {
 		Tensorcd B("tensor1.dat");
 		Tensorcd C = A - B;
 		Matrixcd s = C.DotProduct(C);
-		double residual = abs(s.Trace());
+		double residual = abs(s.trace());
 			CHECK_CLOSE(residual, 0., eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Product) {
 		Matrixcd x = Contraction(A, B, 0);
-		x.Write("Tensor_Product.dat");
+		x.write("Tensor_Product.dat");
 		Matrixcd s("Tensor_Product.dat");
-		auto r = Residual(s, x);
+		auto r = residual(s, x);
 			CHECK_CLOSE(0., r, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, Tensor_Matrix_Product) {
 		Matrixcd x = Contraction(A, B, 1);
-		x.Write("Tensor_Product_0.dat");
+		x.write("Tensor_Product_0.dat");
 		Matrixcd s("Tensor_Product_0.dat");
-		auto r = Residual(x, s);
+		auto r = residual(x, s);
 			CHECK_CLOSE(0., r, eps);
 	}
 
@@ -164,7 +164,7 @@ SUITE (Tensor) {
 		auto C = A.AdjustActiveDim(inc_dim, leaf);
 		A = A.AdjustActiveDim(inc_dim, leaf);
 		auto s = Contraction(C, A, C.shape().lastIdx());
-		auto res = Residual(s, IdentityMatrix<complex<double>>(2));
+		auto res = residual(s, identityMatrix<complex<double>>(2));
 			CHECK_CLOSE(0., res, eps);
 	}
 
@@ -177,14 +177,14 @@ SUITE (Tensor) {
 		auto C = A.AdjustActiveDim(inc_dim, leaf);
 		C = C.AdjustActiveDim(dim, leaf);
 		auto s = Contraction(C, A, C.shape().lastIdx());
-		auto res = Residual(s, IdentityMatrix<complex<double>>(2));
+		auto res = residual(s, identityMatrix<complex<double>>(2));
 			CHECK_CLOSE(0., res, eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, HoleProduct) {
 		Matrixcd s = Contraction(C_, C_, 1);
-			CHECK_EQUAL(shape_c_[1], s.Dim1());
-			CHECK_EQUAL(shape_c_[1], s.Dim2());
+			CHECK_EQUAL(shape_c_[1], s.dim1());
+			CHECK_EQUAL(shape_c_[1], s.dim2());
 		double dim = shape_c_.before(1) * shape_c_.after(1);
 		for (size_t i = 0; i < shape_c_[1]; ++i) {
 			for (size_t j = 0; j < shape_c_[1]; ++j) {
@@ -195,8 +195,8 @@ SUITE (Tensor) {
 
 	TEST_FIXTURE (TensorFactory, DotProduct) {
 		Matrixcd s = C2_.DotProduct(C2_);
-			CHECK_EQUAL(shape_c_[2], s.Dim1());
-			CHECK_EQUAL(shape_c_[2], s.Dim2());
+			CHECK_EQUAL(shape_c_[2], s.dim1());
+			CHECK_EQUAL(shape_c_[2], s.dim2());
 		for (size_t i = 0; i < shape_c_[2]; ++i) {
 			for (size_t j = 0; j < shape_c_[2]; ++j) {
 					CHECK_CLOSE(shape_c_.before(2) * (double) i * (double) j, abs(s(i, j)), eps);
@@ -241,13 +241,13 @@ SUITE (Tensor) {
 		/// Test standard QR
 		Tensorcd Q = QR(A);
 		auto S = Q.DotProduct(Q);
-			CHECK_CLOSE(0., Residual(S, IdentityMatrixcd(S.Dim1())), eps);
+			CHECK_CLOSE(0., residual(S, identityMatrixcd(S.dim1())), eps);
 
 		/// Test QR for other than last mode
 		for (size_t i = 0; i < shape.order(); ++i) {
 			Tensorcd Q2 = QR(A, i);
 			auto S1 = Contraction(Q2, Q2, i);
-				CHECK_CLOSE(0., Residual(S1, IdentityMatrixcd(S1.Dim1())), eps);
+				CHECK_CLOSE(0., residual(S1, identityMatrixcd(S1.dim1())), eps);
 		}
 	}
 }

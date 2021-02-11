@@ -68,14 +68,14 @@ public:
 	/// Move assignment operator
 	Tree& operator=(Tree&& T) noexcept;
 
-	/// Read Basis from ASCII-file
+	/// read Basis from ASCII-file
 	void Read(istream& is);
 	void Read(const string& filename);
 
 	/// Write the tree to a stream in ASCII output
 	void Write(ostream& os = cout) const;
 
-	/// Re-initialize the tree from Tree
+	/// re-initialize the tree from Tree
 	void Update();
 
 	/// Print out tree information

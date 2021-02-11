@@ -33,11 +33,11 @@ SUITE (RMT) {
 		}
 		SpectralDecompositioncd x(U, ew);
 		Matrixcd A = toMatrix(x);
-		double diag = abs(A.Trace());
+		double diag = abs(A.trace());
 		A /= diag;
 
 		/// Diagonalize
-		auto x2 = Diagonalize(A);
+		auto x2 = diagonalize(A);
 		auto x3 = RandomMatrices::DiagonalizeRandom(A, rank, p, gen);
 
 		Vectord ew_acc = reverse(x2.second);
@@ -61,11 +61,11 @@ SUITE (RMT) {
 		}
 		SpectralDecompositioncd x(U, ew);
 		Matrixcd A = toMatrix(x);
-		double diag = abs(A.Trace());
+		double diag = abs(A.trace());
 		A /= diag;
 
 		/// Diagonalize
-		auto x2 = Diagonalize(A);
+		auto x2 = diagonalize(A);
 		auto x3 = RandomMatrices::DiagonalizeRandom(A, rank, p, gen);
 
 		Vectord ew_acc = reverse(x2.second);
@@ -162,11 +162,11 @@ SUITE (RMT) {
 
 		auto svd_acc = svd(A);
 		auto C = toMatrix(svd_acc);
-			CHECK_CLOSE(0., Residual(A, C), 1e-12);
+			CHECK_CLOSE(0., residual(A, C), 1e-12);
 
 		auto svd_rand = svdRandom(A, rank + p, gen);
 		auto B = toMatrix(svd_rand);
-			CHECK_CLOSE(0., Residual(A, B), 1e-12);
+			CHECK_CLOSE(0., residual(A, B), 1e-12);
 	}
 
 	TEST (ProjectRandomGUE) {
@@ -177,19 +177,19 @@ SUITE (RMT) {
 		auto U1 = RandomMatrices::GUE(dim, gen);
 		auto U2 = RandomMatrices::GUE(dim, gen);
 		auto A = U1 * U2;
-		A /= 1. * A.Dim1();
+		A /= 1. * A.dim1();
 		/// B = A * P
-		auto P = RandomProjector(A.Dim2(), rank, gen);
+		auto P = RandomProjector(A.dim2(), rank, gen);
 		auto B = A * P;
 
 		double avg = 0.;
-		for (size_t r = 0.; r < A.Dim1(); ++r) {
+		for (size_t r = 0.; r < A.dim1(); ++r) {
 			auto ui = A.row(r);
 			auto vi = B.row(r);
 			double contr = (ui.Norm() - vi.Norm()) / ui.Norm();
 			avg += contr;
 		}
-		avg /= 1. * A.Dim1();
+		avg /= 1. * A.dim1();
 			CHECK_CLOSE(0., avg, 1e-1);
 	}
 
@@ -210,7 +210,7 @@ SUITE (RMT) {
 		}
 		SpectralDecompositioncd x(U1, ew);
 		auto A = toMatrix(x);
-		x = Diagonalize(A);
+		x = diagonalize(A);
 		ew = x.second;
 		double shift = ew(0);
 		for (size_t i = 0; i < dim; ++i) {
@@ -221,7 +221,7 @@ SUITE (RMT) {
 		}
 		x.second = ew;
 		A = toMatrix(x);
-		A /= A.FrobeniusNorm();
+		A /= A.frobeniusNorm();
 
 		/// Build a start vector
 		auto r = GaussVector(dim, gen);
@@ -242,7 +242,7 @@ SUITE (RMT) {
 		auto P = toMatrix(space);
 //		auto P = RandomProjector(dim, rank, gen);
 //		auto P = RandomGauss(dim, rank, gen);
-		auto PP = P * P.Adjoint();
+		auto PP = P * P.adjoint();
 
 		/// CHECK moment
 		auto y = r;
@@ -258,11 +258,11 @@ SUITE (RMT) {
 
 		if (false) {
 			auto PPA = PP * A;
-			PPA /= PPA.FrobeniusNorm();
+			PPA /= PPA.frobeniusNorm();
 
 			auto Arr_x = reduceRank(x, rank);
 			auto Arr = toMatrix(Arr_x);
-			Arr /= PPA.FrobeniusNorm();
+			Arr /= PPA.frobeniusNorm();
 
 			cout << "entropy(A) = " << entropy(A) << endl;
 			cout << "entropy(PP * A) = " << entropy(PPA) << endl;

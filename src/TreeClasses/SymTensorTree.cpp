@@ -48,7 +48,7 @@ void SymTensorTree::normalizeCanonical(const Node& node) {
 
 	/// Normalize
 	auto S = W.DotProduct(W);
-	auto norm = sqrt(abs(S.Trace()));
+	auto norm = sqrt(abs(S.trace()));
 	weighted_[node] /= norm;
 
 }
@@ -87,7 +87,7 @@ Tensorcd canonicalTensor(Tensorcd w, bool up, bool down) {
 
 Matrixcd calculateB(const Tensorcd& weighted, size_t k) {
 	Matrixcd rho = Contraction(weighted, weighted, k);
-	return toMatrix(sqrt(Diagonalize(rho)));
+	return toMatrix(sqrt(diagonalize(rho)));
 }
 
 template<typename T>
@@ -289,7 +289,7 @@ double epsUpNormalization(const SymTensorTree& Psi, const Tree& tree) {
 		if (node.isToplayer()) { continue; }
 		const auto& Phi = Psi.up_[node];
 		auto S = Phi.DotProduct(Phi);
-		r += abs(Residual(S, IdentityMatrixcd(S.Dim1())));
+		r += abs(residual(S, identityMatrixcd(S.dim1())));
 	}
 	return r;
 }
@@ -301,7 +301,7 @@ double epsDownNormalization(const SymTensorTree& Psi, const Tree& tree) {
 		if (node.isToplayer()) { continue; }
 		const auto& Phi = Psi.down_[node];
 		auto S = Contraction(Phi, Phi, node.childIdx());
-		r += abs(Residual(S, IdentityMatrixcd(S.Dim1())));
+		r += abs(residual(S, identityMatrixcd(S.dim1())));
 	}
 	return r;
 }

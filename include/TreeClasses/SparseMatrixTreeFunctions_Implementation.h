@@ -148,7 +148,7 @@ namespace TreeFunctions {
 				}
 				holes[node] = Contraction(Bra[parent], hKet, node.childIdx());
 			} else {
-				holes[node] = IdentityMatrix<T>(node.shape().lastDimension());
+				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
 		}
 	}
@@ -176,7 +176,7 @@ namespace TreeFunctions {
 				}
 				holes[node] = Contraction(Bra[parent], hKet, node.childIdx());
 			} else {
-				holes[node] = IdentityMatrix<T>(node.shape().lastDimension());
+				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
 		}
 	}

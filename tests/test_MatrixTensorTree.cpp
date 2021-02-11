@@ -22,7 +22,7 @@ SUITE (ExplicitEdgeWavefunction) {
 		auto S = TreeFunctions::DotProduct(Psi, Psi2, tree);
 		for (const Node& node : tree) {
 			const auto& s = S[node];
-				CHECK_CLOSE(0., Residual(s * s, IdentityMatrixcd(s.Dim1())), eps);
+				CHECK_CLOSE(0., residual(s * s, identityMatrixcd(s.dim1())), eps);
 		}
 
 		/// Check top-down
@@ -33,8 +33,8 @@ SUITE (ExplicitEdgeWavefunction) {
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
 				auto x = Contraction(Atilde[parent], Atilde[parent], node.childIdx());
-				auto v1 = Diagonalize(x).second;
-				auto v2 = Diagonalize(rho[node]).second;
+				auto v1 = diagonalize(x).second;
+				auto v2 = diagonalize(rho[node]).second;
 				auto r = Residual(v1, v2);
 					CHECK_CLOSE(0., r, eps);
 			}

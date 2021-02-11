@@ -82,7 +82,7 @@ public:
 		if (!adjoint) {
 			push_back(make_shared<LeafMatrix<T>>(h), mode);
 		} else {
-			push_back(make_shared<LeafMatrix<T>>(h.Adjoint()), mode);
+			push_back(make_shared<LeafMatrix<T>>(h.adjoint()), mode);
 		}
 	}
 

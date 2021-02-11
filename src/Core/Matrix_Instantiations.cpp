@@ -44,32 +44,32 @@ template Matrix<cd> multscalar<cd, doub>(const double sca, const Matrix<cd>& B);
 template Matrix<doub> multscalar<doub, doub>(const double sca,
 	const Matrix<doub>& B);
 
-template Matrix<cd> UnitarySimilarityTrafo<cd>(const Matrix<cd>& A,
+template Matrix<cd> unitarySimilarityTrafo<cd>(const Matrix<cd>& A,
 	const Matrix<cd>& B);
-template Matrix<double> UnitarySimilarityTrafo<doub>(const Matrix<double>& A,
+template Matrix<double> unitarySimilarityTrafo<doub>(const Matrix<double>& A,
 	const Matrix<double>& B);
 
-template Matrix<cd> Re(const Matrix<cd>& A);
-template Matrix<d> Re(const Matrix<d>& A);
+template Matrix<cd> re(const Matrix<cd>& A);
+template Matrix<d> re(const Matrix<d>& A);
 
 ///////////////////////////////////////////////////////////////
 /// Convenience & Management
 ///////////////////////////////////////////////////////////////
 
-template Matrix<cd> IdentityMatrix(size_t dim);
-template Matrix<doub> IdentityMatrix(size_t dim);
+template Matrix<cd> identityMatrix(size_t dim);
+template Matrix<doub> identityMatrix(size_t dim);
 
-template double Residual(const Matrixcd& A, const Matrixcd& B);
-template double Residual(const Matrixd& A, const Matrixd& B);
+template double residual(const Matrixcd& A, const Matrixcd& B);
+template double residual(const Matrixd& A, const Matrixd& B);
 
 template Matrix<cd> Regularize(const Matrix<cd>& A, double eps);
 template Matrix<d> Regularize(const Matrix<d>& A, double eps);
 
-template Matrix<cd> Merge(const Matrix<cd>& A, const Matrix<cd>& B, const Matrix<cd>& AB);
-template Matrix<d> Merge(const Matrix<d>& A, const Matrix<d>& B, const Matrix<d>& AB);
+template Matrix<cd> merge(const Matrix<cd>& A, const Matrix<cd>& B, const Matrix<cd>& AB);
+template Matrix<d> merge(const Matrix<d>& A, const Matrix<d>& B, const Matrix<d>& AB);
 
-template Matrix<cd> Submatrix(const Matrix<cd> A, size_t dim1, size_t dim2);
-template Matrix<d> Submatrix(const Matrix<d> A, size_t dim1, size_t dim2);
+template Matrix<cd> subMatrix(const Matrix<cd> A, size_t dim1, size_t dim2);
+template Matrix<d> subMatrix(const Matrix<d> A, size_t dim1, size_t dim2);
 
 template ostream& operator<< <cd> (ostream& os, const Matrixcd& A);
 template istream& operator>> <cd> (istream& is, Matrixcd& A);
@@ -77,7 +77,7 @@ template istream& operator>> <cd> (istream& is, Matrixcd& A);
 template ostream& operator<< <doub> (ostream& os, const Matrix<doub>& A);
 template istream& operator>> <doub> (istream& is, Matrix<doub>& A);
 
-template Matrix<double> EuclideanDistance(const Matrix<double>& A);
+template Matrix<double> euclideanDistance(const Matrix<double>& A);
 
 ///////////////////////////////////////////////////////////////
 /// Matrix Extension
@@ -92,8 +92,8 @@ template SpectralDecompositiond inverse(SpectralDecompositiond X, double eps);
 template Matrixcd toMatrix(const SpectralDecompositioncd& X);
 template Matrixd toMatrix(const SpectralDecompositiond& X);
 
-template Matrixcd BuildInverse(const SpectralDecompositioncd& X, double eps);
-template Matrixd BuildInverse(const SpectralDecompositiond& X, double eps);
+//template Matrixcd inverse(const SpectralDecompositioncd& X, double eps);
+//template Matrixd inverse(const SpectralDecompositiond& X, double eps);
 
 template SpectralDecomposition<double> reduceRank(const SpectralDecomposition<double>& x, size_t rank);
 template SpectralDecomposition<cd> reduceRank(const SpectralDecomposition<cd>& x, size_t rank);
