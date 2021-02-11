@@ -477,14 +477,6 @@ pair<Matrix<T>, Vectord> diagonalize(const Matrix<T>& A);
 template <typename T>
 Matrix<T> toMatrix(const SpectralDecomposition<T>& X);
 
-/**
- * \brief Construct inverse matrix from SpectralDecomposition
- * @param X Decomposed matrix
- * @return Inverse matrix
- */
-//template <typename T>
-//Matrix<T> inverse(const SpectralDecomposition<T>& X, double eps = 1e-7);
-
 template <typename T>
 SpectralDecomposition<T> inverse(SpectralDecomposition<T> X, double eps = 1e-7);
 

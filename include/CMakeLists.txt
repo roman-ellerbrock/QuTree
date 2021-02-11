@@ -1,5 +1,7 @@
 # Easily regenerated with find include -name '*.h' | sort
 set(QuTree_INCLUDE_FILES
+    QuTree.h
+
     include/Core/Matrix.h
     include/Core/Matrix_Implementation.h
     include/Core/Tensor.h

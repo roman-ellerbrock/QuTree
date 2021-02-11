@@ -604,12 +604,6 @@ Matrix<T> toMatrix(const SpectralDecomposition<T>& X) {
 	return mat * mat2.adjoint();
 }
 
-/*template<typename T>
-Matrix<T> inverse(const SpectralDecomposition<T>& X, double eps) {
-	auto inv_vec = Inverse(X.second, eps);
-	return toMatrix<T>({X.first, inv_vec});
-}*/
-
 template<typename T>
 SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	Vectord& lambda = X.second;

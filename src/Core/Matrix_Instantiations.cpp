@@ -92,9 +92,6 @@ template SpectralDecompositiond inverse(SpectralDecompositiond X, double eps);
 template Matrixcd toMatrix(const SpectralDecompositioncd& X);
 template Matrixd toMatrix(const SpectralDecompositiond& X);
 
-//template Matrixcd inverse(const SpectralDecompositioncd& X, double eps);
-//template Matrixd inverse(const SpectralDecompositiond& X, double eps);
-
 template SpectralDecomposition<double> reduceRank(const SpectralDecomposition<double>& x, size_t rank);
 template SpectralDecomposition<cd> reduceRank(const SpectralDecomposition<cd>& x, size_t rank);
 
