@@ -131,7 +131,7 @@ SymTensorTree::SymTensorTree(mt19937& gen, const TensorTreecd& Psi,
 	const SparseTree& stree, const Tree& tree, bool delta_lowest) {
 	TensorTreecd tmp(gen, tree, delta_lowest);
 	for (const Node& node: tree) {
-		if (!stree.Active(node)) {
+		if (!stree.isActive(node)) {
 			tmp[node] = Psi[node];
 		}
 	}
@@ -159,7 +159,7 @@ namespace TreeFunctions {
 
 		int sub_topnode = mat.sparseTree().size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
-			const Node& node = mat.sparseTree().MCTDHNode(n);
+			const Node& node = mat.sparseTree().node(n);
 			if (!node.isToplayer()) {
 				/// Use Bra/Ket[node] instead of [parent] since Trensors are moved down
 				symContractionLocal(hole, Bra[node], Ket[node], mat, node);

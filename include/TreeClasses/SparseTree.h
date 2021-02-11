@@ -39,10 +39,10 @@ public:
 	void SparseInitialize(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true);
 
-	void InitializeInverse(const SparseTree& stree,
+	void initializeInverse(const SparseTree& stree,
 		const Tree& tree);
 
-	size_t Active(const Node& node) const {
+	size_t isActive(const Node& node) const {
 		size_t count = co_address_.count(node.Address());
 		return (count != 0);
 	}
@@ -57,12 +57,12 @@ public:
 		return nodes_.end();
 	}
 
-	const Node& MCTDHNode(size_t n) const {
+	const Node& node(size_t n) const {
 		assert(n < nodes_.size());
 		return *nodes_[n];
 	}
 
-	size_t SparseAddress(const Node& node) const {
+	size_t sparseAddress(const Node& node) const {
 		size_t addr = node.Address();
 		return co_address_.at(addr);
 	}

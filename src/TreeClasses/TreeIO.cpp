@@ -173,7 +173,7 @@ namespace TreeIO {
 		const Leaf& leaf, const Tree& tree) {
 		const auto& node = (const Node&) leaf.Up();
 		const SparseTree& stree = Rho.sparseTree();
-		assert(stree.Active(node));
+		assert(stree.isActive(node));
 		const auto& Phi = Psi[node];
 		if (!node.isToplayer()) {
 			const auto& rho = Rho[node];

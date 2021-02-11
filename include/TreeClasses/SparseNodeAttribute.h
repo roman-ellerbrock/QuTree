@@ -47,7 +47,7 @@ public:
 
 	/// Getter for the attribute at an active_ node. Crashes if called for inactive nodes.
 	A& operator[](const Node& node) {
-		size_t address = sparseTree().SparseAddress(node);
+		size_t address = sparseTree().sparseAddress(node);
 		assert(address < attributes_.size());
 		assert(isActive(node));
 		return attributes_[address];
@@ -55,7 +55,7 @@ public:
 
 	/// Getter for the attribute at an active_ node. Crashes if called for inactive nodes.
 	const A& operator[](const Node& node) const {
-		size_t address = sparseTree().SparseAddress(node);
+		size_t address = sparseTree().sparseAddress(node);
 		assert(address < attributes_.size());
 		assert(isActive(node));
 		return attributes_[address];
@@ -79,7 +79,7 @@ public:
 
 	/// Check whether node is active_
 	size_t isActive(const Node& node) const {
-		return active_->Active(node);
+		return active_->isActive(node);
 	}
 
 protected:

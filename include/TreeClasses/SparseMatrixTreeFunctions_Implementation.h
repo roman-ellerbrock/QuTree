@@ -51,7 +51,7 @@ namespace TreeFunctions {
 		assert(Bra.size() == Ket.size());
 		const SparseTree& active = hmat.sparseTree();
 		for (size_t n = 0; n < active.size(); ++n) {
-			const Node& node = active.MCTDHNode(n);
+			const Node& node = active.node(n);
 			if (!node.isToplayer()) {
 				representLayer(hmat, Bra[node], Ket[node], M, node);
 			}
@@ -130,20 +130,20 @@ namespace TreeFunctions {
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = marker.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
-			const Node& node = marker.MCTDHNode(n);
+			const Node& node = marker.node(n);
 			if (!node.isToplayer()) {
 				assert(holes.isActive(node));
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = applyHole(mats, Ket[parent], node);
 				if (!parent.isToplayer()) {
-					if (!marker.Active(parent)) {
+					if (!marker.isActive(parent)) {
 						cerr << "Error in Contraction of operator representation:\n";
 						cerr << "Missing active node at parent.\n";
 						exit(1);
 					}
 				}
-				if (marker.Active(parent)) {
+				if (marker.isActive(parent)) {
 					hKet = multStateAB(holes[parent], hKet);
 				}
 				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
@@ -161,14 +161,14 @@ namespace TreeFunctions {
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = marker.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
-			const Node& node = marker.MCTDHNode(n);
+			const Node& node = marker.node(n);
 			if (!node.isToplayer()) {
 				assert(holes.isActive(node));
 
 				const Node& parent = node.parent();
 				Tensor<T> hKet = applyHole(mats, Ket[parent], node);
 				if (!parent.isToplayer()) {
-					if (marker.Active(parent)) {
+					if (marker.isActive(parent)) {
 						hKet = multStateAB(holes[parent], hKet);
 					} else {
 						hKet = multStateAB(rho[parent], hKet);
@@ -238,7 +238,7 @@ namespace TreeFunctions {
 			exit(1);
 		}
 		for (int i = stree.size() - 1; i > 0; --i) {
-			const Node& node = stree.MCTDHNode(i);
+			const Node& node = stree.node(i);
 			if (!node.isToplayer()) {
 				const MatrixTree<T> *null = nullptr;
 				const Node& parent = node.parent();

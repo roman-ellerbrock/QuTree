@@ -32,7 +32,7 @@ namespace TreeFunctions {
 		const TensorTreecd& Psi_down = Psi.topDownNormalized(tree);
 		int sub_topnode = marker.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
-			const Node& node = marker.MCTDHNode(n);
+			const Node& node = marker.node(n);
 			if (!node.isToplayer()) {
 				ContractionLocal(hole, Psi_down[node], mat, node);
 			}

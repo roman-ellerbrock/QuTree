@@ -30,7 +30,7 @@ SUITE (SparseTree) {
 			CHECK_EQUAL(n_expect, num1);
 		size_t num2 = 0;
 		for (const Node& node : tree) {
-			if (stree.Active(node)) {
+			if (stree.isActive(node)) {
 				num2++;
 			}
 		}

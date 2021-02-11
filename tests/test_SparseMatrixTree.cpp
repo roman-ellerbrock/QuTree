@@ -80,8 +80,8 @@ SUITE (SparseMatrixTree) {
 		const SparseTree& marker = gmat.sparseTree();
 			CHECK_EQUAL(hmat.size(), gmat.size());
 		for (size_t i = 0; i < marker.size(); ++i) {
-			const Node& node = marker.MCTDHNode(i);
-			double r = residual(hmat[node], gmat[node]);
+			const Node& nodep = marker.node(i);
+			double r = residual(hmat[nodep], gmat[nodep]);
 				CHECK_CLOSE(0., r, eps);
 		}
 	}
@@ -91,8 +91,8 @@ SUITE (SparseMatrixTree) {
 		SparseTree itree(M_, tree_, true, true);
 		CHECK_EQUAL(tree_.nNodes(), itree.size()+stree.size());
 		for (const Node& node : tree_) {
-			CHECK_EQUAL(true, stree.Active(node) != itree.Active(node));
-			CHECK_EQUAL(true, stree.Active(node) || itree.Active(node));
+			CHECK_EQUAL(true, stree.isActive(node) != itree.isActive(node));
+			CHECK_EQUAL(true, stree.isActive(node) || itree.isActive(node));
 		}
 	}
 

@@ -11,7 +11,7 @@ SparseTree::SparseTree(const vector<size_t>& modes,
 
 	if (inverse_tree) {
 		SparseTree stree(modes, tree, tail, false);
-		InitializeInverse(stree, tree);
+		initializeInverse(stree, tree);
 	} else {
 		SparseInitialize(modes, tree, tail);
 	}
@@ -69,10 +69,10 @@ void SparseTree::SparseInitialize(const vector<size_t>& modes,
 		/// Go top-down and look for first node with more than one active children
 		int m = nodes_.size() - 1;
 		for (m = nodes_.size() - 1; m > 0; --m) {
-			const Node& node = MCTDHNode(m);
+			const Node& nodep = node(m);
 			size_t NumActiveChildren = 0;
-			for (size_t k = 0; k < node.nChildren(); ++k) {
-				if (Active(node.child(k))) { NumActiveChildren++; }
+			for (size_t k = 0; k < nodep.nChildren(); ++k) {
+				if (isActive(nodep.child(k))) { NumActiveChildren++; }
 			}
 			if (NumActiveChildren > 1) { break; }
 		}
@@ -94,12 +94,12 @@ void SparseTree::print(const Tree& tree, ostream& os) const {
 	}
 }
 
-void SparseTree::InitializeInverse(const SparseTree& stree, const Tree& tree) {
+void SparseTree::initializeInverse(const SparseTree& stree, const Tree& tree) {
 	nodes_.clear();
 	co_address_.clear();
 	size_t addr = 0;
 	for (const Node& node : tree) {
-		if (!stree.Active(node)) {
+		if (!stree.isActive(node)) {
 			nodes_.push_back(&node);
 			co_address_[node.Address()] = addr;
 			addr++;

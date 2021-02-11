@@ -95,7 +95,7 @@ public:
 
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.
-	/// Please use the iterator, or MCTDHNode(i) functions to address nodes!
+	/// Please use the iterator, or mctdhNode(i) functions to address nodes!
 	AbstractNode& nextNode() { return *root_.nextNode(); }
 
 	/// get reference to Physical Coordinate i/nPhysNodes
