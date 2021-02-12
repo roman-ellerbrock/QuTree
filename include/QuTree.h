@@ -74,5 +74,5 @@
 #include"Util/Lanzcos.h"
 #include"Util/QMConstants.h"
 #include"Util/SimultaneousDiagonalization.h"
-#include"Util/long_integer.h"
+#include"../../QuTreeVM/src/Util/long_integer.h"
 

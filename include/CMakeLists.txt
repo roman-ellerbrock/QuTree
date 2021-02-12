@@ -79,6 +79,5 @@ set(QuTree_INCLUDE_FILES
     include/Util/Tree.h
     include/Util/TreeNode.h
     include/Util/WeightedSimultaneousDiagonalization.h
-    include/Util/long_integer.h
     )
 
