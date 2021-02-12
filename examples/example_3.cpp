@@ -30,12 +30,12 @@ TensorTreecd create_tensor_tree() {
     // Populate coefficients using a random number generator
     mt19937 gen(2468);
     TensorTreecd T_rand(tree);
-	T_rand.FillRandom(gen, tree, false);
+	T_rand.fillRandom(gen, tree, false);
     cout << "\nT with random coefficients :\n" << endl;
     T_rand.print(tree);
 
     // 2. Read from an istream or file
-    T_rand.Write("TT.dat");
+	T_rand.write("TT.dat");
     TensorTreecd T_rand2("TT.dat");
 
     return T_rand2;
@@ -79,7 +79,7 @@ void tree_examples() {
 	Psi.print(tree);
 
 	mt19937 gen(1995);
-	Psi.FillRandom(gen, tree);
+	Psi.fillRandom(gen, tree);
 	Psi.print(tree);
 
 	cout << "A MatrixTree from an overlap:\n";

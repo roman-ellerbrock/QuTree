@@ -38,7 +38,7 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Adjust(TensorTree<T>& Psi, Tree& tree,
+	void adjust(TensorTree<T>& Psi, Tree& tree,
 		const SpectralDecompositionTree<T>& X, double eps) {
 		for (Node& node : tree) {
 			if (!node.isToplayer()) {
@@ -49,7 +49,7 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Adjust(TensorTree<T>& Psi, const Tree& newtree) {
+	void adjust(TensorTree<T>& Psi, const Tree& newtree) {
 		for (const Node& node : newtree) {
 			Tensor<T>& Phi = Psi[node];
 			Phi = Phi.adjustDimensions(node.shape());
@@ -57,7 +57,7 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
+	void sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
 		bool sharedLeafs, bool sumToplayer) {
 		/**
 		 * \brief Perform sum on TensorTrees.
@@ -84,7 +84,7 @@ namespace TreeFunctions {
 	}
 
 	template <typename T>
-	void Product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi) {
+	void product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi) {
 		for (Node& node : tree) {
 			Psi[node] = Tensor_Extension::directProduct(Psi[node], Chi[node]);
 			node.shape() = Psi[node].shape();

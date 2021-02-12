@@ -253,7 +253,7 @@ public:
 	 */
 	Matrix transpose() const;
 
-	/** \brief Invert a complex Matrix
+	/** \brief invert a complex Matrix
 	 *
 	 * @return Inverted Matrix
 	 */

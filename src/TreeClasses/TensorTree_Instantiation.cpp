@@ -24,19 +24,19 @@ template istream& operator>> <d>(istream& , TensorTree<d>& );
 template TensorTree<d> operator*(d c, TensorTree<d> R);
 template TensorTree<d> operator/(d c, TensorTree<d> R);
 
-template void Orthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
-template void Orthogonal<d>(TensorTree<d>& Psi, const Tree& tree);
+template void orthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
+template void orthogonal<d>(TensorTree<d>& Psi, const Tree& tree);
 
-template void QROrthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
+template void qrOrthogonal<cd>(TensorTree<cd>& Psi, const Tree& tree);
 
-template void Orthonormal<cd>(TensorTree<cd>& Psi, const Tree& tree);
-template void Orthonormal<d>(TensorTree<d>& Psi, const Tree& tree);
+template void orthonormal<cd>(TensorTree<cd>& Psi, const Tree& tree);
+template void orthonormal<d>(TensorTree<d>& Psi, const Tree& tree);
 
-template void TreeFunctions::Adjust(TensorTree<cd>& Psi, Tree& tree, const SpectralDecompositionTree<cd>& X, double eps);
-template void TreeFunctions::Adjust(TensorTree<d>& Psi, Tree& tree, const SpectralDecompositionTree<d>& X, double eps);
+template void TreeFunctions::adjust(TensorTree<cd>& Psi, Tree& tree, const SpectralDecompositionTree<cd>& X, double eps);
+template void TreeFunctions::adjust(TensorTree<d>& Psi, Tree& tree, const SpectralDecompositionTree<d>& X, double eps);
 
-template void TreeFunctions::Adjust<cd>(TensorTree<cd>& Psi, const Tree& newtree);
-template void TreeFunctions::Adjust<d>(TensorTree<d>& Psi, const Tree& newtree);
+template void TreeFunctions::adjust<cd>(TensorTree<cd>& Psi, const Tree& newtree);
+template void TreeFunctions::adjust<d>(TensorTree<d>& Psi, const Tree& newtree);
 
-template void TreeFunctions::Sum(TensorTree<d>& Psi, Tree& tree, const TensorTree<d>& Chi, bool sameLeafs, bool sumToplayer);
-template void TreeFunctions::Sum(TensorTree<cd>& Psi, Tree& tree, const TensorTree<cd>& Chi, bool sameLeafs, bool sumToplayer);
+template void TreeFunctions::sum(TensorTree<d>& Psi, Tree& tree, const TensorTree<d>& Chi, bool sharedLeafs, bool sumToplayer);
+template void TreeFunctions::sum(TensorTree<cd>& Psi, Tree& tree, const TensorTree<cd>& Chi, bool sharedLeafs, bool sumToplayer);

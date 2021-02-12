@@ -129,7 +129,7 @@ SUITE (SymTensorTree) {
 		auto psis = {psi_, chi_};
 
 		for (auto psi : psis) {
-			CanonicalTransformation(psi, tree_, true);
+			canonicalTransformation(psi, tree_, true);
 			auto rho = TreeFunctions::contraction(psi, tree_, true);
 			SymTensorTree sPsi(psi, tree_);
 			auto psiup = sPsi.bottomUpNormalized(tree_);

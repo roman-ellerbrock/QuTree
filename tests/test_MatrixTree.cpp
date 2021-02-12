@@ -116,7 +116,7 @@ SUITE (MatrixTreeFunctions) {
 		}
 
 		SpectralDecompositionTreecd X(H, tree);
-		auto H_inv = X.Invert(tree, 1e-10);
+		auto H_inv = X.invert(tree, 1e-10);
 
 		MatrixTreecd Identity(tree);
 		for (const Node& node : tree) {
@@ -129,13 +129,13 @@ SUITE (MatrixTreeFunctions) {
 		}
 	}
 
-	TEST (CanonicalTransformation) {
+	TEST (canonicalTransformation) {
 
 		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
 
-		CanonicalTransformation(Psi, tree, true);
+		canonicalTransformation(Psi, tree, true);
 		auto rho = TreeFunctions::contraction(Psi, tree, true);
 		double off = 0.;
 		for (const auto& mat : rho) {
@@ -154,7 +154,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree, false);
 		auto rho = TreeFunctions::contraction(Psi, tree, true);
-		CanonicalTransformation(Psi, tree, true);
+		canonicalTransformation(Psi, tree, true);
 		rho = TreeFunctions::contraction(Psi, tree, true);
 
 		auto S = TreeFunctions::dotProduct(Psi, Psi, tree);
@@ -201,11 +201,11 @@ SUITE(TreeTransformations) {
 		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
-		CanonicalTransformation(Psi, tree, true);
+		canonicalTransformation(Psi, tree, true);
 		MatrixTreecd Rho = TreeFunctions::contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
 
-		TreeFunctions::Adjust(Psi, tree, X, 1e-7);
+		TreeFunctions::adjust(Psi, tree, X, 1e-7);
 		for (const Node& node : tree) {
 			const TensorShape& shape = node.shape();
 			/// Check Node TensorShape

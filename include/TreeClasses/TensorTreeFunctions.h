@@ -9,20 +9,20 @@
 namespace TreeFunctions {
 	/// Compress the TensorTree for a given accuracy.
 	template <typename T>
-	void Adjust(TensorTree<T>& Psi, Tree& tree,
+	void adjust(TensorTree<T>& Psi, Tree& tree,
 		const SpectralDecompositionTree<T>& X, double eps);
 
 	template <typename T>
-	void Adjust(TensorTree<T>& Psi, const Tree& newtree);
+	void adjust(TensorTree<T>& Psi, const Tree& newtree);
 
 	/// Perform a (generalized) sum of tensor trees. By default, a regular sum will be performed.
 	template <typename T>
-	void Sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
+	void sum(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi,
 		bool sharedLeafs = true, bool sumToplayer = true);
 
 	/// Perform a product of tensor trees.
 	template <typename T>
-	void Product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi);
+	void product(TensorTree<T>& Psi, Tree& tree, const TensorTree<T>& Chi);
 
 }
 

@@ -22,18 +22,18 @@ public:
 
 	~SpectralDecompositionTree() = default;
 
-	void Initialize(const Tree& tree);
+	void initialize(const Tree& tree);
 
-	void Calculate(const MatrixTree<T>& H, const Tree& tree);
+	void calculate(const MatrixTree<T>& H, const Tree& tree);
 
-	MatrixTree<T> Invert(const Tree& tree, double eps = 1e-7);
+	MatrixTree<T> invert(const Tree& tree, double eps = 1e-7);
 
 	/// I/O
 	void print(const Tree& tree) const;
 };
 
 template<typename T>
-void CanonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal = false);
+void canonicalTransformation(TensorTree<T>& Psi, const Tree& tree, bool orthogonal = false);
 
 template <typename T>
 SpectralDecompositionTree<T> sqrt(SpectralDecompositionTree<T> X);
@@ -48,7 +48,7 @@ template <typename T>
 MatrixTree<T> inverse(MatrixTree<T> X, const Tree& tree, double eps = 1e-7);
 
 template <typename T>
-MatrixTree<T> to_matrixtree(const SpectralDecompositionTree<T>& X, const Tree& tree);
+MatrixTree<T> toMatrixtree(const SpectralDecompositionTree<T>& X, const Tree& tree);
 
 typedef SpectralDecompositionTree<complex<double>> SpectralDecompositionTreecd;
 typedef SpectralDecompositionTree<double> SpectralDecompositionTreed;

@@ -51,20 +51,20 @@ public:
 	~TensorTree() = default;
 
 	/// Create Tensors for all nodes
-	virtual void Initialize(const Tree& tree);
+	virtual void initialize(const Tree& tree);
 
 	/// generate TTs
-	void FillRandom(mt19937& gen, const Tree& tree, bool delta_lowest = true);
+	void fillRandom(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
 	/// (File) I/O
 	/// read TensorTree from stream (binary format)
-	void Read(istream& is);
+	void read(istream& is);
 
 	/// Write TensorTree to stream (binary format)
-	void Write(ostream& os) const;
+	void write(ostream& os) const;
 
 	/// Write TensorTree to file (binary format)
-	void Write(const string& filename) const;
+	void write(const string& filename) const;
 
 	/// Print info in human readable format
 	void print(const Tree& tree, ostream& os = cout) const;
@@ -123,8 +123,8 @@ public:
 	}
 
 protected:
-	void FillBottom(Tensor<T>& Phi, const Node& node);
-	void FillUpper(Tensor<T>& Phi, std::mt19937& gen,
+	void fillBottom(Tensor<T>& Phi, const Node& node);
+	void fillUpper(Tensor<T>& Phi, std::mt19937& gen,
 		const Node& node, bool delta_lowest = true);
 };
 
@@ -133,13 +133,13 @@ typedef TensorTree<complex<double>> TensorTreecd;
 typedef TensorTree<double> TensorTreed;
 
 template <typename T>
-void Orthogonal(TensorTree<T>& Psi, const Tree& tree);
+void orthogonal(TensorTree<T>& Psi, const Tree& tree);
 
 template <typename T>
-void QROrthogonal(TensorTree<T>& Psi, const Tree& tree);
+void qrOrthogonal(TensorTree<T>& Psi, const Tree& tree);
 
 template <typename T>
-void Orthonormal(TensorTree<T>& Psi, const Tree& tree);
+void orthonormal(TensorTree<T>& Psi, const Tree& tree);
 
 template<typename T>
 ostream& operator<<(ostream& os, const TensorTree<T>& t);

@@ -63,12 +63,12 @@ SUITE (Operators) {
 		mt19937 gen(time(nullptr));
 		Tree tree = TreeFactory::BalancedTree(4, 2, 2);
 		TensorTreecd Chi(tree);
-		Chi.FillRandom(gen, tree, false);
+		Chi.fillRandom(gen, tree, false);
 		auto Psi = M.Apply(Chi, tree);
 
 		/// Checking
 		string filename("MLO.apply.dat");
-		Psi.Write(filename);
+		Psi.write(filename);
 		TensorTreecd Xi(filename);
 			CHECK_EQUAL(Xi.size(), Psi.size());
 		for (const Node& node : tree) {

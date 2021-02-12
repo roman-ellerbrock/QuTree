@@ -64,7 +64,7 @@ namespace examples {
 		MatrixTreecd rho = TreeFunctions::contraction(Psi, tree, true); /// true: SPF basis is orthogonal
 
 		/// The wave function is transformed to natural orbitals via
-		CanonicalTransformation(Psi, tree);
+		canonicalTransformation(Psi, tree);
 		/// ...after re-calculating density matrices, they are diagonal.
 		rho = TreeFunctions::contraction(Psi, tree, true);
 

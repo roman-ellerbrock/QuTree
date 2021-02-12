@@ -6,29 +6,29 @@
 
 template<typename T>
 TensorTree<T>::TensorTree(const Tree& tree) {
-	TensorTree<T>::Initialize(tree);
+	TensorTree<T>::initialize(tree);
 }
 
 template<typename T>
 TensorTree<T>::TensorTree(istream& is) {
-	Read(is);
+	read(is);
 }
 
 template<typename T>
 TensorTree<T>::TensorTree(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
 /// Create tensor tree and occupy the coefficients
 template<typename T>
 TensorTree<T>::TensorTree(std::mt19937& gen, const Tree& tree, bool delta_lowest)
 	: TensorTree(tree) {
-	FillRandom(gen, tree, delta_lowest);
+	fillRandom(gen, tree, delta_lowest);
 }
 
 template<typename T>
-void TensorTree<T>::Initialize(const Tree& tree) {
+void TensorTree<T>::initialize(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		attributes_.emplace_back(Tensor<T>(node.shape()));
@@ -36,20 +36,20 @@ void TensorTree<T>::Initialize(const Tree& tree) {
 }
 
 template<typename T>
-void TensorTree<T>::FillRandom(std::mt19937& gen, const Tree& tree, bool delta_lowest) {
+void TensorTree<T>::fillRandom(std::mt19937& gen, const Tree& tree, bool delta_lowest) {
 	assert(tree.nNodes() == attributes_.size());
 	for (const Node& node : tree) {
 		Tensor<T>& Phi = this->operator[](node);
 		if (node.isBottomlayer()) {
-			FillBottom(Phi, node);
+			fillBottom(Phi, node);
 		} else {
-			FillUpper(Phi, gen, node, delta_lowest);
+			fillUpper(Phi, gen, node, delta_lowest);
 		}
 	}
 }
 
 template<typename T>
-void TensorTree<T>::FillUpper(Tensor<T>& Phi,
+void TensorTree<T>::fillUpper(Tensor<T>& Phi,
 	mt19937& gen, const Node& node, bool delta_lowest) {
 
 	assert(Phi.shape().totalDimension() > 0);
@@ -67,7 +67,7 @@ void TensorTree<T>::FillUpper(Tensor<T>& Phi,
 }
 
 template<typename T>
-void TensorTree<T>::FillBottom(Tensor<T>& Phi,
+void TensorTree<T>::fillBottom(Tensor<T>& Phi,
 	const Node& node) {
 	const Leaf& coord = node.getLeaf();
 	const LeafInterface& grid = coord.PrimitiveGrid();
@@ -76,7 +76,7 @@ void TensorTree<T>::FillBottom(Tensor<T>& Phi,
 
 /// (File) I/O
 template<typename T>
-void TensorTree<T>::Write(ostream& os) const {
+void TensorTree<T>::write(ostream& os) const {
 
 	os.write("TTre", 4);
 
@@ -92,13 +92,13 @@ void TensorTree<T>::Write(ostream& os) const {
 }
 
 template<typename T>
-void TensorTree<T>::Write(const string& filename) const {
+void TensorTree<T>::write(const string& filename) const {
 	ofstream os(filename);
-	Write(os);
+	write(os);
 }
 
 template<typename T>
-void TensorTree<T>::Read(istream& is) {
+void TensorTree<T>::read(istream& is) {
 
 	if (is.bad()) {
 		cerr << "Stream bad." << endl;
@@ -136,7 +136,7 @@ void TensorTree<T>::print(const Tree& tree, ostream& os) const {
 }
 
 template <typename T>
-void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
+void orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 	//Bottom-Up-Sweep
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
@@ -167,7 +167,7 @@ void Orthogonal(TensorTree<T>& Psi, const Tree& tree) {
 }
 
 template <typename T>
-void QROrthogonal(TensorTree<T>& Psi, const Tree& tree) {
+void qrOrthogonal(TensorTree<T>& Psi, const Tree& tree) {
 
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
@@ -184,7 +184,7 @@ void QROrthogonal(TensorTree<T>& Psi, const Tree& tree) {
 
 
 template <typename T>
-void Orthonormal(TensorTree<T>& Psi, const Tree& tree) {
+void orthonormal(TensorTree<T>& Psi, const Tree& tree) {
 	for (const Node& node : tree) {
 		gramSchmidt(Psi[node]);
 	}
@@ -192,13 +192,13 @@ void Orthonormal(TensorTree<T>& Psi, const Tree& tree) {
 
 template<typename T>
 ostream& operator<<(ostream& os, const TensorTree<T>& t) {
-	t.Write(os);
+	t.write(os);
 	return os;
 }
 
 template<typename T>
 istream& operator>>(istream& is, TensorTree<T>& t) {
-	t.Read(is);
+	t.read(is);
 	return is;
 }
 
