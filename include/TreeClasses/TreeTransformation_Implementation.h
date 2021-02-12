@@ -38,9 +38,9 @@ namespace TreeFunctions {
 	}
 
 	template <typename T>
-	TensorTree<T> ContractionNormalization(TensorTree<T> Psi, const Tree& tree, bool orthogonal) {
+	TensorTree<T> contractionNormalization(TensorTree<T> Psi, const Tree& tree, bool orthogonal) {
 		assert(orthogonal);
-		/// Transform to Directional-Invariant rep
+		/// transform to Directional-Invariant rep
 		MatrixTree<T> rho = contraction(Psi, tree, orthogonal);
 		auto B = sqrt(rho, tree);
 		auto B_inv = inverse(B, tree);
@@ -77,7 +77,7 @@ namespace TreeFunctions {
 	}
 
 	template <typename T>
-	void Transform(TensorTree<T>& Chi, const TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
+	void transform(TensorTree<T>& Chi, const TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
 		const Tree& tree) {
 
 		for (const Edge& e : tree.Edges()) {

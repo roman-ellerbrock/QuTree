@@ -186,7 +186,7 @@ SUITE(TreeTransformations) {
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
 
-		auto edgePsi = TreeFunctions::ContractionNormalization(Psi, tree, true);
+		auto edgePsi = TreeFunctions::contractionNormalization(Psi, tree, true);
 
 		for (const Edge& e : tree.Edges()) {
 			auto phi = edgePsi[e];

@@ -14,7 +14,7 @@ SUITE (ExplicitEdgeWavefunction) {
 		mt19937 gen(34676949);
 		TensorTreecd Psi(gen, tree, false);
 
-		/// Transform to symmetric representation
+		/// transform to symmetric representation
 		MatrixTensorTree Chi(Psi, tree, true);
 
 		/// Check re-obtaining wavefunction

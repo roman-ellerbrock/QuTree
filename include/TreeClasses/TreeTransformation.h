@@ -9,13 +9,13 @@
 namespace TreeFunctions {
 
 	template <typename T>
-	TensorTree<T> DensityWeighting(TensorTree<T> Psi, const Tree& tree);
+	TensorTree<T> densityWeighting(TensorTree<T> Psi, const Tree& tree);
 
 	template <typename T>
-	TensorTree<T> ContractionNormalization(TensorTree<T> Psi, const Tree& tree, bool orthogonal = true);
+	TensorTree<T> contractionNormalization(TensorTree<T> Psi, const Tree& tree, bool orthogonal = true);
 
 	template <typename T>
-	void Transform(TensorTree<T>& Chi, const TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
+	void transform(TensorTree<T>& Chi, const TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
 		const Tree& tree);
 }
 
