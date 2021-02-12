@@ -31,7 +31,7 @@ void MatrixTensorTree::buildEdges(const Tree& tree) {
 	auto B = sqrt(rho, tree);
 
 	/// Build node representation (A^\tilde's)
-	for (const Edge& e : tree.Edges()) {
+	for (const Edge& e : tree.edges()) {
 		const Node& node = e.down();
 		Tensorcd& A = nodes_[node];
 		/// Basically like multiplying with sqrt(rho)'s
@@ -53,7 +53,7 @@ TensorTreecd MatrixTensorTree::topDownNormalized(const Tree& tree) const {
 	/// Build A^{(p\circ k) p}
 	/// Note: Tensors get moved one layer down!
 	TensorTreecd Psi(nodes());
-	for (const Edge& e : tree.Edges()) {
+	for (const Edge& e : tree.edges()) {
 		const Node& node = e.down();
 		const Node& parent = node.parent();
 		Psi[node] = matrixTensor(edges()[e].transpose(), Psi[parent], node.childIdx());
@@ -67,7 +67,7 @@ TensorTreecd MatrixTensorTree::bottomUpNormalized(const Tree& tree) const {
 	/// This is the conventional wavefunction representation.
 	TensorTreecd Psi(nodes());
 
-	for (const Edge& e : tree.Edges()) {
+	for (const Edge& e : tree.edges()) {
 		const Node& node = e.down();
 		Psi[node] = matrixTensor(edges()[e], Psi[node], node.nChildren());
 	}
@@ -91,7 +91,7 @@ bool IsWorking_bottomup(const MatrixTensorTree& Psi, const Tree& tree, double ep
 
 bool IsWorking_topdown(const MatrixTensorTree& Psi, const Tree& tree, double eps) {
 	auto topdown = Psi.topDownNormalized(tree);
-	for (const Edge& e : tree.Edges()) {
+	for (const Edge& e : tree.edges()) {
 		const Node& node = e.down();
 		auto x = contraction(topdown[node], topdown[node], node.childIdx());
 		auto r = residual(x, identityMatrixcd(x.dim1()));

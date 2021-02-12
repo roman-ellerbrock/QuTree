@@ -24,7 +24,7 @@ SUITE (SparseMatrixTree) {
 		void Initialize() {
 
 			rng_ = mt19937(1993);
-			tree_ = TreeFactory::BalancedTree(8, 2, 2);
+			tree_ = TreeFactory::balancedTree(8, 2, 2);
 
 			Psi_ = TensorTreecd(rng_, tree_);
 
@@ -39,7 +39,7 @@ SUITE (SparseMatrixTree) {
 	};
 
 	TEST (TreeMarker) {
-		Tree tree = TreeFactory::BalancedTree(7, 4, 2);
+		Tree tree = TreeFactory::balancedTree(7, 4, 2);
 		vector<size_t> modes({3, 4});
 		SparseTree active(modes, tree);
 			CHECK_EQUAL(7, active.size());
@@ -53,7 +53,7 @@ SUITE (SparseMatrixTree) {
 
 	TEST_FIXTURE (HelperFactory, Represent) {
 		SparseMatrixTreecd hmat = TreeFunctions::represent(M_, Psi_, tree_);
-		const Node& top = tree_.TopNode();
+		const Node& top = tree_.topNode();
 		const Node& child = top.child(0);
 			CHECK_CLOSE(0.25, real(hmat[child](0, 0)), 0E-12);
 	}

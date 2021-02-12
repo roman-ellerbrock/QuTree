@@ -16,7 +16,7 @@ TensorTreecd create_tensor_tree() {
     size_t num_leaves = 4;
     size_t dim_leaves = 3;
     size_t dim_nodes = 2;
-	Tree tree = TreeFactory::BalancedTree(num_leaves, dim_leaves, dim_nodes);
+	Tree tree = TreeFactory::balancedTree(num_leaves, dim_leaves, dim_nodes);
     tree.info();
     cout << "\nNo. total nodes: " << tree.nTotalNodes() << endl;
     cout << "No. logical nodes: " << tree.nNodes() << endl;
@@ -45,7 +45,7 @@ void dot_product_tree() {
     cout << "\nTensor tree dot product:\n" << endl;
 
     // A dot product between two tensor trees results in a factor matrix tree
-	Tree tree = TreeFactory::BalancedTree(4, 3, 2);
+	Tree tree = TreeFactory::balancedTree(4, 3, 2);
     mt19937 gen(2468);
     TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
@@ -59,7 +59,7 @@ void hole_product_tree() {
     cout << "\nTensor tree hole product:\n" << endl;
 
     // A hole product between two tensor trees results in a hole matrix tree
-	Tree tree = TreeFactory::BalancedTree(4, 3, 2);
+	Tree tree = TreeFactory::balancedTree(4, 3, 2);
     mt19937 gen(2468);
     TensorTreecd Psi(gen, tree, false);
     TensorTreecd Chi(Psi);
@@ -74,7 +74,7 @@ void hole_product_tree() {
 }
 
 void tree_examples() {
-	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
+	Tree tree = TreeFactory::balancedTree(12, 5, 2);
 	TensorTreecd Psi(tree);
 	Psi.print(tree);
 
@@ -116,7 +116,7 @@ void tree_examples() {
 
 void paper_1() {
 	/// generate Tree and TensorTree
-	Tree tree = TreeFactory::BalancedTree(12, 5, 2);
+	Tree tree = TreeFactory::balancedTree(12, 5, 2);
 	TensorTreecd Psi(tree);
 
 	/// Operations on Tensor Trees

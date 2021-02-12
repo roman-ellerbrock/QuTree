@@ -61,7 +61,7 @@ SUITE (Operators) {
 	TEST_FIXTURE (HelperFactory, MPO_1) {
 		MLOcd M(x, 1);
 		mt19937 gen(time(nullptr));
-		Tree tree = TreeFactory::BalancedTree(4, 2, 2);
+		Tree tree = TreeFactory::balancedTree(4, 2, 2);
 		TensorTreecd Chi(tree);
 		Chi.fillRandom(gen, tree, false);
 		auto Psi = M.apply(Chi, tree);

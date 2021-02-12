@@ -31,8 +31,8 @@ SUITE (TensorOperatorTree) {
 
 		void Initialize() {
 			rng_ = mt19937(1990);
-			tree_ = TreeFactory::BalancedTree(12, 2, 2);
-			optree_ = TreeFactory::OperatorTree(tree_);
+			tree_ = TreeFactory::balancedTree(12, 2, 2);
+			optree_ = TreeFactory::operatorTree(tree_);
 			Psi_ = TensorTreecd(rng_, tree_);
 
 			Matrixcd I = identityMatrixcd(2);
@@ -55,8 +55,8 @@ SUITE (TensorOperatorTree) {
 	};
 
 	TEST (OperatorTree) {
-		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
-		Tree optree = TreeFactory::OperatorTree(tree);
+		Tree tree = TreeFactory::balancedTree(12, 2, 2);
+		Tree optree = TreeFactory::operatorTree(tree);
 		for (const Node& node : optree) {
 			if (!node.isToplayer()) {
 					CHECK_EQUAL(3, node.shape().order());

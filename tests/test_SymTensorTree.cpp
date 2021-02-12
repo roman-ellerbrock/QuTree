@@ -14,7 +14,7 @@ SUITE (SymTensorTree) {
 	class TTFactory {
 		public:
 		TTFactory() {
-			tree_ = TreeFactory::BalancedTree(10, 2, 3);
+			tree_ = TreeFactory::balancedTree(10, 2, 3);
 			mt19937 gen(34676949);
 			psi_ = TensorTreecd(gen, tree_, true);
 			chi_ = TensorTreecd(gen, tree_, false);
@@ -134,7 +134,7 @@ SUITE (SymTensorTree) {
 			SymTensorTree sPsi(psi, tree_);
 			auto psiup = sPsi.bottomUpNormalized(tree_);
 			auto S = TreeFunctions::dotProduct(psi, psiup, tree_);
-			auto s = S[tree_.TopNode()];
+			auto s = S[tree_.topNode()];
 				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
 	}
@@ -147,7 +147,7 @@ SUITE (SymTensorTree) {
 			SymTensorTree sPsi(psi, tree_);
 			auto psiup = sPsi.bottomUpNormalized(tree_);
 			auto S = TreeFunctions::dotProduct(psi, psiup, tree_);
-			auto s = S[tree_.TopNode()];
+			auto s = S[tree_.topNode()];
 				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
 	}
@@ -156,7 +156,7 @@ SUITE (SymTensorTree) {
 		SymTensorTree spsi(psi_, tree_);
 		SymTensorTree schi(chi_, tree_);
 		auto S = TreeFunctions::symDotProduct(spsi, schi, tree_);
-		auto s_top = S[tree_.TopNode()].trace();
+		auto s_top = S[tree_.topNode()].trace();
 			CHECK_CLOSE(-0.00557989, real(s_top), eps);
 			CHECK_CLOSE(0., imag(s_top), eps);
 		for (const Node& node : tree_) {

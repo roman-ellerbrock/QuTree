@@ -38,7 +38,7 @@ SUITE (SparseTree) {
 	}
 
 	TEST (TestTail) {
-		auto tree = TreeFactory::BalancedTree(8, 2, 2);
+		auto tree = TreeFactory::balancedTree(8, 2, 2);
 		{
 			vector<size_t> leaves({0, 2});
 			SparseTree stree1(leaves, tree, true, false);

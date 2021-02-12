@@ -43,7 +43,7 @@ public:
 		const Tree& tree);
 
 	size_t isActive(const Node& node) const {
-		size_t count = co_address_.count(node.Address());
+		size_t count = co_address_.count(node.address());
 		return (count != 0);
 	}
 
@@ -63,7 +63,7 @@ public:
 	}
 
 	size_t sparseAddress(const Node& node) const {
-		size_t addr = node.Address();
+		size_t addr = node.address();
 		return co_address_.at(addr);
 	}
 

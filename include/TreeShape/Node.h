@@ -32,7 +32,7 @@ public:
 	~Node() override = default;
 
 	// Initialize node
-	void Initialize(istream& file, Node *up, const NodePosition& position);
+	void initialize(istream& file, Node *up, const NodePosition& position);
 
 	// print out information to this node
 	void info(ostream& os = cout) const override;
@@ -69,11 +69,11 @@ public:
 
 	// Returns the index in the vector of children of the parent
 	// (e.g. this is the 2nd child: this getter returns "1")
-	int childIdx() const { return position_.ChildIdx(); }
+	int childIdx() const { return position_.childIdx(); }
 	size_t parentIdx() const { return nChildren(); }
 
 	// Getter for the number of children of this node
-	int nChildren() const { return down_.size(); }
+	int nChildren() const { return child_.size(); }
 
 	// Getter for the TensorDim
 	TensorShape& shape() { return tensorDim_; }
@@ -89,20 +89,20 @@ public:
 	void push_back(const Node& node);
 
 	vector<unique_ptr<AbstractNode>>::const_iterator begin() const {
-		return down_.begin();
+		return child_.begin();
 	}
 
 	vector<unique_ptr<AbstractNode>>::const_iterator end() const {
-		return down_.end();
+		return child_.end();
 	}
 
 	// Danger-zone (take care what you do here!)
 	// Do not access the functions below, unless you really know what you are doing!
 	// Setter for the address_ of this node
-	void SetAddress(int newaddress) { address_ = newaddress; }
+	void setAddress(int newaddress) { address_ = newaddress; }
 
 	// Getter for the address_ of this node
-	int Address() const { return address_; }
+	int address() const { return address_; }
 
 	// pointer to the next node in sweep
 	AbstractNode *nextNode() override;
@@ -111,26 +111,26 @@ public:
 	// in Uwe Manthe's fortran code
 	AbstractNode *nextNodeManthe() override;
 	// Move getter for unique_ptr to children
-	unique_ptr<AbstractNode> DownUnique(size_t i);
+	unique_ptr<AbstractNode> downUnique(size_t i);
 
 	// Set the upwards pointer
-	void setParent(AbstractNode *up) override { up_ = up; }
+	void setParent(AbstractNode *up) override { parent_ = up; }
 
 	// Replace a Child
-	void Replace(Node& new_child, size_t idx);
+	void replace(Node& new_child, size_t idx);
 	// Update counters, position indices
 	void update(const NodePosition& p) override;
 	// Update position_ index
-	void UpdatePosition(const NodePosition& p);
+	void updatePosition(const NodePosition& p);
 	// Update nTotalNodes_, nNodes_ and nLeaves_
-	void Updatennodes();
+	void updatennodes();
 	// Update the TensorDim
-	void UpdateTDim();
+	void updateTDim();
 	// Reset all counters for the swipe
-	void ResetCounters();
+	void resetCounters();
 
 	// Get a reference to the top-node
-	Node& TopNode();
+	Node& topNode();
 
 protected:
 	// number of nodes under the current node plus this node (n_children+1)
@@ -142,9 +142,9 @@ protected:
 	TensorShape tensorDim_;
 
 	// pointer to the upwards node
-	AbstractNode *up_;
+	AbstractNode *parent_;
 	// vector of references to the children nodes
-	vector<unique_ptr<AbstractNode>> down_;
+	vector<unique_ptr<AbstractNode>> child_;
 
 	// reference to the last_ node that was pointed at at a sweep through the layer_
 	int nextNodeNum_;

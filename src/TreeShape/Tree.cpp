@@ -5,12 +5,12 @@
 
 Tree::Tree(const Tree& T)
 	: root_(T.root_) {
-	Update();
+	update();
 }
 
 Tree::Tree(Tree&& T) noexcept {
 	root_ = move(T.root_);
-	Update();
+	update();
 }
 
 Tree& Tree::operator=(const Tree& T) {
@@ -20,19 +20,19 @@ Tree& Tree::operator=(const Tree& T) {
 
 Tree& Tree::operator=(Tree&& T) noexcept {
 	root_ = move(T.root_);
-	Update();
+	update();
 	return *this;
 }
 
 Tree::Tree(const string& filename) {
-	Read(filename);
+	read(filename);
 }
 
 Tree::Tree(istream& is) {
-	Read(is);
+	read(is);
 }
 
-void Tree::ResetLeafModes() {
+void Tree::resetLeafModes() {
 	size_t n_modes = this->nLeaves();
 	assert(n_modes > 0);
 	int mode = n_modes - 1;
@@ -42,54 +42,54 @@ void Tree::ResetLeafModes() {
 			leaf.mode() = mode--;
 		}
 	}
-	Update();
+	update();
 }
 
-void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
+void Tree::reindexLeafModes(map<size_t, size_t> Map) {
 	for (Node& node : *this) {
 		if (node.isBottomlayer()) {
 			Leaf& leaf = node.getLeaf();
 			leaf.mode() = Map[leaf.mode()];
 		}
 	}
-	Update();
+	update();
 }
 
-void Tree::ExpandNode(Node& node) {
+void Tree::expandNode(Node& node) {
 	assert(!node.isToplayer());
 	assert(!node.isBottomlayer());
 
 	Node& parent = node.parent();
 	size_t childIdx = node.childIdx();
 	parent.expandChild(childIdx);
-	LinearizeNodes();
+	linearizeNodes();
 }
 
-void Tree::Update() {
+void Tree::update() {
 	// Tree is assumed to be updated, but the rest not:
 	// Update everything
 	root_.update(NodePosition());
-	LinearizeLeaves();
-	LinearizeNodes();
+	linearizeLeaves();
+	linearizeNodes();
 }
 
-void Tree::ReplaceNode(Node& old_node, Node& new_node) {
+void Tree::replaceNode(Node& old_node, Node& new_node) {
 	// The old node must not be the toplayer node, otherwise change the
 	// whole tree
 	assert(!old_node.isToplayer());
 
 	// Replace the node
 	Node& parent = old_node.parent();
-	parent.Replace(new_node, old_node.childIdx());
+	parent.replace(new_node, old_node.childIdx());
 
-	Node& topnode = TopNode();
-	topnode.UpdatePosition(NodePosition());
-	topnode.Updatennodes();
-	LinearizeLeaves();
-	LinearizeNodes();
+	Node& topnode = topNode();
+	topnode.updatePosition(NodePosition());
+	topnode.updatennodes();
+	linearizeLeaves();
+	linearizeNodes();
 }
 
-void Tree::LinearizeNodes() {
+void Tree::linearizeNodes() {
 	// block has to be cleared, because logical block
 	// must be resistant to re-feed (important for e.g. expand node)
 	// This routine adds every mctdh node to the logical block
@@ -99,7 +99,7 @@ void Tree::LinearizeNodes() {
 		AbstractNode& abstract_node = nextNode();
 		if (abstract_node.type() == 1) {
 			auto& node = (Node&) (abstract_node);
-			node.SetAddress(counter);
+			node.setAddress(counter);
 			counter++;
 			linearizedNodes_.push_back(node);
 		}
@@ -114,7 +114,7 @@ void Tree::LinearizeNodes() {
 	}
 }
 
-void Tree::LinearizeLeaves() {
+void Tree::linearizeLeaves() {
 	// This routine attends physical coordinates to the linearizedLeaves_ block
 	linearizedLeaves_.clear();
 	linearizedLeaves_.resizeaddress(nLeaves());
@@ -134,15 +134,15 @@ void Tree::LinearizeLeaves() {
 
 /// I/O
 
-void Tree::Read(istream& file) {
+void Tree::read(istream& is) {
 	// feed linearizedLeaves_ and logical block with references
-	root_.Initialize(file, nullptr, NodePosition());
-	Update();
+	root_.initialize(is, nullptr, NodePosition());
+	update();
 
 	// Add new PhysPar for every physical coordinate
 	for (int i = 0; i < linearizedLeaves_.size(); i++) {
 		// Set parameters
-		PhysPar par(file);
+		PhysPar par(is);
 		linearizedLeaves_[i].setPar(par);
 
 		// Initialize primitive grid (HO, FFT, Legendre, ...)
@@ -151,29 +151,29 @@ void Tree::Read(istream& file) {
 	}
 }
 
-void Tree::Read(const string& filename) {
+void Tree::read(const string& filename) {
 	ifstream is(filename);
-	Read(is);
+	read(is);
 }
 
-void Tree::Write(ostream& os) const {
+void Tree::write(ostream& os) const {
 	root_.write(os);
 }
 
 ostream& operator<<(ostream& os, Tree& basis) {
-	basis.Write(os);
+	basis.write(os);
 	return os;
 }
 
 istream& operator<<(istream& is, Tree& basis) {
-	basis.Read(is);
+	basis.read(is);
 	return is;
 }
 
 void Tree::info(ostream& os) const {
 	os << "List of Leaves:" << endl;
 	for (size_t i = 0; i < this->nLeaves(); i++) {
-		const Leaf& node = GetLeaf(i);
+		const Leaf& node = getLeaf(i);
 		node.info(os);
 		os << endl;
 	}
@@ -182,7 +182,7 @@ void Tree::info(ostream& os) const {
 	// ... and now for every logical node
 	os << "List of upper nodes:" << endl;
 	for (int i = nNodes() - 1; i >= 0; i--){
-		const Node& node = GetNode(i);
+		const Node& node = getNode(i);
 		node.info();
 		node.shape().print(os);
 		os << endl;
@@ -190,7 +190,7 @@ void Tree::info(ostream& os) const {
 	os << "Number of Nodes = " << nNodes() << endl;
 }
 
-bool Tree::IsWorking() {
+bool Tree::isWorking() {
 
 	bool works = true;
 	int counter = 0;
@@ -200,7 +200,7 @@ bool Tree::IsWorking() {
 			auto& node = (Node&) (abstract_node);
 			// 1.) Check global address
 			// Do not break here to leave nodes in a valid state
-			if (counter != node.Address()) { works = false; }
+			if (counter != node.address()) { works = false; }
 			counter++;
 
 			if (!node.isBottomlayer()) {
@@ -235,7 +235,7 @@ bool Tree::IsWorking() {
 		}
 	}
 	if (!works) {
-		cerr << "Corrupted linearizedNodes_. Missing Update()?" << endl;
+		cerr << "Corrupted linearizedNodes_. Missing update()?" << endl;
 		return false;
 	}
 	if (!linearizedNodes_.back().get().isToplayer()) {
@@ -259,19 +259,19 @@ bool Tree::IsWorking() {
 	return true;
 }
 
-Leaf& Tree::GetLeaf(size_t i) {
+Leaf& Tree::getLeaf(size_t i) {
 	return linearizedLeaves_[i];
 }
 
-const Leaf& Tree::GetLeaf(size_t i) const {
+const Leaf& Tree::getLeaf(size_t i) const {
 	return linearizedLeaves_[i];
 }
 
-Node& Tree::GetNode(size_t i) {
+Node& Tree::getNode(size_t i) {
 	return linearizedNodes_[i];
 }
 
-const Node& Tree::GetNode(size_t i) const {
+const Node& Tree::getNode(size_t i) const {
 	return linearizedNodes_[i];
 }
 
@@ -288,13 +288,13 @@ ostream& operator<<(ostream& os, const Tree& basis) {
 	if(&os == &cout) {
 		basis.info(os);
 	} else {
-		basis.Write(os);
+		basis.write(os);
 	}
 	return os;
 }
 
 istream& operator>>(istream& is, Tree& basis) {
-	basis.Read(is);
+	basis.read(is);
 	return is;
 }
 

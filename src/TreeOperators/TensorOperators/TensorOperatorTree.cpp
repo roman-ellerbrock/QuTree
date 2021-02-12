@@ -12,7 +12,7 @@ TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 
 	for (size_t k = 0; k < M.size(); ++k) {
 		size_t mode = M.mode(k);
-		const Leaf& leaf = tree.GetLeaf(mode);
+		const Leaf& leaf = tree.getLeaf(mode);
 		const auto& node = (const Node&) leaf.parent();
 
 		const shared_ptr<LeafOperatorcd>& h = M[k];
@@ -66,7 +66,7 @@ void TensorOperatorTree::occupy(const Tree& tree) {
 void TensorOperatorTree::print(const Tree& tree) const {
 	for (const Node& node : tree) {
 		node.info();
-		attributes_[node.Address()].print();
+		attributes_[node.address()].print();
 	}
 }
 

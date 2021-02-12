@@ -118,7 +118,7 @@ TensorTreecd SymTensorTree::bottomUpNormalized(const Tree& tree) const {
 	for (const Node& node : tree) {
 		Psi[node] = up_[node];
 	}
-	Psi[tree.TopNode()] = weighted_[tree.TopNode()];
+	Psi[tree.topNode()] = weighted_[tree.topNode()];
 	return Psi;
 }
 

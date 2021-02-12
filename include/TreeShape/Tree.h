@@ -69,14 +69,14 @@ public:
 	Tree& operator=(Tree&& T) noexcept;
 
 	/// read Basis from ASCII-file
-	void Read(istream& is);
-	void Read(const string& filename);
+	void read(istream& is);
+	void read(const string& filename);
 
 	/// Write the tree to a stream in ASCII output
-	void Write(ostream& os = cout) const;
+	void write(ostream& os = cout) const;
 
 	/// re-initialize the tree from Tree
-	void Update();
+	void update();
 
 	/// Print out tree information
 	void info(ostream& os = cout) const;
@@ -91,7 +91,7 @@ public:
 	size_t nLeaves() const { return root_.nLeaves(); }
 
 	/// Number of states
-	size_t nStates() const { return TopNode().shape().lastDimension(); }
+	size_t nStates() const { return topNode().shape().lastDimension(); }
 
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.
@@ -99,35 +99,35 @@ public:
 	AbstractNode& nextNode() { return *root_.nextNode(); }
 
 	/// get reference to Physical Coordinate i/nPhysNodes
-	Leaf& GetLeaf(size_t i);
-	const Leaf& GetLeaf(size_t i) const;
+	Leaf& getLeaf(size_t i);
+	const Leaf& getLeaf(size_t i) const;
 
 	/// get reference to mctdh-node i/nmctdhNodes
-	Node& GetNode(size_t i);
-	const Node& GetNode(size_t i) const;
+	Node& getNode(size_t i);
+	const Node& getNode(size_t i) const;
 
 	/// get reference to the mctdh topnode
-	Node& TopNode() { return linearizedNodes_.back(); }
+	Node& topNode() { return linearizedNodes_.back(); }
 
-	const Node& TopNode() const { return linearizedNodes_.back(); }
+	const Node& topNode() const { return linearizedNodes_.back(); }
 
 	/// Assign new indices to leaves
-	void ReindexLeafModes(map<size_t, size_t> Map);
+	void reindexLeafModes(map<size_t, size_t> Map);
 
 	/// Reset indices of leaves
-	void ResetLeafModes();
+	void resetLeafModes();
 
 	/// Expand a node in the Basis
-	void ExpandNode(Node& node);
+	void expandNode(Node& node);
 
-	/// Replace a node in the tree with a new node
-	void ReplaceNode(Node& old_node, Node& new_node);
+	/// replace a node in the tree with a new node
+	void replaceNode(Node& old_node, Node& new_node);
 
 	/// Set the root of the tree and update the TreeShape
-	void SetRoot(Node& root) {
+	void setRoot(Node& root) {
 		root_ = root;
-		root_.UpdatePosition(NodePosition());
-		Update();
+		root_.updatePosition(NodePosition());
+		update();
 	}
 
 	/// Bottom-up iterator over all nodes in the mctdh-tree
@@ -153,19 +153,19 @@ public:
 	}
 
 	/// Check whether TensorTreeBasis is working correctly
-	bool IsWorking();
+	bool isWorking();
 
 	/// Human readable output of the tree shape
 	void print(ostream& os = cout) const;
 
-	const vector<Edge>& Edges() const { return edges_; }
+	const vector<Edge>& edges() const { return edges_; }
 
-	const LinearizedNodes& Nodes() const { return linearizedNodes_; }
+	const LinearizedNodes& nodes() const { return linearizedNodes_; }
 
 protected:
-	void LinearizeNodes();
+	void linearizeNodes();
 
-	void LinearizeLeaves();
+	void linearizeLeaves();
 
 	/// Reference block to physical coordinates
 	LinearizedLeaves linearizedLeaves_;

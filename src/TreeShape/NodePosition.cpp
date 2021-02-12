@@ -13,7 +13,7 @@ void NodePosition::info(ostream& os, bool print_layer) const {
 	os << " }" << endl;
 }
 
-size_t NodePosition::ChildIdx() const {
+size_t NodePosition::childIdx() const {
 	size_t size = path_.size();
 	if (size > 0) {
 		return path_[size - 1];

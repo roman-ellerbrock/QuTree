@@ -10,7 +10,7 @@
 SUITE (TensorTree) {
 
 	TEST (TensorTree_FILE_IO) {
-		Tree tree = TreeFactory::BalancedTree(12, 2, 4);
+		Tree tree = TreeFactory::balancedTree(12, 2, 4);
 		TensorTreecd T(tree);
 		T.write("TT.tmp.dat");
 		TensorTreecd Q(tree);
@@ -23,7 +23,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST (TensorTree_RandomGenerate) {
-		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
+		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		TensorTreecd T(tree);
 		mt19937 gen(2468);
 		T.fillRandom(gen, tree, false);
@@ -38,7 +38,7 @@ SUITE (TensorTree) {
 
 	TEST (TensorTree_Train) {
 		size_t nLeaves = 12;
-		auto tree = TreeFactory::UnbalancedTree(nLeaves, 4, 2, 6);
+		auto tree = TreeFactory::unbalancedTree(nLeaves, 4, 2, 6);
 			CHECK_EQUAL(2 * nLeaves - 1, tree.nNodes());
 		mt19937 gen(2468);
 		TensorTreecd Psi(gen, tree);
@@ -46,7 +46,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST (TreeTest) {
-		Tree tree = TreeFactory::BalancedTree(12, 5, 2);
+		Tree tree = TreeFactory::balancedTree(12, 5, 2);
 		TensorTreecd Psi(tree);
 		for (const Tensorcd& A : Psi) {
 			TensorShape shape = A.shape();
@@ -57,7 +57,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST(DirectSum) {
-		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
+		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		mt19937 gen(234);
 		TensorTreecd Psi(gen, tree);
 		TensorTreecd Chi(gen, tree);

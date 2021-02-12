@@ -29,7 +29,7 @@ namespace benchmark {
 		size_t nsample, ostream& os) {
 
 		/// Initialize memory
-		Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+		Tree tree = TreeFactory::balancedTree(nleaves, dim, dim);
 		TensorTreecd Psi(gen, tree);
 		MatrixTreecd Rho(tree);
 
@@ -53,7 +53,7 @@ namespace benchmark {
 pair<double, double> factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
-	Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+	Tree tree = TreeFactory::balancedTree(nleaves, dim, dim);
 	TensorTreecd Psi(gen, tree);
 	MatrixTreecd fmat(tree);
 	return factormatrixtree_sample(fmat, Psi, tree, nsample);
@@ -76,7 +76,7 @@ auto sparse_factormatrixtree_sample(SparseMatrixTreecd& fmat, const MLOcd& M,
 pair<double, double> sparse_factormatrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
-	Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+	Tree tree = TreeFactory::balancedTree(nleaves, dim, dim);
 	TensorTreecd Psi(gen, tree);
 	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;
@@ -106,7 +106,7 @@ auto sparse_holematrixtree_sample(SparseMatrixTreecd& hole,
 pair<double, double> sparse_holematrixtree(mt19937& gen, size_t dim, size_t nleaves,
 	size_t nsample, ostream& os) {
 	/// Initialize memory
-	Tree tree = TreeFactory::BalancedTree(nleaves, dim, dim);
+	Tree tree = TreeFactory::balancedTree(nleaves, dim, dim);
 	TensorTreecd Psi(gen, tree);
 	Matrixcd X(2, 2);
 	X(0, 0) = 0.5;

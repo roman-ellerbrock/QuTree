@@ -33,7 +33,7 @@ namespace Demo {
 
 
 		{
-			Tree tree = TreeFactory::BalancedTree(251, 2, 2);
+			Tree tree = TreeFactory::balancedTree(251, 2, 2);
 			TensorTreecd Psi(RNG, tree);
 			MatrixTreecd Overlap = TreeFunctions::dotProduct(Psi, Psi, tree);
 			MatrixTreecd RDMs = TreeFunctions::contraction(Psi, tree, true);
@@ -52,7 +52,7 @@ namespace Demo {
 			TensorShape shape({200, 200, 200});
 
 									 /// Number Leaves 1024
-			Tree tree = TreeFactory::BalancedTree(1024, 2, 2);
+			Tree tree = TreeFactory::balancedTree(1024, 2, 2);
 
 		}
 	}

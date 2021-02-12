@@ -72,7 +72,7 @@ namespace TreeIO {
 		// Calculate expectation values for each physica mode
 		for (int k = 0; k < tree.nLeaves(); k++) {
 			// References to the Physical coordinate and bottom-layer_ node
-			const Leaf& phys = tree.GetLeaf(k);
+			const Leaf& phys = tree.getLeaf(k);
 			const LeafInterface& grid = phys.interface();
 			auto& node = (Node&) phys.parent();
 			cout << "mode=" << phys.mode() << endl;
@@ -188,7 +188,7 @@ namespace TreeIO {
 	void leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os) {
 		os << fixed;
 		for (size_t l = 0; l < tree.nLeaves(); ++l) {
-			const Leaf& leaf = tree.GetLeaf(l);
+			const Leaf& leaf = tree.getLeaf(l);
 			auto rho_leaf = leafDensity(Psi, Rho, leaf, tree);
 			cout << "Leaf: " << l << "\n";
 			double norm = abs(rho_leaf.trace());

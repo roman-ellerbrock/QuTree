@@ -22,9 +22,9 @@ public:
 
 	void info(ostream& os = cout, bool print_layer = false) const;
 
-	size_t ChildIdx() const;
+	size_t childIdx() const;
 
-	size_t Layer() const { return layer_; }
+	size_t layer() const { return layer_; }
 
 protected:
 	vector<size_t> path_;

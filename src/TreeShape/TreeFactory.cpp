@@ -28,7 +28,7 @@ namespace TreeFactory {
 		return train;
 	}
 
-	Tree UnbalancedTree(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType) {
+	Tree unbalancedTree(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType) {
 		size_t mode = 0;
 		size_t leafSubtype = 0;
 		PhysPar par;
@@ -44,8 +44,8 @@ namespace TreeFactory {
 		auto& tdim_ = train.shape();
 		tdim_.setDimension(1, tdim_.lastIdx());
 		Tree tree;
-		tree.SetRoot(train);
-		tree.ResetLeafModes();
+		tree.setRoot(train);
+		tree.resetLeafModes();
 		return tree;
 	}
 
@@ -107,14 +107,14 @@ namespace TreeFactory {
 					Node& parent = node.parent();
 					parent.expandChild(node.childIdx());
 					it--;
-					tree.Update();
+					tree.update();
 				}
 			}
 		}
 		return tree;
 	}
 
-	Tree BalancedTree(size_t num_leaves,
+	Tree balancedTree(size_t num_leaves,
 		size_t dim_leaves, size_t dim_nodes) {
 		/**
 		 * \brief This functions creates a close-to-balanced Tree
@@ -141,8 +141,8 @@ namespace TreeFactory {
 		auto& tdim = nodes.front().shape();
 		tdim.setDimension(1, tdim.lastIdx());
 		Tree tree;
-		tree.SetRoot(nodes.front());
-		tree.ResetLeafModes();
+		tree.setRoot(nodes.front());
+		tree.resetLeafModes();
 
 		/// Expand nodes that perform no contraction
 		tree = expandNodes(tree);
@@ -150,7 +150,7 @@ namespace TreeFactory {
 		return tree;
 	}
 
-	Tree OperatorTree(const Tree& tree) {
+	Tree operatorTree(const Tree& tree) {
 		Tree otree(tree);
 		for (Node& node : otree) {
 			if (node.isBottomlayer()) {

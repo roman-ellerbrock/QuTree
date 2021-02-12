@@ -3,25 +3,25 @@
 Node::Node()
 	: nTotalNodes_(1), nLeaves_(0),
 	  nNodes_(1), nodeType_(1), bottomLayer_(false),
-	  nextNodeNum_(0), nextNodeNumFortran_(0), address_(-100), up_(nullptr) {
+	  nextNodeNum_(0), nextNodeNumFortran_(0), address_(-100), parent_(nullptr) {
 }
 
 // Copy constructor
 Node::Node(const Node& node)
 	: nTotalNodes_(node.nTotalNodes_), nNodes_(node.nNodes_),
 	  nLeaves_(node.nLeaves_), tensorDim_(node.tensorDim_),
-	  up_(node.up_),
+	  parent_(node.parent_),
 	  nextNodeNum_(node.nextNodeNum_),
 	  nextNodeNumFortran_(node.nextNodeNumFortran_),
 	  position_(node.position_),
 	  address_(node.address_), nodeType_(node.nodeType_),
 	  bottomLayer_(node.bottomLayer_) {
 	if (isBottomlayer()) {
-		down_.emplace_back(make_unique<Leaf>(node.getLeaf()));
+		child_.emplace_back(make_unique<Leaf>(node.getLeaf()));
 		getLeaf().setParent(this);
 	} else {
 		for (size_t i = 0; i < node.nChildren(); i++) {
-			down_.emplace_back(make_unique<Node>(node.child(i)));
+			child_.emplace_back(make_unique<Node>(node.child(i)));
 			child(i).setParent(this);
 		}
 	}
@@ -31,12 +31,12 @@ Node::Node(const Node& node)
 Node::Node(Node&& node) noexcept
 	: nTotalNodes_(node.nTotalNodes_), nNodes_(node.nNodes_),
 	  nLeaves_(node.nLeaves_), tensorDim_(node.tensorDim_),
-	  up_(node.up_),
+	  parent_(node.parent_),
 	  nextNodeNum_(node.nextNodeNum_), position_(node.position_),
 	  address_(node.address_), nodeType_(node.nodeType_),
 	  bottomLayer_(node.bottomLayer_), nextNodeNumFortran_(node.nextNodeNumFortran_) {
 	// Set upwards connectivity of children
-	down_ = move(node.down_);
+	child_ = move(node.child_);
 	if (node.isBottomlayer()) {
 		getLeaf().setParent(this);
 	} else {
@@ -60,13 +60,13 @@ Node& Node::operator=(Node&& old) noexcept {
 	nNodes_ = old.nNodes_;
 	nLeaves_ = old.nLeaves_;
 	tensorDim_ = old.tensorDim_;
-	up_ = old.up_;
+	parent_ = old.parent_;
 	nextNodeNum_ = old.nextNodeNum_;
 	position_ = old.position_;
 	address_ = old.address_;
 	nodeType_ = old.nodeType_;
 	bottomLayer_ = old.bottomLayer_;
-	down_ = move(old.down_);
+	child_ = move(old.child_);
 	// Set upwards connectivity of children
 	if (isBottomlayer()) {
 		getLeaf().setParent(this);
@@ -84,7 +84,7 @@ Node::Node(const Leaf& phys, size_t ntensor)
 	// This constructor initializes a bottomLayer_ GetNode from a
 	// Leaf
 //	down_.emplace_back(unique_ptr<Leaf>(new Leaf(phys)));
-	down_.emplace_back(make_unique<Leaf>(phys));
+	child_.emplace_back(make_unique<Leaf>(phys));
 	nTotalNodes_++;
 	nLeaves_++;
 	bottomLayer_ = true;
@@ -99,9 +99,9 @@ Node::Node(const Leaf& phys, size_t ntensor)
 	tensorDim_ = TensorShape({phys.dim(), ntensor});
 }
 
-void Node::Initialize(istream& file, Node *up,
+void Node::initialize(istream& file, Node *up,
 	const NodePosition& position) {
-	up_ = up;
+	parent_ = up;
 	position_ = position;
 
 	// Variables needed to read input file
@@ -132,14 +132,14 @@ void Node::Initialize(istream& file, Node *up,
 
 		if (newf < 0) {
 			// add logical node
-			down_.emplace_back(unique_ptr<Node>
+			child_.emplace_back(unique_ptr<Node>
 				(new Node(file, this, newposition)));
-			nTotalNodes_ += (*down_[i]).nTotalNodes();
-			nNodes_ += (*down_[i]).nNodes();
-			nLeaves_ += (*down_[i]).nLeaves();
+			nTotalNodes_ += (*child_[i]).nTotalNodes();
+			nNodes_ += (*child_[i]).nNodes();
+			nLeaves_ += (*child_[i]).nLeaves();
 		} else {
 			// add physical node
-			down_.emplace_back(unique_ptr<Leaf>
+			child_.emplace_back(unique_ptr<Leaf>
 				(new Leaf(file, this, newposition)));
 			// A physical node was added, so increase the number of nodes by 1
 			nTotalNodes_++;
@@ -153,17 +153,17 @@ void Node::Initialize(istream& file, Node *up,
 	dim.push_back(nstates);
 	tensorDim_ = TensorShape(dim);
 
-	nextNodeNum_ = down_.size() - 1;
+	nextNodeNum_ = child_.size() - 1;
 }
 
 Node::Node(istream& file, Node *up,
 	const NodePosition& position)
-	: up_(up), nTotalNodes_(1),
+	: parent_(up), nTotalNodes_(1),
 	  nLeaves_(0), nNodes_(1), position_(position),
 	  nodeType_(1), bottomLayer_(false), nextNodeNum_(0),
 	  nextNodeNumFortran_(0), address_(-100) {
 	// Call Initialize
-	Initialize(file, up, position_);
+	initialize(file, up, position_);
 }
 
 void Node::info(ostream& os) const {
@@ -173,67 +173,67 @@ void Node::info(ostream& os) const {
 
 void Node::write(ostream& os) const {
 	const TensorShape& tdim = shape();
-	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
+	for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
 	os << tdim.lastDimension() << "\t-" << nChildren() << "\n";
 	for (size_t i = 0; i < nChildren(); i++) {
-		down_[i]->write(os);
+		child_[i]->write(os);
 	}
 }
 
 void Node::push_back(const Node& node) {
-	down_.emplace_back(std::make_unique<Node>(node));
-	down_.back()->setParent(this);
-	Updatennodes();
+	child_.emplace_back(std::make_unique<Node>(node));
+	child_.back()->setParent(this);
+	updatennodes();
 }
 
 bool Node::isToplayer() const {
-	return (up_ == nullptr);
+	return (parent_ == nullptr);
 }
 
 Leaf& Node::getLeaf() {
 	assert(bottomLayer_);
-	AbstractNode *node = down_[0].get();
+	AbstractNode *node = child_[0].get();
 	return (Leaf&) (*node);
 }
 
 const Leaf& Node::getLeaf() const {
 	assert(bottomLayer_);
-	AbstractNode *node = down_[0].get();
+	AbstractNode *node = child_[0].get();
 	return (Leaf&) (*node);
 }
 
 const Node& Node::child(size_t i) const {
-	assert(i < down_.size());
+	assert(i < child_.size());
 	assert(!bottomLayer_);
-	return (Node&) *down_[i];
+	return (Node&) *child_[i];
 }
 
 Node& Node::child(size_t i) {
-	assert(i < down_.size());
+	assert(i < child_.size());
 	assert(!bottomLayer_);
-	return (Node&) *down_[i];
+	return (Node&) *child_[i];
 }
 
 Node& Node::parent() {
-	assert(up_ != nullptr);
-	return (Node&) *up_;
+	assert(parent_ != nullptr);
+	return (Node&) *parent_;
 }
 
 const Node& Node::parent() const {
-	assert(up_ != nullptr);
-	return (Node&) *up_;
+	assert(parent_ != nullptr);
+	return (Node&) *parent_;
 }
 
 AbstractNode *Node::nextNode() {
 
 	AbstractNode *result;
 	if (nextNodeNum_ >= 0) {
-		result = down_[nextNodeNum_].get()->nextNode();
-		if (result == down_[nextNodeNum_].get()) {
+		result = child_[nextNodeNum_].get()->nextNode();
+		if (result == child_[nextNodeNum_].get()) {
 			nextNodeNum_--;
 		}
 	} else {
-		nextNodeNum_ = down_.size() - 1;
+		nextNodeNum_ = child_.size() - 1;
 		result = this;
 	}
 
@@ -243,9 +243,9 @@ AbstractNode *Node::nextNode() {
 AbstractNode *Node::nextNodeManthe() {
 
 	AbstractNode *result;
-	if (nextNodeNumFortran_ < down_.size()) {
-		result = down_[nextNodeNumFortran_].get()->nextNodeManthe();
-		if (result == down_[nextNodeNumFortran_].get()) {
+	if (nextNodeNumFortran_ < child_.size()) {
+		result = child_[nextNodeNumFortran_].get()->nextNodeManthe();
+		if (result == child_[nextNodeNumFortran_].get()) {
 			++nextNodeNumFortran_;
 		}
 	} else {
@@ -256,14 +256,14 @@ AbstractNode *Node::nextNodeManthe() {
 	return result;
 }
 
-unique_ptr<AbstractNode> Node::DownUnique(size_t i) {
-	assert(i < down_.size());
-	return move(down_[i]);
+unique_ptr<AbstractNode> Node::downUnique(size_t i) {
+	assert(i < child_.size());
+	return move(child_[i]);
 }
 
 void Node::expandChild(size_t i) {
 	assert(!isBottomlayer());
-	assert(i < down_.size());
+	assert(i < child_.size());
 
 	// Make a new "down_new" by adding all old children
 	// except the expanded node and adding the expanded node's children
@@ -272,7 +272,7 @@ void Node::expandChild(size_t i) {
 	vector<unique_ptr<AbstractNode>> down_new;
 	// move nodes until expanded node to down_new 
 	for (size_t j = 0; j < i; j++) {
-		down_new.push_back(move(down_[j]));
+		down_new.push_back(move(child_[j]));
 	}
 
 	// append the children of the expanded node to down_new
@@ -285,46 +285,46 @@ void Node::expandChild(size_t i) {
 		subnode.setParent(this);
 		// Update subnodes positionindices
 		int child_nr = down_new.size();
-		subnode.UpdatePosition(position_ * child_nr);
+		subnode.updatePosition(position_ * child_nr);
 
 		// Save the unique_ptr to the new vector
-		unique_ptr<AbstractNode> subchild = child.DownUnique(j);
+		unique_ptr<AbstractNode> subchild = child.downUnique(j);
 		down_new.push_back(move(subchild));
 	}
 
 	// move the rest of the old children to down_new
 	for (size_t j = i + 1; j < nChildren(); j++) {
-		down_new.push_back(move(down_[j]));
+		down_new.push_back(move(child_[j]));
 	}
 
 	// move down_new to down_
-	down_ = move(down_new);
+	child_ = move(down_new);
 
 	// Adjust TensorDim
-	UpdateTDim();
+	updateTDim();
 
 	// Update position
-	UpdatePosition(position_);
+	updatePosition(position_);
 
 	// update nTotalNodes_: All nTotalNodes_ of the nodes above change
 	// so go to the topnode and update from there downwards
-	Node& topnode = TopNode();
-	topnode.Updatennodes();
+	Node& topnode = topNode();
+	topnode.updatennodes();
 
 	// Set the nextNodeNum_ for a correct nextNode() sweep that starts
 	// at the last_ node
-	nextNodeNum_ = down_.size() - 1;
+	nextNodeNum_ = child_.size() - 1;
 }
 
 void Node::update(const NodePosition& p) {
 	// @TODO: Should reset state_ and Update(connectivity) be in separate routines?
-	ResetCounters();
-	UpdatePosition(p);
-	Updatennodes();
-	UpdateTDim();
+	resetCounters();
+	updatePosition(p);
+	updatennodes();
+	updateTDim();
 }
 
-void Node::UpdateTDim() {
+void Node::updateTDim() {
 /*	size_t ntensor = 0;
 	if (IsToplayer()) {
 		// If the node is a Toplayer, ntensor stays the same
@@ -355,35 +355,35 @@ void Node::UpdateTDim() {
 	tensorDim_ = TensorShape(dim_new);
 }
 
-void Node::UpdatePosition(const NodePosition& p) {
+void Node::updatePosition(const NodePosition& p) {
 	// Save the new position_
 	position_ = p;
 
 	// Update positions of children
-	for (size_t i = 0; i < down_.size(); i++) {
+	for (size_t i = 0; i < child_.size(); i++) {
 		NodePosition subp = p * i;
 		if (isBottomlayer()) {
 			Leaf& phy = getLeaf();
 			phy.updatePosition(subp);
 		} else {
 			Node& child = this->child(i);
-			child.UpdatePosition(subp);
+			child.updatePosition(subp);
 		}
 	}
 }
 
-void Node::ResetCounters() {
+void Node::resetCounters() {
 
-	nextNodeNum_ = down_.size() - 1;
+	nextNodeNum_ = child_.size() - 1;
 	nextNodeNumFortran_ = 0;
 	if (!isBottomlayer()) {
 		for (size_t k = 0; k < nChildren(); ++k) {
-			child(k).ResetCounters();
+			child(k).resetCounters();
 		}
 	}
 }
 
-void Node::Updatennodes() {
+void Node::updatennodes() {
 	if (isBottomlayer()) {
 		nTotalNodes_ = 2;
 		nNodes_ = 1;
@@ -392,9 +392,9 @@ void Node::Updatennodes() {
 		nTotalNodes_ = 1;
 		nNodes_ = 1;
 		nLeaves_ = 0;
-		for (size_t k = 0; k < down_.size(); k++) {
+		for (size_t k = 0; k < child_.size(); k++) {
 			Node& child = this->child(k);
-			child.Updatennodes();
+			child.updatennodes();
 			nTotalNodes_ += child.nTotalNodes();
 			nNodes_ += child.nNodes();
 			nLeaves_ += child.nLeaves();
@@ -402,18 +402,18 @@ void Node::Updatennodes() {
 	}
 }
 
-Node& Node::TopNode() {
+Node& Node::topNode() {
 	// Returns the topnode of the tree
 	if (isToplayer()) {
 		return (*this);
 	} else {
-		return parent().TopNode();
+		return parent().topNode();
 	}
 }
 
-void Node::Replace(Node& new_child, size_t idx) {
-	assert(idx < down_.size());
-	down_[idx] = unique_ptr<Node>(new Node(new_child));
+void Node::replace(Node& new_child, size_t idx) {
+	assert(idx < child_.size());
+	child_[idx] = unique_ptr<Node>(new Node(new_child));
 }
 
 

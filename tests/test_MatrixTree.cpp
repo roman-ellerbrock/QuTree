@@ -15,13 +15,13 @@ SUITE (MatrixTree) {
 	double eps = 1e-8;
 
 	TEST (Constructor) {
-		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
+		Tree tree = TreeFactory::balancedTree(7, 5, 4);
 		MatrixTreecd M(tree);
 			CHECK_EQUAL(tree.nNodes(), M.size());
 	}
 
 	TEST (IO) {
-		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
+		Tree tree = TreeFactory::balancedTree(7, 5, 4);
 		MatrixTreecd M(tree);
 		mt19937 gen(1988);
 		for (const Node& node : tree) {
@@ -46,7 +46,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (dotProduct) {
 		mt19937 gen(1923);
-		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
+		Tree tree = TreeFactory::balancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree);
 		MatrixTreecd S = dotProduct(Psi, Psi, tree);
 		for (const Node& node : tree) {
@@ -59,7 +59,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (contraction) {
 		mt19937 gen(1923);
-		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
+		Tree tree = TreeFactory::balancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree, false);
 		TensorTreecd Chi(gen, tree, false);
 		MatrixTreecd S = dotProduct(Psi, Chi, tree);
@@ -70,7 +70,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (Density) {
 		mt19937 gen(1923);
-		Tree tree = TreeFactory::BalancedTree(7, 5, 4);
+		Tree tree = TreeFactory::balancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree, true);
 		MatrixTreecd Rho = contraction(Psi, tree, true);
 		for (const Node& node : tree) {
@@ -92,7 +92,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (SpectralDecompositionTree_Calc) {
 		mt19937 gen(1993);
-		Tree tree = TreeFactory::BalancedTree(12, 2, 2);
+		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		TensorTreecd Psi(gen, tree);
 		MatrixTreecd Rho = TreeFunctions::contraction(Psi, tree, true);
 		SpectralDecompositionTreecd X(Rho, tree);
@@ -105,7 +105,7 @@ SUITE (MatrixTreeFunctions) {
 	}
 
 	TEST (SpectralDecompositionTree_Inverse) {
-		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		Tree tree = TreeFactory::balancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
@@ -131,7 +131,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (canonicalTransformation) {
 
-		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		Tree tree = TreeFactory::balancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
 
@@ -150,7 +150,7 @@ SUITE (MatrixTreeFunctions) {
 
 	TEST (CanonicalTransformation2) {
 
-		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		Tree tree = TreeFactory::balancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree, false);
 		auto rho = TreeFunctions::contraction(Psi, tree, true);
@@ -177,18 +177,18 @@ SUITE(TreeTransformations) {
 	double eps = 1e-8;
 
 	TEST(ContractionNormalized) {
-		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		Tree tree = TreeFactory::balancedTree(12, 4, 2);
 		// Increase number of states
-		Node& top = tree.TopNode();
+		Node& top = tree.topNode();
 		TensorShape& shape = top.shape();
 		shape[shape.lastIdx()] += 1;
-		tree.Update();
+		tree.update();
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
 
 		auto edgePsi = TreeFunctions::contractionNormalization(Psi, tree, true);
 
-		for (const Edge& e : tree.Edges()) {
+		for (const Edge& e : tree.edges()) {
 			auto phi = edgePsi[e];
 			Matrixcd deltaij = contraction(phi, phi, e.upIdx());
 			Matrixcd I = identityMatrix<complex<double>>(deltaij.dim1());
@@ -198,7 +198,7 @@ SUITE(TreeTransformations) {
 	}
 
 	TEST(CompressTensorTree) {
-		Tree tree = TreeFactory::BalancedTree(12, 4, 2);
+		Tree tree = TreeFactory::balancedTree(12, 4, 2);
 		mt19937 gen(1993);
 		TensorTreecd Psi(gen, tree);
 		canonicalTransformation(Psi, tree, true);

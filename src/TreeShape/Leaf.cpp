@@ -73,7 +73,7 @@ void Leaf::info(ostream& os) const {
 }
 
 void Leaf::write(ostream& os) const {
-	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
+	for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
 	os << dim_ << "\t" << type_ << "\t" << mode_ << "\n";
 }
 

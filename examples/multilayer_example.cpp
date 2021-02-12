@@ -37,7 +37,7 @@ namespace examples {
 	void Manthe2008Paper() {
 		/// We start by generating the tree shown in Fig. 1 f).
 		/// We choose f=12 leaves, N=2, n=3 and a=1 ("a" is can not be modified in this function).
-		Tree tree = TreeFactory::BalancedTree(12, 2, 3);
+		Tree tree = TreeFactory::balancedTree(12, 2, 3);
 
 
 		/// === Wave Function Generation & Basic Operations (mostly Sec. II A.) ===
@@ -52,7 +52,7 @@ namespace examples {
 		/// two wave functions <Psi|Chi>. Note: this is not displayed in Ref. 1.
 		MatrixTreecd S = TreeFunctions::dotProduct(Psi, Chi, tree);
 		/// The overlap of the two wave functions is the overlap matrix at the toplayer
-		Matrixcd braket_mat = S[tree.TopNode()];
+		Matrixcd braket_mat = S[tree.topNode()];
 		/// Note:
 		/// (a) <Psi|Chi> is in general a matrix, if the state-averaged formulation is used.
 		///     If, like here, we calculate the overlap of single wave functions, it is a 1x1-Matrix.

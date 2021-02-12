@@ -31,27 +31,27 @@ class NodeAttribute
 public:
 	// Getter for the attribute to object a
 	A& operator[](const Node& x) {
-		size_t address = x.Address();
+		size_t address = x.address();
 		assert(address < attributes_.size());
 		return attributes_[address];
 	}
 
 	const A& operator[](const Node& x) const {
-		size_t address = x.Address();
+		size_t address = x.address();
 		assert(address < attributes_.size());
 		return attributes_[address];
 	}
 
 	A& operator[](const Edge& e) {
 		const Node& x = e.down();
-		size_t address = x.Address();
+		size_t address = x.address();
 		assert(address < attributes_.size());
 		return attributes_[address];
 	}
 
 	const A& operator[](const Edge& e) const {
 		const Node& x = e.down();
-		size_t address = x.Address();
+		size_t address = x.address();
 		assert(address < attributes_.size());
 		return attributes_[address];
 	}
@@ -82,7 +82,7 @@ public:
 	 * be updated (addresses become invalid).
 	 */
 	void erase(const Node& x) {
-		attributes_.erase(attributes_.begin() + x.Address());
+		attributes_.erase(attributes_.begin() + x.address());
 	}
 
 protected:

@@ -26,7 +26,7 @@ namespace TreeFunctions {
 		auto B = sqrt(rho, tree);
 
 
-		for (const Edge& e : tree.Edges()) {
+		for (const Edge& e : tree.edges()) {
 			TransformEdgeDown(Psi, Psi, B[e], e);
 		}
 	}
@@ -45,13 +45,13 @@ namespace TreeFunctions {
 		auto B = sqrt(rho, tree);
 		auto B_inv = inverse(B, tree);
 
-		for (const Edge& e : tree.Edges()) {
+		for (const Edge& e : tree.edges()) {
 			TransformEdgeDown(Psi, Psi, B[e], e);
 		}
 
 		auto Chi(Psi);
 
-		for (const Edge& e : tree.Edges()) {
+		for (const Edge& e : tree.edges()) {
 			const Node& parent = e.up();
 			Chi[e] = matrixTensor(B_inv[e], Psi[parent], e.upIdx());
 		}
@@ -80,7 +80,7 @@ namespace TreeFunctions {
 	void transform(TensorTree<T>& Chi, const TensorTree<T>& Psi, const MatrixTree<T>& M, const MatrixTree<T>& M_inv,
 		const Tree& tree) {
 
-		for (const Edge& e : tree.Edges()) {
+		for (const Edge& e : tree.edges()) {
 			TransformEdgeUp(Chi, Psi, M_inv[e], e);
 			const Node& node = e.down();
 			auto x = contraction(Chi[node], Chi[node], node.childIdx());
