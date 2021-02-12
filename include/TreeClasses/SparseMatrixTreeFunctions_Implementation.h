@@ -28,7 +28,7 @@ namespace TreeFunctions {
 	template<typename T>
 	Matrix<T> RepresentBottom(const Tensor<T>& Bra,
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& leaf) {
-		Tensor<T> MKet = M.ApplyBottomLayer(Ket, leaf);
+		Tensor<T> MKet = M.apply(Ket, leaf);
 		return Bra.dotProduct(MKet);
 	}
 
@@ -258,7 +258,7 @@ namespace TreeFunctions {
 		if (!mats.isActive(node)) { return Phi; }
 		if (node.isBottomlayer()) {
 			const Leaf& phys = node.getLeaf();
-			return M.ApplyBottomLayer(Phi, phys);
+			return M.apply(Phi, phys);
 		} else {
 			return applyUpper(mats, Phi, node);
 		}

@@ -24,7 +24,7 @@ public:
 
 	~LeafMatrix() = default;
 
-	virtual void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
+	virtual void apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
 
 	const Matrix<T>& matrix()const { return h_; }

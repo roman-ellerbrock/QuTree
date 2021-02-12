@@ -23,7 +23,7 @@ public:
 	LeafOperator() = default;
 	~LeafOperator() = default;
 
-	virtual void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
+	virtual void apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff)const = 0;
 };
 

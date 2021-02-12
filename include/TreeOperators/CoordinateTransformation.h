@@ -11,7 +11,7 @@ public:
 	CoordinateTransformation() = default;
 	~CoordinateTransformation() = default;
 
-	virtual Vectord Transform(const Vectord& x) const { return x; }
+	virtual Vectord transform(const Vectord& x) const { return x; }
 };
 
 

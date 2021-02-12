@@ -17,10 +17,10 @@ SumOfProductsOperator<T> multAB(const SOP<T>& A, const SOP<T>& B) {
 
 	for (size_t i = 0; i < A.size(); i++) {
 		const MLO<T> Ai = A(i);
-		auto acoeff = A.Coeff(i);
+		auto acoeff = A.coeff(i);
 		for (size_t j = 0; j < B.size(); j++) {
 			const MLO<T> Bj = B(j);
-			auto bcoeff = B.Coeff(j);
+			auto bcoeff = B.coeff(j);
 			auto ccoeff = acoeff * bcoeff;
 			C.push_back(Ai * Bj, ccoeff);
 		}
@@ -33,7 +33,7 @@ template<typename T>
 SumOfProductsOperator<T> operator*(T c, const SOP<T>& A) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
-		C.push_back(A(i), c * A.Coeff(i));
+		C.push_back(A(i), c * A.coeff(i));
 	}
 	return C;
 }
@@ -42,7 +42,7 @@ template<typename T>
 SumOfProductsOperator<T> operator*(const SOP<T>& A, T c) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
-		C.push_back(A(i), A.Coeff(i) * c);
+		C.push_back(A(i), A.coeff(i) * c);
 	}
 	return C;
 }
@@ -52,7 +52,7 @@ SumOfProductsOperator<T> operator*(const MLO<T>& M, const SOP<T>& A) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
 		MLO<T> MA = M * A(i);
-		C.push_back(MA, A.Coeff(i));
+		C.push_back(MA, A.coeff(i));
 	}
 	return C;
 }
@@ -62,7 +62,7 @@ SumOfProductsOperator<T> operator*(const SOP<T>& A, const MLO<T>& M) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
 		MLO<T> MA = A(i) * M;
-		C.push_back(MA, A.Coeff(i));
+		C.push_back(MA, A.coeff(i));
 	}
 	return C;
 }
@@ -73,10 +73,10 @@ SumOfProductsOperator<T> operator*(const SOP<T>& A,
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
 		const MLO<T> Ai = A(i);
-		auto acoeff = A.Coeff(i);
+		auto acoeff = A.coeff(i);
 		for (size_t j = 0; j < B.size(); j++) {
 			const MLO<T> Bj = B(j);
-			auto bcoeff = B.Coeff(j);
+			auto bcoeff = B.coeff(j);
 			auto ccoeff = acoeff * bcoeff;
 			C.push_back(Ai * Bj, ccoeff);
 		}
@@ -91,7 +91,7 @@ SumOfProductsOperator<T> operator+(const SumOfProductsOperator<T>& A,
 	SOP<T> C = B;
 
 	for (size_t i = 0; i < A.size(); i++) {
-		C.push_back(A(i), A.Coeff(i));
+		C.push_back(A(i), A.coeff(i));
 	}
 
 	return C;

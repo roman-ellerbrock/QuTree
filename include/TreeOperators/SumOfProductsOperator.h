@@ -21,15 +21,15 @@ public:
 	~SumOfProductsOperator() = default;
 
 	explicit SumOfProductsOperator(const Tree& tree) {
-		Initialize(tree);
+		initialize(tree);
 	}
 
 	explicit SumOfProductsOperator(const MLO<T>& M, T c = 1.);
 
-	void Initialize(const Tree& tree) {
+	void initialize(const Tree& tree) {
 		coeff_.clear();
 		mpos_.clear();
-		SpecialInitialize(tree);
+		specialInitialize(tree);
 	}
 
 	// Get the number of MPOs in the Hamiltonian
@@ -58,7 +58,7 @@ public:
 		coeff_.push_back(coeff);
 	}
 
-	complex<double> Coeff(size_t i) const {
+	complex<double> coeff(size_t i) const {
 		assert(i < coeff_.size());
 		return coeff_[i];
 	}
@@ -74,7 +74,7 @@ public:
 	void print(ostream& os = cout) const {
 		os << "Number of parts in SOP operator: " << size() << endl;
 		for (size_t i = 0; i < size(); ++i) {
-			os << "coeff: " << Coeff(i) << endl;
+			os << "coeff: " << coeff(i) << endl;
 			mpos_[i].print(os);
 		}
 	}
@@ -114,8 +114,8 @@ protected:
 	vector<complex<double>> coeff_;
 
 private:
-	virtual void SpecialInitialize(const Tree& tree) {
-		cerr << "Called SpecialInitialize of SOP-base class." << endl;
+	virtual void specialInitialize(const Tree& tree) {
+		cerr << "Called specialInitialize of SOP-base class." << endl;
 	}
 };
 

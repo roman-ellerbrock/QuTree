@@ -8,7 +8,7 @@ MultiLeafOperator<T>::MultiLeafOperator()
 }
 
 template <typename T>
-Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
+Tensor<T> MultiLeafOperator<T>::apply(Tensor<T> Phi,
 	const Leaf& leaf) const {
 	Tensor<T> hPhi(Phi.shape());
 	size_t mode_x = leaf.Mode();
@@ -22,9 +22,9 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 		shared_ptr<LeafOperator<T>> spo = operator[](l);
 		// apply it
 		if (switchbool) {
-			spo->Apply(grid, hPhi, Phi);
+			spo->apply(grid, hPhi, Phi);
 		} else {
-			spo->Apply(grid, Phi, hPhi);
+			spo->apply(grid, Phi, hPhi);
 		}
 		switchbool = !switchbool;
 	}
@@ -37,7 +37,7 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Phi,
 }
 
 template <typename T>
-Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
+Tensor<T> MultiLeafOperator<T>::apply(Tensor<T> Acoeffs,
 	const vector<int>& list, const LeafInterface& grid) const {
 	Tensor<T> hAcoeff(Acoeffs.shape());
 	bool switchbool = true;
@@ -49,9 +49,9 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 
 		// apply it
 		if (switchbool) {
-			spo->Apply(grid, hAcoeff, Acoeffs);
+			spo->apply(grid, hAcoeff, Acoeffs);
 		} else {
-			spo->Apply(grid, Acoeffs, hAcoeff);
+			spo->apply(grid, Acoeffs, hAcoeff);
 		}
 		switchbool = !switchbool;
 	}
@@ -64,14 +64,14 @@ Tensor<T> MultiLeafOperator<T>::ApplyBottomLayer(Tensor<T> Acoeffs,
 }
 
 template<typename T>
-TensorTree<T> MultiLeafOperator<T>::Apply(TensorTree<T> Psi,
+TensorTree<T> MultiLeafOperator<T>::apply(TensorTree<T> Psi,
 	const Tree& tree) const {
-	ApplyReference(Psi, tree);
+	applyReference(Psi, tree);
 	return Psi;
 }
 
 template<typename T>
-void MultiLeafOperator<T>::ApplyReference(TensorTree<T>& Psi, const Tree& tree) const {
+void MultiLeafOperator<T>::applyReference(TensorTree<T>& Psi, const Tree& tree) const {
 	for (const Node& node : tree) {
 		if (node.isBottomlayer()) {
 			const Leaf& phy = node.getLeaf();
@@ -87,14 +87,14 @@ void MultiLeafOperator<T>::ApplyReference(TensorTree<T>& Psi, const Tree& tree) 
 			}
 
 			Tensor<T>& Acoeff = Psi[node];
-			Acoeff = ApplyBottomLayer(Acoeff, activelayerparts, grid);
+			Acoeff = apply(Acoeff, activelayerparts, grid);
 		}
 	}
 }
 
 
 template <typename T>
-void MultiLeafOperator<T>::SetV(const PotentialOperator& V_) {
+void MultiLeafOperator<T>::setV(const PotentialOperator& V_) {
     v_ = V_;
     hasV_ = true;
 }
@@ -105,7 +105,7 @@ MultiLeafOperator<T> operator*(const MultiLeafOperator<T>& A,
 	MultiLeafOperator<T> M = B;
 
 	for (size_t i = 0; i < A.size(); i++) {
-		M.push_back(A[i], A.Mode(i));
+		M.push_back(A[i], A.mode(i));
 	}
 
 	return M;

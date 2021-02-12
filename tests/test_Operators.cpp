@@ -54,7 +54,7 @@ SUITE (Operators) {
 		A(0) = 1.;
 		Tensorcd XA = matrixTensor(X, A, 0);
 		Tensorcd xA(tdim);
-		x.Apply(ho, xA, A);
+		x.apply(ho, xA, A);
 			CHECK_EQUAL(XA, xA);
 	}
 
@@ -64,7 +64,7 @@ SUITE (Operators) {
 		Tree tree = TreeFactory::BalancedTree(4, 2, 2);
 		TensorTreecd Chi(tree);
 		Chi.fillRandom(gen, tree, false);
-		auto Psi = M.Apply(Chi, tree);
+		auto Psi = M.apply(Chi, tree);
 
 		/// Checking
 		string filename("MLO.apply.dat");

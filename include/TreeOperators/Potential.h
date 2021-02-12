@@ -12,9 +12,9 @@ public:
 	Potential() = default;
 	virtual ~Potential() = default;
 
-	virtual void Initialize(const Tree& tree) {}
+	virtual void initialize(const Tree& tree) {}
 
-	virtual double Evaluate(const Vectord& Xv, size_t part) const = 0;
+	virtual double evaluate(const Vectord& Xv, size_t part) const = 0;
 };
 
 

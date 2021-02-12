@@ -27,7 +27,7 @@ public:
 
 	~LeafFunction() = default;
 
-	void Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
+	void apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 		const Tensor<T>& Acoeff) const override;
 
 protected:

@@ -13,14 +13,14 @@ Matrixcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf) {
 	for (size_t i = 0; i < dim; ++i) {
 		v(i, i) = 1.;
 	}
-	h.Apply(leaf.PrimitiveGrid(), hv, v);
+	h.apply(leaf.PrimitiveGrid(), hv, v);
 	Matrixcd mat = v.dotProduct(hv);
 	return mat;
 }
 
 
 template<typename T>
-void LeafMatrix<T>::Apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
+void LeafMatrix<T>::apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
 	const Tensor<T>& Acoeff) const {
 	matrixTensor(hAcoeff, h_, Acoeff, 0, true);
 }

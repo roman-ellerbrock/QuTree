@@ -61,11 +61,11 @@ public:
 	}
 
 	/// This routine manages how to apply a MLO
-	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
+	Tensor<T> apply(Tensor<T> Acoeffs,
 		const Leaf& leaf) const;
 
 	/// This routine manages how to apply a MLO
-	Tensor<T> ApplyBottomLayer(Tensor<T> Acoeffs,
+	Tensor<T> apply(Tensor<T> Acoeffs,
 		const vector<int>& list, const LeafInterface& grid) const;
 
 	/// Push back a SPO to the MLO
@@ -120,7 +120,7 @@ public:
 	}
 
 	/// Check whether a SPO acts on mode "mode_x"
-	bool ModeIsActive(size_t mode_x) const {
+	bool isActive(size_t mode_x) const {
 		for (size_t i = 0; i < targetLeaves_.size(); i++) {
 			if (targetLeaves_[i] == mode_x) { return true; }
 		}
@@ -128,18 +128,18 @@ public:
 	}
 
 	/// Check whether the "part"-th SPO acts on mode "mode_x"
-	bool ModeIsActive(size_t part, size_t mode_x) const {
+	bool isActive(size_t part, size_t mode_x) const {
 		return (targetLeaves_[part] == mode_x);
 	}
 
 	/// apply a MLO to a wavefunction.
-	void ApplyReference(TensorTree<T>& Psi, const Tree& tree) const;
+	void applyReference(TensorTree<T>& Psi, const Tree& tree) const;
 
 	/// apply a MLO to a wavefunction. Call-by-value-version. This routine is not optimized for performance.
-	TensorTree<T> Apply(TensorTree<T> Psi, const Tree& tree) const;
+	TensorTree<T> apply(TensorTree<T> Psi, const Tree& tree) const;
 
 	/// On which mode does the "part"-th SPO act?
-	size_t Mode(size_t part) const {
+	size_t mode(size_t part) const {
 		assert(part < size());
 		return targetLeaves_[part];
 	}
@@ -149,27 +149,27 @@ public:
 		MultiLeafOperator<T> M = B;
 
 		for (size_t i = 0; i < leafOperators_.size(); i++) {
-			M.push_back(leafOperators_[i], Mode(i));
+			M.push_back(leafOperators_[i], mode(i));
 		}
 
 		return M;
 	}
 
 	/// Check whether a Potential operator is included in the MLO. Important for CDVR.
-	bool HasV() const { return hasV_; }
+	bool hasV() const { return hasV_; }
 
 	/// Get a reference to the PotentialOperator
-	PotentialOperator& V() {
+	PotentialOperator& v() {
 		return v_;
 	}
 
 	/// Get a reference to the PotentialOperator
-	const PotentialOperator& V() const {
+	const PotentialOperator& v() const {
 		return v_;
 	}
 
 	/// Set the PotentialOperator
-	void SetV(const PotentialOperator& V);
+	void setV(const PotentialOperator& V);
 
 	/// Return vector of all active_ modes in this operator
 	const vector<size_t>& targetLeaves()const { return targetLeaves_; }

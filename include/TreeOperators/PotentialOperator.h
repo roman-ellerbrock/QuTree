@@ -42,9 +42,9 @@ public:
 	shared_ptr<Potential>& V() { return V_; }
 
 	double Evaluate(const Vectord& Xv, size_t part) const {
-		Vectord q = Q_->Transform(Xv);
+		Vectord q = Q_->transform(Xv);
 		assert(V_);
-		return V_->Evaluate(q, part);
+		return V_->evaluate(q, part);
 	}
 
 	shared_ptr<CoordinateTransformation> Q_;

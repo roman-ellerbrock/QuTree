@@ -202,7 +202,7 @@ namespace TreeFunctions {
 		const SOPcd& H, const Node& node) {
 		HPhi.zero();
 		for (size_t l = 0; l < H.size(); ++l) {
-			HPhi += H.Coeff(l) * symApply(Phi, hmats[l], H[l], node);
+			HPhi += H.coeff(l) * symApply(Phi, hmats[l], H[l], node);
 		}
 	}
 
