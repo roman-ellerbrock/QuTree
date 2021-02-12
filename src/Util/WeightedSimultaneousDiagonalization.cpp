@@ -2,7 +2,7 @@
 
 namespace WeightedSimultaneousDiagonalization {
 
-	void Calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs,
+	void calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs,
 		Matrixcd& W, Matrixcd& trafo, double eps) {
 		// Checks
 		for (const Matrixcd& x : Xs) {
@@ -27,21 +27,21 @@ namespace WeightedSimultaneousDiagonalization {
 
 		// Initial transformation of the matrices
 		vector<Matrixcd> Xs_plain(Xs);
-		WeightMatrices(Xs, W);
-		WeightMatrices(XXs, W);
+		weightMatrices(Xs, W);
+		weightMatrices(XXs, W);
 
 		// Iterate Jacobirotations until a converged result is reached
 		// Measure off-diagonal norm
-		double delta = MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo);
+		double delta = measureWeightedOffDiagonality(Xs, Xs_plain, W, trafo);
 //		cout << "Start : " << delta << endl;
 		double delta_last = 2 * delta;
 		while (!converged && iter < maxiter) {
 			// Rotation circle over all elements
-			WeightedJacobiRotations(Xs, XXs, W, trafo);
+			weightedJacobiRotations(Xs, XXs, W, trafo);
 
 			// Measure off-diagonal norm
 			delta_last = delta;
-			delta = MeasureWeightedOffDiagonality(Xs, Xs_plain, W, trafo);
+			delta = measureWeightedOffDiagonality(Xs, Xs_plain, W, trafo);
 			double change = abs(delta_last - delta);
 //			cout << iter << " " << delta << " " << change << endl;
 
@@ -55,7 +55,7 @@ namespace WeightedSimultaneousDiagonalization {
 		}
 	}
 
-	double MeasureWeightedDiagonality(
+	double measureWeightedDiagonality(
 		const vector<Matrixcd>& A, const Matrixcd& W) {
 		// Measure of diagonality in WSD
 		double loc = 0;
@@ -70,7 +70,7 @@ namespace WeightedSimultaneousDiagonalization {
 		return loc;
 	}
 
-	void WeightedJacobiRotations(
+	void weightedJacobiRotations(
 		vector<Matrixcd>& Xs, vector<Matrixcd>& XXs, Matrixcd& W, Matrixcd& trafo) {
 		// Angles for Givens-Rotation
 		complex<double> c, s = 0;
@@ -79,27 +79,27 @@ namespace WeightedSimultaneousDiagonalization {
 		for (size_t i = 0; i < W.dim1() - 1; i++) {
 			for (size_t j = i + 1; j < W.dim1(); j++) {
 				// Calculate Angles c and s for the elements i and j
-				CalculateWeightedAngles(c, s, i, j, Xs, XXs, W);
+				calculateWeightedAngles(c, s, i, j, Xs, XXs, W);
 //			cout << "c, s = " << c << " " << s << endl;
 
 				assert(abs(1. - abs(c) * abs(c) - abs(s) * abs(s)) < 1E-10);
 
 				// Perform the Givens-Rotation with angles c and s on the Xw-Matrices
-				RotateMatrices(Xs, c, s, i, j);
+				rotateMatrices(Xs, c, s, i, j);
 
 				// Perform the Givens-Rotation with angles c and s on the Xw²-Matrices
-				RotateMatrices(XXs, c, s, i, j);
+				rotateMatrices(XXs, c, s, i, j);
 
 				// The same for the Weight matrix
-				GivensRotation(W, c, s, i, j);
+				givensRotation(W, c, s, i, j);
 
 				// Rotate the Transformation-Matrix
-				GivensTrafoRotation(trafo, c, s, i, j);
+				givensTrafoRotation(trafo, c, s, i, j);
 			}
 		}
 	}
 
-	int CalculateWeightedAngles(
+	int calculateWeightedAngles(
 		complex<double>& c, complex<double>& s,
 		size_t i, size_t j, const vector<Matrixcd>& Xs,
 		const vector<Matrixcd>& XXs, const Matrixcd& W) {
@@ -125,18 +125,18 @@ namespace WeightedSimultaneousDiagonalization {
 		svec(1) = -eps;
 		cvec(0) = sqrt(1 - 2 * eps * eps);
 		cvec(1) = 0;
-		c = InterpretComplex(cvec);
-		s = InterpretComplex(svec);
+		c = interpretComplex(cvec);
+		s = interpretComplex(svec);
 
 		// Calculate localization measure for the starting angles
-		double loc_alt = WeightedJacobiLoc(Xs, XXs, W, i, j, c, s);
+		double loc_alt = weightedJacobiLoc(Xs, XXs, W, i, j, c, s);
 		double loc_new = 0;
 
 		while (iter < maxiter && diff_rel > eps * eps && a > amin) {
 			// Calculate derivatives of weightes measure
 			Matrixd preHessian(2, 2);
 			Vectord grad(2);
-			WeightedJacobiDerivatives(grad, preHessian, s, Xs, XXs, W, i, j, delta);
+			weightedJacobiDerivatives(grad, preHessian, s, Xs, XXs, W, i, j, delta);
 
 			double diff = -1;
 			// Iteration for Rational Function Optimization
@@ -146,7 +146,7 @@ namespace WeightedSimultaneousDiagonalization {
 				// Decrease a, until z <= 0.5
 				while (a > amin && z > 0.5) {
 					// Build RFO-Hessian
-					Matrixd H = RFO_BuildHessian(preHessian, grad, a);
+					Matrixd H = rfoBuildHessian(preHessian, grad, a);
 					// Diagonalize and adjust eigenvectors
 					Vectord ev(3);
 					H.rDiag(trafo, ev);
@@ -158,7 +158,7 @@ namespace WeightedSimultaneousDiagonalization {
 					snew(0) = real(s) + deltaS(0);
 					snew(1) = imag(s) + deltaS(1);
 					// z = |s_new|�
-					complex<double> z_cd = InterpretComplex(snew);
+					complex<double> z_cd = interpretComplex(snew);
 					z = pow(abs(z_cd), 2);
 					if (z > 0.5) { a /= 2; }
 				}
@@ -166,9 +166,9 @@ namespace WeightedSimultaneousDiagonalization {
 				cnew(1) = 0;
 
 				// Calculate Weighted loc for new angles
-				complex<double> cnow = InterpretComplex(cnew);
-				complex<double> snow = InterpretComplex(snew);
-				loc_new = WeightedJacobiLoc(Xs, XXs, W, i, j, cnow, snow);
+				complex<double> cnow = interpretComplex(cnew);
+				complex<double> snow = interpretComplex(snew);
+				loc_new = weightedJacobiLoc(Xs, XXs, W, i, j, cnow, snow);
 
 				// Check if the measure is decreased
 				double trafoabs = pow(trafo(0, 2), 2) + pow(trafo(1, 2), 2);
@@ -186,8 +186,8 @@ namespace WeightedSimultaneousDiagonalization {
 
 			// save angles, if they improve the measure
 			if (a > amin && diff > 0) {
-				c = InterpretComplex(cnew);
-				s = InterpretComplex(snew);
+				c = interpretComplex(cnew);
+				s = interpretComplex(snew);
 				loc_alt = loc_new;
 			}
 			iter++;
@@ -255,13 +255,13 @@ namespace WeightedSimultaneousDiagonalization {
 	}
 	 */
 
-	double WeightedJacobiLoc(
+	double weightedJacobiLoc(
 		const vector<Matrixcd>& Xs, const vector<Matrixcd>& XXs,
 		const Matrixcd& W, size_t p, size_t q,
 		complex<double> c, complex<double> s) {
 		// Weight matrix contribution
 		// First rotation W*J^H
-		auto W_new = RotatedDiagonals(W, p, q, c, s);
+		auto W_new = rotatedDiagonals(W, p, q, c, s);
 
 		// Change of Xw-Matrix diagonals
 //		Vectord x_old(2), x_new(2);
@@ -272,7 +272,7 @@ namespace WeightedSimultaneousDiagonalization {
 		}
 
 		for (const Matrixcd& Xw : Xs) {
-			auto Xw_rot = RotatedDiagonals(Xw, p, q, c, s);
+			auto Xw_rot = rotatedDiagonals(Xw, p, q, c, s);
 			xnew0 += pow(Xw_rot.first, 2);
 			xnew1 += pow(Xw_rot.second, 2);
 		}
@@ -285,7 +285,7 @@ namespace WeightedSimultaneousDiagonalization {
 		return diff;
 	}
 
-	void WeightedJacobiDerivatives(Vectord& grad,
+	void weightedJacobiDerivatives(Vectord& grad,
 		Matrixd& preHessian, complex<double> s_in,
 		const vector<Matrixcd>& Xs, const vector<Matrixcd>& XXs,
 		const Matrixcd& W, size_t p, size_t q, double delta) {
@@ -305,8 +305,8 @@ namespace WeightedSimultaneousDiagonalization {
 				x(1) = s(1) + ((int) j - 1) * delta;
 				double z = x(0) * x(0) + x(1) * x(1);
 				complex<double> cnow(sqrt(abs(1 - z)), 0);
-				complex<double> snow = InterpretComplex(x);
-				y(i, j) = WeightedJacobiLoc(Xs, XXs, W, p, q, cnow, snow);
+				complex<double> snow = interpretComplex(x);
+				y(i, j) = weightedJacobiLoc(Xs, XXs, W, p, q, cnow, snow);
 			}
 		}
 
@@ -321,7 +321,7 @@ namespace WeightedSimultaneousDiagonalization {
 		preHessian(1, 0) = preHessian(0, 1);
 	}
 
-	double MeasureWeightedOffDiagonality(
+	double measureWeightedOffDiagonality(
 		const vector<Matrixcd>& Xws, const vector<Matrixcd>& Xs,
 		const Matrixcd& W, const Matrixcd& trafo) {
 		// Measure of diagonality in WSD
@@ -364,11 +364,11 @@ namespace WeightedSimultaneousDiagonalization {
 	}
 
 	pair<Matrixcd, vector<Vectord>>
-	Calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps) {
+	calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps) {
 		auto trafo = identityMatrix<complex<double>>(W.dim1());
 		vector<Matrixcd> XXs;
 
-		Calculate(Xs, XXs, W, trafo, eps);
+		calculate(Xs, XXs, W, trafo, eps);
 
 		vector<Vectord> x_evs = GetDiagonals(Xs, W);
 		return {trafo, x_evs};

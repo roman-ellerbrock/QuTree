@@ -26,7 +26,7 @@ SUITE (MatrixTree) {
 		mt19937 gen(1988);
 		for (const Node& node : tree) {
 			Matrixcd& m = M[node];
-			m = RandomMatrices::GUE(m.dim1(), gen);
+			m = RandomMatrices::gue(m.dim1(), gen);
 		}
 
 		string filename("MatrixTree.dat");
@@ -110,7 +110,7 @@ SUITE (MatrixTreeFunctions) {
 		MatrixTreecd H(tree);
 		for (const Node& node : tree) {
 			const TensorShape& dim = node.shape();
-			auto mat = RandomMatrices::GUE(dim.lastDimension(), gen);
+			auto mat = RandomMatrices::gue(dim.lastDimension(), gen);
 			auto mat_dagger = mat.adjoint();
 			H[node] = mat * mat_dagger;
 		}

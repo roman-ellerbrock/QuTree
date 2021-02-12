@@ -18,7 +18,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W Weight matrix
 	 * @return Measure of diagonality
 	 */
-	double MeasureWeightedDiagonality(const vector<Matrixcd>& A,
+	double measureWeightedDiagonality(const vector<Matrixcd>& A,
 			const Matrixcd& W);
 
 	/** \brief Calculate the weighted Simultaneous Diagonalization for the Matrices A with the weight W
@@ -30,7 +30,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param eps Target accuracy
 	 * @return Transformation matrix and diagonal elements
 	 */
-	pair<Matrixcd, vector<Vectord>> Calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps);
+	pair<Matrixcd, vector<Vectord>> calculate(vector<Matrixcd>& Xs, Matrixcd& W, double eps);
 
 	/** \brief Calculate the weighted Simultaneous Diagonalization for the Matrices A with the weight W
 	 *
@@ -42,7 +42,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param trafo output transformation
 	 * @param eps Target accuracy
 	 */
-	void Calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs, Matrixcd& W,
+	void calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs, Matrixcd& W,
 		Matrixcd& trafo, double eps);
 
 	/// Quasi-Protected functions
@@ -54,7 +54,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W Weight matrix
 	 * @param trafo Transformation matrix
 	 */
-	double MeasureWeightedOffDiagonality(const vector<Matrixcd>& Xws,
+	double measureWeightedOffDiagonality(const vector<Matrixcd>& Xws,
 			const vector<Matrixcd>& Xs, const Matrixcd& W, const Matrixcd& trafo);
 
 	/**
@@ -64,7 +64,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W
 	 * @param trafo
 	 */
-	void WeightedJacobiRotations(vector<Matrixcd>& Xs,
+	void weightedJacobiRotations(vector<Matrixcd>& Xs,
 			vector<Matrixcd>& XXs, Matrixcd& W, Matrixcd& trafo);
 
 	/**
@@ -78,7 +78,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param W Weight matrix
 	 * @return error indicator
 	 */
-	int CalculateWeightedAngles(complex<double>& c,
+	int calculateWeightedAngles(complex<double>& c,
 			complex<double>& s, size_t i, size_t j,
 			const vector<Matrixcd>& X, const vector<Matrixcd>& XXs,
 			const Matrixcd& W);
@@ -94,7 +94,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param s element in Jacobi matrix
 	 * @return change of diagonality measure
 	 */
-	double WeightedJacobiLoc(const vector<Matrixcd>& Xs,
+	double weightedJacobiLoc(const vector<Matrixcd>& Xs,
 			const vector<Matrixcd>& XXs, const Matrixcd& W,
 			size_t p, size_t q, complex<double> c, complex<double> s);
 
@@ -110,7 +110,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param q target index in matrix
 	 * @param delta step length for numerical gradient
 	 */
-	void WeightedJacobiDerivatives(Vectord& grad, Matrixd& preHessian,
+	void weightedJacobiDerivatives(Vectord& grad, Matrixd& preHessian,
 			complex<double> s_in, const vector<Matrixcd>& Xs,
 			const vector<Matrixcd>& XXs, const Matrixcd& W,
 			size_t p, size_t q, double delta);

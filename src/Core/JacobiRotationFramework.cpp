@@ -1,7 +1,7 @@
 #include "Util/JacobiRotationFramework.h"
 
 
-void JacobiRotationFramework::GivensRotation(Matrixcd& B,
+void JacobiRotationFramework::givensRotation(Matrixcd& B,
 	complex<double> c, complex<double> s, int i, int j) {
 
 	// Perform a Givens-Rotation: R*A*R^H with R= {{c, s}, {-s*, c}}
@@ -29,15 +29,15 @@ void JacobiRotationFramework::GivensRotation(Matrixcd& B,
 	}
 }
 
-void JacobiRotationFramework::RotateMatrices(vector<Matrixcd>& As,
+void JacobiRotationFramework::rotateMatrices(vector<Matrixcd>& A,
 	complex<double> c, complex<double> s, int i, int j) {
 	// Perform a Givens-Rotation: R*A*R^H with R= {{c, s}, {-s*, c}}
-	for (auto& a  : As) {
-		GivensRotation(a, c, s, i, j);
+	for (auto& a  : A) {
+		givensRotation(a, c, s, i, j);
 	}
 }
 
-void JacobiRotationFramework::GivensTrafoRotation(Matrixcd& trafo,
+void JacobiRotationFramework::givensTrafoRotation(Matrixcd& trafo,
 	complex<double> c, complex<double> s, int i, int j) {
 	int dim = trafo.dim1();
 	Matrixcd copy(dim, 2);
@@ -53,10 +53,10 @@ void JacobiRotationFramework::GivensTrafoRotation(Matrixcd& trafo,
 	}
 }
 
-void JacobiRotationFramework::CalculateAngles(complex<double>& c,
+void JacobiRotationFramework::calculateAngles(complex<double>& c,
 	complex<double>& s, int i, int j, const vector<Matrixcd>& A) {
 	// Build the G-Matrix
-	Matrixcd G = BuildGMatrix(i, j, A);
+	Matrixcd G = buildGMatrix(i, j, A);
 
 	// Diagonalize it (phase convention is important here (x_>0)!)
 	Matrixcd trafo(3, 3);
@@ -77,7 +77,7 @@ void JacobiRotationFramework::CalculateAngles(complex<double>& c,
 	s = (y - imag * z) / t;
 }
 
-Matrixcd JacobiRotationFramework::BuildGMatrix(int i, int j, const vector<Matrixcd>& A) {
+Matrixcd JacobiRotationFramework::buildGMatrix(int i, int j, const vector<Matrixcd>& A) {
 	Matrixcd G(3, 3);
 	Vectorcd h(3);
 	complex<double> imag(0, 1);
@@ -101,7 +101,7 @@ Matrixcd JacobiRotationFramework::BuildGMatrix(int i, int j, const vector<Matrix
 	return G;
 }
 
-void JacobiRotationFramework::WeightMatrices(vector<Matrixcd>& A, const Matrixcd& W) {
+void JacobiRotationFramework::weightMatrices(vector<Matrixcd>& A, const Matrixcd& W) {
 	// Weight every Matrix in vector A with the weight matrix W
 	// A = 0.5 * (W*X + X*W)
 	for (int k = 0; k < A.size(); k++) {
@@ -111,7 +111,7 @@ void JacobiRotationFramework::WeightMatrices(vector<Matrixcd>& A, const Matrixcd
 	}
 }
 
-Matrixd JacobiRotationFramework::RFO_BuildHessian(const Matrixd& preHessian,
+Matrixd JacobiRotationFramework::rfoBuildHessian(const Matrixd& preHessian,
 	const Vectord& grad, double a) {
 	Matrixd Hessian(3, 3);
 	for (int i = 0; i < 2; i++) {
@@ -126,7 +126,7 @@ Matrixd JacobiRotationFramework::RFO_BuildHessian(const Matrixd& preHessian,
 	return Hessian;
 }
 
-pair<double,double> JacobiRotationFramework::RotatedDiagonals(const Matrixcd& A,
+pair<double,double> JacobiRotationFramework::rotatedDiagonals(const Matrixcd& A,
 	int p, int q, complex<double> c, complex<double> s) {
 	// First rotation W*J^H
 	complex<double> c00 = c * A(p, p) + s * A(p, q);
@@ -140,7 +140,7 @@ pair<double,double> JacobiRotationFramework::RotatedDiagonals(const Matrixcd& A,
 	return {Anew0, Anew1};
 }
 
-Matrixcd JacobiRotationFramework::Rotate(const Matrixcd& A,
+Matrixcd JacobiRotationFramework::rotate(const Matrixcd& A,
 	int p, int q, complex<double> c, complex<double> s) {
 	// First rotation W*J^H
 	Matrixcd copy(2, 2);
@@ -158,7 +158,7 @@ Matrixcd JacobiRotationFramework::Rotate(const Matrixcd& A,
 	return A_new;
 }
 
-complex<double> JacobiRotationFramework::InterpretComplex(const Vectord& vec) {
+complex<double> JacobiRotationFramework::interpretComplex(const Vectord& vec) {
 	// Cast a Vectord(2) to complex<double>
 	assert(vec.dim() == 2);
 	complex<double> a(vec(0), vec(1));

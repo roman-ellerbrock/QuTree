@@ -85,7 +85,7 @@ SUITE (Tensor) {
 	}
 
 	TEST (TensorDim_Getters) {
-		/// Check Getters and Initialization
+		/// Check Getters and initialization
 		bool success = true;
 		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 			CHECK_EQUAL(3 * 4 * 5 * 2, tdim.totalDimension());

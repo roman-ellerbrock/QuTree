@@ -6,7 +6,7 @@
 
 namespace RandomMatrices {
 
-	Matrixcd RandomRealGauss(size_t dim1, size_t dim2, mt19937& gen) {
+	Matrixcd randomRealGauss(size_t dim1, size_t dim2, mt19937& gen) {
 		Matrixcd g(dim1, dim2);
 		normal_distribution<double> dist(0., 1.);
 		for (size_t i = 0; i < dim2; ++i) {
@@ -17,7 +17,7 @@ namespace RandomMatrices {
 		return g;
 	}
 
-	Matrixcd RandomGauss(size_t dim1, size_t dim2, mt19937& gen) {
+	Matrixcd randomGauss(size_t dim1, size_t dim2, mt19937& gen) {
 		Matrixcd g(dim1, dim2);
 		normal_distribution<double> dist(0., 1.);
 		for (size_t i = 0; i < dim2; ++i) {
@@ -28,7 +28,7 @@ namespace RandomMatrices {
 		return g;
 	}
 
-	Vectorcd GaussVector(size_t dim, mt19937& gen) {
+	Vectorcd gaussVector(size_t dim, mt19937& gen) {
 		normal_distribution<double> dist;
 		Vectorcd r(dim);
 		for (size_t i = 0; i < dim; ++i) {
@@ -55,17 +55,17 @@ namespace RandomMatrices {
 		return ran;
 	}
 
-	Matrixcd GUE(size_t dim, mt19937& gen) {
-		Matrixcd r = RandomGauss(dim, dim, gen);
+	Matrixcd gue(size_t dim, mt19937& gen) {
+		Matrixcd r = randomGauss(dim, dim, gen);
 		return 0.5 * (r + r.adjoint());
 	}
 
-	SpectralDecompositioncd GUE_diag(size_t dim, mt19937& gen) {
-		auto A = GUE(dim, gen);
+	SpectralDecompositioncd gueDiag(size_t dim, mt19937& gen) {
+		auto A = gue(dim, gen);
 		return diagonalize(A);
 	}
 
-	Matrixd GOE(size_t dim, mt19937& gen) {
+	Matrixd goe(size_t dim, mt19937& gen) {
 		Matrixd r(dim, dim);
 		normal_distribution<double> dist(0., 1.);
 		for (size_t i = 0; i < dim; ++i) {
@@ -76,21 +76,21 @@ namespace RandomMatrices {
 		return 0.5 * (r + r.adjoint());
 	}
 
-	SpectralDecompositiond GOE_diag(size_t dim, mt19937& gen) {
-		auto A = GOE(dim, gen);
+	SpectralDecompositiond goeDiag(size_t dim, mt19937& gen) {
+		auto A = goe(dim, gen);
 		return diagonalize(A);
 	}
 
-	Matrixcd GUE(size_t dim1, size_t dim2, mt19937& gen) {
+	Matrixcd gue(size_t dim1, size_t dim2, mt19937& gen) {
 		size_t dim = max(dim1, dim2);
-		auto G = GUE(dim, gen);
+		auto G = gue(dim, gen);
 		auto Grect = subMatrix(G, dim1, dim2);
 		return Grect;
 	}
 
-	Matrixcd RandomProjector(size_t dim1, size_t dim2, mt19937& gen) {
+	Matrixcd randomProjector(size_t dim1, size_t dim2, mt19937& gen) {
 		/// Right hand side projector
-		auto P = RandomRealGauss(dim1, dim2, gen);
+		auto P = randomRealGauss(dim1, dim2, gen);
 //		P /= sqrt((double) dim2);
 		for (size_t i = 0; i < P.dim1(); ++i) {
 			double norm = P.row(i).norm();
@@ -102,13 +102,13 @@ namespace RandomMatrices {
 	}
 
 	/// Build AP
-	Matrixcd GUEProjector(size_t dim1, size_t dim2, mt19937& gen) {
-		auto G = GUE(dim1, dim2, gen);
+	Matrixcd gueProjector(size_t dim1, size_t dim2, mt19937& gen) {
+		auto G = gue(dim1, dim2, gen);
 		auto Q = qr(G);
 		return subMatrix(Q, dim1, dim2);
 	}
 
-	Matrixcd RandomQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen) {
+	Matrixcd randomQ(const Matrixcd& A, size_t k_plus_p, mt19937& gen) {
 		assert(k_plus_p <= A.dim2());
 		Matrixcd Omega = randomSparse(k_plus_p, A.dim1(), gen);
 //		Matrixcd Omega = GUE(k_plus_p, A.Dim1(), gen);
@@ -121,14 +121,14 @@ namespace RandomMatrices {
 		return Q;
 	}
 
-	Matrixcd RandomProjection(const Matrixcd& A,
+	Matrixcd randomProjection(const Matrixcd& A,
 		size_t rdim, mt19937& gen) {
 		assert(A.dim1() == A.dim2());
-		Matrixcd Q = RandomQ(A, rdim, gen);
+		Matrixcd Q = randomQ(A, rdim, gen);
 		return Q.adjoint() * A * Q;
 	}
 
-	SpectralDecompositioncd DiagonalizeRandom(const Matrixcd& A,
+	SpectralDecompositioncd diagonalizeRandom(const Matrixcd& A,
 		size_t rank, size_t p, mt19937& gen) {
 		/**
 		 * \brief Diagonalize using random projection
@@ -144,7 +144,7 @@ namespace RandomMatrices {
 		 * @return Rectangular transformation matrix and eigenvalues
 		 */
 
-		Matrixcd Q = RandomQ(A, rank + p, gen);
+		Matrixcd Q = randomQ(A, rank + p, gen);
 
 		/// Build and Diagonalize Aprime = Q^* A Q = V ew V^*
 		auto Aprime = Q.adjoint() * A * Q;
@@ -168,7 +168,7 @@ namespace RandomMatrices {
 		 * [1] SIAM Rev., 53(2), 217–288. (72 pages)
 		 *
 		 * */
-		auto Q = RandomQ(A, rank, gen);
+		auto Q = randomQ(A, rank, gen);
 		auto B = Q.adjoint() * A;
 		SVDcd Bsvd = svd(B);
 		auto& U = get<0>(Bsvd);
@@ -222,7 +222,7 @@ namespace RandomMatrices {
 	}
 
 	template <typename T>
-	void GramSchmidt(Vector<T>& v, const vector<Vector<T>>& es) {
+	void gramSchmidt(Vector<T>& v, const vector<Vector<T>>& es) {
 		double conv = 0.;
 		for (const auto& e : es) {
 			T c = e * v;
@@ -231,13 +231,13 @@ namespace RandomMatrices {
 		normalize(v);
 	}
 
-	vector<Vectorcd> BuildKrylovSpace(Vectorcd x,
+	vector<Vectorcd> buildKrylovSpace(Vectorcd x,
 		const Matrixcd& A, size_t dim_subspace) {
 		normalize(x);
 		vector<Vectorcd> vec({x});
 		for (size_t i = 0; i < dim_subspace; ++i) {
 			Vectorcd Av = A * vec[i];
-			GramSchmidt(Av, vec);
+			gramSchmidt(Av, vec);
 			vec.emplace_back(Av);
 		}
 		return vec;

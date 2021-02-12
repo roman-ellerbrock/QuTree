@@ -129,7 +129,7 @@ SUITE (Matrix) {
 	TEST (Matrix_Rebuild) {
 		mt19937 gen(1990);
 		size_t dim = 10;
-		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		Matrixcd A = RandomMatrices::gue(dim, gen);
 		auto x = diagonalize(A);
 		Matrixcd B = toMatrix(x);
 		auto res = residual(A, B);
@@ -139,7 +139,7 @@ SUITE (Matrix) {
 	TEST(Matrix_BuildInverse) {
 		mt19937 gen(1990);
 		size_t dim = 10;
-		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		Matrixcd A = RandomMatrices::gue(dim, gen);
 		Matrixcd Adag = A.adjoint();
 		A = A * Adag;
 		auto x = diagonalize(A);
@@ -154,7 +154,7 @@ SUITE (Matrix) {
 	TEST(svd) {
 		mt19937 gen(1293123);
 		size_t dim = 20;
-		Matrixcd A = RandomMatrices::GUE(dim, gen);
+		Matrixcd A = RandomMatrices::gue(dim, gen);
 		auto Asvd = svd(A);
 		auto B = toMatrix(Asvd);
 		CHECK_CLOSE(0., residual(A, B), 1e-8);

@@ -36,7 +36,7 @@ public:
 		}
 	}
 
-	void Init(int dim)
+	void init(int dim)
 	{
 		dim_ = dim;
 

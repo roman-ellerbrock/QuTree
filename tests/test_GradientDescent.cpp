@@ -6,7 +6,7 @@
 #include "Util/GradientDescent_Implementation.h"
 #include "Core/Vector.h"
 
-SUITE (GradientDescent) {
+SUITE (gradientDescent) {
 	class Interface {
 	public:
 
@@ -49,7 +49,7 @@ SUITE (GradientDescent) {
 
 	TEST (GradientDescent1) {
 		Interface myInterface;
-		GradientDescent<Interface, Vectord>(myInterface, 1., 20000);
+		gradientDescent<Interface, Vectord>(myInterface, 1., 20000);
 		Vectord x = myInterface.parameters();
 			CHECK_CLOSE(0., abs(x(0)), 0.05);
 			CHECK_CLOSE(0., abs(x(1)), 0.05);

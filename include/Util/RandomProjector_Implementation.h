@@ -28,7 +28,7 @@ namespace Random {
 	}
 
 	template <typename T, class LinearOperator>
-	Matrix<T> RandomQ(const LinearOperator& A, size_t k_plus_p, mt19937& gen) {
+	Matrix<T> randomQ(const LinearOperator& A, size_t k_plus_p, mt19937& gen) {
 		assert(k_plus_p <= A.dim2());
 		Matrix<T> Omega = RandomGauss<T>(k_plus_p, A.dim1(), gen);
 //		Matrix<T> Omega = GUE<T>(k_plus_p, A.Dim1(), gen);
@@ -78,7 +78,7 @@ namespace Random {
 // rank: 1500 or 3000
 
 	template <typename T, class LinearOperator>
-	SpectralDecomposition<T> DiagonalizeRandom(const LinearOperator& A,
+	SpectralDecomposition<T> diagonalizeRandom(const LinearOperator& A,
 		size_t rank, size_t power, mt19937& gen) {
 		/**
 		 * \brief Diagonalize using random projection
@@ -95,7 +95,7 @@ namespace Random {
 		 * @return Rectangular transformation matrix and eigenvalues
 		 */
 
-		auto Q = RandomQ<T, LinearOperator>(A, rank, gen);
+		auto Q = randomQ<T, LinearOperator>(A, rank, gen);
 //		auto Q = RandomGauss<T>(rank, A.Dim1(), gen);
 		for (size_t i = 0; i < power; ++i) {
 			Matrix<T> Y = A * Q;

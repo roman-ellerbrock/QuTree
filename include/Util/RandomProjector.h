@@ -11,11 +11,11 @@
 namespace Random {
 
 	template <typename T, class LinearOperator>
-	Matrix<T> RandomQ(const LinearOperator& A, size_t k_plus_p,
+	Matrix<T> randomQ(const LinearOperator& A, size_t k_plus_p,
 		mt19937& gen);
 
 	template <typename T, class LinearOperator>
-	SpectralDecomposition<T> DiagonalizeRandom(const LinearOperator& A,
+	SpectralDecomposition<T> diagonalizeRandom(const LinearOperator& A,
 		size_t rank, size_t pow, mt19937& gen);
 }
 

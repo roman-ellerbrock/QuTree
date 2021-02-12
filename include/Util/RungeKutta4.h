@@ -22,7 +22,7 @@ namespace RungeKutta4 {
 	}
 
 	template<class Interface, class Model, typename T>
-	void Integrate(double t, double t_end, double h,
+	void integrate(double t, double t_end, double h,
 		Model& y, Interface& I) {
 		std::ofstream os("ho.dat");
 		while (t + 1e-7 < t_end) {

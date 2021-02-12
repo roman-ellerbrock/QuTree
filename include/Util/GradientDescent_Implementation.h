@@ -9,11 +9,11 @@ double lr_schedule(double learning_rate, double time, double max_time) {
 }
 
 template<class Model, class Parameters>
-void GradientDescent(Model& model, double learning_rate, size_t num_iter) {
+void gradientDescent(Model& func, double learning_rate, size_t num_iter) {
 	for (size_t iter = 0; iter < num_iter; ++iter) {
 		learning_rate = lr_schedule(learning_rate, iter, num_iter);
-		Parameters grad = model.gradient();
-		model.parameters() -= grad * learning_rate;
+		Parameters grad = func.gradient();
+		func.parameters() -= grad * learning_rate;
 	}
 }
 

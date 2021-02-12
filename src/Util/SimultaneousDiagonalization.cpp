@@ -1,7 +1,7 @@
 #include "Util/SimultaneousDiagonalization.h"
 
-void SimultaneousDiagonalization::Initialization(vector<Matrixcd>& A,
-	double eps_) {
+void SimultaneousDiagonalization::initialization(vector<Matrixcd>& A,
+	double eps) {
 	// Number of matrices
 	nmat_ = A.size();
 	assert(nmat_ > 0);
@@ -18,10 +18,10 @@ void SimultaneousDiagonalization::Initialization(vector<Matrixcd>& A,
 	}
 
 	// Set convergence parameter
-	eps_ = eps_;
+	eps = eps;
 }
 
-void SimultaneousDiagonalization::Calculate(vector<Matrixcd>& A,
+void SimultaneousDiagonalization::calculate(vector<Matrixcd>& A,
 	Matrixcd& trafo) {
 	bool converged = false;
 	int iter = 0;
@@ -35,20 +35,20 @@ void SimultaneousDiagonalization::Calculate(vector<Matrixcd>& A,
 		trafo(i, i) = 1.;
 
 	// This rotates to the eigenspace of the first matrix
-	InitialTransformation(A, trafo);
+	initialTransformation(A, trafo);
 
 	// Iterate Jacobirotations until a converged result is reached
 	// Measure off-diagonal norm
-	double delta = MeasureDiagonality(A);
-	double delta_off = MeasureOffDiagonals(A);
+	double delta = measureDiagonality(A);
+	double delta_off = measureOffDiagonals(A);
 //	cout << "Start : " << delta << "\t" << delta_off << endl;
 	while (!converged && iter < maxiter) {
 		// Rotation circle over all elements
-		JacobiRotations(A, trafo);
+		jacobiRotations(A, trafo);
 
 		// Measure off-diagonal norm
-		delta = MeasureDiagonality(A);
-		delta_off = MeasureOffDiagonals(A);
+		delta = measureDiagonality(A);
+		delta_off = measureOffDiagonals(A);
 
 		// Check convergence
 		if (delta < eps_) { converged = true; }
@@ -62,7 +62,7 @@ void SimultaneousDiagonalization::Calculate(vector<Matrixcd>& A,
 	}
 }
 
-void SimultaneousDiagonalization::JacobiRotations(vector<Matrixcd>& A,
+void SimultaneousDiagonalization::jacobiRotations(vector<Matrixcd>& A,
 	Matrixcd& trafo) {
 	// Angles for Givens-Rotation
 	complex<double> c, s = 0;
@@ -71,20 +71,20 @@ void SimultaneousDiagonalization::JacobiRotations(vector<Matrixcd>& A,
 	for (size_t i = 0; i < dim_ - 1; i++) {
 		for (size_t j = i + 1; j < dim_; j++) {
 			// Calculate Angles c and s for the elements i and j
-			CalculateAngles(c, s, i, j, A);
+			calculateAngles(c, s, i, j, A);
 
 			assert(abs(1. - abs(c) * abs(c) - abs(s) * abs(s)) < 1E-10);
 
 			// Perform the Givens-Rotation with angles c and s
-			RotateMatrices(A, c, s, i, j);
+			rotateMatrices(A, c, s, i, j);
 
 			// Rotate the Transformation-Matrix
-			GivensTrafoRotation(trafo, c, s, i, j);
+			givensTrafoRotation(trafo, c, s, i, j);
 		}
 	}
 }
 
-double SimultaneousDiagonalization::MeasureOffDiagonals(const vector<Matrixcd>& A) {
+double SimultaneousDiagonalization::measureOffDiagonals(const vector<Matrixcd>& A) {
 	// Measure the norm of off-diagonal elements
 	double eps = 0;
 
@@ -101,7 +101,7 @@ double SimultaneousDiagonalization::MeasureOffDiagonals(const vector<Matrixcd>& 
 	return sqrt(eps);
 }
 
-double SimultaneousDiagonalization::MeasureDiagonality(vector<Matrixcd>& A) {
+double SimultaneousDiagonalization::measureDiagonality(vector<Matrixcd>& A) {
 	// Measure the norm of off-diagonal elements
 	double eps = 0;
 
@@ -118,7 +118,7 @@ double SimultaneousDiagonalization::MeasureDiagonality(vector<Matrixcd>& A) {
 	return sqrt(eps);
 }
 
-void SimultaneousDiagonalization::InitialTransformation(vector<Matrixcd>& A,
+void SimultaneousDiagonalization::initialTransformation(vector<Matrixcd>& A,
 	Matrixcd& trafo) {
 	Matrixcd& B = A[0];
 	Vectord ev(B.dim1());

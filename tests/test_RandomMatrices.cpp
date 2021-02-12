@@ -27,7 +27,7 @@ SUITE (RMT) {
 		/// Build a test matrix
 		Matrixcd U(dim, dim);
 		Vectord ew(dim);
-		U = RandomMatrices::GUE(dim, gen);
+		U = RandomMatrices::gue(dim, gen);
 		for (size_t r = 0; r < rank; ++r) {
 			ew(r) = 1.;
 		}
@@ -38,7 +38,7 @@ SUITE (RMT) {
 
 		/// Diagonalize
 		auto x2 = diagonalize(A);
-		auto x3 = RandomMatrices::DiagonalizeRandom(A, rank, p, gen);
+		auto x3 = RandomMatrices::diagonalizeRandom(A, rank, p, gen);
 
 		Vectord ew_acc = reverse(x2.second);
 		Vectord ew_approx = reverse(x3.second);
@@ -55,7 +55,7 @@ SUITE (RMT) {
 		/// Build a test matrix
 		Matrixcd U(dim, dim);
 		Vectord ew(dim);
-		U = RandomMatrices::GUE(dim, gen);
+		U = RandomMatrices::gue(dim, gen);
 		for (size_t r = 0; r < dim; ++r) {
 			ew(r) = 1. / (2. * pow(r + 1., 1));
 		}
@@ -66,7 +66,7 @@ SUITE (RMT) {
 
 		/// Diagonalize
 		auto x2 = diagonalize(A);
-		auto x3 = RandomMatrices::DiagonalizeRandom(A, rank, p, gen);
+		auto x3 = RandomMatrices::diagonalizeRandom(A, rank, p, gen);
 
 		Vectord ew_acc = reverse(x2.second);
 		Vectord ew_app = reverse(x3.second);
@@ -99,7 +99,7 @@ SUITE (RMT) {
 		/// Build a test matrix
 		Matrixcd U(dim, dim);
 		Vectord ew(dim);
-		U = RandomMatrices::GUE(dim, gen);
+		U = RandomMatrices::gue(dim, gen);
 		for (size_t r = 0; r < dim; ++r) {
 //			ew(r) = 1./(2.*pow(r+1., 0.5));
 			ew(r) = 1. / (2. * log(r + 2.));
@@ -107,7 +107,7 @@ SUITE (RMT) {
 		SpectralDecompositioncd y({U, ew});
 		Matrixcd A = toMatrix(y);
 
-		auto x = RandomMatrices::DiagonalizeRandom(A, rank, p, gen);
+		auto x = RandomMatrices::diagonalizeRandom(A, rank, p, gen);
 		auto Aprime = toMatrix(x);
 
 		auto Ared = BuildRankReduced(y, rank + p);
@@ -152,8 +152,8 @@ SUITE (RMT) {
 
 		/// Build a test matrix
 		Vectord ew(dim);
-		auto U1 = RandomMatrices::GUE(dim, gen);
-		auto U2 = RandomMatrices::GUE(dim, gen);
+		auto U1 = RandomMatrices::gue(dim, gen);
+		auto U2 = RandomMatrices::gue(dim, gen);
 		for (size_t r = 0; r < rank; ++r) {
 			ew(r) = 1.;
 		}
@@ -174,12 +174,12 @@ SUITE (RMT) {
 		size_t dim = 50;
 		size_t rank = 10;
 		Vectord ew(dim);
-		auto U1 = RandomMatrices::GUE(dim, gen);
-		auto U2 = RandomMatrices::GUE(dim, gen);
+		auto U1 = RandomMatrices::gue(dim, gen);
+		auto U2 = RandomMatrices::gue(dim, gen);
 		auto A = U1 * U2;
 		A /= 1. * A.dim1();
 		/// B = A * P
-		auto P = RandomProjector(A.dim2(), rank, gen);
+		auto P = randomProjector(A.dim2(), rank, gen);
 		auto B = A * P;
 
 		double avg = 0.;
@@ -202,8 +202,8 @@ SUITE (RMT) {
 
 		/// Build a test matrix
 		Vectord ew(dim);
-		auto U1 = RandomMatrices::GUE(dim, gen);
-		auto U2 = RandomMatrices::GUE(dim, gen);
+		auto U1 = RandomMatrices::gue(dim, gen);
+		auto U2 = RandomMatrices::gue(dim, gen);
 		for (size_t r = 0; r < dim; ++r) {
 //			ew(r) = 1. / (r + 1.);
 			ew(r) = dist(gen);
@@ -224,10 +224,10 @@ SUITE (RMT) {
 		A /= A.frobeniusNorm();
 
 		/// Build a start vector
-		auto r = GaussVector(dim, gen);
-		auto r2 = GaussVector(dim, gen);
+		auto r = gaussVector(dim, gen);
+		auto r2 = gaussVector(dim, gen);
 
-		auto space = RandomMatrices::BuildKrylovSpace(r, A, rank);
+		auto space = RandomMatrices::buildKrylovSpace(r, A, rank);
 		for (size_t i = 0; i < space.size(); ++i) {
 			for (size_t j = 0; j < space.size(); ++j) {
 				double dot = abs(space[i] * space[j]);

@@ -7,6 +7,6 @@
 #include "Core/stdafx.h"
 
 template<class Interface, class Func>
-void GradientDescent(Interface& func, double learning_rate, size_t num_iter);
+void gradientDescent(Interface& func, double learning_rate, size_t num_iter);
 
 #endif //GRADIENTDESCENT_H

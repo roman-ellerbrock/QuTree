@@ -96,5 +96,5 @@ template SpectralDecomposition<double> reduceRank(const SpectralDecomposition<do
 template SpectralDecomposition<cd> reduceRank(const SpectralDecomposition<cd>& x, size_t rank);
 
 template SpectralDecomposition<cd>
-    Random::DiagonalizeRandom<cd, Matrixcd>(const Matrixcd& A,
+    Random::diagonalizeRandom<cd, Matrixcd>(const Matrixcd& A,
 	size_t rank, size_t pow, mt19937& gen);

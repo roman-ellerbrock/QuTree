@@ -26,7 +26,7 @@ SUITE(Integrators) {
 	};
 
 	TEST(RK4) {
-		/// Integrate a 1d Harmonic Oscillator for one circle
+		/// integrate a 1d Harmonic Oscillator for one circle
 		Vectord y(2);
 		y(0) = 0.;
 		y(1) = -1.;
@@ -36,7 +36,7 @@ SUITE(Integrators) {
 		HOInterface I;
 
 		auto y_correct = y;
-		RungeKutta4::Integrate<HOInterface, Vectord, double>(t, t_end, h, y, I);
+		RungeKutta4::integrate<HOInterface, Vectord, double>(t, t_end, h, y, I);
 		auto res = residual(y_correct, y);
 		CHECK_CLOSE(0., res, 10. * h);
 	}

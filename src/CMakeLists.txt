@@ -2,7 +2,6 @@
 set(QuTree_SOURCE_FILES
     src/Core/JacobiRotationFramework.cpp
     src/Core/Matrix_Instantiations.cpp
-    src/Core/RandomMatrices.cpp
     src/Core/TensorShape.cpp
     src/Core/Tensor_Extension_Instantiations.cpp
     src/Core/Tensor_Instantiations.cpp
@@ -47,6 +46,7 @@ set(QuTree_SOURCE_FILES
 
     src/Util/FFT.cpp
     src/Util/SimultaneousDiagonalization.cpp
+    src/Util/RandomMatrices.cpp
     src/Util/string_ext.cpp
     src/Util/WeightedSimultaneousDiagonalization.cpp
 )
