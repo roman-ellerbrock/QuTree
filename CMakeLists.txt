@@ -33,8 +33,6 @@ include(include/CMakeLists.txt)
 add_library(QuTree SHARED ${QuTree_SOURCE_FILES})
 add_library(QuTree::QuTree ALIAS QuTree)
 
-#find_package(Boost REQUIRED)
-#include_directories(${Boost_INCLUDE_DIRS})
 #####################################################################
 # Find Required packages
 #####################################################################
