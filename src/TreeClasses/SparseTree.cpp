@@ -21,7 +21,7 @@ SparseTree::SparseTree(const SOPcd& sop, const Tree& tree, bool tail) {
 	vector<size_t> actives;
 	for (const MLOcd& M : sop) {
 		for (size_t i = 0; i < M.size(); ++i) {
-			size_t k = M.mode(i);
+			size_t k = M.mode_(i);
 			if (count(actives.begin(), actives.end(), k) == 0) {
 				actives.push_back(k);
 			}

@@ -5,7 +5,7 @@
 #include "TreeOperators/TensorOperators//MatrixListTree.h"
 
 
-void MatrixListTree::Initialize(const Tree& tree) {
+void MatrixListTree::initialize(const Tree& tree) {
 	attributes_.resize(tree.nNodes());
 }
 

@@ -78,7 +78,7 @@ namespace TreeFunctions {
 		return hs;
 	}
 
-	MatrixListTree Represent(const TensorTreecd& Psi, const TensorOperatorTree& H,
+	MatrixListTree represent(const TensorTreecd& Psi, const TensorOperatorTree& H,
 		const Tree& tree) {
 
 		MatrixListTree Hrep(tree);
@@ -127,7 +127,7 @@ namespace TreeFunctions {
 		return hmeans;
 	}
 
-	MatrixListTree Contraction(const TensorTreecd& Psi, const TensorOperatorTree& H,
+	MatrixListTree contraction(const TensorTreecd& Psi, const TensorOperatorTree& H,
 		MatrixListTree& Hrep, const Tree& tree) {
 
 		MatrixListTree Hmean(tree);

@@ -43,7 +43,7 @@ SUITE (TensorOperatorTree) {
 			leafX_ = LeafMatrixcd(X);
 
 			H_ = TensorOperatorTree(optree_);
-			H_.Occupy(optree_);
+			H_.occupy(optree_);
 			for (const Node& node : optree_) {
 				if (node.isBottomlayer()) {
 					H_.setLeafOperator(leafI_, 0, node);

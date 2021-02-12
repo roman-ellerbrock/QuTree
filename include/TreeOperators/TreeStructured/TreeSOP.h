@@ -20,24 +20,24 @@ typedef vector<shared_ptr<LeafOperatorcd>> LeafOperatorLib;
 
 class NodeOperator {
 public:
-	NodeOperator(size_t part_, size_t mode_)
-		: mode(mode_), part(part_) {}
+	NodeOperator(size_t part, size_t mode)
+		: mode_(mode), part_(part) {}
 
 	~NodeOperator() = default;
 
-	size_t Mode() const { return mode; }
+	size_t mode() const { return mode_; }
 
-	size_t Part() const { return part; }
+	size_t part() const { return part_; }
 
 	bool operator==(const NodeOperator& h) const {
-		return (h.Part() == Part() && h.Mode() == Mode());
+		return ((h.part() == part()) && (h.mode() == mode()));
 	}
 
 	void Print(const vector<string>& names, size_t indent = 0) const;
 
 private:
-	size_t mode;
-	size_t part;
+	size_t mode_;
+	size_t part_;
 };
 
 typedef vector<NodeOperator> NodeProductOperator;

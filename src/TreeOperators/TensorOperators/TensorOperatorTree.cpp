@@ -7,11 +7,11 @@
 TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 	const Tree& tree)
 	: TensorOperatorTree(tree) {
-	Occupy(tree);
+	occupy(tree);
 	vector<size_t> idxs(tree.nLeaves(), 0);
 
 	for (size_t k = 0; k < M.size(); ++k) {
-		size_t mode = M.mode(k);
+		size_t mode = M.mode_(k);
 		const Leaf& leaf = tree.GetLeaf(mode);
 		const auto& node = (const Node&) leaf.Up();
 
@@ -26,7 +26,7 @@ TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 TensorOperatorTree::TensorOperatorTree(const SOPcd& S,
 	const Tree& tree)
 	: TensorOperatorTree(tree) {
-	Occupy(tree);
+	occupy(tree);
 	assert(S.size() > 0);
 }
 
@@ -42,10 +42,10 @@ TensorOperatorTree::TensorOperatorTree(const Tree& tree) {
 			attributes_.emplace_back(Tensorcd(shape));
 		}
 	}
-	Occupy(tree);
+	occupy(tree);
 }
 
-void TensorOperatorTree::Occupy(const Tree& tree) {
+void TensorOperatorTree::occupy(const Tree& tree) {
 	for (const Node& node : tree) {
 		Tensorcd& Phi = operator[](node);
 		Phi.zero();

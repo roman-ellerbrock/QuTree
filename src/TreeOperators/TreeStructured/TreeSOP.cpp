@@ -9,9 +9,9 @@ void NodeOperator::Print(const vector<string>& names, size_t indent) const {
 		cout << "\t";
 	}
 	if (names.empty()) {
-		cout << "(" << Part() << ", " << Mode() << ")";
+		cout << "(" << part() << ", " << mode() << ")";
 	} else {
-		cout << "(" << names[Part()] << ", " << Mode() << ")";
+		cout << "(" << names[part()] << ", " << mode() << ")";
 	}
 }
 

@@ -26,10 +26,10 @@ public:
 
 	/// Constructor that initializes the mlHMatrices
 	MatrixListTree(const Tree& tree)
-	{ Initialize(tree); }
+	{ initialize(tree); }
 
 	/// Initialize the mlHMatrices
-	void Initialize(const Tree& tree);
+	void initialize(const Tree& tree);
 
 	/// Print the ml-H-matrices
 	void print(const Tree& tree, ostream& os = cout) const;

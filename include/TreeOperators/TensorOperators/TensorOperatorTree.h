@@ -19,7 +19,7 @@ public:
 
 	~TensorOperatorTree() = default;
 
-	void Occupy(const Tree& tree);
+	void occupy(const Tree& tree);
 
 	void print(const Tree& tree) const;
 
