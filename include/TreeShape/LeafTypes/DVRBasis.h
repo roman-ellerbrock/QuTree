@@ -11,24 +11,24 @@ public:
 	explicit DVRBasis(int dim);
 	virtual ~DVRBasis() override = default;
 
-	void Initialize(double par0, double par1, double par2, double par3) override = 0;
+	void initialize(double par0, double par1, double par2, double par3) override = 0;
 
-	void InitSPF(Tensorcd& A) const override = 0;
+	void initSPF(Tensorcd& A) const override = 0;
 	void applyX(Tensorcd& uA, const Tensorcd& A) const override;
 	void applyX2(Tensorcd& uA, const Tensorcd& A) const override;
 	void applyP(Tensorcd& uA, const Tensorcd& A) const override;
 	void applyKin(Tensorcd& uA, const Tensorcd& A) const override;
 
-	void ToGrid(Tensorcd& uA, const Tensorcd& A) const override;
-	void FromGrid(Tensorcd& uA, const Tensorcd& A) const override;
+	void toGrid(Tensorcd& uA, const Tensorcd& A) const override;
+	void fromGrid(Tensorcd& uA, const Tensorcd& A) const override;
 
 	int oSQR() const override { return -1; }
 
-	Vectord& GetX() override { return x_; }
+	Vectord& getX() override { return x_; }
 
-	const Vectord& GetX() const override { return x_; }
+	const Vectord& getX() const override { return x_; }
 
-	bool HasDVR() const override { return true; }
+	bool hasDVR() const override { return true; }
 
 protected:
 

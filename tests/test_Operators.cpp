@@ -33,10 +33,10 @@ SUITE (Operators) {
 
 	TEST_FIXTURE (HelperFactory, SPO_HO) {
 		HO_Basis ho(10);
-		ho.Initialize(1., 0., 0., 1.);
+		ho.initialize(1., 0., 0., 1.);
 		TensorShape tdim(vector<size_t>({10, 1}));
 		Tensorcd A(tdim);
-		ho.InitSPF(A);
+		ho.initSPF(A);
 		Tensorcd xA(A.shape());
 		ho.applyX(xA, A);
 		string file("HO_Applyx.dat");

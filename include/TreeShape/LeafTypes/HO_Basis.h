@@ -11,9 +11,9 @@ public:
 	explicit HO_Basis(int dim)
 		: DVRBasis(dim) {};
 
-	void Initialize(double omega, double r0, double wfr0, double wfomega) override;
+	void initialize(double omega, double r0, double wfr0, double wfomega) override;
 
-	void InitSPF(Tensorcd& phi) const override;
+	void initSPF(Tensorcd& phi) const override;
 
 
 protected:

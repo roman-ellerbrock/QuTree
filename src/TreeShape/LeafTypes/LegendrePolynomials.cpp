@@ -1,6 +1,6 @@
 #include "TreeShape/LeafTypes/LegendrePolynomials.h"
 
-void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, double wfomega) {
+void LegendrePolynomials::initialize(double omega, double r0, double wfr0, double wfomega) {
 	// save all parameters
 	omega_ = omega;
 	r0_ = r0;
@@ -32,7 +32,7 @@ void LegendrePolynomials::Initialize(double omega, double r0, double wfr0, doubl
 	kin_ = unitarySimilarityTrafo(kin_, trafo_);
 }
 
-void LegendrePolynomials::InitSPF(Tensorcd& phi) const {
+void LegendrePolynomials::initSPF(Tensorcd& phi) const {
 	// set ground state_ wf
 	for (int i = 0; i < dim_; i++) {
 		double w = trafo_(0, i);

@@ -11,21 +11,21 @@ public:
 	explicit FFTGrid(int dim);
 	~FFTGrid() override = default;
 
-	void Initialize(double omega, double r0, double wfr0, double wfomega) override;
+	void initialize(double omega, double r0, double wfr0, double wfomega) override;
 
 	void applyX(Tensorcd& uA, const Tensorcd & A)const override;
 	void applyX2(Tensorcd& uA, const Tensorcd & A)const override;
 	void applyP(Tensorcd& uA, const Tensorcd & A)const override;
 	void applyKin(Tensorcd& uA, const Tensorcd & A)const override;
-	void InitSPF(Tensorcd & A)const override;
+	void initSPF(Tensorcd & A)const override;
 
-	const Vectord& GetX()const override { return x_; }
-	Vectord& GetX() override { return x_; }
+	const Vectord& getX()const override { return x_; }
+	Vectord& getX() override { return x_; }
 
-	void ToGrid(Tensorcd& uA, const Tensorcd& A)const override;
-	void FromGrid(Tensorcd& uA, const Tensorcd& A)const override;
+	void toGrid(Tensorcd& uA, const Tensorcd& A)const override;
+	void fromGrid(Tensorcd& uA, const Tensorcd& A)const override;
 	int oSQR()const override {return -1;}//added by TW 30.07.17
-	bool HasDVR()const override {return true;}
+	bool hasDVR()const override {return true;}
 
 protected:
 	

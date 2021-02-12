@@ -492,7 +492,7 @@ SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X);
  * \brief Create an identity matrix
  * @tparam T Type of identity matrix
  * @param dim dimension
- * @return Identity-matrix
+ * @return identity-matrix
  */
 template<typename T>
 Matrix<T> identityMatrix(size_t dim);

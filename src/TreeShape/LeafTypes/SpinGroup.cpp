@@ -1,13 +1,13 @@
 #include "TreeShape/LeafTypes/SpinGroup.h"
 #include <chrono>
 
-void SpinGroup::Initialize(double par0, double par1, double par2, double par3) {
+void SpinGroup::initialize(double par0, double par1, double par2, double par3) {
     last_ = false;
     alpha_ = par2 * 3.1415926538;
 	if (par3 < 0) { last_ = true; }
 }
 
-void SpinGroup::InitSPF(Tensorcd& A) const {
+void SpinGroup::initSPF(Tensorcd& A) const {
 	const TensorShape& tdim = A.shape();
 	size_t ntensor = tdim.lastDimension();
 	size_t dimpart = tdim.lastBefore();

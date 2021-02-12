@@ -25,7 +25,7 @@ Leaf::Leaf(const Leaf& old)
 	  nodeType_(old.nodeType_), parent_(old.parent_), position_(old.position_) {
 	CreatePrimitiveBasis(type_, subType_, dim_);
 	par_ = old.par_;
-	interface_->Initialize(par_.omega(), par_.r0(), par_.wfr0(), par_.wfOmega());
+	interface_->initialize(par_.omega(), par_.r0(), par_.wfr0(), par_.wfOmega());
 }
 
 void Leaf::CreatePrimitiveBasis(size_t type, size_t subtype, size_t dim) {

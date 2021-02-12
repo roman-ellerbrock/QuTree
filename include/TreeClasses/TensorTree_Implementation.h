@@ -71,7 +71,7 @@ void TensorTree<T>::fillBottom(Tensor<T>& Phi,
 	const Node& node) {
 	const Leaf& coord = node.getLeaf();
 	const LeafInterface& grid = coord.interface();
-	grid.InitSPF(Phi);
+	grid.initSPF(Phi);
 }
 
 /// (File) I/O

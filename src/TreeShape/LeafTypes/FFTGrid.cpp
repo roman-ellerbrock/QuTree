@@ -4,7 +4,7 @@
 FFTGrid::FFTGrid(int dim)
 	: dim_(dim), x_(dim), p_(dim), trafo_(dim, dim) {}
 
-void FFTGrid::Initialize(double x0, double x1, double wfr0, double wfomega) {
+void FFTGrid::initialize(double x0, double x1, double wfr0, double wfomega) {
 	x0_ = x0;
 	x1_ = x1;
 	wfr0_ = wfr0;
@@ -52,34 +52,34 @@ void FFTGrid::applyX2(Tensorcd& xA, const Tensorcd& Acoeffs) const {
 }
 
 void FFTGrid::applyP(Tensorcd& pA, const Tensorcd& Acoeffs) const {
-	FromGrid(pA, Acoeffs);
+	fromGrid(pA, Acoeffs);
 //	#pragma omp for
 	for (int n = 0; n < Acoeffs.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++)
 			pA(i, n) *= -p_(i);
 
 	Tensorcd tmp(pA);
-	ToGrid(pA, tmp);
+	toGrid(pA, tmp);
 }
 
-void FFTGrid::ToGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
+void FFTGrid::toGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
 	uA = multATB(trafo_, Acoeffs, 0);
 }
 
-void FFTGrid::FromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
+void FFTGrid::fromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
 	uA = matrixTensor(trafo_, Acoeffs, 0);
 }
 
 void FFTGrid::applyKin(Tensorcd& pA, const Tensorcd& Acoeffs) const {
-	FromGrid(pA, Acoeffs);
+	fromGrid(pA, Acoeffs);
 	for (int n = 0; n < Acoeffs.shape().lastDimension(); n++)
 		for (int i = 0; i < dim_; i++)
 			pA(i, n) *= 0.5 * p_(i) * p_(i);
 	Tensorcd tmp(pA);
-	ToGrid(pA, tmp);
+	toGrid(pA, tmp);
 }
 
-void FFTGrid::InitSPF(Tensorcd& phi) const {
+void FFTGrid::initSPF(Tensorcd& phi) const {
 	for (int i = 0; i < dim_; i++) {
 		phi(i, 0) = exp(-0.5 * wfomega_ * pow(x_(i) - wfr0_, 2));
 	}

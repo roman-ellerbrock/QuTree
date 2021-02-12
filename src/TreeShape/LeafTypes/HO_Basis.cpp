@@ -1,6 +1,6 @@
 #include "TreeShape/LeafTypes/HO_Basis.h"
 
-void HO_Basis::Initialize(double omega, double r0, double wfr0, double wfomega) {
+void HO_Basis::initialize(double omega, double r0, double wfr0, double wfomega) {
 	// save all parameters
 	omega_ = omega;
 	r0_ = r0;
@@ -33,7 +33,7 @@ void HO_Basis::Initialize(double omega, double r0, double wfr0, double wfomega) 
 	p_ = unitarySimilarityTrafo(p_, trafocd);
 }
 
-void HO_Basis::InitSPF(Tensorcd& phi) const {
+void HO_Basis::initSPF(Tensorcd& phi) const {
 	const TensorShape& tdim(phi.shape());
 	size_t nstates = tdim.lastDimension();
 	// soft check for bottom layer_

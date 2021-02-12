@@ -13,7 +13,7 @@ public:
 
 	~SpinGroup() = default;
 
-	void Initialize(double par0, double par1, double par2, double par3) override;
+	void initialize(double par0, double par1, double par2, double par3) override;
 
 	void applyX(Tensorcd& uA, const Tensorcd& A) const override { uA = A; }
 
@@ -23,17 +23,17 @@ public:
 
 	void applyKin(Tensorcd& uA, const Tensorcd& A) const override { uA = A; }
 
-	void InitSPF(Tensorcd& Acoeffs) const override;
+	void initSPF(Tensorcd& Acoeffs) const override;
 
-	const Vectord& GetX() const override { return x_; } // does nothing
-	Vectord& GetX() override { return x_; } // does nothing
+	const Vectord& getX() const override { return x_; } // does nothing
+	Vectord& getX() override { return x_; } // does nothing
 
-	void ToGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const override { uA = Acoeffs; } // does nothing
-	void FromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const override { uA = Acoeffs; } // does nothing
+	void toGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const override { uA = Acoeffs; } // does nothing
+	void fromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const override { uA = Acoeffs; } // does nothing
 
 	int oSQR() const override { return -1; }
 
-	bool HasDVR() const override { return false; }
+	bool hasDVR() const override { return false; }
 
 
 private:

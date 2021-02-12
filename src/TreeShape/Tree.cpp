@@ -147,7 +147,7 @@ void Tree::read(istream& is) {
 
 		// Initialize primitive grid (HO, FFT, Legendre, ...)
 		LeafInterface& primitivebasis = linearizedLeaves_[i].interface();
-		primitivebasis.Initialize(par.omega(), par.r0(), par.wfr0(), par.wfOmega());
+		primitivebasis.initialize(par.omega(), par.r0(), par.wfr0(), par.wfOmega());
 	}
 }
 

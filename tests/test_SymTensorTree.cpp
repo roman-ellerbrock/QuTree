@@ -22,7 +22,7 @@ SUITE (SymTensorTree) {
 			schi_ = SymTensorTree(chi_, tree_);
 
 			/// Operator initialization
-			auto I = &LeafInterface::Identity;
+			auto I = &LeafInterface::identity;
 			for (size_t l = 0; l < tree_.nLeaves(); ++l) { I_.push_back(I, l); }
 			stree_ = make_shared<SparseTree>(SparseTree(I_, tree_, false));
 			SparseMatrixTreecd x1(stree_, tree_);

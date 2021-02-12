@@ -7,8 +7,8 @@ class LegendrePolynomials
 public:
 	explicit LegendrePolynomials(int dim)
 		: DVRBasis(dim) {};
-	void Initialize(double omega, double r0, double wfr0, double wfomega) override;
-	void InitSPF(Tensorcd& Acoeffs) const override;
+	void initialize(double omega, double r0, double wfr0, double wfomega) override;
+	void initSPF(Tensorcd& Acoeffs) const override;
 
 	void applyP(Tensorcd& pA, const Tensorcd& A) const override {
 		cerr << "ApplyP of LegendrePolynomials has been called.\n";

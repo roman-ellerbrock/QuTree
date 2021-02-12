@@ -57,7 +57,7 @@ void DVRBasis::applyKin(Tensorcd& uPhi, const Tensorcd& phi) const {
 	uPhi = matrixTensor(kin_, phi, 0);
 }
 
-void DVRBasis::ToGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
+void DVRBasis::toGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
@@ -65,7 +65,7 @@ void DVRBasis::ToGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	uPhi = multATB(trafo_, phi, 0);
 }
 
-void DVRBasis::FromGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
+void DVRBasis::fromGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	// soft check that its really a bottom-layer_ tensor
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
