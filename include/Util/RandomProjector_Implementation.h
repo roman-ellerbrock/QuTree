@@ -9,7 +9,7 @@
 namespace Random {
 
 	template <typename T>
-	Matrix<T> RandomGauss(size_t dim1, size_t dim2, mt19937& gen) {
+	Matrix<T> randomGauss(size_t dim1, size_t dim2, mt19937& gen) {
 		Matrixcd g(dim1, dim2);
 		normal_distribution<double> dist(0., 1.);
 		for (size_t i = 0; i < dim2; ++i) {
@@ -22,15 +22,15 @@ namespace Random {
 	}
 
 	template <typename T>
-	Matrix<T> GUE(size_t dim, mt19937& gen) {
-		Matrix<T> r = RandomGauss<T>(dim, dim, gen);
+	Matrix<T> gue(size_t dim, mt19937& gen) {
+		Matrix<T> r = randomGauss<T>(dim, dim, gen);
 		return 0.5 * (r + r.adjoint());
 	}
 
 	template <typename T, class LinearOperator>
 	Matrix<T> randomQ(const LinearOperator& A, size_t k_plus_p, mt19937& gen) {
 		assert(k_plus_p <= A.dim2());
-		Matrix<T> Omega = RandomGauss<T>(k_plus_p, A.dim1(), gen);
+		Matrix<T> Omega = randomGauss<T>(k_plus_p, A.dim1(), gen);
 //		Matrix<T> Omega = GUE<T>(k_plus_p, A.Dim1(), gen);
 		Matrix<T> Y = A * Omega.adjoint();
 		/// Y = QR
