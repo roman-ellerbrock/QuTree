@@ -60,7 +60,7 @@ void TreeSOP::print(const Tree& tree) const {
 		if (node.isBottomlayer()) {
 			const NodeSOPlist& sopl = operator[](node);
 			const Leaf& leaf = node.getLeaf();
-			::print(sopl, leafoperatornames[leaf.Mode()], 0);
+			::print(sopl, leafoperatornames[leaf.mode()], 0);
 		} else {
 			const NodeSOPlist& sopl = operator[](node);
 			::print(sopl, vector<string>(), 0);

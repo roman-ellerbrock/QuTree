@@ -11,9 +11,9 @@ TensorOperatorTree::TensorOperatorTree(const MLOcd& M,
 	vector<size_t> idxs(tree.nLeaves(), 0);
 
 	for (size_t k = 0; k < M.size(); ++k) {
-		size_t mode = M.mode_(k);
+		size_t mode = M.mode(k);
 		const Leaf& leaf = tree.GetLeaf(mode);
-		const auto& node = (const Node&) leaf.Up();
+		const auto& node = (const Node&) leaf.parent();
 
 		const shared_ptr<LeafOperatorcd>& h = M[k];
 		Matrixcd hmat = toMatrix(*h, leaf);

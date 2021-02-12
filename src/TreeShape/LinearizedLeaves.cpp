@@ -6,7 +6,7 @@ void LinearizedLeaves::push_back(Leaf& phys) {
 	coordinates_.emplace_back(reference_wrapper<Leaf>(phys));
 
 	// Save address_ of this physical mode
-	int mode = phys.Mode();
+	int mode = phys.mode();
 	assert(mode >= 0);
 	// mode > address_ fails due to CDVR (TDVR-X-Matrices)
 	// @TODO: This is not fixed yet but commented out to test partialoverlap!

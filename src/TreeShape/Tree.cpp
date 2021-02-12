@@ -39,7 +39,7 @@ void Tree::ResetLeafModes() {
 	for (Node& node : *this) {
 		if (node.isBottomlayer()) {
 			Leaf& leaf = node.getLeaf();
-			leaf.Mode() = mode--;
+			leaf.mode() = mode--;
 		}
 	}
 	Update();
@@ -49,7 +49,7 @@ void Tree::ReindexLeafModes(map<size_t, size_t> Map) {
 	for (Node& node : *this) {
 		if (node.isBottomlayer()) {
 			Leaf& leaf = node.getLeaf();
-			leaf.Mode() = Map[leaf.Mode()];
+			leaf.mode() = Map[leaf.mode()];
 		}
 	}
 	Update();
@@ -143,11 +143,11 @@ void Tree::Read(istream& file) {
 	for (int i = 0; i < linearizedLeaves_.size(); i++) {
 		// Set parameters
 		PhysPar par(file);
-		linearizedLeaves_[i].SetPar(par);
+		linearizedLeaves_[i].setPar(par);
 
 		// Initialize primitive grid (HO, FFT, Legendre, ...)
-		LeafInterface& primitivebasis = linearizedLeaves_[i].PrimitiveGrid();
-		primitivebasis.Initialize(par.Omega(), par.R0(), par.WFR0(), par.WFOmega());
+		LeafInterface& primitivebasis = linearizedLeaves_[i].interface();
+		primitivebasis.Initialize(par.omega(), par.r0(), par.wfr0(), par.wfOmega());
 	}
 }
 
@@ -157,7 +157,7 @@ void Tree::Read(const string& filename) {
 }
 
 void Tree::Write(ostream& os) const {
-	root_.Write(os);
+	root_.write(os);
 }
 
 ostream& operator<<(ostream& os, Tree& basis) {
@@ -248,7 +248,7 @@ bool Tree::IsWorking() {
 		// If this node is a physical mode push it back
 		if (abstract_node.type() == 0) {
 			auto& leaf = (Leaf&) (abstract_node);
-			if (&leaf != &linearizedLeaves_[leaf.Mode()]) { works = false; }
+			if (&leaf != &linearizedLeaves_[leaf.mode()]) { works = false; }
 		}
 	}
 	if (!works) {

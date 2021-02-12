@@ -44,13 +44,13 @@ public:
 		par3 = omega;
 	}
 
-	double Omega() const { return par0; }
+	double omega() const { return par0; }
 
-	double R0() const { return par1; }
+	double r0() const { return par1; }
 
-	double WFR0() const { return par2; }
+	double wfr0() const { return par2; }
 
-	double WFOmega() const { return par3; }
+	double wfOmega() const { return par3; }
 
 	void info(ostream& os = cout) const {
 		os << "par0=" << par0 << "\t";
@@ -91,7 +91,7 @@ public:
 	void CreatePrimitiveBasis(size_t type, size_t subtype, size_t dim);
 
 	void info(ostream& os = cout) const override;
-	void Write(ostream& os = cout) const override;
+	void write(ostream& os = cout) const override;
 
 	size_t nTotalNodes() const override { return 1; }
 
@@ -104,50 +104,50 @@ public:
 	AbstractNode *nextNodeManthe() override { return this; }
 
 	// Getter & Setter
-	size_t Mode() const { return mode_; }
+	size_t mode() const { return mode_; }
 
-	int& Mode() { return mode_; }
+	int& mode() { return mode_; }
 
 	size_t Type() const { return type_; }
 
-	size_t Dim() const { return dim_; }
+	size_t dim() const { return dim_; }
 
 	int type() const override { return nodeType_; }
 
-	LeafInterface& PrimitiveGrid() { return *primitiveBasis_; }
+	LeafInterface& interface() { return *interface_; }
 
-	const LeafInterface& PrimitiveGrid() const { return *primitiveBasis_; }
+	const LeafInterface& interface() const { return *interface_; }
 
 	// This is not a GetNode& to avoid circular dependencies
-	AbstractNode& Up() const { return *up_; };
+	AbstractNode& parent() const { return *parent_; };
 
-	void SetPar(PhysPar par) { par_ = par; }
+	void setPar(PhysPar par) { par_ = par; }
 
-	PhysPar Par() const { return par_; }
+	PhysPar par() const { return par_; }
 
-	double Omega() const { return par_.Omega(); }
+	double omega() const { return par_.omega(); }
 
-	double R0() const { return par_.R0(); }
+	double r0() const { return par_.r0(); }
 
-	double WFR0() const { return par_.WFR0(); }
+	double wfr0() const { return par_.wfr0(); }
 
-	double WFOmega() const { return par_.WFOmega(); }
+	double wfOmega() const { return par_.wfOmega(); }
 
 	void update(const NodePosition& p) override;
 
-	void UpdatePosition(const NodePosition& p);
+	void updatePosition(const NodePosition& p);
 
 	// Danger zone
-	void setParent(AbstractNode *node) override { up_ = node; }
+	void setParent(AbstractNode *node) override { parent_ = node; }
 
 protected:
 	int dim_, type_, mode_;
 	int subType_;
 	int nodeType_;
 	// This is not a GetNode& to avoid circular dependencies
-	AbstractNode *up_;
+	AbstractNode *parent_;
 	PhysPar par_;
 	NodePosition position_;
-	unique_ptr<LeafInterface> primitiveBasis_;
+	unique_ptr<LeafInterface> interface_;
 };
 

@@ -96,7 +96,7 @@ Node::Node(const Leaf& phys, size_t ntensor)
 	phy.setParent(this);
 
 	// Build the TensorDim
-	tensorDim_ = TensorShape({phys.Dim(), ntensor});
+	tensorDim_ = TensorShape({phys.dim(), ntensor});
 }
 
 void Node::Initialize(istream& file, Node *up,
@@ -171,12 +171,12 @@ void Node::info(ostream& os) const {
 //	tensorDim_.print(os);
 }
 
-void Node::Write(ostream& os) const {
+void Node::write(ostream& os) const {
 	const TensorShape& tdim = shape();
 	for (size_t l = 0; l < position_.Layer(); l++) { os << "\t"; }
 	os << tdim.lastDimension() << "\t-" << nChildren() << "\n";
 	for (size_t i = 0; i < nChildren(); i++) {
-		down_[i]->Write(os);
+		down_[i]->write(os);
 	}
 }
 
@@ -341,7 +341,7 @@ void Node::UpdateTDim() {
 	vector<size_t> dim_new;
 	if (isBottomlayer()) {
 		const Leaf& phys = getLeaf();
-		dim_new.push_back(phys.Dim());
+		dim_new.push_back(phys.dim());
 	} else {
 		for (int i = 0; i < nChildren(); i++) {
 			const Node& child = this->child(i);
@@ -364,7 +364,7 @@ void Node::UpdatePosition(const NodePosition& p) {
 		NodePosition subp = p * i;
 		if (isBottomlayer()) {
 			Leaf& phy = getLeaf();
-			phy.UpdatePosition(subp);
+			phy.updatePosition(subp);
 		} else {
 			Node& child = this->child(i);
 			child.UpdatePosition(subp);

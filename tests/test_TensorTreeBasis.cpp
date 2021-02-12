@@ -61,7 +61,7 @@ SUITE (TensorTreeBasis) {
 		for (const Node& node : tree) {
 			if (node.isBottomlayer()) {
 				const Leaf& leaf = node.getLeaf();
-					CHECK_EQUAL(k++, leaf.Mode());
+					CHECK_EQUAL(k++, leaf.mode());
 			}
 		}
 	}

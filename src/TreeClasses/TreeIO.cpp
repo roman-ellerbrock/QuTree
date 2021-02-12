@@ -73,9 +73,9 @@ namespace TreeIO {
 		for (int k = 0; k < tree.nLeaves(); k++) {
 			// References to the Physical coordinate and bottom-layer_ node
 			const Leaf& phys = tree.GetLeaf(k);
-			const LeafInterface& grid = phys.PrimitiveGrid();
-			auto& node = (Node&) phys.Up();
-			cout << "mode=" << phys.Mode() << endl;
+			const LeafInterface& grid = phys.interface();
+			auto& node = (Node&) phys.parent();
+			cout << "mode=" << phys.mode() << endl;
 
 			// Get SPF
 			Tensorcd Acoeff = Psi[node];
@@ -157,7 +157,7 @@ namespace TreeIO {
 	template<typename T>
 	Matrix<T> leafDensity(const TensorTree<T>& Psi, const MatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree) {
-		const auto& node = (const Node&) leaf.Up();
+		const auto& node = (const Node&) leaf.parent();
 		const auto& Phi = Psi[node];
 		if (!node.isToplayer()) {
 			const auto& rho = Rho[node];
@@ -171,7 +171,7 @@ namespace TreeIO {
 	template<typename T>
 	Matrix<T> leafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree) {
-		const auto& node = (const Node&) leaf.Up();
+		const auto& node = (const Node&) leaf.parent();
 		const SparseTree& stree = Rho.sparseTree();
 		assert(stree.isActive(node));
 		const auto& Phi = Psi[node];

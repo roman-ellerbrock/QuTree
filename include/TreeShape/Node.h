@@ -37,7 +37,7 @@ public:
 	// print out information to this node
 	void info(ostream& os = cout) const override;
 	// Write the node information
-	void Write(ostream& os) const override;
+	void write(ostream& os) const override;
 
 	// Setter & Getter
 	// number of sublaying nodes

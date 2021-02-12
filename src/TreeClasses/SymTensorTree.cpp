@@ -312,7 +312,7 @@ bool isWorking(const SymTensorTree& Psi, const Tree& tree) {
 	double r_up = epsUpNormalization(Psi, tree);
 	double r_down = epsDownNormalization(Psi, tree);
 	if (r_up > eps) {
-		cerr << "Up-normalization failed.\n";
+		cerr << "parent-normalization failed.\n";
 		works = false;
 	}
 	if (r_down > eps) {

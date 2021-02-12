@@ -70,7 +70,7 @@ template<typename T>
 void TensorTree<T>::fillBottom(Tensor<T>& Phi,
 	const Node& node) {
 	const Leaf& coord = node.getLeaf();
-	const LeafInterface& grid = coord.PrimitiveGrid();
+	const LeafInterface& grid = coord.interface();
 	grid.InitSPF(Phi);
 }
 

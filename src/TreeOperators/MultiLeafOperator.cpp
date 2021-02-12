@@ -11,8 +11,8 @@ template <typename T>
 Tensor<T> MultiLeafOperator<T>::apply(Tensor<T> Phi,
 	const Leaf& leaf) const {
 	Tensor<T> hPhi(Phi.shape());
-	size_t mode_x = leaf.Mode();
-	const LeafInterface& grid = leaf.PrimitiveGrid();
+	size_t mode_x = leaf.mode();
+	const LeafInterface& grid = leaf.interface();
 	bool switchbool = true;
 
 	// Applying the MLO uses switching of the result Tensor to increase performance.
@@ -75,8 +75,8 @@ void MultiLeafOperator<T>::applyReference(TensorTree<T>& Psi, const Tree& tree) 
 	for (const Node& node : tree) {
 		if (node.isBottomlayer()) {
 			const Leaf& phy = node.getLeaf();
-			const LeafInterface& grid = phy.PrimitiveGrid();
-			size_t coord = phy.Mode();
+			const LeafInterface& grid = phy.interface();
+			size_t coord = phy.mode();
 
 			// build list with active_ parts
 			vector<int> activelayerparts;

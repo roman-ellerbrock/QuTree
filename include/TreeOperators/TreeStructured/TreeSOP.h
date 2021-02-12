@@ -94,7 +94,7 @@ public:
 	LeafOperatorLib& leafOperatorLib(const Node& node) {
 		assert(node.isBottomlayer());
 		const Leaf& phys = node.getLeaf();
-		const size_t mode = phys.Mode();
+		const size_t mode = phys.mode();
 		assert(mode < leafoperatorlibs.size());
 		return leafoperatorlibs[mode];
 	}
@@ -102,7 +102,7 @@ public:
 	const LeafOperatorLib& leafOperatorLib(const Node& node) const {
 		assert(node.isBottomlayer());
 		const Leaf& leaf = node.getLeaf();
-		const size_t mode = leaf.Mode();
+		const size_t mode = leaf.mode();
 		assert(mode < leafoperatorlibs.size());
 		return leafoperatorlibs[mode];
 	}

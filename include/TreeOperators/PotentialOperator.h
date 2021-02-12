@@ -31,17 +31,17 @@ public:
 
 	~PotentialOperator() = default;
 
-	size_t F()const {
+	size_t f()const {
 		return f_;
 	}
 
-	size_t State()const {
+	size_t state()const {
 		return state_;
 	}
 
-	shared_ptr<Potential>& V() { return V_; }
+	shared_ptr<Potential>& v() { return V_; }
 
-	double Evaluate(const Vectord& Xv, size_t part) const {
+	double evaluate(const Vectord& Xv, size_t part) const {
 		Vectord q = Q_->transform(Xv);
 		assert(V_);
 		return V_->evaluate(q, part);
