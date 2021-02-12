@@ -71,7 +71,7 @@ class Leaf
 	 * \ingroup TTBasis
 	 * \brief This class represents the leaf in the tree of a TTBasis.
 	 *
-	 * The Leafs represent the lowest layer (even below the bottomlayer)
+	 * The leafs represent the lowest layer (even below the bottomlayer)
 	 * in a tree of a TTBasis. Leaves contain abstract class pointers
 	 * to PrimitiveBasis which provides the interface to the problem
 	 * under consideration.

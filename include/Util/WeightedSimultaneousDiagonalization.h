@@ -39,7 +39,7 @@ namespace WeightedSimultaneousDiagonalization
 	 * @param Xs Matrices to diagonalize
 	 * @param XXs Second moments of matrices (not used, can be empty)
 	 * @param W Weight matrix
-	 * @param trafo Output transformation
+	 * @param trafo output transformation
 	 * @param eps Target accuracy
 	 */
 	void Calculate(vector<Matrixcd>& Xs, vector<Matrixcd> XXs, Matrixcd& W,

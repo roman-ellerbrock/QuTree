@@ -6,7 +6,7 @@
 #include "TreeClasses/SpectralDecompositionTree.h"
 
 namespace TreeIO {
-	void Status(size_t it, size_t max, size_t freq, size_t length) {
+	void status(size_t it, size_t max, size_t freq, size_t length) {
 		double ptg = it * 1. / ((double) max);
 		auto num = (size_t) (ptg * length);
 		if (!(it % freq)) {
@@ -23,7 +23,7 @@ namespace TreeIO {
 		}
 	}
 
-	void StatusTime(size_t it, size_t max, size_t freq, size_t length,
+	void statusTime(size_t it, size_t max, size_t freq, size_t length,
 		chrono::high_resolution_clock::time_point& t1, chrono::high_resolution_clock::time_point& t2,
 		chrono::microseconds& time) {
 
@@ -138,16 +138,16 @@ namespace TreeIO {
 		}
 	}
 
-	void Output(const TensorTreecd& Psi, const Tree& tree, ostream& os) {
+	void output(const TensorTreecd& Psi, const Tree& tree, ostream& os) {
 		MatrixTreecd Rho(tree);
 		TreeFunctions::contraction(Rho, Psi, tree, true);
-		Occupancy(Psi, tree, os);
+		occupancy(Psi, tree, os);
 		expectationValues(Psi, Rho, tree, os);
-		Leafs(Psi, Rho, tree, os);
+		leafs(Psi, Rho, tree, os);
 	}
 
 	template<typename T>
-	void Occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
+	void occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
 		MatrixTree<T> Rho(tree);
 		TreeFunctions::contraction(Rho, Psi, tree, true);
 		SpectralDecompositionTree<T> specs(Rho, tree);
@@ -155,7 +155,7 @@ namespace TreeIO {
 	}
 
 	template<typename T>
-	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const MatrixTree<T>& Rho,
+	Matrix<T> leafDensity(const TensorTree<T>& Psi, const MatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree) {
 		const auto& node = (const Node&) leaf.Up();
 		const auto& Phi = Psi[node];
@@ -169,7 +169,7 @@ namespace TreeIO {
 	}
 
 	template<typename T>
-	Matrix<T> LeafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
+	Matrix<T> leafDensity(const TensorTree<T>& Psi, const SparseMatrixTree<T>& Rho,
 		const Leaf& leaf, const Tree& tree) {
 		const auto& node = (const Node&) leaf.Up();
 		const SparseTree& stree = Rho.sparseTree();
@@ -185,11 +185,11 @@ namespace TreeIO {
 	}
 
 	template<typename T>
-	void Leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os) {
+	void leafs(const TensorTree<T>& Psi, const MatrixTree<T>& Rho, const Tree& tree, ostream& os) {
 		os << fixed;
 		for (size_t l = 0; l < tree.nLeaves(); ++l) {
 			const Leaf& leaf = tree.GetLeaf(l);
-			auto rho_leaf = LeafDensity(Psi, Rho, leaf, tree);
+			auto rho_leaf = leafDensity(Psi, Rho, leaf, tree);
 			cout << "Leaf: " << l << "\n";
 			double norm = abs(rho_leaf.trace());
 			for (size_t i = 0; i < rho_leaf.dim1(); ++i) {
@@ -203,7 +203,7 @@ namespace TreeIO {
 	}
 
 	template <typename T>
-	void EntropyMap(const TensorTree<T>& Psi, const Tree& tree) {
+	void entropyMap(const TensorTree<T>& Psi, const Tree& tree) {
 		auto rho = TreeFunctions::contraction(Psi, tree, true);
 		SpectralDecompositionTree<T> X = diagonalize(rho);
 		for (const SpectralDecomposition<T>& x : X) {
@@ -227,23 +227,23 @@ typedef complex<double> cd;
 
 typedef double d;
 
-template void TreeIO::Occupancy<complex<double>>(const TensorTree<complex<double>>& Psi, const Tree& tree, ostream& os);
-template void TreeIO::Occupancy<double>(const TensorTree<double>& Psi, const Tree& tree, ostream& os);
+template void TreeIO::occupancy<complex<double>>(const TensorTree<complex<double>>& Psi, const Tree& tree, ostream& os);
+template void TreeIO::occupancy<double>(const TensorTree<double>& Psi, const Tree& tree, ostream& os);
 
 //template void TreeIO::Output<d>(const TensorTree<d>& Psi, const Tree& tree, ostream& os);
 //template void TreeIO::Output(const TensorTree<cd>& Psi, const Tree& tree, ostream& os);
 
-template void TreeIO::Leafs<cd>(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Tree& tree, ostream& os);
-template void TreeIO::Leafs<d>(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Tree& tree, ostream& os);
+template void TreeIO::leafs<cd>(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Tree& tree, ostream& os);
+template void TreeIO::leafs<d>(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Tree& tree, ostream& os);
 
 template Matrix<cd>
-TreeIO::LeafDensity(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
+TreeIO::leafDensity(const TensorTree<cd>& Psi, const MatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
 template Matrix<d>
-TreeIO::LeafDensity(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
+TreeIO::leafDensity(const TensorTree<d>& Psi, const MatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
 
 template Matrix<cd>
-TreeIO::LeafDensity(const TensorTree<cd>& Psi, const SparseMatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
+TreeIO::leafDensity(const TensorTree<cd>& Psi, const SparseMatrixTree<cd>& Rho, const Leaf& leaf, const Tree& tree);
 template Matrix<d>
-TreeIO::LeafDensity(const TensorTree<d>& Psi, const SparseMatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
+TreeIO::leafDensity(const TensorTree<d>& Psi, const SparseMatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
 
 

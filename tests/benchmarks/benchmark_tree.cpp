@@ -96,7 +96,7 @@ auto sparse_holematrixtree_sample(SparseMatrixTreecd& hole,
 	for (size_t n = 0; n < nsample; ++n) {
 		std::chrono::time_point<std::chrono::system_clock> start, end;
 		start = std::chrono::system_clock::now();
-		TreeFunctions::Contraction(hole, Psi, fmat, tree);
+		TreeFunctions::contraction(hole, Psi, fmat, tree);
 		end = std::chrono::system_clock::now();
 		duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
 	}
