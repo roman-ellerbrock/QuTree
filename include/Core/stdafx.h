@@ -9,7 +9,9 @@
 #include <complex>
 #include <memory>
 
-double conj(double x);
-
 using namespace std;
+
+double conj(double x);
+int conj(const int d);
+
 

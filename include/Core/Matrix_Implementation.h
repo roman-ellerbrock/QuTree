@@ -201,7 +201,16 @@ Matrix<T> Matrix<T>::adjoint() const {
 	Matrix B(dim2_, dim1_);
 	for (size_t i = 0; i < dim2_; i++)
 		for (size_t j = 0; j < dim1_; j++)
-			B(i, j) = conjugate(operator()(j, i));
+			B(i, j) = conj(operator()(j, i));
+	return B;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::conjugate() const {
+	Matrix B(dim1_, dim2_);
+	for (size_t i = 0; i < dim2_; i++)
+		for (size_t j = 0; j < dim1_; j++)
+			B(i, j) = conj(operator()(i, j));
 	return B;
 }
 

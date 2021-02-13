@@ -141,6 +141,11 @@ public:
 	friend Matrix operator*(const U sca, const Matrix& B) {
 		return multscalar(sca, B);
 	}
+	template<typename U>
+	friend Matrix operator*(const Matrix& B, const U sca) {
+		return multscalar(sca, B);
+	}
+
 
 	/** \brief Matrix-vector product
 	 *
@@ -249,6 +254,11 @@ public:
 	Matrix adjoint() const;
 
 	/**
+	 * @return conjugate of matrix
+	 */
+	Matrix conjugate() const;
+
+	/**
 	 * @return Transposed matrix
 	 */
 	Matrix transpose() const;
@@ -347,14 +357,6 @@ public:
     ///@} End Getters/Setters
 
 protected:
-	double conjugate(const double d) const {
-		return d;
-	}
-
-	complex<double> conjugate(const complex<double> c) const {
-		return conj(c);
-	}
-
 	T *coeffs_;
 	size_t dim1_;
 	size_t dim2_;
