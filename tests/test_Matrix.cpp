@@ -16,6 +16,7 @@ SUITE (Matrix) {
 
 		Matrixcd A;
 		Matrixcd B;
+		Matrix<int> C_;
 		Matrixcd realH2x2_;
 		Matrixcd realG2x2_;
 		Matrixcd imagH2x2_;
@@ -40,9 +41,20 @@ SUITE (Matrix) {
 			}
 		}
 
+		void CreateMatrixC() {
+			C_ = Matrix<int>(3, 3);
+			for (size_t i = 0; i < C_.dim1(); ++i) {
+				for (size_t j = 0; j < C_.dim2(); ++j) {
+					C_(j, i) = j * 3 + i; /// ordered according to output
+				}
+			}
+		}
+
 		void CreateMatrices() {
 			CreateMatrixA();
 			CreateMatrixB();
+			CreateMatrixC();
+
 			realH2x2_ = Matrixcd(2, 2);
 			realH2x2_(0, 0) = 1;
 			realH2x2_(1, 0) = 2;
@@ -330,6 +342,25 @@ SUITE (Matrix) {
 			CHECK_EQUAL(1., sub(1, 0));
 			CHECK_EQUAL(1., sub(0, 1));
 			CHECK_EQUAL(2., sub(1, 1));
+	}
+
+	TEST_FIXTURE (MatrixFactory, residual) {
+			CHECK_CLOSE(0., residual(realG2x2_, realG2x2_), eps);
+			CHECK_CLOSE(0., residual(imagG2x2_, imagG2x2_), eps);
+	}
+
+	TEST_FIXTURE (MatrixFactory, row) {
+		auto row = C_.row(1);
+			CHECK_EQUAL(3, row(0));
+			CHECK_EQUAL(4, row(1));
+			CHECK_EQUAL(5, row(2));
+	}
+
+	TEST_FIXTURE (MatrixFactory, col) {
+		auto col = C_.col(1);
+			CHECK_EQUAL(1, col(0));
+			CHECK_EQUAL(4, col(1));
+			CHECK_EQUAL(7, col(2));
 	}
 
 	TEST (svd) {

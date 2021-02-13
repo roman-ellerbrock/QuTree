@@ -326,8 +326,8 @@ Matrix<complex<double> > Matrix<T>::cInv() const {
 //////////////////////////////////////////////////////////////////////
 template<typename T>
 void Matrix<T>::print(ostream& os) const {
-	for (size_t i = 0; i < dim2_; i++) {
-		for (size_t j = 0; j < dim1_; j++) {
+	for (size_t j = 0; j < dim1_; j++) {
+		for (size_t i = 0; i < dim2_; i++) {
 			os << (*this)(j, i) << " ";
 		}
 		os << endl;

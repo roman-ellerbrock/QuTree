@@ -347,7 +347,6 @@ public:
 	Vector<T> col(size_t i) const;
 	Vector<T> diag() const;
 
-
 	size_t dim1() const { return dim1_; }
 
 	size_t dim2() const { return dim2_; }
