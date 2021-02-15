@@ -391,8 +391,9 @@ void Matrix<T>::read(const string& filename) {
 
 template<typename T>
 void Matrix<T>::zero() {
-	for (size_t i = 0; i < dim1_ * dim2_; i++)
-		coeffs_[i] = 0;
+	memset(coeffs_, 0, dim1_ * dim2_ * sizeof(T));
+//	for (size_t i = 0; i < dim1_ * dim2_; i++)
+//		coeffs_[i] = 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -455,9 +456,9 @@ Matrix<T> multAB(const Matrix<T>& A, const Matrix<T>& B) {
 		trmatvec_((double *) &C[0], (double *) &A[0], (double *) &B[0],
 			&a, &b, &c, &add);
 	} else {
-		auto Ae = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) A.ptr(), A.dim1(), A.dim2());
-		auto Be = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) B.ptr(), B.dim1(), B.dim2());
-		auto Ce = Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic>>((T*) C.ptr(), C.dim1(), C.dim2());
+		auto Ae = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>((T *) A.ptr(), A.dim1(), A.dim2());
+		auto Be = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>((T *) B.ptr(), B.dim1(), B.dim2());
+		auto Ce = Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>((T *) C.ptr(), C.dim1(), C.dim2());
 		Ce = Ae * Be;
 /*		for (size_t j = 0; j < B.Dim2(); j++) {
 			for (size_t i = 0; i < A.Dim1(); i++) {

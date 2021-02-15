@@ -2,7 +2,8 @@
 // Created by Roman Ellerbrock on 2020-01-17.
 //
 #include "UnitTest++/UnitTest++.h"
-#include "Core/Matrix.h"
+//#include "Core/Matrix.h"
+#include "Core/Matrix_Implementation.h"
 #include <random>
 #include "Util/RandomMatrices.h"
 

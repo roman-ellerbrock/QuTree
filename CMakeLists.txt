@@ -166,8 +166,8 @@ set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math")
 
 #include(vectorization.cmake)
 
-set(QuTree_DEBUG_FLAGS "-g")
-#set(QuTree_RELEASE_FLAGS " -O3 -ffast-math")
+#set(QuTree_DEBUG_FLAGS "-g")
+set(QuTree_RELEASE_FLAGS " -O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")

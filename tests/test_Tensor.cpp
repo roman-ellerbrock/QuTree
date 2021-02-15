@@ -1,4 +1,5 @@
-#include "Core/Tensor.h"
+//#include "Core/Tensor.h"
+#include "Core/Tensor_Implementation.h"
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
 #include "Util/QMConstants.h"

@@ -146,7 +146,9 @@ namespace TreeFunctions {
 				if (marker.isActive(parent)) {
 					hKet = multStateAB(holes[parent], hKet);
 				}
-				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
+//				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
+				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) { cerr << "Holematrices not allocated correctly.\n"; exit(1); }
+				contraction(holes[node], Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -174,7 +176,9 @@ namespace TreeFunctions {
 						hKet = multStateAB(rho[parent], hKet);
 					}
 				}
-				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
+//				holes[node] = contraction(Bra[parent], hKet, node.childIdx());
+				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) { cerr << "Holematrices not allocated correctly.\n"; exit(1); }
+				contraction(holes[node], Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
