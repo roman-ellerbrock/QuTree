@@ -161,13 +161,13 @@ target_compile_features(QuTree PUBLIC cxx_std_14)
 #set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
 set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -loop-vectorize")
 #set(FLAGS_VECTORIZE "-ftree-parallelize-loops=8 ${FLAGS_VECTORIZE}")
-set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math")
+set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math -pg")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math -pg")
 
 #include(vectorization.cmake)
 
 #set(QuTree_DEBUG_FLAGS "-g")
-set(QuTree_RELEASE_FLAGS " -O3 -ffast-math")
+#set(QuTree_RELEASE_FLAGS " -O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")

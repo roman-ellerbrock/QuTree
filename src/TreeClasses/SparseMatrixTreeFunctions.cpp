@@ -73,9 +73,6 @@ namespace TreeFunctions {
 
 	template Tensor<cd> applyHole(const SparseMatrixTree<cd>& holes, Tensor<cd> Phi, const Node& hole_node);
 
-	template void apply(Tensorcd& hPhi, const SparseMatrixTree<cd>& mat, const Tensor<cd>& Phi,
-		const MLO<cd>& M, const Node& node);
-
 	typedef double d;
 	template void represent(SparseMatrixTree<d>& hmat,
 		const MLO<d>& M, const TensorTree<d>& Bra, const TensorTree<d>& Ket,

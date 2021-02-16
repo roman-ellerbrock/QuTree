@@ -312,21 +312,6 @@ namespace TreeFunctions {
 	}
 
 
-	/// apply factor matrices locally
-	template<typename T>
-	void apply(Tensor<T>& hPhi, const SparseMatrixTree<T>& mat, const Tensor<T>& Phi,
-		const MLO<T>& M, const Node& node) {
-		if (!mat.isActive(node)) { hPhi = Phi; return; }
-		if (node.isBottomlayer()) {
-			const Leaf& phys = node.getLeaf();
-			hPhi = M.apply(Phi, phys);
-		} else {
-			SparseMatrixTree<T>* null = nullptr;
-			MatrixTree<T>* nullp = nullptr;
-			apply(hPhi, mat, null, nullp, Phi, mat.sparseTree(), node, node.parentIdx());
-		}
-	}
-
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H
