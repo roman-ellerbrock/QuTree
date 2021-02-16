@@ -127,7 +127,18 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 
 	template<typename T>
-	Tensor<T> apply(const SparseMatrixTree<T>& mat, const Tensor<T>& Phi, const MLO<T>& M, const Node& node);
+	Tensor<T> apply(const SparseMatrixTree<T>& mat, const Tensor<T>& Phi,
+		const MLO<T>& M, const Node& node);
+
+	template<typename T>
+	void apply(Tensor<T>& hPhi, const SparseMatrixTree<T>& mat,
+		const SparseMatrixTree<T> *holes, const MatrixTree<T> *rho,
+		Tensor<T> Phi, const SparseTree& stree, const Node& node, int skip);
+
+	template<typename T>
+	Tensor<T> apply(const SparseMatrixTree<T>& mat,
+		const SparseMatrixTree<T>& holes, const MatrixTree<T> *rho,
+		Tensor<T> Phi, const SparseTree& stree, const Node& node, int skip);
 
 	template<typename T>
 	Tensor<T> applyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node);

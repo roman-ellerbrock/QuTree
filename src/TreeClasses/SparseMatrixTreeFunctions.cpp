@@ -61,6 +61,14 @@ namespace TreeFunctions {
 
 	template Tensor<cd> apply(const SparseMatrixTree<cd>& mat, const Tensor<cd>& Phi, const MLO<cd>& M, const Node& node);
 
+	template void apply(Tensor<cd>& hPhi, const SparseMatrixTree<cd>& mat,
+		const SparseMatrixTree<cd> *holes, const MatrixTree<cd> *rho,
+		Tensor<cd> Phi, const SparseTree& stree, const Node& node, int skip);
+
+	template Tensor<cd> apply(const SparseMatrixTree<cd>& mat,
+		const SparseMatrixTree<cd>& holes, const MatrixTree<cd> *rho,
+		Tensor<cd> Phi, const SparseTree& stree, const Node& node, int skip);
+
 	template Tensor<cd> applyUpper(const SparseMatrixTree<cd>& mat, Tensor<cd> Phi, const Node& node);
 
 	template Tensor<cd> applyHole(const SparseMatrixTree<cd>& holes, Tensor<cd> Phi, const Node& hole_node);
@@ -114,6 +122,14 @@ namespace TreeFunctions {
 		const SparseTree& stree, bool orthogonal);
 
 	template Tensor<d> apply(const SparseMatrixTree<d>& mat, const Tensor<d>& Phi, const MLO<d>& M, const Node& node);
+
+	template void apply(Tensor<d>& hPhi, const SparseMatrixTree<d>& mat,
+		const SparseMatrixTree<d> *holes, const MatrixTree<d> *rho,
+		Tensor<d> Phi, const SparseTree& stree, const Node& node, int skip);
+
+	template Tensor<d> apply(const SparseMatrixTree<d>& mat,
+		const SparseMatrixTree<d>& holes, const MatrixTree<d> *rho,
+		Tensor<d> Phi, const SparseTree& stree, const Node& node, int skip);
 
 	template Tensor<d> applyUpper(const SparseMatrixTree<d>& mat, Tensor<d> Phi, const Node& node);
 
