@@ -129,7 +129,6 @@ namespace TreeFunctions {
 		const SparseTree& stree, const Tree& tree) {
 
 		SparseTensorTree<T> hKet(stree.leafIndices(), tree, true, false);
-//		TensorTree<T> hKet(tree);
 		// Swipe top-down_ but exclude topnode
 		int sub_topnode = stree.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {

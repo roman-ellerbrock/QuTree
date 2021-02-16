@@ -63,7 +63,7 @@ if (USE_INTERNAL_EIGEN OR NOT TARGET Eigen3::Eigen)
         EXPORT QuTree-export
         DESTINATION ${QuTree_INSTALL_INC_DIR})
 endif()
-target_link_libraries(QuTree Eigen3::Eigen)
+#target_link_libraries(QuTree Eigen3::Eigen)
 
 #####################################################################
 # Target Installation setup
@@ -106,68 +106,31 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
     DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
 
-set(openmp OFF)
+set(openmp ON)
 if (openmp)
-    if (APPLE)
-        # Assumes you've installed llvm openmp using homebrew (brew install llvm)
-        message("On MAC OS - Setting Clan-compiler & OpenMP lib")
-        set(CMAKE_C_COMPILER "/usr/local/opt/llvm/bin/clang")
-        set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
-        set(OPENMP_LIBRARIES "/usr/local/opt/llvm/lib")
-        set(OPENMP_INCLUDES "/usr/local/opt/llvm/include")
-
-        OPTION(USE_OpenMP "Use OpenMP to enable <omp.h>" ON)
-
-        # Find OpenMP
-        if (USE_OpenMP)
-            if (CMAKE_C_COMPILER_ID MATCHES "Clang")
-                set(OpenMP_C "${CMAKE_C_COMPILER}")
-                set(OpenMP_C_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-                set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
-                set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-                set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-                set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
-            endif ()
-            if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-                set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
-                set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-                set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
-                set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-                set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-                set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-            endif ()
-        endif ()
-    endif ()
     find_package(OpenMP REQUIRED)
-#    find_package(OPENMP REQUIRED)
-    if (OPENMP_FOUND)
-        include_directories("${OPENMP_INCLUDES}")
-        link_directories("${OPENMP_LIBRARIES}")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        # set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    endif (OPENMP_FOUND)
-endif ()
+    target_link_libraries(QuTree PRIVATE OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran)
+    set(QuTree_RELEASE_FLAGS "-openmp ${QuTree_RELEASE_FLAGS}")
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
+endif()
+target_link_libraries(QuTree PUBLIC Eigen3::Eigen)
 
 #####################################################################
 # Set Compiler Flags
 #####################################################################
-# For debugging
-# set(CMAKE_VERBOSE_MAKEFILE ON)
+# set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
 
 # Ensure C++14 standard (force downstream as well)
 target_compile_features(QuTree PUBLIC cxx_std_14)
 
-#set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
-set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -loop-vectorize")
+#set(FLAGS_VECTORIZE  "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
+set(FLAGS_VECTORIZE "-fopenmp-simd -march=native")
+#set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -loop-vectorize")
 #set(FLAGS_VECTORIZE "-ftree-parallelize-loops=8 ${FLAGS_VECTORIZE}")
 set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math")
 
 #include(vectorization.cmake)
-
-#set(QuTree_DEBUG_FLAGS "-g")
-#set(QuTree_RELEASE_FLAGS " -O3 -ffast-math")
 
 if (APPLE)
     message("On OSX")
