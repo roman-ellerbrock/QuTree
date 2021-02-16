@@ -54,16 +54,41 @@ SUITE (SparseMatrixTree) {
 	}
 
 	TEST_FIXTURE (HelperFactory, Represent) {
-		SparseMatrixTreecd hmat = TreeFunctions::represent(M_, Psi_, tree_);
-		const Node& top = tree_.topNode();
-		const Node& child = top.child(0);
-			CHECK_CLOSE(0.25, real(hmat[child](0, 0)), 0E-12);
+		SparseMatrixTreecd mat = TreeFunctions::represent(M_, Psi_, tree_);
+		const SparseTree& stree = mat.sparseTree();
+		Matrixcd x(2, 2);
+		x(0, 0) = x(1, 1) = 0.5;
+			CHECK_CLOSE(0., residual(x, mat[stree.node(0)]), eps);
+			CHECK_CLOSE(0., residual(x, mat[stree.node(1)]), eps);
+			CHECK_CLOSE(0., residual(x, mat[stree.node(2)]), eps);
+			CHECK_CLOSE(0., residual(x, mat[stree.node(3)]), eps);
+		x(0, 0) = x(1, 1) = 0.25;
+			CHECK_CLOSE(0., residual(x, mat[stree.node(4)]), eps);
+		Matrixcd x1(1, 1);
+		x1(0,0) = 0.;
+			CHECK_CLOSE(0.0, residual(x1, mat[tree_.topNode()]), eps);
 	}
 
 	TEST_FIXTURE (HelperFactory, contraction) {
 		SparseMatrixTreecd mats = TreeFunctions::represent(M_, Psi_, tree_);
 		SparseMatrixTreecd holes(M_, tree_);
 		TreeFunctions::contraction(holes, Psi_, Psi_, mats, tree_);
+		const SparseTree& stree = holes.sparseTree();
+
+		Matrixcd x(2, 2);
+		x(0, 0) = 0.03125;
+			CHECK_CLOSE(0., residual(x, holes[stree.node(0)]), eps);
+		x(0, 0) = 0.0625;
+			CHECK_CLOSE(0., residual(x, holes[stree.node(1)]), eps);
+		x(0, 0) = 0.03125;
+			CHECK_CLOSE(0., residual(x, holes[stree.node(2)]), eps);
+		x(0, 0) = 0.0625;
+			CHECK_CLOSE(0., residual(x, holes[stree.node(3)]), eps);
+		x(0, 0) = 0.25;
+			CHECK_CLOSE(0., residual(x, holes[stree.node(4)]), eps);
+		Matrixcd x1(1, 1);
+		x1(0, 0) = 1.;
+			CHECK_CLOSE(0., residual(x1, holes[stree.node(5)]), eps);
 	}
 
 	TEST_FIXTURE (HelperFactory, Constructor) {
@@ -99,7 +124,7 @@ SUITE (SparseMatrixTree) {
 		auto stree = make_shared<SparseTree>(M_.targetLeaves(), tree_, false);
 		SparseTensorTreecd work(stree, tree_);
 			CHECK_EQUAL(5, work.size());
-		for (const Node* node_ptr : *stree) {
+		for (const Node *node_ptr : *stree) {
 				CHECK_EQUAL(true, (node_ptr->shape() == work[*node_ptr].shape()));
 		}
 	}
@@ -107,9 +132,9 @@ SUITE (SparseMatrixTree) {
 	TEST_FIXTURE (HelperFactory, SparseTensorTree2) {
 		SparseTree stree(M_.targetLeaves(), tree_, false);
 		SparseTensorTreecd work(stree, tree_);
-		CHECK_EQUAL(5, work.size());
-		for (const Node* node_ptr : stree) {
-			CHECK_EQUAL(true, (node_ptr->shape() == work[*node_ptr].shape()));
+			CHECK_EQUAL(5, work.size());
+		for (const Node *node_ptr : stree) {
+				CHECK_EQUAL(true, (node_ptr->shape() == work[*node_ptr].shape()));
 		}
 	}
 }
