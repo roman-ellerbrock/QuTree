@@ -5,6 +5,7 @@
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "Util/RandomMatrices.h"
 #include "TreeShape/TreeFactory.h"
+#include "TreeClasses/SparseTensorTree.h"
 
 SUITE (SparseMatrixTree) {
 
@@ -15,6 +16,7 @@ SUITE (SparseMatrixTree) {
 		HelperFactory() {
 			Initialize();
 		}
+
 		~HelperFactory() = default;
 		mt19937 rng_;
 		Tree tree_;
@@ -62,9 +64,6 @@ SUITE (SparseMatrixTree) {
 		SparseMatrixTreecd mats = TreeFunctions::represent(M_, Psi_, tree_);
 		SparseMatrixTreecd holes(M_, tree_);
 		TreeFunctions::contraction(holes, Psi_, Psi_, mats, tree_);
-		for (const Node& node : tree_) {
-
-		}
 	}
 
 	TEST_FIXTURE (HelperFactory, Constructor) {
@@ -86,15 +85,32 @@ SUITE (SparseMatrixTree) {
 		}
 	}
 
-	TEST_FIXTURE(HelperFactory, InverseTree) {
+	TEST_FIXTURE (HelperFactory, InverseTree) {
 		SparseTree stree(M_, tree_);
 		SparseTree itree(M_, tree_, true, true);
-		CHECK_EQUAL(tree_.nNodes(), itree.size()+stree.size());
+			CHECK_EQUAL(tree_.nNodes(), itree.size() + stree.size());
 		for (const Node& node : tree_) {
-			CHECK_EQUAL(true, stree.isActive(node) != itree.isActive(node));
-			CHECK_EQUAL(true, stree.isActive(node) || itree.isActive(node));
+				CHECK_EQUAL(true, stree.isActive(node) != itree.isActive(node));
+				CHECK_EQUAL(true, stree.isActive(node) || itree.isActive(node));
 		}
 	}
 
+	TEST_FIXTURE (HelperFactory, SparseTensorTree) {
+		auto stree = make_shared<SparseTree>(M_.targetLeaves(), tree_, false);
+		SparseTensorTreecd work(stree, tree_);
+			CHECK_EQUAL(5, work.size());
+		for (const Node* node_ptr : *stree) {
+				CHECK_EQUAL(true, (node_ptr->shape() == work[*node_ptr].shape()));
+		}
+	}
+
+	TEST_FIXTURE (HelperFactory, SparseTensorTree2) {
+		SparseTree stree(M_.targetLeaves(), tree_, false);
+		SparseTensorTreecd work(stree, tree_);
+		CHECK_EQUAL(5, work.size());
+		for (const Node* node_ptr : stree) {
+			CHECK_EQUAL(true, (node_ptr->shape() == work[*node_ptr].shape()));
+		}
+	}
 }
 

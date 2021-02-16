@@ -6,6 +6,7 @@
 #define SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
+#include "TreeClasses/SparseTensorTree.h"
 
 namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
@@ -125,22 +126,27 @@ namespace TreeFunctions {
 	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
-		const SparseTree& marker, const Tree& tree) {
+		const SparseTree& stree, const Tree& tree) {
 
+		SparseTensorTree<T> hKet(stree.leafIndices(), tree, true, false);
+//		TensorTree<T> hKet(tree);
 		// Swipe top-down_ but exclude topnode
-		int sub_topnode = marker.size() - 1;
+		int sub_topnode = stree.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
-			const Node& node = marker.node(n);
+			const Node& node = stree.node(n);
 			if (!node.isToplayer()) {
 				assert(holes.isActive(node));
 
 				const Node& parent = node.parent();
-				Tensor<T> hKet = apply(mats, holes, rho, Ket[parent], marker, parent, node.childIdx());
+				if (hKet[parent].shape() != Ket[parent].shape()) {
+					cerr << "wrong dimensions.\n";getchar();
+				}
+				apply(hKet[parent], mats, &holes, rho, Ket[parent], stree, parent, node.childIdx());
 				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
 					cerr << "Holematrices not allocated correctly.\n";
 					exit(1);
 				}
-				contraction(holes[node], Bra[parent], hKet, node.childIdx());
+				contraction(holes[node], Bra[parent], hKet[parent], node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -148,11 +154,11 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	void Contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const SparseTree& marker, const Tree& tree) {
 
-		const MatrixTree<T>* null = nullptr;
-		Contraction(holes, Bra, Ket, mats, marker, tree);
+		const MatrixTree<T> *null = nullptr;
+		contraction(holes, Bra, Ket, mats, null, marker, tree);
 	}
 
 	template<typename T>
@@ -165,7 +171,7 @@ namespace TreeFunctions {
 	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const Tree& tree) {
-		Contraction(holes, Bra, Ket, mats, holes.sparseTree(), tree);
+		contraction(holes, Bra, Ket, mats, holes.sparseTree(), tree);
 	}
 
 	template<typename T>
@@ -252,7 +258,10 @@ namespace TreeFunctions {
 			swap(in, out);
 		}
 		if (!node.isToplayer() && (skip != node.parentIdx()) && (holes != nullptr)) {
-			if (holes == nullptr) { cerr << "Holefunction accessed but null.\n"; exit(1); }
+			if (holes == nullptr) {
+				cerr << "Holefunction accessed but null.\n";
+				exit(1);
+			}
 			if (!stree.isActive(node) && (rho != nullptr)) {
 				matrixTensor(*out, (*rho)[node], *in, node.parentIdx(), true);
 			} else {
@@ -292,8 +301,8 @@ namespace TreeFunctions {
 	template<typename T>
 	Tensor<T> applyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
 		Tensor<T> hPhi(Phi.shape());
-		SparseMatrixTree<T>* null = nullptr;
-		MatrixTree<T>* nullp = nullptr;
+		SparseMatrixTree<T> *null = nullptr;
+		MatrixTree<T> *nullp = nullptr;
 		apply(hPhi, mat, null, nullp, Phi, mat.sparseTree(), node, node.parentIdx());
 		return hPhi;
 	}
@@ -310,8 +319,6 @@ namespace TreeFunctions {
 			return applyUpper(mats, Phi, node);
 		}
 	}
-
-
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

@@ -57,6 +57,8 @@ public:
 		return nodes_.end();
 	}
 
+	const Node* back() const { return nodes_.back(); }
+
 	const Node& node(size_t n) const {
 		assert(n < nodes_.size());
 		return *nodes_[n];
@@ -65,6 +67,18 @@ public:
 	size_t sparseAddress(const Node& node) const {
 		size_t addr = node.address();
 		return co_address_.at(addr);
+	}
+
+	vector<size_t> leafIndices() const {
+		vector<size_t> idxs;
+		for (const Node* node_ptr : nodes_) {
+			const Node& node = *node_ptr;
+			if (node.isBottomlayer()) {
+				const Leaf& leaf = node.getLeaf();
+				idxs.push_back(leaf.mode());
+			}
+		}
+		return idxs;
 	}
 
 	void print(const Tree& tree, ostream& os = cout) const;
