@@ -275,6 +275,21 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
+	Tensor<T> applyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
+		assert(!hole_node.isToplayer());
+		const Node& parent = hole_node.parent();
+		size_t drop = hole_node.childIdx();
+
+		for (size_t k = 0; k < parent.nChildren(); ++k) {
+			const Node& child = parent.child(k);
+			size_t childidx = child.childIdx();
+			if ((childidx == drop) || (!mats.isActive(child))) { continue; }
+			Phi = matrixTensor(mats[child], Phi, childidx);
+		}
+		return Phi;
+	}
+
+	template<typename T>
 	Tensor<T> applyUpper(const SparseMatrixTree<T>& mat, Tensor<T> Phi, const Node& node) {
 		Tensor<T> hPhi(Phi.shape());
 		SparseMatrixTree<T>* null = nullptr;
@@ -296,48 +311,22 @@ namespace TreeFunctions {
 		}
 	}
 
-	template<typename T>
-	Tensor<T> applyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
-		assert(!hole_node.isToplayer());
-		const Node& parent = hole_node.parent();
-		size_t drop = hole_node.childIdx();
 
-		for (size_t k = 0; k < parent.nChildren(); ++k) {
-			const Node& child = parent.child(k);
-			size_t childidx = child.childIdx();
-			if ((childidx == drop) || (!mats.isActive(child))) { continue; }
-			Phi = matrixTensor(mats[child], Phi, childidx);
-		}
-		return Phi;
-	}
-
-	/*
 	/// apply factor matrices locally
 	template<typename T>
-	void apply(Tensorcd& HPhi, const SparseMatrixTree<T>& mats, const Tensor<T>& Phi,
+	void apply(Tensor<T>& hPhi, const SparseMatrixTree<T>& mat, const Tensor<T>& Phi,
 		const MLO<T>& M, const Node& node) {
-		if (!mats.isActive(node)) { return Phi; }
+		if (!mat.isActive(node)) { hPhi = Phi; return; }
 		if (node.isBottomlayer()) {
 			const Leaf& phys = node.getLeaf();
-			HPhi = M.apply(Phi, phys);
+			hPhi = M.apply(Phi, phys);
 		} else {
 			SparseMatrixTree<T>* null = nullptr;
-			apply(HPhi, mats, null, Phi, mats.sparseTree, node, node.parentIdx());
-			return applyUpper(mats, Phi, node);
+			MatrixTree<T>* nullp = nullptr;
+			apply(hPhi, mat, null, nullp, Phi, mat.sparseTree(), node, node.parentIdx());
 		}
 	}
 
-	template <typename T>
-	Tensor<T> applyTop(const Tensor<T>& Ket, const vector<SparseMatrixTree<T>>& mats,
-		const SOPcd& sop, const Node& node) {
-		Tensorcd HKet (Ket.shape());
-		Tensorcd work (Ket.shape());
-		for (size_t n = 0; n < sop.size(); ++n) {
-			apply(work, mats[n], Ket, sop(n), node);
-			HKet += work;
-		}
-		return HKet;
-	}*/
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

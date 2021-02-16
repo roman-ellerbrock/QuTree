@@ -145,6 +145,10 @@ namespace TreeFunctions {
 
 	template<typename T>
 	Tensor<T> applyHole(const SparseMatrixTree<T>& holes, Tensor<T> Phi, const Node& hole_node);
+
+	template<typename T>
+	void apply(Tensor<T>& hPhi, const SparseMatrixTree<T>& mat, const Tensor<T>& Phi,
+		const MLO<T>& M, const Node& node);
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_H
