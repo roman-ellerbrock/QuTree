@@ -138,9 +138,6 @@ namespace TreeFunctions {
 				assert(holes.isActive(node));
 
 				const Node& parent = node.parent();
-				if (hKet[parent].shape() != Ket[parent].shape()) {
-					cerr << "wrong dimensions.\n";getchar();
-				}
 				apply(hKet[parent], mats, &holes, rho, Ket[parent], stree, parent, node.childIdx());
 				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
 					cerr << "Holematrices not allocated correctly.\n";
