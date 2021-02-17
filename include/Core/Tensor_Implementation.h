@@ -426,34 +426,16 @@ T Tensor<T>::singleDotProduct(const Tensor& A, size_t n, size_t m) const {
 template<typename T>
 Matrix<T> Tensor<T>::dotProduct(const Tensor<T>& A) const {
 	TensorShape tdima(A.shape());
-	// Every tensor can have different amount of states but same dimpart
-
 	size_t nmax = tdima.lastDimension();
 	size_t mmax = shape_.lastDimension();
-	size_t npart = shape_.lastBefore();
-	assert(tdima.lastBefore() == npart);
-
 	Matrix<T> S(mmax, nmax);
 	contraction(S, *this, A, shape_.lastIdx());
-/*#pragma omp parallel for
-	for (size_t n = 0; n < nmax; n++) {
-		for (size_t m = 0; m < mmax; m++) {
-			for (size_t i = 0; i < npart; i++) {
-//				S(m, n) += conj(operator()(i, m))*A(i, n);
-//				S(m, n) += conj(operator[](m * npart + i)) * A[n * npart + i];
-				S(m, n) += conj(coeffs_[m * npart + i]) * A[n * npart + i];
-			}
-		}
-	}
-	*/
 	return S;
 }
 
 template<typename T>
 void Tensor<T>::zero() {
 	memset(coeffs_, 0, shape_.totalDimension() * sizeof(T));
-//	for (size_t i = 0; i < shape_.totalDimension(); i++)
-//		coeffs_[i] = 0;
 }
 
 template<typename T>

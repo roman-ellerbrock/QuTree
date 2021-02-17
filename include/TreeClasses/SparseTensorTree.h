@@ -32,8 +32,31 @@ public:
 		initialize(tree);
 	}
 
+	~SparseTensorTree() {
+		delete[] mem_;
+	}
 
-	void initialize(const Tree& tree) override;
+	void initialize(const Tree& tree) override {
+		/**
+		 * Rationale:
+		 * - pool memory allocator
+		 */
+		attributes_.clear();
+		size_t dim = 0;
+		for (const Node *const node_ptr : sparseTree()) {
+			dim += node_ptr->shape().totalDimension();
+		}
+		mem_ = (T *) malloc(dim * sizeof(T)); /// allocate memory for all tensors at once
+		memset(mem_, 0, dim * sizeof(T));
+		T *loc = mem_; /// point to location of next tensor
+		for (const Node *const node_ptr : sparseTree()) {
+			attributes_.emplace_back(Tensor<T>(node_ptr->shape(), loc, false, false));
+			loc += node_ptr->shape().totalDimension();
+		}
+	}
+
+private:
+	T *mem_;
 };
 
 typedef SparseTensorTree<complex<double>> SparseTensorTreecd;
