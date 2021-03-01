@@ -106,7 +106,13 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
     DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
 
-set(openmp ON)
+if (NOT openmp)
+    set(openmp OFF)
+    message("Setting openMP off (${openmp})")
+    else ()
+    message("openmp=${openmp}")
+endif()
+
 if (openmp)
     find_package(OpenMP REQUIRED)
     target_link_libraries(QuTree PRIVATE OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran)
