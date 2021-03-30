@@ -584,6 +584,11 @@ void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	typedef complex<double> cd;
 	typedef double d;
 
+	if (activeB != activeC) {
+		cerr << "Error in Core/Tensor: Fortran functions do not support rectangular matrix shapes.\n";
+		exit(1);
+	}
+
 	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
 		matvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
 		&a, &b, &c, &add);

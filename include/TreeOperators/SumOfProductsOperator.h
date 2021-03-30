@@ -71,6 +71,15 @@ public:
 		return mpos_.end();
 	}
 
+	bool isActive(size_t mode) const {
+		for (size_t i = 0; i < size(); ++i) {
+			if (mpos_[i].isActive(mode)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void print(ostream& os = cout) const {
 		os << "Number of parts in SOP operator: " << size() << endl;
 		for (size_t i = 0; i < size(); ++i) {
