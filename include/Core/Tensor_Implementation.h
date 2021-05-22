@@ -487,17 +487,9 @@ void rhomat_(double* Bra, double* Ket, double* M,
 }
 
 template<typename T>
-void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+void contractionAsymmetric(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind) {
 
-	int a = active1;
-	int b = before;
-	int c = behind;
-
-	rhomat_((double*) &A[0], (double*) &B[0], (double*) &S[0],
-		&a, &b, &c);
-
-	/*
 	// Variables for precalculation of indices
 	size_t actbef1 = active1 * before;
 	size_t actbef2 = active2 * before;
@@ -508,19 +500,8 @@ void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t jpreidx = 0;
 	size_t npreidx1 = 0;
 	size_t npreidx2 = 0;
-	 */
 
-	// Avoid unnecessary thread launches
-	/*
-	const char* threads = getenv("OMP_NUM_THREADS");
-	if (threads) {
-	    if (after < atoi(threads)) {
-            omp_set_num_threads(after);
-	    }
-	}
-	*/
-	/*
-#pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
+//	#pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
 	for (size_t n = 0; n < behind; n++) {
 		npreidx1 = n * actbef1;
 		npreidx2 = n * actbef2;
@@ -540,7 +521,24 @@ void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 			}
 		}
 	}
-	*/
+}
+
+template<typename T>
+void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
+	size_t before, size_t active1, size_t active2, size_t behind) {
+
+	if (active1 != active2) {
+		contractionAsymmetric(S, A, B, before, active1, active2, behind);
+		return;
+	}
+
+	int a = active1;
+	int b = before;
+	int c = behind;
+
+	rhomat_((double*) &A[0], (double*) &B[0], (double*) &S[0],
+		&a, &b, &c);
+
 }
 
 template<typename T>
@@ -574,6 +572,78 @@ void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k,
 }
 
 template<typename T, typename U>
+void matrixTensorAsymmetric(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
+	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
+
+	if (zero) { C.zero(); }
+
+	// Variables to Precompute index values
+	size_t actbefB = activeB * before;
+	size_t actbefC = activeC * before;
+	size_t Aidx = 0;
+	size_t Bidx = 0;
+	size_t Cidx = 0;
+	size_t kpreidxB = 0;
+	size_t kpreidxC = 0;
+	size_t lpreidx = 0;
+	size_t jpreidx = 0;
+	size_t lactive = 0;
+	// Avoid unnecessary thread launches
+	// TODO: this requires #inclue <omp.h>
+	/*
+	const char* threads = getenv("OMP_NUM_THREADS");
+	if (threads) {
+		if (after < atoi(threads)) {
+			omp_set_num_threads(after);
+		}
+	}
+	 */
+	if (before == 1) {
+//#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
+		for (size_t k = 0; k < after; ++k) {
+			kpreidxB = k * actbefB;
+			kpreidxC = k * actbefC;
+			for (size_t l = 0; l < activeB; ++l) {
+				Bidx = l + kpreidxB;
+				for (size_t j = 0; j < activeC; ++j) {
+					Cidx = j + kpreidxC;
+					Aidx = l * activeB + j; //TODO: why is this declared twice?
+					Aidx = l * activeC + j;
+//					assert(Cidx < C.shape().totalDimension());
+//					assert(Bidx < B.shape().totalDimension());
+//					assert(Aidx < A.Dim1()*A.Dim2());
+					/// C(1, j, k) += A(j, l) * B(1, l, k)
+					C[Cidx] += A[Aidx] * B[Bidx];
+				}
+			}
+		}
+	} else {
+//#pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
+		for (size_t k = 0; k < after; ++k) {
+			kpreidxB = k * actbefB;
+			kpreidxC = k * actbefC;
+			for (size_t l = 0; l < activeB; ++l) {
+				lpreidx = l * before + kpreidxB;
+				lactive = l * activeC;
+				for (size_t j = 0; j < activeC; ++j) {
+					Aidx = lactive + j;
+					jpreidx = j * before + kpreidxC;
+					for (size_t i = 0; i < before; ++i) {
+						Cidx = jpreidx + i;
+						Bidx = lpreidx + i;
+//						assert(Cidx < C.shape().totalDimension());
+//						assert(Bidx < B.shape().totalDimension());
+//						assert(Aidx < A.Dim1()*A.Dim2());
+						/// C(i, j, k) += A(j, l) * B(i, l, k)
+						C[Cidx] += A[Aidx] * B[Bidx];
+					}
+				}
+			}
+		}
+	}
+}
+
+template<typename T, typename U>
 void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
 	// Null the result tensor if flag is set to "true"
@@ -585,8 +655,10 @@ void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	typedef double d;
 
 	if (activeB != activeC) {
-		cerr << "Error in Core/Tensor: Fortran functions do not support rectangular matrix shapes.\n";
-		exit(1);
+		cerr << "Warning in Core/Tensor: Fortran functions do not support rectangular matrix shapes"
+		  "using untested C code instead.\n";
+		matrixTensorAsymmetric(C, A, B, before, activeC, activeB, after, zero);
+		return;
 	}
 
 	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
@@ -596,74 +668,10 @@ void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
 			&a, &b, &c, &add);
 	} else {
-		if (zero) { C.zero(); }
-
-		// Variables to Precompute index values
-		size_t actbefB = activeB * before;
-		size_t actbefC = activeC * before;
-		size_t Aidx = 0;
-		size_t Bidx = 0;
-		size_t Cidx = 0;
-		size_t kpreidxB = 0;
-		size_t kpreidxC = 0;
-		size_t lpreidx = 0;
-		size_t jpreidx = 0;
-		size_t lactive = 0;
-		// Avoid unnecessary thread launches
-		// TODO: this requires #inclue <omp.h>
-		/*
-		const char* threads = getenv("OMP_NUM_THREADS");
-		if (threads) {
-			if (after < atoi(threads)) {
-				omp_set_num_threads(after);
-			}
-		}
-		 */
-		if (before == 1) {
-#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
-			for (size_t k = 0; k < after; ++k) {
-				kpreidxB = k * actbefB;
-				kpreidxC = k * actbefC;
-				for (size_t l = 0; l < activeB; ++l) {
-					Bidx = l + kpreidxB;
-					for (size_t j = 0; j < activeC; ++j) {
-						Cidx = j + kpreidxC;
-						Aidx = l * activeB + j; //TODO: why is this declared twice?
-						Aidx = l * activeC + j;
-//					assert(Cidx < C.shape().totalDimension());
-//					assert(Bidx < B.shape().totalDimension());
-//					assert(Aidx < A.Dim1()*A.Dim2());
-						/// C(1, j, k) += A(j, l) * B(1, l, k)
-						C[Cidx] += A[Aidx] * B[Bidx];
-					}
-				}
-			}
-		} else {
-#pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
-			for (size_t k = 0; k < after; ++k) {
-				kpreidxB = k * actbefB;
-				kpreidxC = k * actbefC;
-				for (size_t l = 0; l < activeB; ++l) {
-					lpreidx = l * before + kpreidxB;
-					lactive = l * activeC;
-					for (size_t j = 0; j < activeC; ++j) {
-						Aidx = lactive + j;
-						jpreidx = j * before + kpreidxC;
-						for (size_t i = 0; i < before; ++i) {
-							Cidx = jpreidx + i;
-							Bidx = lpreidx + i;
-//						assert(Cidx < C.shape().totalDimension());
-//						assert(Bidx < B.shape().totalDimension());
-//						assert(Aidx < A.Dim1()*A.Dim2());
-							/// C(i, j, k) += A(j, l) * B(i, l, k)
-							C[Cidx] += A[Aidx] * B[Bidx];
-						}
-					}
-				}
-			}
-		}
+		matrixTensorAsymmetric(C, A, B, before, activeC, activeB, after, zero);
 	}
 }
+
 
 template<typename T, typename U>
 void tMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
@@ -773,6 +781,7 @@ Tensor<T> matrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
 		assert(active2 == B.shape()[mode]);
 		cout << "non-quadratic mattensor implemented but tested only once so far.\n";
 		matrixTensor(C, A, B, before, active1, active2, after, false);
+		cout << "done.\n";
 		return C;
 	}
 }

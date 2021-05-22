@@ -21,6 +21,13 @@ namespace TreeFunctions {
 		}
 		size_t last = node.shape().lastIdx();
 		contraction(S[node], Bra, Ket, last);
+		if (S[node].dim1() != S[node].dim2()) {
+			cout << "Ket:\n";
+			Ket.print();
+			cout << "S:\n";
+			S[node].print();
+			@TODO: Something is wrong in the contraction routine for asymmetric inputs
+		}
 
 	}
 

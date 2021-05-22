@@ -19,6 +19,25 @@ MatrixTree<T>::MatrixTree(const Tree& tree) {
 	Initialize(tree);
 }
 
+template<typename T>
+MatrixTree<T>::MatrixTree(const Tree& tree1, const Tree& tree2) {
+	attributes_.clear();
+
+	if (tree1.nNodes() != tree2.nNodes()) {
+		cerr << "Error: in MatrixTree: trees do not share the same topology!\n";
+		exit(1);
+	}
+	for (const Node& node1 : tree1) {
+		const Node& node2 = tree2.getNode(node1.address());
+		const TensorShape& tdim1 = node1.shape();
+		const TensorShape& tdim2 = node2.shape();
+		size_t dim1 = tdim1.lastDimension();
+		size_t dim2 = tdim2.lastDimension();
+		attributes_.emplace_back(Matrix<T>(dim1, dim2));
+	}
+}
+
+
 template <typename T>
 void MatrixTree<T>::Initialize(const Tree& tree) {
 	attributes_.clear();

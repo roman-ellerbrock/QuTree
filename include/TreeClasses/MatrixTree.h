@@ -16,6 +16,8 @@ public:
 
 	explicit MatrixTree(const Tree& tree);
 
+	MatrixTree(const Tree& tree1, const Tree& tree2);
+
 	explicit MatrixTree(istream& is);
 
 	explicit MatrixTree(const string& filename);
