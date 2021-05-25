@@ -26,7 +26,9 @@ namespace TreeFunctions {
 			Ket.print();
 			cout << "S:\n";
 			S[node].print();
-			@TODO: Something is wrong in the contraction routine for asymmetric inputs
+			//@TODO: Something is wrong in the contraction routine for asymmetric inputs
+			cout << "Exit TODO:MatrixTreeFunctions_Impl" << endl;
+			exit(1);
 		}
 
 	}

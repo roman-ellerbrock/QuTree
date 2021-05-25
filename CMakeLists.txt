@@ -119,7 +119,19 @@ if (openmp)
     set(QuTree_RELEASE_FLAGS "-openmp ${QuTree_RELEASE_FLAGS}")
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
 endif()
-target_link_libraries(QuTree PUBLIC Eigen3::Eigen)
+
+#find_package(OpenBLAS REQUIRED)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(BLA_VENDOR OpenBLAS)
+#set(BLA_VENDOR Intel10_64lp)
+#find_package(BLAS REQUIRED)
+set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+#find_package(LAPACK)
+message("Libs: ${BLAS_LIBRARIES}")
+target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
+#target_link_libraries(QuTree PRIVATE ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+
+#target_link_libraries(QuTree PUBLIC Eigen3::Eigen)
 
 #####################################################################
 # Set Compiler Flags

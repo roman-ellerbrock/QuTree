@@ -232,14 +232,5 @@ namespace benchmark {
 		}*/
 	}
 
-	void run() {
-		mt19937 gen(1989);
-		size_t nsample = 20;
-		ostream& os = cout;
-
-//		screen_order(gen, os, nsample);
-//		screen_dim(gen, os, nsample);
-		screen_nleaves(gen, os, nsample);
-	}
 }
 

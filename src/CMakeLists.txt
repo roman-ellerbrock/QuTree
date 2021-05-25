@@ -3,6 +3,7 @@ set(QuTree_SOURCE_FILES
     src/Core/JacobiRotationFramework.cpp
     src/Core/Matrix_Instantiations.cpp
     src/Core/TensorShape.cpp
+    src/Core/TensorMath.cpp
     src/Core/Tensor_Extension_Instantiations.cpp
     src/Core/Tensor_Instantiations.cpp
     src/Core/Vector_Instantiations.cpp
