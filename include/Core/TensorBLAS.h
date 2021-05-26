@@ -2,9 +2,18 @@
 // Created by Roman Ellerbrock on 5/22/21.
 //
 
-#ifndef TENSORMATH_H
-#define TENSORMATH_H
+#ifndef TENSORBLAS_H
+#define TENSORBLAS_H
 #include "Tensor.h"
+
+template<typename T>
+void transpose(T *dest, const T *src, size_t dim1, size_t dim2);
+
+template<typename T>
+void transpose2(T *dest, const T *src, size_t lda, size_t ldb, size_t blocksize);
+
+template<typename T>
+void transposeAB(T *dest, const T *src, size_t A, size_t B, size_t C);
 
 template <typename T, typename U>
 void matrixTensor1(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
@@ -12,10 +21,12 @@ void matrixTensor1(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 
 template <typename T, typename U>
 void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
+	Tensorcd& D,
 	size_t before, size_t active, size_t activeC, size_t after, bool zero);
 
 template <typename T, typename U>
 void matrixTensor3(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
+	Tensor<T>& Ket_work, Tensor<T>& hKet_work,
 	size_t before, size_t active, size_t activeC, size_t after, bool zero);
 
 template<typename T, typename U>
@@ -24,6 +35,7 @@ void contraction1(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 
 template<typename T, typename U>
 void contraction2(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	Tensorcd& bra_work, Tensorcd& ket_work,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
-#endif //TENSORMATH_H
+#endif //TENSORBLAS_H

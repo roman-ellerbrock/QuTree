@@ -7,14 +7,20 @@
 namespace benchmark {
 	void run() {
 		mt19937 gen(1989);
-		size_t nsample = 1000;
+		size_t nsample = 50;
 		ostream& os = cout;
 
 //		screen_order(gen, os, nsample);
 //		screen_dim(gen, os, nsample);
 //		screen_nleaves(gen, os, nsample);
-//		screen_matrixtensor_optimization(gen, os, nsample);
-		screen_contraction_optimization(gen, os, nsample);
+//		cout << "Transpose:\n";
+//		screenTranspose(gen, os, nsample);
+//		cout << "TransposeAB:\n";
+//		screenDimensionTransposeAB(gen, os, nsample);
+//		cout << "matrixTensor:\n";
+//		screenDimensionMatrixTensor(gen, os, nsample);
+//		cout << "TensorContraction:\n";
+//		screenDimensionTensorHoleProduct(gen, os, nsample);
 	}
 }
 

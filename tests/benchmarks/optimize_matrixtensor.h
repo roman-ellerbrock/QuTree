@@ -6,8 +6,10 @@
 #define OPTIMIZE_MATRIXTENSOR_H
 
 namespace benchmark {
-	void screen_matrixtensor_optimization(mt19937& gen, ostream& os, size_t nsample);
-	void screen_contraction_optimization(mt19937& gen, ostream& os, size_t nsample);
+	void screenDimensionMatrixTensor(mt19937& gen, ostream& os, size_t nsample);
+	void screenDimensionTensorHoleProduct(mt19937& gen, ostream& os, size_t nsample);
+	void screenTranspose(mt19937& gen, ostream& os, size_t nsample);
+	void screenDimensionTransposeAB(mt19937& gen, ostream& os, size_t nsample);
 }
 
 #endif //OPTIMIZE_MATRIXTENSOR_H

@@ -26,6 +26,7 @@ set(QuTree_tests
         test_Tensor.cpp
         tests.cpp
         test_TensorTree.cpp
+        test_TensorBLAS.cpp
         test_Operators.cpp
         test_SparseTree.cpp
         test_SymTensorTree.cpp
