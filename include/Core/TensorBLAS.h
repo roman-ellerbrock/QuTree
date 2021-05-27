@@ -9,8 +9,8 @@
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2);
 
-template<typename T>
-void transpose2(T *dest, const T *src, size_t lda, size_t ldb, size_t blocksize);
+template<typename T, int blocksize>
+void transpose2(T *dest, const T *src, size_t lda, size_t ldb);
 
 template<typename T>
 void transposeAB(T *dest, const T *src, size_t A, size_t B, size_t C);

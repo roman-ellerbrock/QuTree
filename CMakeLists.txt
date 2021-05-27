@@ -83,6 +83,7 @@ install(TARGETS QuTree
     LIBRARY DESTINATION ${QuTree_INSTALL_LIB_DIR}
     ARCHIVE DESTINATION ${QuTree_INSTALL_LIB_DIR}
     )
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
     DESTINATION ${QuTree_INSTALL_INC_DIR}
     FILES_MATCHING PATTERN "*.h*")
@@ -109,7 +110,7 @@ install(FILES
 if (NOT openmp)
     set(openmp OFF)
     message("Setting openMP off (${openmp})")
-    else ()
+else ()
     message("openmp=${openmp}")
 endif()
 
@@ -123,15 +124,17 @@ endif()
 #find_package(OpenBLAS REQUIRED)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 #set(BLA_VENDOR OpenBLAS)
-#set(BLA_VENDOR Intel10_64lp)
-#find_package(BLAS REQUIRED)
-set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
-#find_package(LAPACK)
-message("Libs: ${BLAS_LIBRARIES}")
-target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
-#target_link_libraries(QuTree PRIVATE ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
-#target_link_libraries(QuTree PUBLIC Eigen3::Eigen)
+#set(MKL_DIR "/opt/intel/oneapi/mkl/2021.2.0/lib")
+#find_library(MKL_LIB NAMES mkl_intel_lp64 PATHS ${MKL_DIR})
+find_package(BLAS REQUIRED)
+set(BLA_VENDOR Intel10_64lp)
+#find_package(LAPACK REQUIRED)
+#set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+#set(BLAS_LIBRARIES "/opt/intel/oneapi/mkl/2021.2.0/lib/libmkl_intel_lp64.dylib")
+
+#target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} "${MKL_DIR}/libmkl_intel_lp64.dylib")
+target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
 
 #####################################################################
 # Set Compiler Flags
@@ -173,11 +176,9 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-
 #####################################################################
 # Recurse into subdirectories
 #####################################################################
 # Excluded from default builds
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
-

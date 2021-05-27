@@ -12,7 +12,7 @@ namespace benchmark {
 		for (size_t n = 0; n < nsample; ++n) {
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-			transpose2(&dest[0], &src[0], dim1, dim2, blocksize);
+			transpose2<complex<double>,4>(&dest[0], &src[0], dim1, dim2);
 //			transpose(&dest[0], &src[0], dim1, dim2);
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -45,9 +45,10 @@ namespace benchmark {
 //			B2.zero();
 			std::chrono::time_point<std::chrono::system_clock> start, end;
 			start = std::chrono::system_clock::now();
-//			matrixTensor3(B, S, A, A2, B2, bef, act, act, aft, true);
+//			matrixTensor1(B, S, A, bef, act, act, aft, true);
 			matrixTensor2(B, S, A, B2, bef, act, act, aft, true);
-//			matrixTensor(B2, S, A, bef, act, act, aft, false);
+//			matrixTensor3(B, S, A, A2, B2, bef, act, act, aft, true);
+//			matrixTensor(B2, S, A, bef, act, act, aft, true);
 //			cout << "res = " << residual(B, B2) << endl;
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -84,7 +85,7 @@ namespace benchmark {
 			Matrixcd dest(dim, dim);
 			Tensor_Extension::generate(src, gen);
 			auto stat = sampleTranspose(dest, src, nsample, dim, dim, blocksize);
-			os << "dim = " << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+			os << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 
@@ -104,15 +105,16 @@ namespace benchmark {
 			size_t bef = tdim.before(mode);
 
 			auto stat = sampleTransposeAB(A, B, nsample, bef, act, aft, blocksize);
-			os << "dim = " << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+			os << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 
 	void screenDimensionMatrixTensor(mt19937& gen, ostream& os, size_t nsample) {
-		size_t order = 3;
+		size_t order = 5;
 //		size_t dim = 10;
-		size_t mode = 1;
-		for (size_t dim = 50; dim <= 250; dim += 20) {
+		size_t mode = 4;
+//		for (size_t dim = 50; dim <= 250; dim += 20) { // order 3
+		for (size_t dim = 8; dim <= 36; dim += 4) { // order 5
 			auto tdim = make_TensorDim(order, dim);
 			Tensorcd A(tdim, false);
 			Matrixcd S(dim, dim);
@@ -124,7 +126,7 @@ namespace benchmark {
 			size_t bef = tdim.before(mode);
 
 			auto stat = sampleMatrixTensor(B, S, A, nsample, bef, act, aft);
-			os << "dim = " << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+			os << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 
@@ -143,7 +145,7 @@ namespace benchmark {
 			size_t bef = tdim.before(mode);
 
 			auto stat = sampleTensorHoleProduct(S, A, B, nsample, bef, act, aft);
-			os << "dim = " << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
+			os << dim << "\t" << stat.first / 1000. << "\t" << stat.second / 1000. << endl;
 		}
 	}
 

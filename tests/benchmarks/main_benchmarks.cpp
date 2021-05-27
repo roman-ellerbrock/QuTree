@@ -7,7 +7,7 @@
 namespace benchmark {
 	void run() {
 		mt19937 gen(1989);
-		size_t nsample = 50;
+		size_t nsample = 20;
 		ostream& os = cout;
 
 //		screen_order(gen, os, nsample);
@@ -18,7 +18,7 @@ namespace benchmark {
 //		cout << "TransposeAB:\n";
 //		screenDimensionTransposeAB(gen, os, nsample);
 //		cout << "matrixTensor:\n";
-//		screenDimensionMatrixTensor(gen, os, nsample);
+		screenDimensionMatrixTensor(gen, os, nsample);
 //		cout << "TensorContraction:\n";
 //		screenDimensionTensorHoleProduct(gen, os, nsample);
 	}

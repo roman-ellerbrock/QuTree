@@ -18,11 +18,12 @@ void transpose(T *dest, const T *src, size_t dim1, size_t dim2) {
 	}
 }
 
-template<typename T>
-void transpose2(T *dest, const T *src, size_t lda, size_t ldb, size_t blocksize) {
+template<typename T, int blocksize>
+void transpose2(T *dest, const T *src, size_t lda, size_t ldb) {
 	/// Incorporate blocking to minimize cache misses
 	// dest[b, a, c] = src[a, b, c]
 	/// simple in-place transpose
+	cerr << "check for rectangular shapes.\n";
 	size_t nblockA = lda / blocksize;
 	size_t nblockB = ldb / blocksize;
 	for (size_t b = 0; b < nblockB; ++b) {
@@ -67,29 +68,21 @@ void transpose2(T *dest, const T *src, size_t lda, size_t ldb, size_t blocksize)
 template<typename T>
 void transposeAB(T *dest, const T *src, size_t A, size_t B, size_t C) {
 	// dest[b, a, c] = src[a, b, c]
-	/// simple in-place transpose
-	size_t blocksize = 64 / sizeof(T);
-	if (blocksize == 0) { blocksize = 1; }
-
 	for (size_t c = 0; c < C; ++c) {
-/*		for (size_t b = 0; b < B; ++b) {
-			for (size_t a = 0; a < A; ++a) {
-				dest[b + a * B + c * A * B] = src[a + b * A + c * A * B];
-			}
-		}*/
-		transpose2(&dest[c * A * B], &src[c * A * B], A, B, blocksize);
+	//	transpose2<T,4>(&dest[c * A * B], &src[c * A * B], A, B);
+		transpose(&dest[c * A * B], &src[c * A * B], A, B);
 	}
 }
 
 template<typename T>
 void transposeBC(T *dest, const T *src, size_t A, size_t B, size_t C) {
 	// dest[a, c, b] = src[a, b, c]
-	/// simple in-place transpose
 	for (size_t c = 0; c < C; ++c) {
 		for (size_t b = 0; b < B; ++b) {
-			for (size_t a = 0; a < A; ++a) {
+			memcpy(&dest[c * A + b * A * C], &src[b * A + c * A * B], A * sizeof(T));
+/*			for (size_t a = 0; a < A; ++a) {
 				dest[a + c * A + b * A * C] = src[a + b * A + c * A * B];
-			}
+			}*/
 		}
 	}
 }
@@ -118,25 +111,29 @@ template<typename T, typename U>
 void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	Tensorcd& D, size_t before, size_t active, size_t activeC, size_t after, bool zero) {
 
-	complex<double> z = 1.0, zz = 1.;
+	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
 
-	size_t m = activeC;
-	size_t k = active; //activeB
-	size_t n = before;
-
 	if (before == 1) {
+		size_t m = activeC;
+		size_t k = active; //activeB
+		size_t n = after;
 		cblas_zgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
 			(void *) &z, (void *) &h[0], m, (void *) &B[0], k, (void *) &zz, (void *) &C[0], m);
 		return;
 	}
+
+	size_t m = activeC;
+	size_t k = active; //activeB
+	size_t n = before;
 
 	size_t pref = before * active;
 	size_t prefC = before * activeC;
 	for (size_t aft = 0; aft < after; ++aft) {
 		cblas_zgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
 			(void *) &z, (void *) &h[0], m, (void *) &B[aft * pref], n, (void *) &zz, (void *) &D[aft * prefC], m);
-		transpose2(&C[aft * prefC], &D[aft * prefC], activeC, before, 4);
+//		transpose2<T, 4>(&C[aft * prefC], &D[aft * prefC], activeC, before);
+		transpose(&C[aft * prefC], &D[aft * prefC], activeC, before);
 	}
 }
 
@@ -148,11 +145,8 @@ void matrixTensor3(Tensor<T>& hKet, const Matrix<U>& h, const Tensor<T>& Ket,
 	/// A, B, B2, C are dimensions of indices a, b, b2, c
 	/// Transpose tensor and map to BLAS ?geem
 
-//	Tensorcd Ket_cpy(Ket.shape());
-//	Tensorcd hKet_cpy = hKet;
-
 	size_t AC = A * C;
-	complex<double> z = 1.0, zz = 1.;
+	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
 	transposeAB(&Ket_work[0], &Ket[0], A, B, C);
 	cblas_zgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, B2, AC, B,
@@ -194,11 +188,15 @@ void contraction2(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	transposeBC(&ket_work[0], &ket[0], A, B2, C);
 
 	size_t AC = A * C;
-	complex<double> z = 1.0, zz = 1.;
+	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
 	cblas_zgemm(CblasColMajor, CblasConjTrans, CblasNoTrans, B, B2, AC,
 		(void *) &z, (void *) &bra_work[0], AC, (void *) &ket_work[0], AC, (void *) &zz, (void *) &h[0], B);
 }
+
+/// ========================================================================
+/// Template Instantiations
+/// ========================================================================
 
 typedef complex<double> cd;
 
@@ -224,6 +222,6 @@ template void contraction2(Matrix<cd>& h, const Tensor<cd>& bra, const Tensor<cd
 
 template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2);
 
-template void transpose2(cd *dest, const cd *src, size_t lda, size_t ldb, size_t blocksize);
+template void transpose2<complex<double>,4>(cd *dest, const cd *src, size_t lda, size_t ldb);
 
 template void transposeAB(cd *dest, const cd *src, size_t A, size_t B, size_t C);
