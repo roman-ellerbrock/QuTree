@@ -127,10 +127,10 @@ endif()
 
 #set(MKL_DIR "/opt/intel/oneapi/mkl/2021.2.0/lib")
 #find_library(MKL_LIB NAMES mkl_intel_lp64 PATHS ${MKL_DIR})
-find_package(BLAS REQUIRED)
-set(BLA_VENDOR Intel10_64lp)
+#find_package(BLAS REQUIRED)
+#set(BLA_VENDOR Intel10_64lp)
 #find_package(LAPACK REQUIRED)
-#set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
 #set(BLAS_LIBRARIES "/opt/intel/oneapi/mkl/2021.2.0/lib/libmkl_intel_lp64.dylib")
 
 #target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} "${MKL_DIR}/libmkl_intel_lp64.dylib")

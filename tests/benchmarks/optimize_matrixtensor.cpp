@@ -68,6 +68,7 @@ namespace benchmark {
 			start = std::chrono::system_clock::now();
 			contraction2(S, A, B, workA, workB, bef, act, act, aft, true);
 //			auto S2 = contraction(A, B, 0);
+//			contraction(S, A, B, 2);
 //			cout << residual(S, S2) << endl;
 			end = std::chrono::system_clock::now();
 			duration_vec.emplace_back(chrono::duration_cast<chrono::microseconds>(end - start).count());
@@ -131,9 +132,10 @@ namespace benchmark {
 	}
 
 	void screenDimensionTensorHoleProduct(mt19937& gen, ostream& os, size_t nsample) {
-		size_t order = 3;
-		size_t mode = 1;
-		for (size_t dim = 50; dim <= 250; dim += 20) {
+		size_t order = 5;
+		size_t mode = 2;
+//		for (size_t dim = 50; dim <= 250; dim += 20) {
+		for (size_t dim = 8; dim <= 48; dim += 4) { // order 5
 			auto tdim = make_TensorDim(order, dim);
 			Tensorcd A(tdim, false);
 			Tensorcd B(tdim, false);

@@ -18,9 +18,9 @@ namespace benchmark {
 //		cout << "TransposeAB:\n";
 //		screenDimensionTransposeAB(gen, os, nsample);
 //		cout << "matrixTensor:\n";
-		screenDimensionMatrixTensor(gen, os, nsample);
+//		screenDimensionMatrixTensor(gen, os, nsample);
 //		cout << "TensorContraction:\n";
-//		screenDimensionTensorHoleProduct(gen, os, nsample);
+		screenDimensionTensorHoleProduct(gen, os, nsample);
 	}
 }
 
