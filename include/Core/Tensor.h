@@ -163,7 +163,6 @@ public:
 	//////////////////////////////////////////////////////////
 	// Operations on Tensors
 	//////////////////////////////////////////////////////////
-	T singleDotProduct(const Tensor& A, size_t n, size_t m)const;
 
 	//! A Dot Product between two Tensors.
 	/*!
@@ -171,7 +170,6 @@ public:
 		(*this) and A. The result is an overlap matrix sized with
 		the number of tensors.
 	 */
-
 	Matrix<T> dotProduct(const Tensor<T>& A)const;
 
 	/// This function will fill the Tensor with Zero-entries
@@ -206,6 +204,10 @@ T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m);
 
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
+
+template<typename T, typename U>
+void contraction1(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
 template<typename T>
 void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,

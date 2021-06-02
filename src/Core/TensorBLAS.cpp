@@ -178,23 +178,6 @@ void matrixTensor3(Tensor<T>& hKet, const Matrix<U>& h, const Tensor<T>& Ket,
 //====================================================================
 
 //====================================================================
-template<typename T, typename U>
-void contraction1(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
-	size_t A, size_t B, size_t B2, size_t C, bool zero) {
-
-	if (zero) { h.zero(); }
-
-	for (size_t a = 0; a < A; ++a) {
-		for (size_t b = 0; b < B; ++b) {
-			for (size_t b2 = 0; b2 < B2; ++b2) {
-				for (size_t c = 0; c < C; ++c) {
-//					h(b, b2) += conj(bra(a, b, c)) * ket(a, b2, c);
-					h(b, b2) += conj(bra[a + b * A + c * A * B]) * ket(a + b2 * A + c * A * B2);
-				}
-			}
-		}
-	}
-}
 
 template<typename T>
 void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
@@ -323,9 +306,6 @@ template void matrixTensor2(Tensor<cd>& C, const Matrix<cd>& h, const Tensor<cd>
 
 template void matrixTensor3(Tensor<cd>& hKet, const Matrix<cd>& h, const Tensor<cd>& Ket,
 	Tensor<cd>& Ket_work, Tensor<cd>& hKet_work,
-	size_t A, size_t B, size_t B2, size_t C, bool zero);
-
-template void contraction1(Matrix<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
 template void contraction2(Matrix<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,

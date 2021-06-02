@@ -16,7 +16,7 @@ Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
 
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
-	:shape_(dim), coeffs_((T*)malloc(dim.totalDimension()*sizeof(T)) ), ownership_(true) {
+	:shape_(dim), coeffs_((T *) malloc(dim.totalDimension() * sizeof(T))), ownership_(true) {
 //	:shape_(dim), coeffs_(new T[dim.totalDimension()]), ownership_(true) {
 	if (InitZero) { zero(); }
 }
@@ -167,56 +167,6 @@ const T& Tensor<T>::operator()(const vector<size_t>& dims) const {
 	return operator()(indexMapping(dims, shape_));
 }
 
-/*
-//////////////////////////////////////////////////////////
-template<typename T>
-inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) {
-	size_t a = shape_.before(f);
-	size_t b = shape_[f];
-	size_t dimpart = shape_.lastBefore();
-	size_t idx = n * dimpart + k * a * b + j * a + i;
-	assert(i < a);
-	assert(j < b);
-	assert(n < shape_.lastDimension());
-	assert(f < shape_.order());
-	return coeffs_[idx];
-}
-
-template<typename T>
-inline T& Tensor<T>::operator()(const size_t i, const size_t j, const size_t k, const size_t f, const size_t n) const {
-	size_t a = shape_.before(f);
-	size_t b = shape_[f];
-	size_t dimpart = shape_.lastBefore();
-	size_t idx = n * dimpart + k * a * b + j * a + i;
-	assert(i < a);
-	assert(j < b);
-	assert(n < shape_.lastDimension());
-	assert(f < shape_.order());
-	return coeffs_[idx];
-}
-
-// Double Hole Operator
-template<typename T>
-T& Tensor<T>::operator()(const size_t bef, const size_t i, const size_t mid,
-	const size_t j, const size_t beh, const size_t mode1, const size_t mode2,
-	const size_t n) const {
-	assert(mode1 < mode2);
-	assert(mode2 < shape_.order());
-	size_t dimpart = shape_.lastBefore();
-	size_t before = shape_.before(mode1);
-	size_t active1 = shape_[mode1];
-	size_t active2 = shape_[mode2];
-	size_t before2 = shape_.before(mode2);
-	size_t idx = n * dimpart + before2 * active2 * beh + before2 * j +
-		mid * before * active1 + before * i + bef;
-	// mostly checking
-	assert(bef < before);
-	assert(i < active1);
-	assert(j < active2);
-	assert(n < shape_.lastDimension());
-	return coeffs_[idx];
-}*/
-
 //////////////////////////////////////////////////////////
 // File handling
 //////////////////////////////////////////////////////////
@@ -299,7 +249,7 @@ void Tensor<T>::read(const string& filename) {
 template<typename T>
 Tensor<T>& Tensor<T>::operator+=(const Tensor& A) {
 	assert(A.shape().totalDimension() == shape().totalDimension());
-	T const * Ax = A.coeffs_;
+	T const *Ax = A.coeffs_;
 	for (size_t i = 0; i < A.shape().totalDimension(); i++) {
 		coeffs_[i] += Ax[i];
 	}
@@ -414,16 +364,6 @@ void Tensor<T>::reshape(const TensorShape& new_dim) {
 // Operations on Tensors
 //////////////////////////////////////////////////////////
 template<typename T>
-T Tensor<T>::singleDotProduct(const Tensor& A, size_t n, size_t m) const {
-	T result = 0;
-#pragma omp parallel for reduction(+: result)
-	for (size_t i = 0; i < A.shape().lastBefore(); i++) {
-		result += conjugate(operator()(i, n)) * A(i, m);
-	}
-	return result;
-}
-
-template<typename T>
 Matrix<T> Tensor<T>::dotProduct(const Tensor<T>& A) const {
 	TensorShape tdima(A.shape());
 	size_t nmax = tdima.lastDimension();
@@ -449,7 +389,8 @@ Tensor<T>::Tensor(const Matrix<T>& mat)
 	}
 }
 
-// Non-member functions
+//////////////////////////////////////////////////////////
+/// Non-member functions
 //////////////////////////////////////////////////////////
 template<typename T>
 T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
@@ -476,47 +417,28 @@ T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 extern "C" {
 // subroutine matvec (mulpsi, psi, matrix, a, b, c, add)
 // subroutine rhomat (bra,ket,matrix,a,b,c)
-void matvec_(double* C, double* B, double* mat,
-	int* a, int* b, int* c, int* add);
-void ctmatvec_(double* C, double* B, double* mat,
-	int* a, int* b, int* c, int* add);
-void rmatvec_(double* C, double* B, double* mat,
-	int* a, int* b, int* c, int* add);
-void rhomat_(double* Bra, double* Ket, double* M,
-	int* a, int* b, int* c);
+void matvec_(double *C, double *B, double *mat,
+	int *a, int *b, int *c, int *add);
+void ctmatvec_(double *C, double *B, double *mat,
+	int *a, int *b, int *c, int *add);
+void rmatvec_(double *C, double *B, double *mat,
+	int *a, int *b, int *c, int *add);
+void rhomat_(double *Bra, double *Ket, double *M,
+	int *a, int *b, int *c);
 }
 
-template<typename T>
-void contractionAsymmetric(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
-	size_t before, size_t active1, size_t active2, size_t behind) {
+template<typename T, typename U>
+void contraction1(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	size_t A, size_t B, size_t B2, size_t C, bool zero) {
 
-	// Variables for precalculation of indices
-	size_t actbef1 = active1 * before;
-	size_t actbef2 = active2 * before;
-	size_t Sidx = 0;
-	size_t Aidx = 0;
-	size_t Bidx = 0;
-	size_t ipreidx = 0;
-	size_t jpreidx = 0;
-	size_t npreidx1 = 0;
-	size_t npreidx2 = 0;
+	if (zero) { h.zero(); }
 
-//	#pragma omp parallel for private(npreidx1, npreidx2, jpreidx, Sidx, ipreidx, Aidx, Bidx)
-	for (size_t n = 0; n < behind; n++) {
-		npreidx1 = n * actbef1;
-		npreidx2 = n * actbef2;
-		for (size_t j = 0; j < active2; j++) {
-			jpreidx = npreidx2 + j * before;
-			for (size_t i = 0; i < active1; i++) {
-				// S(i, j)
-				Sidx = j * active1 + i;
-				ipreidx = npreidx1 + i * before;
-				for (size_t l = 0; l < before; l++) {
-					// A(l, i, n)
-					Aidx = ipreidx + l;
-					// B(l, j, n)
-					Bidx = jpreidx + l;
-					S[Sidx] += conj(A[Aidx]) * B[Bidx];
+	for (size_t a = 0; a < A; ++a) {
+		for (size_t b = 0; b < B; ++b) {
+			for (size_t b2 = 0; b2 < B2; ++b2) {
+				for (size_t c = 0; c < C; ++c) {
+//					h(b, b2) += conj(bra(a, b, c)) * ket(a, b2, c);
+					h(b, b2) += conj(bra[a + b * A + c * A * B]) * ket(a + b2 * A + c * A * B2);
 				}
 			}
 		}
@@ -527,18 +449,22 @@ template<typename T>
 void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 	size_t before, size_t active1, size_t active2, size_t behind) {
 
-	if (active1 != active2) {
-		contractionAsymmetric(S, A, B, before, active1, active2, behind);
-		return;
+	typedef complex<double> cd;
+	typedef double d;
+	if constexpr(is_same<T, cd>::value) {
+		if (active1 == active2) {
+
+			int a = active1;
+			int b = before;
+			int c = behind;
+
+			rhomat_((double *) &A[0], (double *) &B[0], (double *) &S[0],
+				&a, &b, &c);
+			return;
+		}
 	}
 
-	int a = active1;
-	int b = before;
-	int c = behind;
-
-	rhomat_((double*) &A[0], (double*) &B[0], (double*) &S[0],
-		&a, &b, &c);
-
+	contraction1(S, A, B, before, active1, active2, behind, true);
 }
 
 template<typename T>
@@ -572,71 +498,19 @@ void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B, size_t k,
 }
 
 template<typename T, typename U>
-void matrixTensorAsymmetric(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
-	size_t before, size_t activeC, size_t activeB, size_t after, bool zero) {
+void matrixTensor1(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
+	size_t before, size_t active, size_t activeC, size_t after, bool zero) {
 
 	if (zero) { C.zero(); }
 
-	// Variables to Precompute index values
-	size_t actbefB = activeB * before;
-	size_t actbefC = activeC * before;
-	size_t Aidx = 0;
-	size_t Bidx = 0;
-	size_t Cidx = 0;
-	size_t kpreidxB = 0;
-	size_t kpreidxC = 0;
-	size_t lpreidx = 0;
-	size_t jpreidx = 0;
-	size_t lactive = 0;
-	// Avoid unnecessary thread launches
-	// TODO: this requires #inclue <omp.h>
-	/*
-	const char* threads = getenv("OMP_NUM_THREADS");
-	if (threads) {
-		if (after < atoi(threads)) {
-			omp_set_num_threads(after);
-		}
-	}
-	 */
-	if (before == 1) {
-//#pragma omp parallel for private(kpreidxB, kpreidxC, Bidx, Cidx, Aidx)
-		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				Bidx = l + kpreidxB;
-				for (size_t j = 0; j < activeC; ++j) {
-					Cidx = j + kpreidxC;
-					Aidx = l * activeB + j; //TODO: why is this declared twice?
-					Aidx = l * activeC + j;
-//					assert(Cidx < C.shape().totalDimension());
-//					assert(Bidx < B.shape().totalDimension());
-//					assert(Aidx < A.Dim1()*A.Dim2());
-					/// C(1, j, k) += A(j, l) * B(1, l, k)
-					C[Cidx] += A[Aidx] * B[Bidx];
-				}
-			}
-		}
-	} else {
-//#pragma omp parallel for private(Aidx, Bidx, Cidx, kpreidxB, kpreidxC, lpreidx, lactive, jpreidx)
-		for (size_t k = 0; k < after; ++k) {
-			kpreidxB = k * actbefB;
-			kpreidxC = k * actbefC;
-			for (size_t l = 0; l < activeB; ++l) {
-				lpreidx = l * before + kpreidxB;
-				lactive = l * activeC;
-				for (size_t j = 0; j < activeC; ++j) {
-					Aidx = lactive + j;
-					jpreidx = j * before + kpreidxC;
-					for (size_t i = 0; i < before; ++i) {
-						Cidx = jpreidx + i;
-						Bidx = lpreidx + i;
-//						assert(Cidx < C.shape().totalDimension());
-//						assert(Bidx < B.shape().totalDimension());
-//						assert(Aidx < A.Dim1()*A.Dim2());
-						/// C(i, j, k) += A(j, l) * B(i, l, k)
-						C[Cidx] += A[Aidx] * B[Bidx];
-					}
+	size_t dimafter = active * before;
+	size_t dimafterC = activeC * before;
+	for (size_t aft = 0; aft < after; ++aft) {
+		for (size_t act = 0; act < active; ++act) {
+			for (size_t actC = 0; actC < activeC; ++actC) {
+				for (size_t bef = 0; bef < before; ++bef) {
+					C[dimafterC * aft + actC * before + bef] +=
+						h[act * activeC + actC] * B[dimafter * aft + act * before + bef];
 				}
 			}
 		}
@@ -654,24 +528,20 @@ void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	typedef complex<double> cd;
 	typedef double d;
 
-	if (activeB != activeC) {
-		cerr << "Warning in Core/Tensor: Fortran functions do not support rectangular matrix shapes"
-		  "using untested C code instead.\n";
-		matrixTensorAsymmetric(C, A, B, before, activeC, activeB, after, zero);
-		return;
+	if (activeB == activeC) {
+		if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
+			matvec_((double *) &C[0], (double *) &B[0], (double *) &A[0],
+				&a, &b, &c, &add);
+			return;
+		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
+			rmatvec_((double *) &C[0], (double *) &B[0], (double *) &A[0],
+				&a, &b, &c, &add);
+			return;
+		}
 	}
 
-	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
-		matvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
-		&a, &b, &c, &add);
-	} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
-		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
-			&a, &b, &c, &add);
-	} else {
-		matrixTensorAsymmetric(C, A, B, before, activeC, activeB, after, zero);
-	}
+	matrixTensor1(C, A, B, before, activeC, activeB, after, zero);
 }
-
 
 template<typename T, typename U>
 void tMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
@@ -685,7 +555,7 @@ void tMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	typedef complex<double> cd;
 	typedef double d;
 	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
-		ctmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
+		ctmatvec_((double *) &C[0], (double *) &B[0], (double *) &A[0],
 			&a, &b, &c, &add);
 //	} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
 //		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
@@ -1120,12 +990,12 @@ template<typename T>
 void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f) {
 	assert(A.Dim1() == res.Dim1());
 	assert(A.Dim2() == res.Dim2());
-	for (size_t i = 0; i < A.Dim1()*A.Dim2(); ++i) {
+	for (size_t i = 0; i < A.Dim1() * A.Dim2(); ++i) {
 		res[i] = f(A[i]);
 	}
 }
 
-template <typename T>
+template<typename T>
 Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f) {
 	Tensor<T> res(A.Dim1(), A.Dim2(), false);
 	elementwise(res, A, f);

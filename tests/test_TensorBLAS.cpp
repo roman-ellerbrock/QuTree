@@ -172,5 +172,6 @@ SUITE (Tensor) {
 		contraction2(h, A_, Brec, workA, workB, dim_ * dim_, dim_, 2 * dim_, 1, 0);
 			CHECK_CLOSE(0., residual(h, hSol), eps);
 	}
+
 }
 
