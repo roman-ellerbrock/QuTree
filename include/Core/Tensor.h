@@ -240,7 +240,7 @@ template<typename T, typename U>
 Tensor<T> tensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode);
 
 template <typename T, typename U>
-Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
+Tensor<T> tMatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode);
 
 template <typename T, typename U>
 void multStateAB(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, bool zero = true);

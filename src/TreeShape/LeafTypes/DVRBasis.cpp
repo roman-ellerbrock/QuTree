@@ -62,7 +62,7 @@ void DVRBasis::toGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape();
 	assert(tdim.order() == 2);
 
-	uPhi = multATB(trafo_, phi, 0);
+	uPhi = tMatrixTensor(trafo_, phi, 0);
 }
 
 void DVRBasis::fromGrid(Tensorcd& uPhi, const Tensorcd& phi) const {

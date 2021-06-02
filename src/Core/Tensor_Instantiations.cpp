@@ -18,7 +18,7 @@ template Tensor<d> productElementwise(const Tensor<d>& A, const Tensor<d>& B);
 //template void HoleProduct<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
 template Tensor<cd> matrixTensor<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode);
 template void matrixTensor<cd, cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
-template Tensor<cd> multATB<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode);
+template Tensor<cd> tMatrixTensor<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode);
 template Tensor<cd> multStateAB(const Matrix<cd>& A, const Tensor<cd>& B);
 template Tensor<cd> multStateArTB<cd, cd>(const Matrix<cd>& A, const Tensor<cd>& B);
 template void multStateArTB<cd, cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B);
@@ -52,7 +52,7 @@ template Tensor<double> matrixTensor<doub, doub>(const Matrix<double>& A, const 
 template void matrixTensor<doub, doub>(Tensor<double>& C, const Matrix<double>& A, const Tensor<double>& B, size_t mode, bool zero);
 template void tensorMatrix(Tensor<double>& C, const Tensor<double>& B, const Matrix<double>& A, size_t mode, bool zero);
 template Tensor<double> tensorMatrix(const Tensor<double>& B, const Matrix<double>& A, size_t mode);
-template Tensor<double> multATB<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);
+template Tensor<double> tMatrixTensor<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);
 template Tensor<double> multStateAB(const Matrix<double>& A, const Tensor<double>& B);
 template Tensor<double> multStateArTB<doub, doub>(const Matrix<double>& A, const Tensor<double>& B);
 template void multStateArTB<doub, doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>& B);
@@ -75,6 +75,6 @@ template bool operator== <doub>(const Tensor<doub>& A, const Tensor<doub>& B);
 /// Mixed double/complex<double>
 template void multAdd<cd, double>(Tensor<cd>& A, const Tensor<cd>& B, double coeff);
 template Tensor<cd> matrixTensor<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
-template Tensor<cd> multATB<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
+template Tensor<cd> tMatrixTensor<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
 
 

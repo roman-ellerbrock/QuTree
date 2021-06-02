@@ -667,7 +667,8 @@ Tensor<T> tensorMatrix(const Tensor<T>& B, const Matrix<U>& A, size_t mode) {
 }
 
 template<typename T, typename U>
-Tensor<T> multATB(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
+Tensor<T> tMatrixTensor(const Matrix<U>& A, const Tensor<T>& B, size_t mode) {
+	/// @TODO: remove this function; replace by tensorMatrix
 	const TensorShape& tdim(B.shape());
 	assert(mode < tdim.order());
 	assert(mode >= 0);

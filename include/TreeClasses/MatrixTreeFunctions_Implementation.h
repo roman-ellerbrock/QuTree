@@ -5,6 +5,7 @@
 #ifndef MATRIXTREE_IMPLEMENTATION_H
 #define MATRIXTREE_IMPLEMENTATION_H
 #include "MatrixTreeFunctions.h"
+#include "Core/TensorBLAS.h"
 
 namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
@@ -16,20 +17,13 @@ namespace TreeFunctions {
 		if (!node.isBottomlayer()) {
 			for (int k = 0; k < node.nChildren(); k++) {
 				const Node& child = node.child(k);
-				Ket = matrixTensor(S[child], Ket, k);
+				Ket = matrixTensorBLAS(S[child], Ket, k);
+//				Ket = matrixTensor(S[child], Ket, k);
 			}
 		}
 		size_t last = node.shape().lastIdx();
-		contraction(S[node], Bra, Ket, last);
-		if (S[node].dim1() != S[node].dim2()) {
-			cout << "Ket:\n";
-			Ket.print();
-			cout << "S:\n";
-			S[node].print();
-			//@TODO: Something is wrong in the contraction routine for asymmetric inputs
-			cout << "Exit TODO:MatrixTreeFunctions_Impl" << endl;
-			exit(1);
-		}
+//		contraction(S[node], Bra, Ket, last);
+		contractionBLAS(S[node], Bra, Ket, last);
 
 	}
 
@@ -65,14 +59,16 @@ namespace TreeFunctions {
 			for (size_t k = 0; k < parent.nChildren(); ++k) {
 				if (k != child_idx) {
 					const Node& child = parent.child(k);
-					Ket = matrixTensor(S[child], Ket, k);
+//					Ket = matrixTensor(S[child], Ket, k);
+					Ket = matrixTensorBLAS(S[child], Ket, k);
 				}
 			}
 		}
 
-		Ket = multStateAB(Rho[parent], Ket);
+		//Ket = multStateAB(Rho[parent], Ket);
+		Ket = matrixTensorBLAS(Rho[parent], Ket, Ket.shape().lastIdx());
 
-		contraction(Rho[node], Bra, Ket, child_idx);
+		contractionBLAS(Rho[node], Bra, Ket, child_idx);
 	}
 
 	template<typename T>

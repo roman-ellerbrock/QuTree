@@ -21,8 +21,7 @@ void matrixTensor1(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 
 template <typename T, typename U>
 void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
-	Tensorcd& D,
-	size_t before, size_t active, size_t activeC, size_t after, bool zero);
+	Tensor<T>& D, size_t before, size_t active, size_t activeC, size_t after, bool zero);
 
 template <typename T, typename U>
 void matrixTensor3(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
@@ -43,8 +42,14 @@ void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 template<typename T, typename U>
 void matrixTensorBLAS(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
 
+template<typename T, typename U>
+Tensor<T> matrixTensorBLAS(const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+
 template<typename T>
 void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+
+template<typename T>
+Matrix<T> contractionBLAS(const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero = true);
 
 
 #endif //TENSORBLAS_H

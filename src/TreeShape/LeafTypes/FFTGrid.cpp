@@ -63,7 +63,7 @@ void FFTGrid::applyP(Tensorcd& pA, const Tensorcd& Acoeffs) const {
 }
 
 void FFTGrid::toGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {
-	uA = multATB(trafo_, Acoeffs, 0);
+	uA = tMatrixTensor(trafo_, Acoeffs, 0);
 }
 
 void FFTGrid::fromGrid(Tensorcd& uA, const Tensorcd& Acoeffs) const {

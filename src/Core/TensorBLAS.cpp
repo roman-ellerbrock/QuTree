@@ -108,7 +108,7 @@ void matrixTensor1(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 
 template<typename T, typename U>
 void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
-	Tensorcd& D, size_t before, size_t active, size_t activeC, size_t after, bool zero) {
+	Tensor<T>& D, size_t before, size_t active, size_t activeC, size_t after, bool zero) {
 	/// D is work tensor with shape of C.
 	typedef complex<double> cd;
 	typedef double d;
@@ -130,7 +130,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 				(void *) &z, (void *) &h[0], m, (void *) &B[0], k, (void *) &zz, (void *) &C[0], m);
 		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
 			cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
-				&z, (void *) &h[0], m, (void *) &B[0], k, &zz, (void *) &C[0], m);
+				z, (double *) &h[0], m, (double *) &B[0], k, zz, (double *) &C[0], m);
 		}
 		return;
 	}
@@ -147,7 +147,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 				(void *) &z, (void *) &h[0], m, (void *) &B[aft * pref], n, (void *) &zz, (void *) &D[aft * prefC], m);
 		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
 			cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
-				&z, (void *) &h[0], m, (void *) &B[aft * pref], n, &zz, (void *) &D[aft * prefC], m);
+				z, (double *) &h[0], m, (double *) &B[aft * pref], n, zz, (double *) &D[aft * prefC], m);
 		}
 //		transpose2<T, 4>(&C[aft * prefC], &D[aft * prefC], activeC, before);
 		transpose(&C[aft * prefC], &D[aft * prefC], activeC, before);
@@ -202,7 +202,7 @@ void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 			(void *) &z, (void *) &bra_work[0], AC, (void *) &ket_work[0], AC, (void *) &zz, (void *) &h[0], B);
 	} else if constexpr(is_same<T, d>::value) {
 		cblas_dgemm(CblasColMajor, CblasConjTrans, CblasNoTrans, B, B2, AC,
-			&z, (void *) &bra_work[0], AC, (void *) &ket_work[0], AC, &zz, (void *) &h[0], B);
+			z, (double *) &bra_work[0], AC, (double *) &ket_work[0], AC, zz, (double *) &h[0], B);
 	}
 }
 
@@ -289,6 +289,35 @@ void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_
 	contraction2(h, A, B, Awork, Bwork, before, activeA, activeB, after, zero);
 }
 
+template<typename T>
+Matrix<T> contractionBLAS(const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero) {
+	TensorShape tdimA(A.shape());
+	TensorShape tdimB(B.shape());
+	if (mode >= tdimA.order()) {
+		cerr << "contraction error: mode too large for Bra.\n";
+		exit(1);
+	}
+	if (mode >= tdimB.order()) {
+		cerr << "contraction error: mode too large for Ket.\n";
+		exit(1);
+	}
+
+	size_t dim1 = tdimA[mode];
+	size_t dim2 = tdimB[mode];
+	Matrix<T> h(dim1, dim2);
+	contractionBLAS(h, A, B, mode, zero);
+	return h;
+}
+
+template<typename T, typename U>
+Tensor<T> matrixTensorBLAS(const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
+	TensorShape Cshape = B.shape();
+	Cshape.setDimension(A.dim1(), mode);
+	Tensor<T> C(Cshape);
+	matrixTensorBLAS(C, A, B, mode, zero);
+	return C;
+}
+
 /// ========================================================================
 /// Template Instantiations
 /// ========================================================================
@@ -301,8 +330,7 @@ template void matrixTensor1(Tensor<cd>& C, const Matrix<cd>& h, const Tensor<cd>
 	size_t before, size_t active, size_t activeC, size_t after, bool zero);
 
 template void matrixTensor2(Tensor<cd>& C, const Matrix<cd>& h, const Tensor<cd>& B,
-	Tensorcd& D,
-	size_t before, size_t active, size_t activeC, size_t after, bool zero);
+	Tensorcd& D, size_t before, size_t active, size_t activeC, size_t after, bool zero);
 
 template void matrixTensor3(Tensor<cd>& hKet, const Matrix<cd>& h, const Tensor<cd>& Ket,
 	Tensor<cd>& Ket_work, Tensor<cd>& hKet_work,
@@ -319,5 +347,13 @@ template void transpose2<complex<double>, 4>(cd *dest, const cd *src, size_t lda
 template void transposeAB(cd *dest, const cd *src, size_t A, size_t B, size_t C);
 
 /// ==== Wrappers ====
+// complex double
 template void matrixTensorBLAS(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 template void contractionBLAS(Matrix<cd>& h, const Tensor<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
+template Tensor<cd> matrixTensorBLAS(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
+template Matrix<cd> contractionBLAS(const Tensor<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
+// double
+template void matrixTensorBLAS(Tensor<d>& C, const Matrix<d>& A, const Tensor<d>& B, size_t mode, bool zero);
+template void contractionBLAS(Matrix<d>& h, const Tensor<d>& A, const Tensor<d>& B, size_t mode, bool zero);
+template Tensor<d> matrixTensorBLAS(const Matrix<d>& A, const Tensor<d>& B, size_t mode, bool zero);
+template Matrix<d> contractionBLAS(const Tensor<d>& A, const Tensor<d>& B, size_t mode, bool zero);
