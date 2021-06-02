@@ -142,7 +142,7 @@ target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
 # set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
 
 # Ensure C++14 standard (force downstream as well)
-target_compile_features(QuTree PUBLIC cxx_std_14)
+target_compile_features(QuTree PUBLIC cxx_std_17)
 
 #set(FLAGS_VECTORIZE  "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
 set(FLAGS_VECTORIZE "-fopenmp-simd -march=native")

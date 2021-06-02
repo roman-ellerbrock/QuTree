@@ -21,8 +21,10 @@ SUITE (Tensor) {
 			S_ = Create(dim_);
 			TensorShape shape3({dim_, dim_, dim_});
 			A_ = Tensorcd(shape3);
+			B_ = Tensorcd(shape3);
 			A2_ = Tensorcd(shape3);
 			Tensor_Extension::generate(A_, gen_);
+			Tensor_Extension::generate(B_, gen_);
 		}
 
 		Matrixcd Create(size_t dim) {
@@ -33,7 +35,7 @@ SUITE (Tensor) {
 
 		size_t dim_;
 		Matrixcd S_;
-		Tensorcd A_, A2_, A2sol_;
+		Tensorcd A_, A2_, B_, A2sol_;
 		mt19937 gen_;
 	};
 
@@ -53,6 +55,8 @@ SUITE (Tensor) {
 		transpose2<cd, 4>(&XT2[0], &X[0], d, d);
 			CHECK_CLOSE(0., residual(XT1, XT2), eps);
 	}
+
+	/// ===== matrixTensor ================================
 
 	TEST_FIXTURE (Factory, matrixTensorT1) {
 		/// Test matrixTensor routine for square matrices
@@ -115,5 +119,58 @@ SUITE (Tensor) {
 			CHECK_CLOSE(0., residual(A2, A2sol), eps);
 	}
 
+	/// ===== Contraction ================================
+
+	TEST_FIXTURE (Factory, contractionT1) {
+		Matrixcd h(dim_, dim_);
+
+		auto hSol = contraction(A_, B_, 0);
+		contractionBLAS(h, A_, B_, 0);
+			CHECK_CLOSE(0., residual(hSol, h), eps);
+
+		hSol = contraction(A_, B_, 1);
+		contractionBLAS(h, A_, B_, 1);
+			CHECK_CLOSE(0., residual(hSol, h), eps);
+
+		hSol = contraction(A_, B_, 2);
+		contractionBLAS(h, A_, B_, 2);
+			CHECK_CLOSE(0., residual(hSol, h), eps);
+	}
+
+	TEST_FIXTURE (Factory, contractionT2mode0) {
+		TensorShape shapeB({2 * dim_, dim_, dim_});
+		Matrixcd h(dim_, 2 * dim_);
+		Matrixcd hSol(dim_, 2 * dim_);
+		Tensorcd Brec(shapeB);
+		contraction1(hSol, A_, Brec, 1, dim_, 2 * dim_, dim_ * dim_, 0);
+		Tensorcd workA(A_);
+		Tensorcd workB(Brec);
+		contraction2(h, A_, Brec, workA, workB, 1, dim_, 2 * dim_, dim_ * dim_, 0);
+			CHECK_CLOSE(0., residual(h, hSol), eps);
+	}
+
+	TEST_FIXTURE (Factory, contractionT2mode1) {
+		TensorShape shapeB({2 * dim_, dim_, dim_});
+		Matrixcd h(dim_, 2 * dim_);
+		Matrixcd hSol(dim_, 2 * dim_);
+		Tensorcd Brec(shapeB);
+		contraction1(hSol, A_, Brec, dim_, dim_, 2 * dim_, dim_, 0);
+		Tensorcd workA(A_);
+		Tensorcd workB(Brec);
+		contraction2(h, A_, Brec, workA, workB, dim_, dim_, 2 * dim_, dim_, 0);
+			CHECK_CLOSE(0., residual(h, hSol), eps);
+	}
+
+	TEST_FIXTURE (Factory, contractionT2mode2) {
+		TensorShape shapeB({2 * dim_, dim_, dim_});
+		Matrixcd h(dim_, 2 * dim_);
+		Matrixcd hSol(dim_, 2 * dim_);
+		Tensorcd Brec(shapeB);
+		contraction1(hSol, A_, Brec, dim_, dim_ * dim_, 2 * dim_, 1, 0);
+		Tensorcd workA(A_);
+		Tensorcd workB(Brec);
+		contraction2(h, A_, Brec, workA, workB, dim_ * dim_, dim_, 2 * dim_, 1, 0);
+			CHECK_CLOSE(0., residual(h, hSol), eps);
+	}
 }
 

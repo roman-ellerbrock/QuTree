@@ -110,11 +110,16 @@ template<typename T, typename U>
 void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	Tensorcd& D, size_t before, size_t active, size_t activeC, size_t after, bool zero) {
 	/// D is work tensor with shape of C.
+	typedef complex<double> cd;
+	typedef double d;
+	/// If not double/complex<double> type, fall back to straightforward implementation
+	if constexpr(!((is_same<U, cd>::value && is_same<T, cd>::value)) || (is_same<U, d>::value && is_same<T, d>::value)) {
+		matrixTensor1(C, h, B, before, active, activeC, after, zero);
+		return;
+	}
 
 	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
-	typedef complex<double> cd;
-	typedef double d;
 
 	if (before == 1) {
 		size_t m = activeC;
@@ -123,7 +128,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 		if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
 			cblas_zgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
 				(void *) &z, (void *) &h[0], m, (void *) &B[0], k, (void *) &zz, (void *) &C[0], m);
-		} else if (is_same<U, d>::value && is_same<T, d>::value) {
+		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
 			cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
 				&z, (void *) &h[0], m, (void *) &B[0], k, &zz, (void *) &C[0], m);
 		}
@@ -140,7 +145,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 		if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
 			cblas_zgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
 				(void *) &z, (void *) &h[0], m, (void *) &B[aft * pref], n, (void *) &zz, (void *) &D[aft * prefC], m);
-		} else if (is_same<U, d>::value && is_same<T, d>::value) {
+		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
 			cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
 				&z, (void *) &h[0], m, (void *) &B[aft * pref], n, &zz, (void *) &D[aft * prefC], m);
 		}
@@ -191,21 +196,31 @@ void contraction1(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	}
 }
 
-template<typename T, typename U>
-void contraction2(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+template<typename T>
+void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	Tensor<T>& bra_work, Tensor<T>& ket_work,
 	size_t A, size_t B, size_t B2, size_t C, bool zero) {
+	typedef complex<double> cd;
+	typedef double d;
+	/// If not double/complex<double> type, fall back to straightforward implementation
+	if constexpr(!(is_same<T, cd>::value || is_same<T, d>::value)) {
+		contraction1(h, bra, ket, A, B, B2, C, zero);
+		return;
+	}
 
-//	Tensorcd bra_cpy(bra.shape());
-//	Tensorcd ket_work(bra.shape());
 	transposeBC(&bra_work[0], &bra[0], A, B, C);
 	transposeBC(&ket_work[0], &ket[0], A, B2, C);
 
 	size_t AC = A * C;
 	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
-	cblas_zgemm(CblasColMajor, CblasConjTrans, CblasNoTrans, B, B2, AC,
-		(void *) &z, (void *) &bra_work[0], AC, (void *) &ket_work[0], AC, (void *) &zz, (void *) &h[0], B);
+	if constexpr(is_same<T, cd>::value) {
+		cblas_zgemm(CblasColMajor, CblasConjTrans, CblasNoTrans, B, B2, AC,
+			(void *) &z, (void *) &bra_work[0], AC, (void *) &ket_work[0], AC, (void *) &zz, (void *) &h[0], B);
+	} else if constexpr(is_same<T, d>::value) {
+		cblas_dgemm(CblasColMajor, CblasConjTrans, CblasNoTrans, B, B2, AC,
+			&z, (void *) &bra_work[0], AC, (void *) &ket_work[0], AC, &zz, (void *) &h[0], B);
+	}
 }
 
 /// ========================================================================
@@ -249,6 +264,47 @@ void matrixTensorBLAS(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size
 	matrixTensor2(C, A, B, workC, before, active1, active2, after, zero);
 }
 
+/// Wrapper for matrix-Tensor product
+template<typename T>
+void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero) {
+
+	TensorShape tdimA(A.shape());
+	TensorShape tdimB(B.shape());
+	if (mode >= tdimA.order()) {
+		cerr << "contraction error: mode too large for Bra.\n";
+		exit(1);
+	}
+	if (mode >= tdimB.order()) {
+		cerr << "contraction error: mode too large for Ket.\n";
+		exit(1);
+	}
+
+	size_t after = tdimA.after(mode);
+	size_t before = tdimA.before(mode);
+	size_t activeA = tdimA[mode];
+	size_t activeB = tdimB[mode];
+
+	if (!(h.dim1() == activeA)) {
+		cerr << "contraction error: ket active dimension wrong.\n";
+		exit(1);
+	}
+	if (!(h.dim2() == activeB)) {
+		cerr << "contraction error: bra active dimension wrong.\n";
+		exit(1);
+	}
+	if (tdimA.before(mode) != tdimB.before(mode)) {
+		cerr << "contraction error: before dimension wrong.\n";
+		exit(1);
+	}
+	if (tdimA.after(mode) != tdimB.after(mode)) {
+		cerr << "contraction error: after dimension wrong.\n";
+		exit(1);
+	}
+
+	Tensor<T> Awork(A.shape());
+	Tensor<T> Bwork(B.shape());
+	contraction2(h, A, B, Awork, Bwork, before, activeA, activeB, after, zero);
+}
 
 /// ========================================================================
 /// Template Instantiations
@@ -284,3 +340,4 @@ template void transposeAB(cd *dest, const cd *src, size_t A, size_t B, size_t C)
 
 /// ==== Wrappers ====
 template void matrixTensorBLAS(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
+template void contractionBLAS(Matrix<cd>& h, const Tensor<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
