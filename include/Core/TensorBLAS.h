@@ -28,7 +28,6 @@ void matrixTensor3(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	Tensor<T>& Ket_work, Tensor<T>& hKet_work,
 	size_t before, size_t active, size_t activeC, size_t after, bool zero);
 
-
 template<typename T, typename U>
 void contraction1(Matrix<U>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);

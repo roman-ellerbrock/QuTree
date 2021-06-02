@@ -7,6 +7,7 @@
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "TreeClasses/SparseTensorTree.h"
+#include "Core/TensorBLAS.h"
 
 namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,8 @@ namespace TreeFunctions {
 		for (size_t l = 0; l < node.nChildren(); l++) {
 			const Node& child = node.child(l);
 			if (!hmat.isActive(child)) { continue; }
-			hKet = matrixTensor(hmat[child], hKet, child.childIdx());
+//			hKet = matrixTensor(hmat[child], hKet, child.childIdx());
+			hKet = matrixTensorBLAS(hmat[child], hKet, child.childIdx());
 		}
 
 		return Bra.dotProduct(hKet);
@@ -142,7 +144,8 @@ namespace TreeFunctions {
 					cerr << "Holematrices not allocated correctly.\n";
 					exit(1);
 				}
-				contraction(holes[node], Bra[parent], hKet[parent], node.childIdx());
+//				contraction(holes[node], Bra[parent], hKet[parent], node.childIdx());
+				contractionBLAS(holes[node], Bra[parent], hKet[parent], node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -250,7 +253,8 @@ namespace TreeFunctions {
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
 			if (!mat.isActive(child)) { continue; }
-			matrixTensor(*out, mat[child], *in, child.childIdx(), true);
+//			matrixTensor(*out, mat[child], *in, child.childIdx(), true);
+			matrixTensorBLAS(*out, mat[child], *in, child.childIdx(), true);
 			swap(in, out);
 		}
 		if (!node.isToplayer() && (skip != node.parentIdx()) && (holes != nullptr)) {
@@ -259,9 +263,11 @@ namespace TreeFunctions {
 				exit(1);
 			}
 			if (!stree.isActive(node) && (rho != nullptr)) {
-				matrixTensor(*out, (*rho)[node], *in, node.parentIdx(), true);
+//				matrixTensor(*out, (*rho)[node], *in, node.parentIdx(), true);
+				matrixTensorBLAS(*out, (*rho)[node], *in, node.parentIdx(), true);
 			} else {
-				matrixTensor(*out, (*holes)[node], *in, node.parentIdx(), true);
+//				matrixTensor(*out, (*holes)[node], *in, node.parentIdx(), true);
+				matrixTensorBLAS(*out, (*holes)[node], *in, node.parentIdx(), true);
 			}
 		} else {
 			swap(in, out);
@@ -289,7 +295,8 @@ namespace TreeFunctions {
 			const Node& child = parent.child(k);
 			size_t childidx = child.childIdx();
 			if ((childidx == drop) || (!mats.isActive(child))) { continue; }
-			Phi = matrixTensor(mats[child], Phi, childidx);
+//			Phi = matrixTensor(mats[child], Phi, childidx);
+			Phi = matrixTensorBLAS(mats[child], Phi, childidx);
 		}
 		return Phi;
 	}
