@@ -113,7 +113,8 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	typedef complex<double> cd;
 	typedef double d;
 	/// If not double/complex<double> type, fall back to straightforward implementation
-	if constexpr(!((is_same<U, cd>::value && is_same<T, cd>::value)) || (is_same<U, d>::value && is_same<T, d>::value)) {
+	if constexpr(!((is_same<U, cd>::value && is_same<T, cd>::value))
+		|| (is_same<U, d>::value && is_same<T, d>::value)) {
 		matrixTensor1(C, h, B, before, active, activeC, after, zero);
 		return;
 	}
@@ -141,6 +142,9 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 
 	size_t pref = before * active;
 	size_t prefC = before * activeC;
+	if (!zero) {
+		D = C;
+	}
 	for (size_t aft = 0; aft < after; ++aft) {
 		if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
 			cblas_zgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
@@ -212,7 +216,8 @@ void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 
 /// Wrapper for matrix-Tensor product
 template<typename T, typename U>
-void matrixTensorBLAS(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
+void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
+
 	TensorShape tdim(B.shape());
 	TensorShape tdimC(C.shape());
 
@@ -243,13 +248,18 @@ void matrixTensorBLAS(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size
 		exit(1);
 	}
 
-	Tensor<T> workC(C);
 	matrixTensor2(C, A, B, workC, before, active1, active2, after, zero);
 }
 
-/// Wrapper for matrix-Tensor product
+template<typename T, typename U>
+void matrixTensorBLAS(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
+	Tensor<T> workC(C);
+	matrixTensorBLAS(C, workC, A, B, mode, zero);
+}
+
 template<typename T>
-void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero) {
+void contractionBLAS(Matrix<T>& h, Tensor<T>& workA, Tensor<T>& workB, const Tensor<T>& A, const Tensor<T>& B,
+	size_t mode, bool zero) {
 
 	TensorShape tdimA(A.shape());
 	TensorShape tdimB(B.shape());
@@ -284,9 +294,15 @@ void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_
 		exit(1);
 	}
 
+	contraction2(h, A, B, workA, workB, before, activeA, activeB, after, zero);
+}
+
+/// Wrapper for matrix-Tensor product
+template<typename T>
+void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero) {
 	Tensor<T> Awork(A.shape());
 	Tensor<T> Bwork(B.shape());
-	contraction2(h, A, B, Awork, Bwork, before, activeA, activeB, after, zero);
+	contractionBLAS(h, Awork, Bwork, A, B, mode, zero);
 }
 
 template<typename T>
@@ -348,12 +364,16 @@ template void transposeAB(cd *dest, const cd *src, size_t A, size_t B, size_t C)
 
 /// ==== Wrappers ====
 // complex double
+template void matrixTensorBLAS(Tensor<cd>& C, Tensor<cd>& workC, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 template void matrixTensorBLAS(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
+template void contractionBLAS(Matrix<cd>& h, Tensor<cd>& workA, Tensor<cd>& workB, const Tensor<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 template void contractionBLAS(Matrix<cd>& h, const Tensor<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 template Tensor<cd> matrixTensorBLAS(const Matrix<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 template Matrix<cd> contractionBLAS(const Tensor<cd>& A, const Tensor<cd>& B, size_t mode, bool zero);
 // double
+template void matrixTensorBLAS(Tensor<d>& C, Tensor<d>& workC, const Matrix<d>& A, const Tensor<d>& B, size_t mode, bool zero);
 template void matrixTensorBLAS(Tensor<d>& C, const Matrix<d>& A, const Tensor<d>& B, size_t mode, bool zero);
+template void contractionBLAS(Matrix<d>& h, Tensor<d>& workA, Tensor<d>& workB, const Tensor<d>& A, const Tensor<d>& B, size_t mode, bool zero);
 template void contractionBLAS(Matrix<d>& h, const Tensor<d>& A, const Tensor<d>& B, size_t mode, bool zero);
 template Tensor<d> matrixTensorBLAS(const Matrix<d>& A, const Tensor<d>& B, size_t mode, bool zero);
 template Matrix<d> contractionBLAS(const Tensor<d>& A, const Tensor<d>& B, size_t mode, bool zero);

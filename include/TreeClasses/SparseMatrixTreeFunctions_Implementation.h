@@ -25,7 +25,8 @@ namespace TreeFunctions {
 			hKet = matrixTensorBLAS(hmat[child], hKet, child.childIdx());
 		}
 
-		return Bra.dotProduct(hKet);
+//		return Bra.dotProduct(hKet);
+		return contractionBLAS(Bra, hKet, hKet.shape().lastIdx());
 	}
 
 	template<typename T>

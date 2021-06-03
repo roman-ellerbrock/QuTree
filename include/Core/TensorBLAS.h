@@ -39,10 +39,17 @@ void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 
 /// ==== Wrappers ====
 template<typename T, typename U>
+void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+
+template<typename T, typename U>
 void matrixTensorBLAS(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
 
 template<typename T, typename U>
 Tensor<T> matrixTensorBLAS(const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);
+
+template<typename T>
+void contractionBLAS(Matrix<T>& h, Tensor<T>& workA, Tensor<T>& workB, const Tensor<T>& A,
+	const Tensor<T>& B, size_t mode, bool zero = true);
 
 template<typename T>
 void contractionBLAS(Matrix<T>& h, const Tensor<T>& A, const Tensor<T>& B, size_t mode, bool zero = true);

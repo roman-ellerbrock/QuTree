@@ -77,9 +77,14 @@ namespace Random {
 // dimensions: 6000*160000
 // rank: 1500 or 3000
 
-	template <typename T, class LinearOperator>
+	template <typename T>
+	Matrix<T> product(const Matrix<T>& x, const Matrix<T>& y, void* mem) {
+		return x * y;
+	}
+
+	template <typename T, class LinearOperator, class Mem>
 	SpectralDecomposition<T> diagonalizeRandom(const LinearOperator& A,
-		size_t rank, size_t power, mt19937& gen) {
+		size_t rank, size_t power, mt19937& gen, Mem *mem) {
 		/**
 		 * \brief Diagonalize using random projection
 		 *
@@ -98,10 +103,8 @@ namespace Random {
 		auto Q = randomQ<T, LinearOperator>(A, rank, gen);
 //		auto Q = RandomGauss<T>(rank, A.Dim1(), gen);
 		for (size_t i = 0; i < power; ++i) {
-			Matrix<T> Y = A * Q;
-//			Tensor<T> ytemp({Y.Dim1(), Y.Dim2()}, Y.Coeffs(), false, false);
-//			GramSchmidt(ytemp);
-//			Q = Y;
+//			Matrix<T> Y = A * Q;
+			Matrix<T> Y = product(A, Q, mem);
 			auto Q2 = qr(Y);
 			Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 		}
@@ -121,7 +124,8 @@ namespace Random {
 */
 		/// Build eigenvector of full matrix
 		auto U = Q * V;
-
+//		SpectralDecomposition<T> res(U, ew);
+//		return res;
 		return {U, ew};
 	}
 }
