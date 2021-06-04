@@ -8,12 +8,13 @@
 #define swap(type, x, y) { type _tmp; _tmp = x; x = y; y = _tmp; }
 
 template<typename T>
-void transpose(T *dest, const T *src, size_t dim1, size_t dim2) {
+void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {
 	// A[dim1, dim2] --> A[dim2, dim1]
 	/// simple in-place transpose
 	for (size_t j = 0; j < dim2; ++j) {
 		for (size_t i = 0; i < dim1; ++i) {
-			dest[j + dim2 * i] = src[i + dim1 * j];
+//			dest[j + dim2 * i] = src[i + dim1 * j];
+			dest[j + dim2 * i] = beta * dest[j + dim2 * i] + src[i + dim1 * j];
 		}
 	}
 }
@@ -122,7 +123,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
 
-	if (before == 1) {
+/*	if (before == 1) {
 		size_t m = activeC;
 		size_t k = active; //activeB
 		size_t n = after;
@@ -134,7 +135,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 				z, (double *) &h[0], m, (double *) &B[0], k, zz, (double *) &C[0], m);
 		}
 		return;
-	}
+	}*/
 
 	size_t m = activeC;
 	size_t k = active; //activeB
@@ -142,20 +143,19 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 
 	size_t pref = before * active;
 	size_t prefC = before * activeC;
-	if (!zero) {
-		D = C;
-	}
+	T zer = 0.;
 	for (size_t aft = 0; aft < after; ++aft) {
 		if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
 			cblas_zgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
-				(void *) &z, (void *) &h[0], m, (void *) &B[aft * pref], n, (void *) &zz, (void *) &D[aft * prefC], m);
+				(void *) &z, (void *) &h[0], m, (void *) &B[aft * pref], n, (void *) &zer, (void *) &D[aft * prefC], m);
 		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
 			cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
-				z, (double *) &h[0], m, (double *) &B[aft * pref], n, zz, (double *) &D[aft * prefC], m);
+				z, (double *) &h[0], m, (double *) &B[aft * pref], n, zer, (double *) &D[aft * prefC], m);
 		}
 //		transpose2<T, 4>(&C[aft * prefC], &D[aft * prefC], activeC, before);
-		transpose(&C[aft * prefC], &D[aft * prefC], activeC, before);
+		transpose(&C[aft * prefC], &D[aft * prefC], activeC, before, zz);
 	}
+	if (!zero) { }
 }
 
 template<typename T, typename U>
@@ -247,6 +247,10 @@ void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const 
 		cerr << "matrix Tensor error: after dimension wrong.\n";
 		exit(1);
 	}
+	if (tdimC.totalDimension() != workC.shape().totalDimension()) {
+		cerr << "matrix Tensor error: work array has wrong dimension.\n";
+		exit(1);
+	}
 
 	matrixTensor2(C, A, B, workC, before, active1, active2, after, zero);
 }
@@ -291,6 +295,15 @@ void contractionBLAS(Matrix<T>& h, Tensor<T>& workA, Tensor<T>& workB, const Ten
 	}
 	if (tdimA.after(mode) != tdimB.after(mode)) {
 		cerr << "contraction error: after dimension wrong.\n";
+		exit(1);
+	}
+
+	if (tdimA.totalDimension() != workA.shape().totalDimension()) {
+		cerr << "contraction error: work array A has wrong dimension.\n";
+		exit(1);
+	}
+	if (tdimB.totalDimension() != workB.shape().totalDimension()) {
+		cerr << "contraction error: work array B has wrong dimension.\n";
 		exit(1);
 	}
 
@@ -356,7 +369,7 @@ template void contraction2(Matrix<cd>& h, const Tensor<cd>& bra, const Tensor<cd
 	Tensor<cd>& bra_work, Tensor<cd>& ket_work,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
-template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2);
+template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2, cd beta);
 
 template void transpose2<complex<double>, 4>(cd *dest, const cd *src, size_t lda, size_t ldb);
 

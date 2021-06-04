@@ -246,16 +246,16 @@ namespace TreeFunctions {
 		 * Rationale:
 		 * - *the* routine for applying adjacent matrices (except 'skip') to a Tensor
 		 * - hPhi has to have correct dimensions and be initialized correctly
-		 * - @TODO: remove return and instead check for memcopy to hPhi
 		 */
 
 		Tensor<T> *in = &Phi;
 		Tensor<T> *out = &hPhi;
+		Tensor<T> work = Phi;
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
 			if (!mat.isActive(child)) { continue; }
 //			matrixTensor(*out, mat[child], *in, child.childIdx(), true);
-			matrixTensorBLAS(*out, mat[child], *in, child.childIdx(), true);
+			matrixTensorBLAS(*out, work, mat[child], *in, child.childIdx(), true);
 			swap(in, out);
 		}
 		if (!node.isToplayer() && (skip != node.parentIdx()) && (holes != nullptr)) {
@@ -265,10 +265,10 @@ namespace TreeFunctions {
 			}
 			if (!stree.isActive(node) && (rho != nullptr)) {
 //				matrixTensor(*out, (*rho)[node], *in, node.parentIdx(), true);
-				matrixTensorBLAS(*out, (*rho)[node], *in, node.parentIdx(), true);
+				matrixTensorBLAS(*out, work, (*rho)[node], *in, node.parentIdx(), true);
 			} else {
 //				matrixTensor(*out, (*holes)[node], *in, node.parentIdx(), true);
-				matrixTensorBLAS(*out, (*holes)[node], *in, node.parentIdx(), true);
+				matrixTensorBLAS(*out, work, (*holes)[node], *in, node.parentIdx(), true);
 			}
 		} else {
 			swap(in, out);

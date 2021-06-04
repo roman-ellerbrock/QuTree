@@ -179,6 +179,9 @@ public:
 	const TensorShape& shape()const { return shape_; }
 	TensorShape& shape() { return shape_; }
 
+	TensorShape shape_;
+	T* coeffs_;
+	bool ownership_;
 protected:
 	double conjugate(const double d) const {
 		return d;
@@ -188,9 +191,6 @@ protected:
 		return conj(c);
 	}
 
-	TensorShape shape_;
-	T* coeffs_;
-	bool ownership_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;
@@ -289,10 +289,16 @@ template<typename T>
 Matrix<T> toMatrix(const Tensor<T>& A, size_t mode);
 
 template<typename T>
+Matrix<T> moveToMatrix(Tensor<T>& A);
+
+template<typename T>
 Tensor<T> toTensor(const Matrix<T>& B, const TensorShape& shape, size_t mode);
 
 template<typename T>
 Tensor<T> toTensor(const Matrix<T>& B);
+
+template<typename T>
+Tensor<T> moveToTensor(Matrix<T>& B);
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A);

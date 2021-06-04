@@ -39,6 +39,16 @@ public:
 	 */
 	Matrix(size_t dim1, size_t dim2);
 
+	/** \brief Zero constructor
+	 *
+	 * @param dim1 size of first dimension
+	 * @param dim2 size of second dimension
+	 * @param ptr pointer to pre-allocated memory
+	 * @param ownership if true, matrix will take care of deallocation
+	 * @param InitZero if true, set entries to zero
+	 */
+	Matrix(size_t dim1, size_t dim2, T *ptr, bool ownership, bool InitZero);
+
 	/** \brief Constructor from input stream
 	 *
 	 * @param is Input stream passed to read()
@@ -359,6 +369,7 @@ protected:
 	T *coeffs_;
 	size_t dim1_;
 	size_t dim2_;
+	bool ownership_;
 };
 
 /** \brief General typedef for complex matrices

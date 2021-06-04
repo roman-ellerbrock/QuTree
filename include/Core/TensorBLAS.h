@@ -7,7 +7,7 @@
 #include "Tensor.h"
 
 template<typename T>
-void transpose(T *dest, const T *src, size_t dim1, size_t dim2);
+void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta = 0.);
 
 template<typename T, int blocksize>
 void transpose2(T *dest, const T *src, size_t lda, size_t ldb);

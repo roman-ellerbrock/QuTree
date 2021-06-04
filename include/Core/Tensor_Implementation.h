@@ -914,6 +914,16 @@ Matrix<T> toMatrix(const Tensor<T>& A) {
 }
 
 template<typename T>
+Matrix<T> moveToMatrix(Tensor<T>& A) {
+	const TensorShape& shape = A.shape();
+	size_t diml = shape.lastBefore();
+	size_t dimr = shape.lastDimension();
+	A.ownership_ = false;
+	Matrix<T> B(diml, dimr, A.coeffs_, true, false);
+	return B;
+}
+
+template<typename T>
 Matrix<T> toMatrix(const Tensor<T>& A, size_t mode) {
 	const TensorShape& shape = A.shape();
 	size_t dimbef = shape.before(mode);
@@ -963,6 +973,13 @@ Tensor<T> toTensor(const Matrix<T>& B) {
 			A(i, j) = B(i, j);
 		}
 	}
+	return A;
+}
+
+template<typename T>
+Tensor<T> moveToTensor(Matrix<T>& B) {
+	TensorShape shape({B.dim1(), B.dim2()});
+	Tensor<T> A(shape, &B[0], true, false);
 	return A;
 }
 

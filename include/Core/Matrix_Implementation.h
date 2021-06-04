@@ -11,11 +11,16 @@ Matrix<T>::Matrix()
 
 template<typename T>
 Matrix<T>::Matrix(size_t dim1, size_t dim2)
-	:dim1_(dim1), dim2_(dim2),
-	 coeffs_(new T[dim1 * dim2]) {
+	:dim1_(dim1), dim2_(dim2), coeffs_((T *) malloc(dim1 * dim2 * sizeof(T))), ownership_(true) {
 	assert(dim1 > 0);
 	assert(dim2 > 0);
 	zero();
+}
+
+template<typename T>
+Matrix<T>::Matrix(size_t dim1, size_t dim2, T *ptr, bool ownership, bool InitZero)
+	:dim1_(dim1), dim2_(dim2), coeffs_(ptr), ownership_(ownership) {
+	if (InitZero) { zero(); }
 }
 
 template<typename T>
@@ -42,7 +47,7 @@ Matrix<T>::Matrix(const Matrix& old)
 template<typename T>
 Matrix<T>::Matrix(Matrix&& old) noexcept
 	:dim1_(old.dim1_), dim2_(old.dim2_),
-	 coeffs_(old.coeffs_) {
+	 coeffs_(old.coeffs_), ownership_(old.ownership_) {
 	old.coeffs_ = nullptr;
 }
 
@@ -63,13 +68,14 @@ Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept {
 	dim2_ = other.dim2_;
 	delete[] coeffs_;
 	coeffs_ = other.coeffs_;
+	ownership_ = other.ownership_;
 	other.coeffs_ = nullptr;
 	return *this;
 }
 
 template<typename T>
 Matrix<T>::~Matrix() {
-	delete[] coeffs_;
+	if (ownership_) { delete[] coeffs_; }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -586,8 +592,16 @@ SpectralDecompositioncd diagonalize(const Matrix<complex<double>>& A) {
 	return A.cDiag();
 }
 
-void diagonalize(SpectralDecompositioncd& S, const Matrix<complex<double>>& A) {
-	A.cDiag(S.first, S.second);
+void diagonalize(SpectralDecompositioncd & S,
+
+const Matrix<complex<double>>& A
+
+) {
+A.
+
+cDiag(S
+
+.first, S.second);
 }
 
 SpectralDecompositiond diagonalize(const Matrix<double>& A) {
@@ -722,10 +736,16 @@ Eigen::MatrixXd toEigen(Matrixd A) {
 	return Eigen::MatrixXd(Aeigen);
 }
 
-Eigen::MatrixXcd toEigen(Matrixcd A) {
-	Eigen::MatrixXcd Aeigen = Eigen::Map<Eigen::MatrixXcd>((complex<double> *)
-		A.ptr(), A.dim1(), A.dim2());
-	return Eigen::MatrixXcd(Aeigen);
+Eigen::MatrixXcd toEigen(Matrixcd
+
+A) {
+Eigen::MatrixXcd Aeigen = Eigen::Map<Eigen::MatrixXcd>((complex<double> *)
+	A.ptr(), A.dim1(), A.dim2());
+
+return
+
+Eigen::MatrixXcd(Aeigen);
+
 }
 
 Matrixd toQutree(const Eigen::MatrixXd& A) {
