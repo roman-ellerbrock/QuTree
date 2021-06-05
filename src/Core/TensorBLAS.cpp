@@ -4,6 +4,7 @@
 
 #include "Core/TensorBLAS.h"
 #include <cblas.h>
+#include "Core/MatrixBLAS.h"
 
 #define swap(type, x, y) { type _tmp; _tmp = x; x = y; y = _tmp; }
 
@@ -123,7 +124,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	T z = 1.0, zz = 1.;
 	if (zero) { zz = 0.; }
 
-/*	if (before == 1) {
+	if (before == 1) {
 		size_t m = activeC;
 		size_t k = active; //activeB
 		size_t n = after;
@@ -135,7 +136,7 @@ void matrixTensor2(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 				z, (double *) &h[0], m, (double *) &B[0], k, zz, (double *) &C[0], m);
 		}
 		return;
-	}*/
+	}
 
 	size_t m = activeC;
 	size_t k = active; //activeB

@@ -29,11 +29,11 @@ namespace TreeFunctions {
 
 	template<typename T>
 	Matrix<T> representUpper(const SparseMatrixTree<T>& hmat,
-		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node);
+		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node, Tensor<T>* work = nullptr);
 
 	template<typename T>
 	void representLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
-		const Tensor<T>& Ket, const MLO<T>& M, const Node& node);
+		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, Tensor<T>* work = nullptr);
 
 	template<typename T>
 	void represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
@@ -133,7 +133,7 @@ namespace TreeFunctions {
 	template<typename T>
 	void apply(Tensor<T>& hPhi, const SparseMatrixTree<T>& mat,
 		const SparseMatrixTree<T> *holes, const MatrixTree<T> *rho,
-		Tensor<T> Phi, const SparseTree& stree, const Node& node, int skip);
+		Tensor<T> Phi, const SparseTree& stree, const Node& node, int skip, Tensor<T>* work = nullptr);
 
 	template<typename T>
 	Tensor<T> apply(const SparseMatrixTree<T>& mat,

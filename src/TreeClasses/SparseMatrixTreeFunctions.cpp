@@ -26,7 +26,7 @@ namespace TreeFunctions {
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
 
 	template void representLayer(SparseMatrixTree<cd>& mats, const Tensor<cd>& Bra,
-		const Tensor<cd>& Ket, const MLO<cd>& M, const Node& node);
+		const Tensor<cd>& Ket, const MLO<cd>& M, const Node& node, Tensor<cd>*);
 
 	template SparseMatrixTrees<cd> represent(const SOP<cd>& sop,
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
@@ -63,7 +63,7 @@ namespace TreeFunctions {
 
 	template void apply(Tensor<cd>& hPhi, const SparseMatrixTree<cd>& mat,
 		const SparseMatrixTree<cd> *holes, const MatrixTree<cd> *rho,
-		Tensor<cd> Phi, const SparseTree& stree, const Node& node, int skip);
+		Tensor<cd> Phi, const SparseTree& stree, const Node& node, int skip, Tensor<cd>* work);
 
 	template Tensor<cd> apply(const SparseMatrixTree<cd>& mat,
 		const SparseMatrixTree<cd>& holes, const MatrixTree<cd> *rho,
@@ -94,7 +94,7 @@ namespace TreeFunctions {
 		const TensorTree<d>& Bra, const TensorTree<d>& Ket, const Tree& tree);
 
 	template void representLayer(SparseMatrixTree<d>& mats, const Tensor<d>& Bra,
-		const Tensor<d>& Ket, const MLO<d>& M, const Node& node);
+		const Tensor<d>& Ket, const MLO<d>& M, const Node& node, Tensor<d>*);
 
 	template SparseMatrixTrees<d> represent(const SOP<d>& sop,
 		const TensorTree<d>& Bra, const TensorTree<d>& Ket,
@@ -124,7 +124,7 @@ namespace TreeFunctions {
 
 	template void apply(Tensor<d>& hPhi, const SparseMatrixTree<d>& mat,
 		const SparseMatrixTree<d> *holes, const MatrixTree<d> *rho,
-		Tensor<d> Phi, const SparseTree& stree, const Node& node, int skip);
+		Tensor<d> Phi, const SparseTree& stree, const Node& node, int skip, Tensor<d>* work);
 
 	template Tensor<d> apply(const SparseMatrixTree<d>& mat,
 		const SparseMatrixTree<d>& holes, const MatrixTree<d> *rho,
