@@ -129,8 +129,9 @@ namespace TreeFunctions {
 		SparseTensorTree<T> hKet(stree.leafIndices(), tree, true, false);
 		SparseTensorTree<T> workBra(stree.leafIndices(), tree, true, false);
 		SparseTensorTree<T> workKet(stree.leafIndices(), tree, true, false);
-		// Swipe top-down_ but exclude topnode
 		int sub_topnode = stree.size() - 1;
+
+		// Swipe top-down_ but exclude topnode
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = stree.node(n);
 			if (!node.isToplayer()) {

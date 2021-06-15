@@ -348,6 +348,24 @@ Tensor<T> matrixTensorBLAS(const Matrix<U>& A, const Tensor<T>& B, size_t mode, 
 	return C;
 }
 
+void dgeem(Matrixd& h, const Matrixd& bra, const Matrixd& ket) {
+
+	double z = 1.0, zz = 0.;
+	// test 1
+	size_t m = h.dim1();
+	size_t n = h.dim2();
+	size_t k = bra.dim2();
+	cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
+		z, &bra[0], m, &ket[0], n, zz, &h[0], m);
+	// test 2
+/*	size_t m = h.dim1();
+	size_t n = h.dim2();
+	size_t k = bra.dim1();
+	cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, n, k,
+		z, (double *) &bra[0], k, (double *) &ket[0], k, zz, (double *) &h[0], m);
+		*/
+}
+
 /// ========================================================================
 /// Template Instantiations
 /// ========================================================================
@@ -375,6 +393,10 @@ template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2, cd be
 template void transpose2<complex<double>, 4>(cd *dest, const cd *src, size_t lda, size_t ldb);
 
 template void transposeAB(cd *dest, const cd *src, size_t A, size_t B, size_t C);
+
+template void contraction2(Matrix<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
+	Tensor<d>& bra_work, Tensor<d>& ket_work,
+	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
 /// ==== Wrappers ====
 // complex double

@@ -10,6 +10,7 @@ namespace benchmark {
 	void screenDimensionTensorHoleProduct(mt19937& gen, ostream& os, size_t nsample);
 	void screenTranspose(mt19937& gen, ostream& os, size_t nsample);
 	void screenDimensionTransposeAB(mt19937& gen, ostream& os, size_t nsample);
+	void screenDGEEM(mt19937& gen, ostream& os, size_t nsample);
 }
 
 #endif //OPTIMIZE_MATRIXTENSOR_H

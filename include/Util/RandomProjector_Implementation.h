@@ -32,12 +32,20 @@ namespace Random {
 		return 0.5 * (r + r.adjoint());
 	}
 
-	template <typename T, class LinearOperator>
-	Matrix<T> randomQ(const LinearOperator& A, size_t k_plus_p, mt19937& gen) {
+	template<typename T>
+	Matrix<T> product(const Matrix<T>& x, const Matrix<T>& y, void *mem) {
+		return x * y;
+	}
+
+	template <typename T, class LinearOperator, class Mem>
+	Matrix<T> randomQ(const LinearOperator& A, size_t k_plus_p, mt19937& gen,
+		Mem* mem) {
 		assert(k_plus_p <= A.dim2());
 		Matrix<T> Omega = randomGauss<T>(k_plus_p, A.dim1(), gen);
 //		Matrix<T> Omega = GUE<T>(k_plus_p, A.Dim1(), gen);
-		Matrix<T> Y = A * Omega.adjoint();
+
+//		Matrix<T> Y = A * Omega.adjoint();
+		Matrix<T> Y = product(A, Omega.adjoint(), mem);
 		/// Y = QR
 		/// YY^ = QRR^Q^
 //		auto Q2 = qr(Y);
@@ -84,11 +92,6 @@ namespace Random {
 // dimensions: 6000*160000
 // rank: 1500 or 3000
 
-		template<typename T>
-		Matrix<T> product(const Matrix<T>& x, const Matrix<T>& y, void *mem) {
-			return x * y;
-		}
-
 		template<typename T, class LinearOperator, class Mem>
 		SpectralDecomposition<T> diagonalizeRandom(const LinearOperator& A,
 			size_t rank, size_t power, mt19937& gen, Mem *mem) {
@@ -107,7 +110,7 @@ namespace Random {
 			 * @return Rectangular transformation matrix and eigenvalues
 			 */
 
-			auto Q = randomQ<T, LinearOperator>(A, rank, gen);
+			auto Q = randomQ<T, LinearOperator, Mem>(A, rank, gen, mem);
 //		auto Q = RandomGauss<T>(rank, A.Dim1(), gen);
 			for (size_t i = 0; i < power; ++i) {
 //			Matrix<T> Y = A * Q;
@@ -118,7 +121,8 @@ namespace Random {
 				Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 			}
 
-			auto Y = A * Q;
+//			auto Y = A * Q;
+			Matrix<T> Y = product(A, Q, mem);
 
 			/// Build and Diagonalize Aprime = Q^* A Q = V ew V^*
 			auto B = Q.adjoint() * Y;

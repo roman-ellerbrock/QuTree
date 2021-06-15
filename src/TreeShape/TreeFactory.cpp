@@ -72,10 +72,32 @@ namespace TreeFactory {
 			p.shape() = tensordim;
 			groups.emplace_back(p);
 		}
+
 		size_t n_rest = nodes.size() % n_partition;
-		for (size_t r = 0; r < n_rest; ++r) {
-			groups.push_back(nodes[n_loop * n_partition + r]);
+		if ((n_loop == 0) && (n_rest > 0)) {
+			/// if nothing would be done, wrap it up
+			Node p;
+			vector<size_t> dims;
+			size_t product = 1;
+			for (size_t l = 0; l < n_rest; ++l) {
+				const Node& child = nodes[l];
+				p.push_back(child);
+				size_t dim_now = child.shape().lastDimension();
+				product *= dim_now;
+				dims.push_back(dim_now);
+			}
+			size_t dim_parent = min(product, dim_node);
+			dims.push_back(dim_parent);
+			TensorShape tensordim(dims);
+			p.shape() = tensordim;
+			groups.emplace_back(p);
+		} else {
+			/// Just append and deal with dangling nodes later
+			for (size_t r = 0; r < n_rest; ++r) {
+				groups.push_back(nodes[n_loop * n_partition + r]);
+			}
 		}
+
 		return groups;
 	}
 

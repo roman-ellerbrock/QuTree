@@ -7,7 +7,7 @@
 namespace benchmark {
 	void run() {
 		mt19937 gen(1989);
-		size_t nsample = 20;
+		size_t nsample = 5;
 		ostream& os = cout;
 
 //		screen_order(gen, os, nsample);
@@ -20,7 +20,9 @@ namespace benchmark {
 //		cout << "matrixTensor:\n";
 //		screenDimensionMatrixTensor(gen, os, nsample);
 //		cout << "TensorContraction:\n";
-		screenDimensionTensorHoleProduct(gen, os, nsample);
+//		screenDimensionTensorHoleProduct(gen, os, nsample);
+		cout << "DGEEM:\n";
+		screenDGEEM(gen, os, nsample);
 	}
 }
 

@@ -6,6 +6,8 @@
 #define TENSORBLAS_H
 #include "Tensor.h"
 
+void dgeem(Matrixd& h, const Matrixd& bra, const Matrixd& ket);
+
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta = 0.);
 

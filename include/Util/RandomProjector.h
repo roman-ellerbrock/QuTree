@@ -10,9 +10,9 @@
 
 namespace Random {
 
-	template <typename T, class LinearOperator>
+	template <typename T, class LinearOperator, class Mem>
 	Matrix<T> randomQ(const LinearOperator& A, size_t k_plus_p,
-		mt19937& gen);
+		mt19937& gen, Mem* mem);
 
 	template <typename T, class LinearOperator, class Mem>
 	SpectralDecomposition<T> diagonalizeRandom(const LinearOperator& A,
