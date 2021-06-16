@@ -7,6 +7,7 @@
 #include "TreeClasses/SparseMatrixTree.h"
 #include "TreeClasses/SOPMatrixTrees.h"
 #include "TreeClasses/MatrixTree.h"
+#include "TreeClasses/WorkMemory.h"
 
 namespace TreeFunctions {
 /**
@@ -69,6 +70,11 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 /// Build SparseMatrixTree Top-child (Backward)
 ////////////////////////////////////////////////////////////////////////
+	/// \brief Low-level routine for calculating mean field matrices
+	template<typename T>
+	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
+		const SparseTree& stree, const Tree& tree, WorkMemory<T>* mem = nullptr);
 
 	template<typename T>
 	SparseMatrixTree<T> contraction(const TensorTree<T>& Psi,

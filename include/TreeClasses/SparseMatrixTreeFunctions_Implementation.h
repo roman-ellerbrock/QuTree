@@ -27,7 +27,8 @@ namespace TreeFunctions {
 	Matrix<T> RepresentBottom(const Tensor<T>& Bra,
 		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& leaf) {
 		Tensor<T> MKet = M.apply(Ket, leaf);
-		return Bra.dotProduct(MKet);
+		return contractionBLAS(Bra, MKet, MKet.shape().lastIdx());
+//		return Bra.dotProduct(MKet);
 	}
 
 	template<typename T>
@@ -124,30 +125,40 @@ namespace TreeFunctions {
 	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
-		const SparseTree& stree, const Tree& tree) {
+		const SparseTree& stree, const Tree& tree, WorkMemory<T>* mem) {
 
-		SparseTensorTree<T> hKet(stree.leafIndices(), tree, true, false);
-		SparseTensorTree<T> workBra(stree.leafIndices(), tree, true, false);
-		SparseTensorTree<T> workKet(stree.leafIndices(), tree, true, false);
-		int sub_topnode = stree.size() - 1;
+		bool internal_mem = false;
+		if (mem == nullptr) {
+			mem = new WorkMemory<T>(stree);
+			internal_mem = true;
+		}
 
 		// Swipe top-down_ but exclude topnode
+		int sub_topnode = stree.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = stree.node(n);
 			if (!node.isToplayer()) {
 				assert(holes.isActive(node));
-
 				const Node& parent = node.parent();
-				apply(hKet[parent], mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet[parent]);
+
+				/// assign work memory
+				Tensor<T> hKet(parent.shape(), &mem->work1_[0], false, false);
+				Tensor<T> workKet(parent.shape(), &mem->work2_[0], false, false);
+				Tensor<T> workBra(parent.shape(), &mem->work3_[0], false, false);
+
+				/// mats * |Ket>
+				apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);
 				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
 					cerr << "Holematrices not allocated correctly.\n";
 					exit(1);
 				}
-				contractionBLAS(holes[node], workBra[parent], workKet[parent], Bra[parent], hKet[parent], node.childIdx());
+				/// <Bra|mats|Ket>_(p)
+				contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
 		}
+		if (internal_mem) { delete mem; }
 	}
 
 	template<typename T>
@@ -155,14 +166,16 @@ namespace TreeFunctions {
 		const SparseMatrixTree<T>& mats, const SparseTree& marker, const Tree& tree) {
 
 		const MatrixTree<T> *null = nullptr;
-		contraction(holes, Bra, Ket, mats, null, marker, tree);
+		WorkMemory<T>* mem = nullptr;
+		contraction(holes, Bra, Ket, mats, null, marker, tree, mem);
 	}
 
 	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T>& rho,
 		const SparseTree& marker, const Tree& tree) {
-		contraction(holes, Bra, Ket, mats, &rho, marker, tree);
+		WorkMemory<T>* mem = nullptr;
+		contraction(holes, Bra, Ket, mats, &rho, marker, tree, mem);
 	}
 
 	template<typename T>
