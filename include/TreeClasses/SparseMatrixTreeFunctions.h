@@ -30,21 +30,20 @@ namespace TreeFunctions {
 
 	template<typename T>
 	Matrix<T> representUpper(const SparseMatrixTree<T>& hmat,
-		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node, Tensor<T>* work = nullptr);
+		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node, WorkMemory<T>* mem);
 
 	template<typename T>
 	void representLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
-		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, Tensor<T>* work = nullptr);
+		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, WorkMemory<T>* mem);
 
 	template<typename T>
 	void represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const Tree& tree);
+		const Tree& tree, WorkMemory<T>* mem = nullptr);
 
 	template<typename T>
 	SparseMatrixTree<T> represent(const MLO<T>& M,
-		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const Tree& tree);
+		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
 
 	template<typename T>
 	void represent(SparseMatrixTree<T>& hmat, const MLO<T>& M,
@@ -54,6 +53,7 @@ namespace TreeFunctions {
 	SparseMatrixTree<T> represent(const MLO<T>& M,
 		const TensorTree<T>& Psi, const Tree& tree);
 
+	/// === vector versions ===
 	template <typename T>
 	void represent(vector<SparseMatrixTree<T>>& Mats, const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);

@@ -8,7 +8,7 @@ namespace TreeFunctions {
 
 	template void represent(SparseMatrixTree<cd>& hmat,
 		const MLO<cd>& M, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
-		const Tree& tree);
+		const Tree& tree, WorkMemory<cd>* mem);
 
 	template void represent(SparseMatrixTree<cd>& hmat, const MLO<cd>& M,
 		const TensorTree<cd>& Psi, const Tree& tree);
@@ -26,7 +26,7 @@ namespace TreeFunctions {
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
 
 	template void representLayer(SparseMatrixTree<cd>& mats, const Tensor<cd>& Bra,
-		const Tensor<cd>& Ket, const MLO<cd>& M, const Node& node, Tensor<cd>*);
+		const Tensor<cd>& Ket, const MLO<cd>& M, const Node& node, WorkMemory<cd>*);
 
 	template SparseMatrixTrees<cd> represent(const SOP<cd>& sop,
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
@@ -66,7 +66,7 @@ namespace TreeFunctions {
 
 	template void apply(Tensor<cd>& hPhi, const SparseMatrixTree<cd>& mat,
 		const SparseMatrixTree<cd> *holes, const MatrixTree<cd> *rho,
-		Tensor<cd> Phi, const SparseTree& stree, const Node& node, int skip, Tensor<cd>* work);
+		Tensor<cd> Phi, const SparseTree& stree, const Node& node, int skip, Tensor<cd>* mem);
 
 	template Tensor<cd> apply(const SparseMatrixTree<cd>& mat,
 		const SparseMatrixTree<cd>& holes, const MatrixTree<cd> *rho,
@@ -79,7 +79,7 @@ namespace TreeFunctions {
 	typedef double d;
 	template void represent(SparseMatrixTree<d>& hmat,
 		const MLO<d>& M, const TensorTree<d>& Bra, const TensorTree<d>& Ket,
-		const Tree& tree);
+		const Tree& tree, WorkMemory<d>* mem);
 
 	template void represent(SparseMatrixTree<d>& hmat, const MLO<d>& M,
 		const TensorTree<d>& Psi, const Tree& tree);
@@ -97,7 +97,7 @@ namespace TreeFunctions {
 		const TensorTree<d>& Bra, const TensorTree<d>& Ket, const Tree& tree);
 
 	template void representLayer(SparseMatrixTree<d>& mats, const Tensor<d>& Bra,
-		const Tensor<d>& Ket, const MLO<d>& M, const Node& node, Tensor<d>*);
+		const Tensor<d>& Ket, const MLO<d>& M, const Node& node, WorkMemory<d>*);
 
 	template SparseMatrixTrees<d> represent(const SOP<d>& sop,
 		const TensorTree<d>& Bra, const TensorTree<d>& Ket,

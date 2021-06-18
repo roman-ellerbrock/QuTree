@@ -16,10 +16,11 @@ namespace TreeFunctions {
 
 	template<typename T>
 	Matrix<T> representUpper(const SparseMatrixTree<T>& hmat,
-		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node, Tensor<T>* work) {
-		Tensor<T> hKet(Ket);
+		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node, WorkMemory<T>* mem) {
+		Tensor<T> work(Ket.shape(), mem->work1_, false, false);
+		Tensor<T> hKet(Ket.shape(), mem->work2_, false, false);
 		apply(hKet, hmat, (const SparseMatrixTree<T>*) nullptr,
-			(const MatrixTree<T>*) nullptr, Ket, hmat.sparseTree(), node, node.parentIdx(), work);
+			(const MatrixTree<T>*) nullptr, Ket, hmat.sparseTree(), node, node.parentIdx(), &work);
 		return contractionBLAS(Bra, hKet, hKet.shape().lastIdx());
 	}
 
@@ -33,28 +34,36 @@ namespace TreeFunctions {
 
 	template<typename T>
 	void representLayer(SparseMatrixTree<T>& mats, const Tensor<T>& Bra,
-		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, Tensor<T>* work) {
+		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, WorkMemory<T>* mem) {
 		if (!mats.isActive(node)) { return; }
 
 		if (node.isBottomlayer()) {
 			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf());
 		} else {
-			mats[node] = representUpper(mats, Bra, Ket, node, work);
+			mats[node] = representUpper(mats, Bra, Ket, node, mem);
 		}
 	}
 
 	template<typename T>
 	void represent(SparseMatrixTree<T>& hmat,
 		const MLO<T>& M, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		const Tree& tree) {
+		const Tree& tree, WorkMemory<T>* mem) {
 		assert(Bra.size() == Ket.size());
 		const SparseTree& stree = hmat.sparseTree();
-		SparseTensorTree<T> work(stree.leafIndices(), tree, true, false);
+		bool internal = false;
+		if (mem == nullptr) {
+			mem = new WorkMemory<T>(tree);
+			internal = true;
+		}
+//		SparseTensorTree<T> work(stree.leafIndices(), tree, true, false);
 		for (size_t n = 0; n < stree.size(); ++n) {
 			const Node& node = stree.node(n);
 			if (!node.isToplayer()) {
-				representLayer(hmat, Bra[node], Ket[node], M, node, &(work[node]));
+				representLayer(hmat, Bra[node], Ket[node], M, node, mem);
 			}
+		}
+		if (internal) {
+			delete mem;
 		}
 	}
 

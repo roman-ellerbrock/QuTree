@@ -6,11 +6,12 @@
 #define WORKMEMORY_H
 #include "TensorTree.h"
 
-template <typename T>
+template<typename T>
 class WorkMemory {
 public:
 	WorkMemory() = default;
 	~WorkMemory() = default;
+
 	WorkMemory(const Tree& tree) {
 		TensorShape shape({1});
 		for (const Node& node : tree) {
@@ -42,10 +43,24 @@ public:
 		work3_ = Tensor<T>(shape);
 	}
 
+	WorkMemory(const Node& node) {
+		TensorShape shape({1});
+		if (!node.isToplayer()) {
+			const Node& parent = node.parent();
+			if (parent.shape().totalDimension() > shape.totalDimension()) {
+				shape = parent.shape();
+			}
+		}
+		work1_ = Tensor<T>(shape);
+		work2_ = Tensor<T>(shape);
+		work3_ = Tensor<T>(shape);
+	}
+
 	Tensor<T> work1_, work2_, work3_;
 };
 
 typedef WorkMemory<complex<double>> WorkMemorycd;
+
 typedef WorkMemory<double> WorkMemoryd;
 
 #endif //WORKMEMORY_H
