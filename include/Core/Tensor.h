@@ -44,6 +44,8 @@ public:
 	// Construct from external memory
 	explicit Tensor(const TensorShape& dim, T* ptr, bool ownership = true, bool InitZero = true);
 
+	explicit Tensor(const TensorShape& dim, Tensor<T>& ptr, bool ownership = true, bool InitZero = true);
+
 	explicit Tensor(istream& is);
 
 	explicit Tensor(const string& filename);

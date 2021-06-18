@@ -142,9 +142,12 @@ namespace TreeFunctions {
 				const Node& parent = node.parent();
 
 				/// assign work memory
-				Tensor<T> hKet(parent.shape(), &mem->work1_[0], false, false);
-				Tensor<T> workKet(parent.shape(), &mem->work2_[0], false, false);
-				Tensor<T> workBra(parent.shape(), &mem->work3_[0], false, false);
+				Tensor<T> hKet(parent.shape(), mem->work1_, false, false);
+				Tensor<T> workKet(parent.shape(), mem->work2_, false, false);
+				Tensor<T> workBra(parent.shape(), mem->work3_, false, false);
+//				Tensor<T> hKet(parent.shape(), &mem->work1_[0], false, false);
+//				Tensor<T> workKet(parent.shape(), &mem->work2_[0], false, false);
+//				Tensor<T> workBra(parent.shape(), &mem->work3_[0], false, false);
 
 				/// mats * |Ket>
 				apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);

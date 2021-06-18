@@ -14,6 +14,27 @@ Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
 	if (InitZero) { zero(); }
 }
 
+// Construct from external tensor that holds the memory
+template<typename T>
+Tensor<T>::Tensor(const TensorShape& dim, Tensor<T>& A, bool ownership, bool InitZero)
+	: Tensor<T>(dim, &A[0], ownership, false){
+	if (dim.totalDimension() > A.shape().totalDimension()) {
+		cerr << "Error: memory too small for tensor.\n";
+		ownership_ = false;
+		exit(1);
+	}
+	if (ownership &! A.ownership_) {
+		cerr << "Error: cannot transfer ownership, since original tensor was not owning memory.\n";
+		ownership_ = false;
+		exit(1);
+	}
+	if (ownership) {
+		A.ownership_ = false;
+	}
+	if (InitZero) { zero(); }
+}
+
+
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_((T *) malloc(dim.totalDimension() * sizeof(T))), ownership_(true) {
