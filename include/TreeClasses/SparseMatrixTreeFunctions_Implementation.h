@@ -17,18 +17,28 @@ namespace TreeFunctions {
 	template<typename T>
 	Matrix<T> representUpper(const SparseMatrixTree<T>& hmat,
 		const Tensor<T>& Bra, const Tensor<T>& Ket, const Node& node, WorkMemory<T>* mem) {
-		Tensor<T> work(Ket.shape(), mem->work1_, false, false);
-		Tensor<T> hKet(Ket.shape(), mem->work2_, false, false);
+
+		Tensor<T> workKet(Ket.shape(), mem->work1_, false, false);
+		Tensor<T> workBra(Bra.shape(), mem->work2_, false, false);
+		Tensor<T> hKet(Ket.shape(), mem->work3_, false, false);
+
 		apply(hKet, hmat, (const SparseMatrixTree<T>*) nullptr,
-			(const MatrixTree<T>*) nullptr, Ket, hmat.sparseTree(), node, node.parentIdx(), &work);
-		return contractionBLAS(Bra, hKet, hKet.shape().lastIdx());
+			(const MatrixTree<T>*) nullptr, Ket, hmat.sparseTree(), node, node.parentIdx(), &workKet);
+		Matrix<T> mat(Ket.shape().lastDimension(), Ket.shape().lastDimension());
+		contractionBLAS(mat, workBra, workKet, Bra, hKet, Ket.shape().lastIdx());
+		return mat;
+		//return contractionBLAS(Bra, hKet, hKet.shape().lastIdx());
 	}
 
 	template<typename T>
 	Matrix<T> RepresentBottom(const Tensor<T>& Bra,
-		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& leaf) {
+		const Tensor<T>& Ket, const MLO<T>& M, const Node& node, const Leaf& leaf, WorkMemory<T>* mem) {
 		Tensor<T> MKet = M.apply(Ket, leaf);
-		return contractionBLAS(Bra, MKet, MKet.shape().lastIdx());
+		Tensor<T> workKet(Ket.shape(), mem->work1_, false, false);
+		Tensor<T> workBra(Bra.shape(), mem->work2_, false, false);
+		Matrix<T> mat(Bra.shape().lastDimension(), Ket.shape().lastDimension());
+		contractionBLAS(mat, workBra, workKet, Bra, MKet, Ket.shape().lastIdx());
+		return mat;
 //		return Bra.dotProduct(MKet);
 	}
 
@@ -38,7 +48,7 @@ namespace TreeFunctions {
 		if (!mats.isActive(node)) { return; }
 
 		if (node.isBottomlayer()) {
-			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf());
+			mats[node] = RepresentBottom(Bra, Ket, M, node, node.getLeaf(), mem);
 		} else {
 			mats[node] = representUpper(mats, Bra, Ket, node, mem);
 		}
@@ -101,12 +111,12 @@ namespace TreeFunctions {
 	template<typename T>
 	SparseMatrixTrees<T> represent(const SOP<T>& sop,
 		const TensorTree<T>& Bra, const TensorTree<T>& Ket,
-		shared_ptr<SparseTree>& stree, const Tree& tree) {
+		shared_ptr<SparseTree>& stree, const Tree& tree, WorkMemory<T>* mem) {
 
 		vector<SparseMatrixTree<T>> Mats;
 		for (size_t l = 0; l < sop.size(); ++l) {
 			SparseMatrixTree<T> M(stree, tree);
-			represent(M, sop[l], Bra, Ket, tree);
+			represent(M, sop[l], Bra, Ket, tree, mem);
 			Mats.push_back(M);
 		}
 		return Mats;

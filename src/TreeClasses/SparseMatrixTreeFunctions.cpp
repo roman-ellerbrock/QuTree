@@ -30,7 +30,7 @@ namespace TreeFunctions {
 
 	template SparseMatrixTrees<cd> represent(const SOP<cd>& sop,
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
-		shared_ptr<SparseTree>& stree, const Tree& tree);
+		shared_ptr<SparseTree>& stree, const Tree& tree, WorkMemorycd* mem);
 
 	template void contraction(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
 		const SparseMatrixTree<cd>& mats, const MatrixTree<cd> *rho,
@@ -101,7 +101,7 @@ namespace TreeFunctions {
 
 	template SparseMatrixTrees<d> represent(const SOP<d>& sop,
 		const TensorTree<d>& Bra, const TensorTree<d>& Ket,
-		shared_ptr<SparseTree>& stree, const Tree& tree);
+		shared_ptr<SparseTree>& stree, const Tree& tree, WorkMemory<d>* mem);
 
 	template void contraction(SparseMatrixTree<d>& holes, const TensorTree<d>& Bra, const TensorTree<d>& Ket,
 		const SparseMatrixTree<d>& mats, const MatrixTree<d> *rho,

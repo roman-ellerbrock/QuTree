@@ -44,7 +44,7 @@ public:
 	}
 
 	WorkMemory(const Node& node) {
-		TensorShape shape({1});
+		TensorShape shape = node.shape();
 		if (!node.isToplayer()) {
 			const Node& parent = node.parent();
 			if (parent.shape().totalDimension() > shape.totalDimension()) {
