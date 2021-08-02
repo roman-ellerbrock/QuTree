@@ -170,6 +170,7 @@ namespace TreeFunctions {
 
 				/// mats * |Ket>
 				apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);
+//				hKet = Ket[parent];
 				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
 					cerr << "Holematrices not allocated correctly.\n";
 					exit(1);
@@ -290,7 +291,7 @@ namespace TreeFunctions {
 //		Tensor<T> work = Phi;
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
-			if (!mat.isActive(child)) { continue; }
+			if ((k == skip) || !mat.isActive(child)) { continue; }
 			matrixTensorBLAS(*out, *work, mat[child], *in, child.childIdx(), true);
 			swap(in, out);
 		}

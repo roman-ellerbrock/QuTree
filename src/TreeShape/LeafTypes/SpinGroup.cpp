@@ -8,15 +8,29 @@ void SpinGroup::initialize(double par0, double par1, double par2, double par3) {
 }
 
 void SpinGroup::initSPF(Tensorcd& A) const {
-	const TensorShape& tdim = A.shape();
-	size_t ntensor = tdim.lastDimension();
-	size_t dimpart = tdim.lastBefore();
 
-	using namespace std::chrono;
+	const TensorShape& shape = A.shape();
+	if (shape.order() < 1 || shape[0] <= 1) {
+		cerr << "Cannot initialize spin basis: primitive basis too small.\n";
+		exit(1);
+	}
+	A(0, 0) = cos(alpha_);
+	if (shape[0] > 1) {
+		A(1, 0) = sin(alpha_);
+	}
+	if (A.shape().lastDimension() > 1) {
+		A(0, 1) = -sin(alpha_);
+		A(1, 1) = cos(alpha_);
+	}
+
+/*	using namespace std::chrono;
+	uniform_real_distribution<double> dist;
+	assert(ntensor == 2);
+	assert(dimpart == 2);
 	auto seed = system_clock::now().time_since_epoch().count();
 	mt19937 gen(seed);
-	uniform_real_distribution<double> dist;
-
+	size_t ntensor = tdim.lastDimension();
+	size_t dimpart = tdim.lastBefore();
 	if (dim_ == 2) {
 		assert(ntensor == 2);
 		assert(dimpart == 2);
@@ -41,7 +55,7 @@ void SpinGroup::initSPF(Tensorcd& A) const {
 			}
 			A(dimpart - 1, 0) = 1.;
 		}
-	}
+	}*/
 
 	gramSchmidt(A);
 }

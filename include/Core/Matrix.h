@@ -277,7 +277,7 @@ public:
 	 *
 	 * @return Inverted Matrix
 	 */
-	Matrix<complex<double> > cInv() const;
+	Matrix<T> cInv() const;
 
 	/** \brief Diagonalization of a real Matrix
 	 *

@@ -56,6 +56,7 @@ template void tensorMatrix(Tensor<double>& C, const Tensor<double>& B, const Mat
 template Tensor<double> tensorMatrix(const Tensor<double>& B, const Matrix<double>& A, size_t mode);
 template Tensor<double> tMatrixTensor<doub, doub>(const Matrix<double>& A, const Tensor<double>& B, size_t mode);
 template Tensor<double> multStateAB(const Matrix<double>& A, const Tensor<double>& B);
+template Tensor<d> projectOut<d>(const Tensor<d>& A, const Tensor<d>& B);
 template Tensor<double> multStateArTB<doub, doub>(const Matrix<double>& A, const Tensor<double>& B);
 template void multStateArTB<doub, doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>& B);
 template void gramSchmidt<double>(Tensor<double>& A);

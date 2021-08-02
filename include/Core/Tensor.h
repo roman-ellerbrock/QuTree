@@ -268,8 +268,7 @@ Tensorcd qr(const Tensorcd& A, size_t mode);
 
 //Projects B on A
 template<typename T>
-Tensor< complex<double> > project(const Tensor<complex<double> >& A,
-	const Tensor< T >& B);
+Tensor<T> project(const Tensor<T>& A, const Tensor<T>& B);
 
 template<typename T>
 Tensor<T> projectOut(const Tensor<T>& A, const Tensor<T>& B);

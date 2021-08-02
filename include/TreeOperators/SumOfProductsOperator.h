@@ -58,7 +58,7 @@ public:
 		coeff_.push_back(coeff);
 	}
 
-	complex<double> coeff(size_t i) const {
+	T coeff(size_t i) const {
 		assert(i < coeff_.size());
 		return coeff_[i];
 	}
@@ -120,7 +120,7 @@ public:
 
 protected:
 	vector<MLO<T>> mpos_;
-	vector<complex<double>> coeff_;
+	vector<T> coeff_;
 
 private:
 	virtual void specialInitialize(const Tree& tree) {

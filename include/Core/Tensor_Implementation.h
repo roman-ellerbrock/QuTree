@@ -857,21 +857,21 @@ Tensorcd qr(const Tensorcd& A, size_t mode) {
 
 //Projects B on A
 template<typename T>
-Tensor<complex<double> > project(const Tensor<complex<double> >& A,
+Tensor<T> project(const Tensor<T>& A,
 	const Tensor<T>& B) {
 	//calculates the overlap of A with it self
-	Tensor<complex<double> > Aperp(A);
+	Tensor<T> Aperp(A);
 //	GramSchmidt(Aperp);
-	const Matrix<complex<double> > overlap = Aperp.dotProduct(Aperp);
+	const Matrix<T> overlap = Aperp.dotProduct(Aperp);
 
 	//invert the overlap
-	const Matrix<complex<double> > inverse_operlap = overlap.cInv();
+	const Matrix<T> inverse_operlap = overlap.cInv();
 
 	//calculate the scalar product of A and B
-	const Matrix<complex<double> > dotproduct = Aperp.dotProduct(B);
+	const Matrix<T> dotproduct = Aperp.dotProduct(B);
 
 	//multiply the scalar product and the inverse_operlap
-	const Matrix<complex<double> > product = inverse_operlap * dotproduct;
+	const Matrix<T> product = inverse_operlap * dotproduct;
 
 	return multStateArTB(product, Aperp);
 //	return multStateArTB(dotproduct, Aperp);
@@ -886,8 +886,8 @@ Tensor<complex<double> > project(const Tensor<complex<double> >& A,
 template<typename T>
 Tensor<T> projectOut(const Tensor<T>& A,
 	const Tensor<T>& B) {
-	Tensorcd projector = project(B, A);
-	Tensorcd perp_A(A);
+	Tensor<T> projector = project(B, A);
+	Tensor<T> perp_A(A);
 	const TensorShape& tdim = A.shape();
 	for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 		perp_A(i) -= projector(i);

@@ -308,8 +308,8 @@ void Matrix<T>::cDiag(Matrix<complex<double>>& Transformation, Vector<double>& e
 }
 
 //Inverts a complex matrix
-template<typename T>
-Matrix<complex<double> > Matrix<T>::cInv() const {
+template<>
+Matrix<complex<double> > Matrix<complex<double>>::cInv() const {
 	assert(dim1_ == dim2_);
 
 	//map everything on classes of Eigen
@@ -320,6 +320,26 @@ Matrix<complex<double> > Matrix<T>::cInv() const {
 
 	//map the result back to MCTDH Matrices
 	Matrix<complex<double> > Inverse(dim1_, dim2_);
+	for (size_t i = 0; i < dim1_; i++)
+		for (size_t j = 0; j < dim2_; j++)
+			Inverse(j, i) = B(j, i);
+
+	return Inverse;
+}
+
+//Inverts a real matrix
+template<>
+Matrix<double> Matrix<double>::cInv() const {
+	assert(dim1_ == dim2_);
+
+	//map everything on classes of Eigen
+	Eigen::MatrixXd A = Eigen::Map<Eigen::MatrixXd>((double*) coeffs_, dim1_, dim2_);
+
+	//Invert the matrix
+	Eigen::MatrixXd B = A.inverse();
+
+	//map the result back to MCTDH Matrices
+	Matrix<double> Inverse(dim1_, dim2_);
 	for (size_t i = 0; i < dim1_; i++)
 		for (size_t j = 0; j < dim2_; j++)
 			Inverse(j, i) = B(j, i);

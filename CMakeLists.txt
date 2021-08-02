@@ -136,6 +136,9 @@ set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
 #target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} "${MKL_DIR}/libmkl_intel_lp64.dylib")
 target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
 
+# @TODO: Install BLAS automatically if it cannot find it
+# Set paths automatically for BLAS
+
 #####################################################################
 # Set Compiler Flags
 #####################################################################

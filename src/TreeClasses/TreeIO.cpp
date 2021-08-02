@@ -146,6 +146,15 @@ namespace TreeIO {
 		leafs(Psi, Rho, tree, os);
 	}
 
+	template <typename T>
+	void output2(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
+		MatrixTree<T> Rho(tree);
+		TreeFunctions::contraction(Rho, Psi, tree, true);
+		occupancy(Psi, tree, os);
+//		expectationValues(Psi, Rho, tree, os);
+		leafs(Psi, Rho, tree, os);
+	}
+
 	template<typename T>
 	void occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os) {
 		MatrixTree<T> Rho(tree);
@@ -224,7 +233,6 @@ namespace TreeIO {
 }
 
 typedef complex<double> cd;
-
 typedef double d;
 
 template void TreeIO::occupancy<complex<double>>(const TensorTree<complex<double>>& Psi, const Tree& tree, ostream& os);
@@ -246,4 +254,4 @@ TreeIO::leafDensity(const TensorTree<cd>& Psi, const SparseMatrixTree<cd>& Rho, 
 template Matrix<d>
 TreeIO::leafDensity(const TensorTree<d>& Psi, const SparseMatrixTree<d>& Rho, const Leaf& leaf, const Tree& tree);
 
-
+template void TreeIO::output2<double>(const TensorTree<double>& Psi, const Tree& tree, ostream& os);

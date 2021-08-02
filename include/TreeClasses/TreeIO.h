@@ -18,6 +18,9 @@ namespace TreeIO {
 	void output(const TensorTreecd& Psi, const Tree& tree, ostream& os = cout);
 
 	template <typename T>
+	void output2(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);
+
+	template <typename T>
 	void occupancy(const TensorTree<T>& Psi, const Tree& tree, ostream& os = cout);
 
 	template <typename T>
