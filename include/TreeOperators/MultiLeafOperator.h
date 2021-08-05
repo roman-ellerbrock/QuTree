@@ -193,4 +193,5 @@ template <typename T>
 using MLO = MultiLeafOperator<T>;
 
 typedef MLO<complex<double>> MLOcd;
+typedef MLO<double> MLOd;
 

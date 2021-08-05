@@ -53,7 +53,7 @@ public:
 	}
 
 	// append a new summand
-	void push_back(const MLO<T>& M, complex<double> coeff) {
+	void push_back(const MLO<T>& M, T coeff) {
 		mpos_.push_back(M);
 		coeff_.push_back(coeff);
 	}
