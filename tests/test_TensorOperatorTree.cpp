@@ -24,23 +24,23 @@ SUITE (TensorOperatorTree) {
 		mt19937 rng_;
 		Tree tree_;
 		Tree optree_;
-		TensorTreecd Psi_;
+		TensorTreed Psi_;
 		TensorOperatorTree H_;
-		LeafMatrixcd leafI_;
-		LeafMatrixcd leafX_;
+		LeafMatrixd leafI_;
+		LeafMatrixd leafX_;
 
 		void Initialize() {
 			rng_ = mt19937(1990);
 			tree_ = TreeFactory::balancedTree(12, 2, 2);
 			optree_ = TreeFactory::operatorTree(tree_);
-			Psi_ = TensorTreecd(rng_, tree_);
+			Psi_ = TensorTreed(rng_, tree_);
 
-			Matrixcd I = identityMatrixcd(2);
-			Matrixcd X(2, 2);
+			Matrixd I = identityMatrixd(2);
+			Matrixd X(2, 2);
 			X(0, 1) = 1.;
 			X(1, 0) = 1.;
-			leafI_ = LeafMatrixcd(I);
-			leafX_ = LeafMatrixcd(X);
+			leafI_ = LeafMatrixd(I);
+			leafX_ = LeafMatrixd(X);
 
 			H_ = TensorOperatorTree(optree_);
 			H_.occupy(optree_);
@@ -50,7 +50,6 @@ SUITE (TensorOperatorTree) {
 					H_.setLeafOperator(leafX_, 1, node);
 				}
 			}
-			H_.print(tree_);
 		}
 	};
 

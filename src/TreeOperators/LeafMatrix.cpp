@@ -18,6 +18,20 @@ Matrixcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf) {
 	return mat;
 }
 
+Matrixd toMatrix(const LeafOperator<double>& h, const Leaf& leaf) {
+	size_t mode = leaf.mode();
+	size_t dim = leaf.dim();
+	TensorShape shape{dim, dim};
+	Tensord v(shape);
+	Tensord hv(shape);
+	for (size_t i = 0; i < dim; ++i) {
+		v(i, i) = 1.;
+	}
+	h.apply(leaf.interface(), hv, v);
+	Matrixd mat = v.dotProduct(hv);
+	return mat;
+}
+
 
 template<typename T>
 void LeafMatrix<T>::apply(const LeafInterface& grid, Tensor<T>& hAcoeff,

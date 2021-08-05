@@ -23,6 +23,20 @@ void SpinGroup::initSPF(Tensorcd& A) const {
 		A(1, 1) = cos(alpha_);
 	}
 
+	if (A.shape().lastDimension() > 2 ) {
+		using namespace std::chrono;
+		uniform_real_distribution<double> dist;
+		auto seed = system_clock::now().time_since_epoch().count();
+		mt19937 gen(seed);
+		size_t ntensor = A.shape().lastDimension();
+		size_t dimpart = A.shape().lastBefore();
+		for (size_t n = 2; n < ntensor; ++n) {
+			for (size_t i = 2; i < dimpart; ++i) {
+				A(i, n) = dist(gen);
+			}
+		}
+	}
+
 /*	using namespace std::chrono;
 	uniform_real_distribution<double> dist;
 	assert(ntensor == 2);

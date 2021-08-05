@@ -48,6 +48,7 @@ SUITE (MatrixTreeFunctions) {
 		mt19937 gen(1923);
 		Tree tree = TreeFactory::balancedTree(7, 5, 4);
 		TensorTreecd Psi(gen, tree);
+		orthogonal(Psi, tree);
 		MatrixTreecd S = dotProduct(Psi, Psi, tree);
 		for (const Node& node : tree) {
 			const Matrixcd& s = S[node];

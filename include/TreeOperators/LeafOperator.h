@@ -28,3 +28,4 @@ public:
 };
 
 typedef LeafOperator<complex<double>> LeafOperatorcd;
+typedef LeafOperator<double> LeafOperatord;

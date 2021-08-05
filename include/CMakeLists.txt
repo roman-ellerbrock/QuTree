@@ -48,6 +48,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeOperators/SumOfProductsOperator_Implementation.h
     include/TreeOperators/TensorOperators/MatrixListTree.h
     include/TreeOperators/TensorOperators/TensorOperatorTree.h
+    include/TreeOperators/TensorOperators/TensorOperatorRepresentation.h
     include/TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h
 
     include/TreeShape/AbstractNode.h

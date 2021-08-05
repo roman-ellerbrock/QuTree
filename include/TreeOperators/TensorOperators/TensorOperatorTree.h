@@ -10,12 +10,12 @@
 #include "TreeOperators/MultiLeafOperator.h"
 #include "TreeOperators/SumOfProductsOperator.h"
 
-class TensorOperatorTree : public TensorTreecd {
+class TensorOperatorTree : public TensorTreed {
 public:
 	TensorOperatorTree() = default;
 	explicit TensorOperatorTree(const Tree& tree);
-	TensorOperatorTree(const MLOcd& M, const Tree& tree);
-	TensorOperatorTree(const SOPcd& S, const Tree& tree);
+	TensorOperatorTree(const MLOd& M, const Tree& tree);
+	TensorOperatorTree(const SOPd& S, const Tree& tree);
 
 	~TensorOperatorTree() = default;
 
@@ -23,10 +23,10 @@ public:
 
 	void print(const Tree& tree) const;
 
-	void setLeafOperator(const Matrixcd& M,
+	void setLeafOperator(const Matrixd& M,
 		size_t operator_idx, const Node& node);
 
-	void setLeafOperator(const LeafMatrixcd& M,
+	void setLeafOperator(const LeafMatrixd& M,
 		size_t operator_idx, const Node& node) {
 		setLeafOperator(M.matrix(), operator_idx, node);
 	}

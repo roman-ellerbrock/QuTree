@@ -76,15 +76,12 @@ SUITE (SparseMatrixTree) {
 		const SparseTree& stree = holes.sparseTree();
 
 		Matrixcd x(2, 2);
-		x(0, 0) = 0.03125;
+		x(0, 0) = 0.5;
 			CHECK_CLOSE(0., residual(x, holes[stree.node(0)]), eps);
-		x(0, 0) = 0.0625;
 			CHECK_CLOSE(0., residual(x, holes[stree.node(1)]), eps);
-		x(0, 0) = 0.03125;
 			CHECK_CLOSE(0., residual(x, holes[stree.node(2)]), eps);
-		x(0, 0) = 0.0625;
 			CHECK_CLOSE(0., residual(x, holes[stree.node(3)]), eps);
-		x(0, 0) = 0.25;
+		x(0, 0) = 1.;
 			CHECK_CLOSE(0., residual(x, holes[stree.node(4)]), eps);
 		Matrixcd x1(1, 1);
 		x1(0, 0) = 1.;

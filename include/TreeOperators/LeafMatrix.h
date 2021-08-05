@@ -8,6 +8,7 @@
 #include "TreeShape/Leaf.h"
 
 Matrixcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf);
+Matrixd toMatrix(const LeafOperatord& h, const Leaf& leaf);
 
 template<typename T>
 class LeafMatrix: public LeafOperator<T>
