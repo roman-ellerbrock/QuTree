@@ -82,6 +82,12 @@ public:
 	Vector operator*(T coeff)const;
 	Vector operator/(T coeff)const;
 
+	friend Vector operator*(T a, const Vector<T>& A) {
+		Vector B(A);
+		B *= a;
+		return B;
+	}
+
 	// Math Operators
 	double norm() const;
 

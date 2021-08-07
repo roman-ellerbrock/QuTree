@@ -179,7 +179,7 @@ namespace TreeFactory {
 				TensorShape& shape = node.shape();
 				size_t dim = shape.lastBefore();
 				size_t ldim = shape.lastDimension();
-				TensorShape newshape({dim, dim, ldim});
+				TensorShape newshape({dim * dim, ldim});
 				node.shape() = newshape;
 			}
 		}
