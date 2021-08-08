@@ -34,13 +34,7 @@ TensorOperatorTree::TensorOperatorTree(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		const TensorShape& shape = node.shape();
-		if (node.isBottomlayer()) {
-			vector<size_t> dim({shape.lastBefore(), shape.lastBefore(), shape.lastDimension()});
-			TensorShape oshape(dim);
-			attributes_.emplace_back(Tensord(oshape));
-		} else {
-			attributes_.emplace_back(Tensord(shape));
-		}
+		attributes_.emplace_back(Tensord(shape));
 	}
 	occupy(tree);
 }
@@ -53,11 +47,11 @@ void TensorOperatorTree::occupy(const Tree& tree) {
 			Phi(i, i) = 1.;
 		}
 		if (node.isBottomlayer()) {
-			if (!(Phi.shape().order() == 3)) {
+			if (!(Phi.shape().order() == 2)) {
 				cerr << "Wrong order in tensor operator tree.\n";
 				exit(1);
 			}
-			size_t dim = sqrt(Phi.shape().lastBefore());
+			size_t dim = sqrt(1e-10 + Phi.shape().lastBefore());
 			setLeafOperator(identityMatrixd(dim), 0, node);
 		}
 	}
@@ -80,6 +74,18 @@ void TensorOperatorTree::setLeafOperator(const Matrixd& m,
 	Tensord& h = operator[](node);
 	for (size_t i = 0; i < shape.lastBefore(); ++i) {
 		h(i, operator_idx) = m[i];
+	}
+}
+
+void TensorOperatorTree::occupy(const Tree& tree, mt19937& gen) {
+	uniform_real_distribution<double> dist(-1., 1.);
+	for (const Node& node : tree) {
+		Tensord& A = (*this)[node];
+		const TensorShape& shape = A.shape();
+		for (size_t i = 0; i < shape.totalDimension(); ++i) {
+			A[i] = dist(gen);
+		}
+		A = qr(A, shape.lastIdx());
 	}
 }
 

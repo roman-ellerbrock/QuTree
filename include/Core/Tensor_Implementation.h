@@ -840,7 +840,8 @@ void gramSchmidt(Tensor<T>& A) {
 	}
 }
 
-Tensorcd qr(const Tensorcd& A) {
+template<typename T>
+Tensor<T> qr(const Tensor<T>& A) {
 	auto Amat = toMatrix(A);
 	auto Qmat = qr(Amat);
 	auto Q = toTensor(Qmat);
@@ -848,7 +849,8 @@ Tensorcd qr(const Tensorcd& A) {
 	return Q;
 }
 
-Tensorcd qr(const Tensorcd& A, size_t mode) {
+template<typename T>
+Tensor<T> qr(const Tensor<T>& A, size_t mode) {
 	auto Amat = toMatrix(A, mode);
 	auto Qmat = qr(Amat);
 	auto Q = toTensor(Qmat, A.shape(), mode);

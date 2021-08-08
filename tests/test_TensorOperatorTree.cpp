@@ -10,6 +10,9 @@
 #include "TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h"
 #include <UnitTest++/UnitTest++.h>
 #include "TreeOperators/TensorOperators/TTNOMatrixTree.h"
+#include "TreeOperators/TensorOperators/TTNOHoleTree.h"
+#include "TreeShape/LeafTypes/SpinGroup.h"
+#include "TreeOperators/TensorOperators/contractSOP.h"
 
 SUITE (TensorOperatorTree) {
 
@@ -60,7 +63,7 @@ SUITE (TensorOperatorTree) {
 		for (const Node& node : optree) {
 			if (node.isBottomlayer()) {
 					CHECK_EQUAL(2, node.shape().order());
-					CHECK_EQUAL(2, node.shape().lastDimension());
+					CHECK_EQUAL(4, node.shape().lastDimension());
 					CHECK_EQUAL(4, node.shape().lastBefore());
 			}
 		}
@@ -70,6 +73,60 @@ SUITE (TensorOperatorTree) {
 		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		Tree optree = TreeFactory::operatorTree(tree);
 
+		mt19937 gen(2348);
+		TensorOperatorTree A(optree);
+		A.occupy(optree, gen);
+		for (const Node& node : optree) {
+			const Tensord& B = A[node];
+			for (size_t i = 0; i < node.shape().totalDimension(); ++i) {
+				double r = abs(B[i]);
+				CHECK_EQUAL((r > 1e-15), true);
+			}
+		}
+
+	}
+
+	TEST(TTNOrep) {
+		SOPd S;
+		Tree tree = TreeFactory::balancedTree(12, 2, 4);
+		Tree optree = TreeFactory::operatorTree(tree);
+		for (size_t l = 0; l < tree.nLeaves(); ++l) {
+			Matrixd sigma = JordanWigner::sigmaX();
+/*			for (size_t k = 0; k < l; ++k) {
+				sigma = sigma * JordanWigner::sigmaZ();
+			}*/
+			MLOd M(sigma, l);
+			S.push_back(M, 1.);
+		}
+
+		mt19937 gen(1239);
+		TensorOperatorTree A(optree, gen);
+
+		/// Set primitive operators to 1, s_x
+		for (const Node& node : optree) {
+			if (node.isBottomlayer()) {
+				A.setLeafOperator(JordanWigner::identity(), 0, node);
+				A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
+			}
+		}
+
+		cout << "rep: " << endl;
+		TTNOMatrixTree rep(S, optree);
+		rep.represent(A, S, optree);
+		rep.print(optree);
+
+		cout << "holes: " << endl;
+		TTNOHoleTree hole(S, optree);
+		hole.represent(A, rep, optree);
+		hole.print(optree);
+
+		cout << "dot: " << endl;
+		auto AA = TreeFunctions::dotProduct(A, A, optree);
+		auto aa = 1. / (double) pow(2, optree.nLeaves()) * AA[optree.topNode()] ;
+		aa.print();
+
+//		TensorOperatorTree B = contractSOP(S, optree);
+//		B.print(optree);
 	}
 
 }

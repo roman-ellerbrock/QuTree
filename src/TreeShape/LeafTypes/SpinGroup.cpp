@@ -1,6 +1,49 @@
 #include "TreeShape/LeafTypes/SpinGroup.h"
 #include <chrono>
 
+namespace JordanWigner {
+	Matrixd identity() {
+		return identityMatrixd(2);
+	}
+
+	Matrixd sigmaX() {
+		Matrixd x(2, 2);
+		x(1, 0) = 1.;
+		x(0, 1) = 1.;
+		return x;
+	}
+
+	Matrixcd sigmaY() {
+		Matrixcd y(2, 2);
+		y(1, 0) = QM::im;
+		y(0, 1) = -QM::im;
+		return y;
+	}
+
+	Matrixd sigmaZ() {
+		Matrixd z(2, 2);
+		z(0, 0) = 1.;
+		z(1, 1) = -1.;
+		return z;
+	}
+
+	Matrixd sigmaPlus() {
+		/// Ref. [1] Eq. (19)
+		Matrixd s(2, 2);
+		s(1, 0) = 1.;
+		return s;
+//		return 0.5 * (sigmaX() - QM::im * sigmaY());
+	}
+
+	Matrixd sigmaMinus() {
+		/// Ref. [1] Eq. (19)
+		Matrixd s(2, 2);
+		s(0, 1) = 1.;
+		return s;
+//		return 0.5 * (sigmaX() + QM::im * sigmaY());
+	}
+}
+
 void SpinGroup::initialize(double par0, double par1, double par2, double par3) {
     last_ = false;
     alpha_ = par2 * 3.1415926538;

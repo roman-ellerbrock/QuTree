@@ -532,6 +532,7 @@ istream& operator>>(istream& is, Matrix<T>& A);
 
 /// @TODO: Return Q & R matrix and adjust name convention
 Matrixcd qr(const Matrixcd& A);
+Matrixd qr(const Matrixd& A);
 
 typedef tuple<Matrixcd, Matrixcd, Vectord> SVDcd;
 typedef tuple<Matrixd, Matrixd, Vectord> SVDd;

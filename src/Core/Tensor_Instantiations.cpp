@@ -40,6 +40,8 @@ template void contraction<cd>(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<c
 template void matrixTensor<cd>(Tensor<cd>& C, const Matrix<cd>& A, const Tensor<cd>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
 template Matrix<cd> contraction(const Tensor<cd>& A, const Tensor<cd>& B, size_t k);
 template void contraction(Matrix<cd>& S, const Tensor<cd>& A, const Tensor<cd>& B, size_t k, bool zero);
+template Tensor<cd> qr(const Tensor<cd>& A);
+template Tensor<cd> qr(const Tensor<cd>& A, size_t mode);
 
 template void tensorMatrix(Tensor<cd>& C, const Tensor<cd>& B, const Matrix<cd>& A, size_t mode, bool zero);
 template Tensor<cd> tensorMatrix(const Tensor<cd>& B, const Matrix<cd>& A, size_t mode);
@@ -71,6 +73,8 @@ template void contraction<doub>(Matrix<doub>& S, const Tensor<doub>& A, const Te
 template void matrixTensor<doub>(Tensor<doub>& C, const Matrix<doub>& A, const Tensor<doub>&  B, size_t before, size_t activeC, size_t activeB, size_t after, bool zero);
 template Matrix<doub> contraction(const Tensor<doub>& A, const Tensor<doub>& B, size_t k);
 template void contraction(Matrix<doub>& S, const Tensor<doub>& A, const Tensor<doub>& B, size_t k, bool zero);
+template Tensor<doub> qr(const Tensor<doub>& A);
+template Tensor<doub> qr(const Tensor<doub>& A, size_t mode);
 
 template ostream& operator<< <doub> (ostream&, const Tensor<doub>& );
 template istream& operator>> <doub> (istream&, Tensor<doub>& );

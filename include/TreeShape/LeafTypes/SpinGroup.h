@@ -4,8 +4,20 @@
 #include "Core/Vector.h"
 #include "Core/Tensor.h"
 #include <random>
+#include "Util/QMConstants.h"
 
-class SpinGroup:
+
+namespace JordanWigner {
+	Matrixd sigmaX();
+	Matrixd identity();
+	Matrixcd sigmaY();
+	Matrixd sigmaZ();
+	Matrixd sigmaPlus();
+	Matrixd sigmaMinus();
+}
+
+
+	class SpinGroup:
 	public LeafInterface {
 public:
 	explicit SpinGroup(size_t dim)

@@ -801,6 +801,19 @@ Matrixcd qr(const Matrixcd& A) {
 	return toQutree(thinQ);
 }
 
+Matrixd qr(const Matrixd& A) {
+//	auto Aeigen = toEigen(A);
+	using namespace Eigen;
+	MatrixXd Aeigen = Map<MatrixXd>((double *) A.ptr(),
+		A.dim1(), A.dim2());
+//	auto& QR = Aeigen.householderQr();
+//	const Eigen::MatrixXcd& Q = QR.householderQ();
+//	return toQutree(Q);
+	HouseholderQR<MatrixXd> qr(Aeigen);
+	MatrixXd thinQ = qr.householderQ() * MatrixXd::Identity(A.dim1(), A.dim2());
+	return toQutree(thinQ);
+}
+
 SVDcd svd(const Matrixcd& A) {
 	/**
 	 * Rationale:
