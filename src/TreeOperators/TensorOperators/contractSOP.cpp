@@ -51,14 +51,12 @@ void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 	for (const Node& node : optree) {
 		const Tensord& B = A[node];
 
-		if (node.isBottomlayer()) { continue; }
-		Tensord Bnew = applyLayer(rep, hole, S, node);
+		A[node] = applyLayer(rep, hole, S, node);
+
 		if (!node.isToplayer()) {
-			Bnew = qr(Bnew);
+			A[node] = qr(A[node]);
 			rep.representLayer(A, S, node);
 		}
-
-		A[node] = Bnew;
 	}
 }
 
