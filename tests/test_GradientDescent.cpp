@@ -54,4 +54,5 @@ SUITE (gradientDescent) {
 			CHECK_CLOSE(0., abs(x(0)), 0.05);
 			CHECK_CLOSE(0., abs(x(1)), 0.05);
 	}
+
 }

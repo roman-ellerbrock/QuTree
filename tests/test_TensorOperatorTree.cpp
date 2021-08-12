@@ -88,7 +88,7 @@ SUITE (TensorOperatorTree) {
 
 	TEST(TTNOrep) {
 		SOPd S;
-		Tree tree = TreeFactory::balancedTree(12, 2, 4);
+		Tree tree = TreeFactory::balancedTree(4, 2, 4);
 		Tree optree = TreeFactory::operatorTree(tree);
 		for (size_t l = 0; l < tree.nLeaves(); ++l) {
 			Matrixd sigma = JordanWigner::sigmaX();
@@ -109,6 +109,9 @@ SUITE (TensorOperatorTree) {
 				A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
 			}
 		}
+		auto AA = TreeFunctions::dotProduct(A, A, optree);
+		auto aa = AA[optree.topNode()] ;
+//		auto aa = 1. / (double) pow(2, optree.nLeaves()) * AA[optree.topNode()] ;
 
 		cout << "rep: " << endl;
 		TTNOMatrixTree rep(S, optree);
@@ -120,13 +123,8 @@ SUITE (TensorOperatorTree) {
 		hole.represent(A, rep, optree);
 		hole.print(optree);
 
-		cout << "dot: " << endl;
-		auto AA = TreeFunctions::dotProduct(A, A, optree);
-		auto aa = 1. / (double) pow(2, optree.nLeaves()) * AA[optree.topNode()] ;
-		aa.print();
-
-//		TensorOperatorTree B = contractSOP(S, optree);
-//		B.print(optree);
+		TensorOperatorTree B = contractSOP(S, optree);
+		B.print(optree);
 	}
 
 }

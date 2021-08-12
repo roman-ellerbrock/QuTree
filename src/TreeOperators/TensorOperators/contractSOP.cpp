@@ -45,34 +45,50 @@ void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 		}
 		if (!node.isToplayer()) {
 			Bnew = qr(Bnew);
-			auto s = Bnew.dotProduct(Bnew);
-			s.print();
-			getchar();
-
 			rep.representLayer(A, S, node);
 		}
 		A[node] = Bnew;
 	}
 }
 
+Tensord buildOperator(const MLOd& M, const Leaf& leaf) {
+
+	size_t mode = leaf.mode();
+	Matrixd I = identityMatrixd(leaf.dim());
+	for (size_t i = 0; i < M.size(); ++i) {
+		if (!M.isActive(i, mode)) { continue; }
+		const auto& op_ptr = M[i];
+		const LeafOperatord & op = *op_ptr;
+		Matrixd op_rep = toMatrix(op, leaf);
+		I = op_rep * I;
+	}
+	Tensord Itens({leaf.dim() * leaf.dim(), 1});
+	for (size_t i = 0; i < Itens.shape().totalDimension(); ++i) {
+		Itens[i] = I[i];
+	}
+	return Itens;
+}
+
+double prodnorm(const MLOd& Ml, const MLOd& Mm, const Tree& tree) {
+	double x = 1.;
+	for (size_t k = 0; k < tree.nLeaves(); ++k) {
+		const Leaf& leaf = tree.getLeaf(k);
+		Tensord ml = buildOperator(Ml, leaf);
+		Tensord mm = buildOperator(Mm, leaf);
+		Matrixd prod = ml.dotProduct(mm);
+		x *= abs(prod(0, 0)) / (double) leaf.dim();
+	}
+	return x;
+}
+
 double norm(const SOPd& S, const Tree& tree) {
 	double norm = 0.;
-//	auto Ssq = S * S; // @TODO: only holds for hermitian matrices
-	for (size_t l = 0; l < S.size(); ++l) {
-		double c = S.coeff(l);
-		const MLOd& M = S[l];
-		for (size_t k = 0; k < tree.nLeaves(); ++k) {
-			const Leaf& leaf = tree.getLeaf(k);
-			Matrixd I = identityMatrixd(sqrt(1e-15 + leaf.dim()));
-			if (M.isActive(k, l)) {
-				for (size_t i = 0; i < M.size(); ++i) {
-					const auto& op_ptr = M[i];
-					const auto& op = *op_ptr;
-					auto op_rep = toMatrix(op, leaf);
-					I = op_rep * I;
-				}
-			}
-			norm += c * I.frobeniusNorm() / (double) leaf.dim();
+	for (size_t m = 0; m < S.size(); ++m) {
+		const MLOd& Mm = S[m];
+		for (size_t l = 0; l < S.size(); ++l) {
+			const MLOd& Ml = S[l];
+			double factor = prodnorm(Ml, Mm, tree);
+			norm += S.coeff(l) * S.coeff(m) * factor;
 		}
 	}
 	return norm;
@@ -89,7 +105,7 @@ double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 	double err = 0;
 	for (size_t j = 0; j < aa.dim2(); ++j) {
 		for (size_t i = 0; i < aa.dim1(); ++i) {
-			err += aa(i, j);
+			err = aa(i, j);
 		}
 	}
 	err /= (double) pow(2, optree.nLeaves());
@@ -100,6 +116,10 @@ double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 		}
 	}
 
-	return 2e-0;
+	double normS = norm(S, optree);
+	cout << "Err: " << err << " + " << normS << endl;
+	err += normS;
+
+	return err;
 }
 

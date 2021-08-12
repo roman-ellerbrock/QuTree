@@ -23,9 +23,14 @@ public:
 		}
 	}
 
-	void gatherMk(vector<Matrixd>& Mk, const Node& node) const {
-		if (!node.isToplayer()) {
-			Mk.push_back((*this)[node.parent()]);
+	/**
+	 *
+	 * @param Mk
+	 * @param parent of node at which calculation is performed (NOT node itself!)
+	 */
+	void gatherMk(vector<Matrixd>& Mk, const Node& parent) const {
+		if (!parent.isToplayer()) {
+			Mk.push_back((*this)[parent]);
 		}
 	}
 
@@ -45,9 +50,9 @@ public:
 
 			for (size_t l = 0; l < mrep.dim2(); ++l) {
 				for (size_t I = 0; I < shape.totalDimension(); ++I) {
-					auto is = indexMapping(I, shape);
-					size_t ik = is[skip];
-					double factor = prodMk(is, ms, l, (int) skip);
+					auto idx = indexMapping(I, shape);
+					size_t ik = idx[skip];
+					double factor = prodMk(idx, ms, l, (int) skip);
 					mrep(ik, l) += B(I) * factor;
 				}
 			}
