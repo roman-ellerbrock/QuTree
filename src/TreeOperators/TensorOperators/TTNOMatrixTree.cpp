@@ -11,8 +11,7 @@ void toTensor(Tensord& A, const MLOd& M, size_t part, const Leaf& leaf) {
 	 * Note: currently only works if there is a single operator acting on 'leaf' in M
 	 */
 	const TensorShape& shape = A.shape();
-	auto dim = (size_t) sqrt((double) shape.lastBefore() + 1e-12);
-	auto sigma = identityMatrixd(dim);
+	auto sigma = identityMatrixd(leaf.dim());
 	for (size_t k = 0; k < M.size(); ++k) {
 		if (M.isActive(k, leaf.mode())) {
 			const auto& L = M[k];

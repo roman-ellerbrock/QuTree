@@ -90,41 +90,47 @@ SUITE (TensorOperatorTree) {
 		SOPd S;
 		Tree tree = TreeFactory::balancedTree(4, 2, 4);
 		Tree optree = TreeFactory::operatorTree(tree);
-		for (size_t l = 0; l < tree.nLeaves(); ++l) {
-			Matrixd sigma = JordanWigner::sigmaX();
-/*			for (size_t k = 0; k < l; ++k) {
-				sigma = sigma * JordanWigner::sigmaZ();
-			}*/
-			MLOd M(sigma, l);
-			S.push_back(M, 1.);
-		}
+//		for (size_t l = 0; l < tree.nLeaves(); ++l) {
+//			MLOd M(sigma, l);
+//			Matrixd sigma = JordanWigner::sigmaX();
+//		}
+		MLOd M;
+		S.push_back(M, 1.);
 
 		mt19937 gen(1239);
 		TensorOperatorTree A(optree, gen);
+		auto lap = TreeFunctions::dotProduct(A, A, optree);
+		lap[optree.topNode()].print();
 
 		/// Set primitive operators to 1, s_x
 		for (const Node& node : optree) {
 			if (node.isBottomlayer()) {
-				A.setLeafOperator(JordanWigner::identity(), 0, node);
-				A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
+				if (node.getLeaf().mode() == 0) {
+					A.setLeafOperator(JordanWigner::identity(), 0, node);
+					A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
+				}
 			}
 		}
-		auto AA = TreeFunctions::dotProduct(A, A, optree);
-		auto aa = AA[optree.topNode()] ;
+
+		orthogonal(A, optree);
+		orthonormal(A, optree);
+
+		A.print(optree);
+
 //		auto aa = 1. / (double) pow(2, optree.nLeaves()) * AA[optree.topNode()] ;
 
 		cout << "rep: " << endl;
 		TTNOMatrixTree rep(S, optree);
 		rep.represent(A, S, optree);
-		rep.print(optree);
+//		rep.print(optree);
 
 		cout << "holes: " << endl;
 		TTNOHoleTree hole(S, optree);
 		hole.represent(A, rep, optree);
-		hole.print(optree);
+//		hole.print(optree);
 
-		TensorOperatorTree B = contractSOP(S, optree);
-		B.print(optree);
+		TensorOperatorTree B = contractSOP(A, S, optree);
+//		B.print(optree);
 	}
 
 }
