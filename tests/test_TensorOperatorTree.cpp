@@ -57,7 +57,7 @@ SUITE (TensorOperatorTree) {
 		}
 	};
 
-	TEST (OperatorTree) {
+/*	TEST (OperatorTree) {
 		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		Tree optree = TreeFactory::operatorTree(tree);
 		for (const Node& node : optree) {
@@ -67,7 +67,7 @@ SUITE (TensorOperatorTree) {
 					CHECK_EQUAL(4, node.shape().lastBefore());
 			}
 		}
-	}
+	}*/
 
 	TEST(TTNO) {
 		Tree tree = TreeFactory::balancedTree(12, 2, 2);
@@ -88,14 +88,15 @@ SUITE (TensorOperatorTree) {
 
 	TEST(TTNOrep) {
 		SOPd S;
-		Tree tree = TreeFactory::balancedTree(4, 2, 4);
+		Tree tree = TreeFactory::balancedTree(4, 2, 6);
 		Tree optree = TreeFactory::operatorTree(tree);
-//		for (size_t l = 0; l < tree.nLeaves(); ++l) {
-//			MLOd M(sigma, l);
-//			Matrixd sigma = JordanWigner::sigmaX();
-//		}
-		MLOd M;
-		S.push_back(M, 1.);
+		for (size_t l = 0; l < tree.nLeaves(); l+=2) {
+			Matrixd sigma = JordanWigner::sigmaX();
+			MLOd M(sigma, l);
+			S.push_back(M, 1.);
+		}
+//		MLOd M;
+//		S.push_back(M, 1.);
 
 		mt19937 gen(1239);
 		TensorOperatorTree A(optree, gen);
@@ -103,14 +104,14 @@ SUITE (TensorOperatorTree) {
 		lap[optree.topNode()].print();
 
 		/// Set primitive operators to 1, s_x
-		for (const Node& node : optree) {
+/*		for (const Node& node : optree) {
 			if (node.isBottomlayer()) {
 				if (node.getLeaf().mode() == 0) {
 					A.setLeafOperator(JordanWigner::identity(), 0, node);
 					A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
 				}
 			}
-		}
+		}*/
 
 		orthogonal(A, optree);
 		orthonormal(A, optree);
@@ -119,7 +120,7 @@ SUITE (TensorOperatorTree) {
 
 //		auto aa = 1. / (double) pow(2, optree.nLeaves()) * AA[optree.topNode()] ;
 
-		cout << "rep: " << endl;
+/*		cout << "rep: " << endl;
 		TTNOMatrixTree rep(S, optree);
 		rep.represent(A, S, optree);
 //		rep.print(optree);
@@ -128,9 +129,11 @@ SUITE (TensorOperatorTree) {
 		TTNOHoleTree hole(S, optree);
 		hole.represent(A, rep, optree);
 //		hole.print(optree);
+*/
 
+		A.print(optree);
 		TensorOperatorTree B = contractSOP(A, S, optree);
-//		B.print(optree);
+		B.print(optree);
 	}
 
 }

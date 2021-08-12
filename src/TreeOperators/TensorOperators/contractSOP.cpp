@@ -6,7 +6,7 @@
 
 TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, const Tree& optree) {
 
-	size_t maxIter = 1;
+	size_t maxIter = 25;
 	double eps = 1e-10;
 	cout << "Initial error " << ": ";
 	double err = error(A, S, optree);
@@ -17,7 +17,6 @@ TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, const Tree& 
 		cout << "Error after iteration " << i << ": ";
 		err = error(A, S, optree);
 		cout << err << endl;
-		A.print(optree);
 		if (err < 1e-10) { break; }
 	}
 	return A;
@@ -25,16 +24,31 @@ TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, const Tree& 
 
 Tensord applyLayer(const TTNOMatrixTree& rep, const TTNOHoleTree& hole,
 	const SOPd& S, const Node& node) {
-	vector<Matrixd> Mk = rep.gatherMk(node);
-	hole.gatherMk(Mk, node);
-	const TensorShape& shape = node.shape();
 
+	const TensorShape& shape = node.shape();
 	Tensord Bnew(shape);
-	for (size_t l = 0; l < S.size(); ++l) {
-		for (size_t I = 0; I < shape.totalDimension(); ++I) {
-			auto idx = indexMapping(I, shape);
-			double factor = prodMk(idx, Mk, l);
-			Bnew(I) += S.coeff(l) * factor;
+
+	if (node.isBottomlayer()) {
+		Matrixd shole = hole[node];
+		for (size_t l = 0; l < S.size(); ++l) {
+			Tensord sterm = S.coeff(l) * toTensor(S, node.getLeaf());
+			for (size_t I = 0; I < shape.totalDimension(); ++I) {
+				auto idx = indexMapping(I, shape);
+				size_t i0 = idx[node.parentIdx()];
+				Bnew(I) += sterm(I) * shole(i0, l);
+			}
+		}
+	} else {
+
+		vector<Matrixd> Mk = rep.gatherMk(node);
+		hole.gatherMk(Mk, node);
+
+		for (size_t l = 0; l < S.size(); ++l) {
+			for (size_t I = 0; I < shape.totalDimension(); ++I) {
+				auto idx = indexMapping(I, shape);
+				double factor = prodMk(idx, Mk, l);
+				Bnew(I) += S.coeff(l) * factor;
+			}
 		}
 	}
 	return Bnew;
@@ -46,8 +60,6 @@ void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 	rep.represent(A, S, optree);
 	hole.represent(A, rep, optree);
 
-//	orthogonal(A, optree);
-//	orthonormal(A, optree);
 	for (const Node& node : optree) {
 		const Tensord& B = A[node];
 
@@ -56,6 +68,9 @@ void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 		if (!node.isToplayer()) {
 			A[node] = qr(A[node]);
 			rep.representLayer(A, S, node);
+		} else {
+//			gramSchmidt(A[node]);
+//			A[node] *= sqrt((double) pow(2, optree.nLeaves()) * S.size());
 		}
 	}
 }
@@ -67,7 +82,7 @@ Tensord buildOperator(const MLOd& M, const Leaf& leaf) {
 	for (size_t i = 0; i < M.size(); ++i) {
 		if (!M.isActive(i, mode)) { continue; }
 		const auto& op_ptr = M[i];
-		const LeafOperatord & op = *op_ptr;
+		const LeafOperatord& op = *op_ptr;
 		Matrixd op_rep = toMatrix(op, leaf);
 		I = op_rep * I;
 	}
@@ -127,8 +142,8 @@ double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 
 	double normS = norm(S, optree);
 	double err = normA + normS - overlap;
+	err /= normS; /// 0.5 renomalizes so that antiparallel vector has distance 2
 	cout << err << " = " << normA << " - " << overlap << " + " << normS << endl;
-	err /= normS;
 
 	return err;
 }

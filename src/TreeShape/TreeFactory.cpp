@@ -179,12 +179,12 @@ namespace TreeFactory {
 				TensorShape& shape = node.shape();
 				size_t dim = shape.lastBefore();
 				size_t ldim = shape.lastDimension();
-				TensorShape newshape({dim * dim, ldim * ldim});
+				TensorShape newshape({dim * dim,  ldim});
 				node.shape() = newshape;
 
 				Node& parent = node.parent();
 				TensorShape& pshape = parent.shape();
-				pshape.setDimension(ldim * ldim, node.childIdx());
+				pshape.setDimension(ldim , node.childIdx());
 			}
 		}
 		return otree;
