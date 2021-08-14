@@ -6,7 +6,7 @@
 
 TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, const Tree& optree) {
 
-	size_t maxIter = 4;
+	size_t maxIter = 1;
 	double eps = 1e-10;
 	cout << "Initial error " << ": ";
 	double err = error(A, S, optree);
@@ -30,23 +30,24 @@ Tensord applyLayer(const TTNOMatrixTree& rep, const TTNOHoleTree& hole,
 
 	if (node.isBottomlayer()) {
 		Matrixd shole = hole[node];
+
 		for (size_t l = 0; l < S.size(); ++l) {
 			Tensord sterm = S.coeff(l) * toTensor(S, node.getLeaf());
+			const TensorShape termShape = sterm.shape();
 			for (size_t I = 0; I < shape.totalDimension(); ++I) {
-				auto idx = indexMapping(I, shape);
+				auto idx = indexMapping(I, termShape);
 				size_t i0 = idx[node.parentIdx()];
-				Bnew(I) += sterm(I) * shole(i0, l);
+				/// Evaluate index for sterm
+				auto idxS = idx;
+				idxS[termShape.lastIdx()] = l;
+				size_t L = indexMapping(idxS, termShape);
+				Bnew(I) += S.coeff(l) * sterm(L) * shole(i0, l);
 			}
 		}
 	} else {
 
 		vector<Matrixd> Mk = rep.gatherMk(node);
 		hole.gatherMk(Mk, node);
-/*		for (int i = 0; i < Mk.size(); ++i) {
-			cout << "i = " << endl;
-			Mk[i].print();
-		}*/
-
 		for (size_t l = 0; l < S.size(); ++l) {
 			for (size_t I = 0; I < shape.totalDimension(); ++I) {
 				auto idx = indexMapping(I, shape);
@@ -68,19 +69,17 @@ void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 		const Tensord& B = A[node];
 
 		////////////
-		if (node.isBottomlayer()){continue;}
-//		if (node.isToplayer()){continue;}
+//		if (node.isBottomlayer()) { continue; }
+//		if (node.isToplayer()) { continue; }
 
 		A[node] = applyLayer(rep, hole, S, node);
-//		A[node].print();
-//		getchar();
 
 		if (!node.isToplayer()) {
 			A[node] = qr(A[node]);
 			rep.representLayer(A, S, node);
 		} else {
-			gramSchmidt(A[node]);
-			A[node] *= sqrt((double) pow(2, optree.nLeaves()) * S.size()) ;
+//			gramSchmidt(A[node]);
+//			A[node] *= sqrt((double) pow(2, optree.nLeaves()) * S.size()) ;
 		}
 	}
 }
@@ -152,8 +151,9 @@ double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 
 	double normS = norm(S, optree);
 	double err = normA + normS - overlap;
+//	double err = normA + 1 - overlap/sqrt(normS);
 	err /= normS;
-	cout << err << " = " << normA/normS << " - " << overlap/normS << " + " << normS/normS << endl;
+	cout << err << " = " << normA/normS << " - " << overlap / normS << " + " << normS / normS << endl;
 
 	return err;
 }

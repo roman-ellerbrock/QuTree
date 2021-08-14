@@ -88,39 +88,23 @@ SUITE (TensorOperatorTree) {
 
 	TEST(TTNOrep) {
 		SOPd S;
-		Tree tree = TreeFactory::balancedTree(3, 2, 2);
+		Tree tree = TreeFactory::balancedTree(16, 2, 3);
 		Tree optree = TreeFactory::operatorTree(tree);
 
-		Node& top = optree.topNode();
-		Node& node = top.child(0);
-		top.shape().setDimension(4, 0);
-		node.shape().setDimension(4, node.parentIdx());
 		optree.print();
 
-		for (size_t l = 0; l < tree.nLeaves(); l+=2) {
+		for (size_t l = 0; l < tree.nLeaves(); l++) {
 			Matrixd sigma = JordanWigner::sigmaX();
 			MLOd M(sigma, l);
 			S.push_back(M, 1.);
 		}
-//		MLOd M(JordanWigner::sigmaX(), 1.);
-//		S.push_back(M, 1.);
 		cout << "S.size(): " << S.size() << endl;
 
-		mt19937 gen(100239);
+		mt19937 gen(time(NULL));
 		TensorOperatorTree A(optree, gen);
-		/// Set primitive operators to 1, s_x
-		for (const Node& node : optree) {
-			if (node.isBottomlayer()) {
-				A.setLeafOperator(JordanWigner::identity(), 0, node);
-				A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
-			}
-		}
+
 		orthogonal(A, optree);
 		orthonormal(A, optree);
-
-//		TensorOperatorTree A;
-//		ifstream is("A.dat");
-//		A.read(is);
 
 		cout << "rep: " << endl;
 		TTNOMatrixTree rep(S, optree);
@@ -132,13 +116,6 @@ SUITE (TensorOperatorTree) {
 		hole.represent(A, rep, optree);
 		hole.print(optree);
 
-//		const Node& node = optree.topNode().child(0);
-/*		normal_distribution<double> dist(0., 1.);
-		for (size_t i = 0; i < node.shape().totalDimension(); ++i) {
-			A[node](i) = dist(gen);
-		}
-		gramSchmidt(A[node]);*/
-//		A.print(optree);
 		TensorOperatorTree B = contractSOP(A, S, optree);
 		cout << "Final result:\n";
 		B.print(optree);
