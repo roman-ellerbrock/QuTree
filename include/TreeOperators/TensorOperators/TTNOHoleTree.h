@@ -47,6 +47,7 @@ public:
 			const Tensord& B = A[parent];
 			const TensorShape& shape = B.shape();
 			auto& mrep = (*this)[node];
+			mrep.zero();
 
 			for (size_t l = 0; l < mrep.dim2(); ++l) {
 				for (size_t I = 0; I < shape.totalDimension(); ++I) {

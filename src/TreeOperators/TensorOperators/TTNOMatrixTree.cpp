@@ -28,8 +28,7 @@ Tensord toTensor(const SOPd& S, const Leaf& leaf) {
 	const auto& node = (const Node&) leaf.parent();
 	const TensorShape& shape = node.shape();
 	TensorShape shape_sop(shape);
-	size_t idx = shape_sop.lastIdx();
-	shape_sop.setDimension(S.size(), idx);
+	shape_sop.setDimension(S.size(), shape.lastIdx());
 	Tensord C(shape_sop);
 	for (size_t l = 0; l < S.size(); ++l) {
 		const MLOd& M = S[l];

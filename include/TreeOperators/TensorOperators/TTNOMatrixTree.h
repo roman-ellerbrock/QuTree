@@ -32,6 +32,7 @@ public:
 
 	vector<Matrixd> gatherMk(const Node& node) const {
 		vector<Matrixd> Mk;
+		if (node.isBottomlayer()) { cerr << "Bottomlayer does not have active matrices.\n"; getchar(); }
 		if (node.isBottomlayer()) { return Mk; }
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
@@ -41,16 +42,17 @@ public:
 	}
 
 	void representLayer(const TensorOperatorTree& A, const SOPd& S, const Node& node) {
+		auto& mrep = (*this)[node];
+		mrep.zero();
 		if (node.isBottomlayer()) {
 			Tensord C = toTensor(S, node.getLeaf());
-			(*this)[node] = A[node].dotProduct(C);
+			mrep = A[node].dotProduct(C);
 		} else {
 			/// collect all underlying matrices
 			/// contribution from each matrix
 			const Tensord& B = A[node];
 			const TensorShape& shape = B.shape();
 			const auto& Mk = gatherMk(node);
-			auto& mrep = (*this)[node];
 			for (size_t l = 0; l < S.size(); ++l) {
 				for (size_t I = 0; I < shape.totalDimension(); ++I) {
 					auto idx = indexMapping(I, shape);

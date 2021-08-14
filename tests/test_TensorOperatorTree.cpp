@@ -88,51 +88,59 @@ SUITE (TensorOperatorTree) {
 
 	TEST(TTNOrep) {
 		SOPd S;
-		Tree tree = TreeFactory::balancedTree(4, 2, 6);
+		Tree tree = TreeFactory::balancedTree(3, 2, 2);
 		Tree optree = TreeFactory::operatorTree(tree);
+
+		Node& top = optree.topNode();
+		Node& node = top.child(0);
+		top.shape().setDimension(4, 0);
+		node.shape().setDimension(4, node.parentIdx());
+		optree.print();
+
 		for (size_t l = 0; l < tree.nLeaves(); l+=2) {
 			Matrixd sigma = JordanWigner::sigmaX();
 			MLOd M(sigma, l);
 			S.push_back(M, 1.);
 		}
-//		MLOd M;
+//		MLOd M(JordanWigner::sigmaX(), 1.);
 //		S.push_back(M, 1.);
+		cout << "S.size(): " << S.size() << endl;
 
-		mt19937 gen(1239);
+		mt19937 gen(100239);
 		TensorOperatorTree A(optree, gen);
-		auto lap = TreeFunctions::dotProduct(A, A, optree);
-		lap[optree.topNode()].print();
-
 		/// Set primitive operators to 1, s_x
-/*		for (const Node& node : optree) {
+		for (const Node& node : optree) {
 			if (node.isBottomlayer()) {
-				if (node.getLeaf().mode() == 0) {
-					A.setLeafOperator(JordanWigner::identity(), 0, node);
-					A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
-				}
+				A.setLeafOperator(JordanWigner::identity(), 0, node);
+				A.setLeafOperator(JordanWigner::sigmaX(), 1, node);
 			}
-		}*/
-
+		}
 		orthogonal(A, optree);
 		orthonormal(A, optree);
 
-		A.print(optree);
+//		TensorOperatorTree A;
+//		ifstream is("A.dat");
+//		A.read(is);
 
-//		auto aa = 1. / (double) pow(2, optree.nLeaves()) * AA[optree.topNode()] ;
-
-/*		cout << "rep: " << endl;
+		cout << "rep: " << endl;
 		TTNOMatrixTree rep(S, optree);
 		rep.represent(A, S, optree);
-//		rep.print(optree);
+		rep.print(optree);
 
 		cout << "holes: " << endl;
 		TTNOHoleTree hole(S, optree);
 		hole.represent(A, rep, optree);
-//		hole.print(optree);
-*/
+		hole.print(optree);
 
-		A.print(optree);
+//		const Node& node = optree.topNode().child(0);
+/*		normal_distribution<double> dist(0., 1.);
+		for (size_t i = 0; i < node.shape().totalDimension(); ++i) {
+			A[node](i) = dist(gen);
+		}
+		gramSchmidt(A[node]);*/
+//		A.print(optree);
 		TensorOperatorTree B = contractSOP(A, S, optree);
+		cout << "Final result:\n";
 		B.print(optree);
 	}
 
