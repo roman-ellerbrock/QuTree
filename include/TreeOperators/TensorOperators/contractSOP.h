@@ -8,7 +8,7 @@
 #include "TreeOperators/TensorOperators/TTNOMatrixTree.h"
 #include "TreeOperators/TensorOperators/TTNOHoleTree.h"
 
-TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, const Tree& optree);
+TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, size_t maxIter, const Tree& optree, ostream *os);
 
 void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree);
 

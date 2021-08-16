@@ -13,6 +13,7 @@
 #include "TreeOperators/TensorOperators/TTNOHoleTree.h"
 #include "TreeShape/LeafTypes/SpinGroup.h"
 #include "TreeOperators/TensorOperators/contractSOP.h"
+#include "TreeClasses/SpectralDecompositionTree.h"
 
 SUITE (TensorOperatorTree) {
 
@@ -69,7 +70,7 @@ SUITE (TensorOperatorTree) {
 		}
 	}*/
 
-	TEST(TTNO) {
+	TEST (TTNO) {
 		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		Tree optree = TreeFactory::operatorTree(tree);
 
@@ -80,25 +81,21 @@ SUITE (TensorOperatorTree) {
 			const Tensord& B = A[node];
 			for (size_t i = 0; i < node.shape().totalDimension(); ++i) {
 				double r = abs(B[i]);
-				CHECK_EQUAL((r > 1e-15), true);
+					CHECK_EQUAL((r > 1e-15), true);
 			}
 		}
-
 	}
 
-	TEST(TTNOrep) {
+	TEST (TTNOrep) {
 		SOPd S;
-		Tree tree = TreeFactory::balancedTree(16, 2, 3);
+		Tree tree = TreeFactory::balancedTree(32, 2, 3);
 		Tree optree = TreeFactory::operatorTree(tree);
-
-		optree.print();
 
 		for (size_t l = 0; l < tree.nLeaves(); l++) {
 			Matrixd sigma = JordanWigner::sigmaX();
 			MLOd M(sigma, l);
 			S.push_back(M, 1.);
 		}
-		cout << "S.size(): " << S.size() << endl;
 
 		mt19937 gen(time(NULL));
 		TensorOperatorTree A(optree, gen);
@@ -106,19 +103,38 @@ SUITE (TensorOperatorTree) {
 		orthogonal(A, optree);
 		orthonormal(A, optree);
 
-		cout << "rep: " << endl;
-		TTNOMatrixTree rep(S, optree);
-		rep.represent(A, S, optree);
-		rep.print(optree);
-
-		cout << "holes: " << endl;
-		TTNOHoleTree hole(S, optree);
-		hole.represent(A, rep, optree);
-		hole.print(optree);
-
-		TensorOperatorTree B = contractSOP(A, S, optree);
-		cout << "Final result:\n";
-		B.print(optree);
+		double err0 = error(A, S, optree);
+			CHECK_EQUAL(1, (err0 > 1e-1));
+		TensorOperatorTree B = contractSOP(A, S, 2, optree, nullptr);
+		double err = error(B, S, optree);
+			CHECK_EQUAL(1, (err < 1e-12));
 	}
 
+	TEST (TTNOrep_nonhermitian) {
+		SOPd S;
+		Tree tree = TreeFactory::balancedTree(6, 2, 3);
+		Tree optree = TreeFactory::operatorTree(tree, 3);
+
+		for (size_t l = 0; l < tree.nLeaves(); l++) {
+			Matrixd sigma = JordanWigner::sigmaPlus();
+			if (l % 2) { sigma = JordanWigner::sigmaMinus(); }
+			MLOd M(sigma, l);
+			for (size_t i = 0; i < l; ++i) {
+				if (l != i) { M.push_back(JordanWigner::sigmaZ(), i); }
+			}
+			S.push_back(M, 1./(double)(l+1.));
+		}
+
+		mt19937 gen(time(NULL));
+		TensorOperatorTree A(optree, gen);
+
+		orthogonal(A, optree);
+		orthonormal(A, optree);
+
+		double err0 = error(A, S, optree);
+			CHECK_EQUAL(1, (err0 > 1e-1));
+		TensorOperatorTree B = contractSOP(A, S, 30, optree, nullptr);
+		double err = error(B, S, optree);
+			CHECK_EQUAL(1, (err < 1e-12));
+	}
 }

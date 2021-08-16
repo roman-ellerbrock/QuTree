@@ -172,19 +172,21 @@ namespace TreeFactory {
 		return tree;
 	}
 
-	Tree operatorTree(const Tree& tree) {
+	Tree operatorTree(const Tree& tree, size_t bottom) {
 		Tree otree(tree);
 		for (Node& node : otree) {
 			if (node.isBottomlayer()) {
 				TensorShape& shape = node.shape();
 				size_t dim = shape.lastBefore();
 				size_t ldim = shape.lastDimension();
-				TensorShape newshape({dim * dim,  ldim});
+				if (bottom == 0 || bottom > (ldim * ldim)) { bottom = ldim * ldim; }
+
+				TensorShape newshape({dim * dim, bottom});
 				node.shape() = newshape;
 
 				Node& parent = node.parent();
 				TensorShape& pshape = parent.shape();
-				pshape.setDimension(ldim , node.childIdx());
+				pshape.setDimension(bottom, node.childIdx());
 			}
 		}
 		return otree;

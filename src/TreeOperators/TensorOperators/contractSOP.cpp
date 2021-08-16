@@ -4,19 +4,19 @@
 #include "TreeOperators/TensorOperators/contractSOP.h"
 #include "TreeClasses/TensorTreeFunctions.h"
 
-TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, const Tree& optree) {
+TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, size_t maxIter, const Tree& optree, ostream *os) {
 
-	size_t maxIter = 1;
+//	size_t maxIter = 1;
 	double eps = 1e-10;
-	cout << "Initial error " << ": ";
+	if (os) *os << "Initial error " << ": ";
 	double err = error(A, S, optree);
-	cout << err << endl;
+	if (os) *os << err << endl;
 	for (size_t i = 0; i < maxIter; ++i) {
-		cout << "Iteration: " << i << endl;
+		if (os) *os << "Iteration: " << i << endl;
 		iterate(A, S, optree);
-		cout << "Error after iteration " << i << ": ";
+		if (os) *os << "Error after iteration " << i << ": ";
 		err = error(A, S, optree);
-		cout << err << endl;
+		if (os) *os << err << endl;
 		if (err < 1e-10) { break; }
 	}
 	return A;
@@ -78,13 +78,14 @@ void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 			A[node] = qr(A[node]);
 			rep.representLayer(A, S, node);
 		} else {
+//			A[node] = qr(A[node]);
 //			gramSchmidt(A[node]);
-//			A[node] *= sqrt((double) pow(2, optree.nLeaves()) * S.size()) ;
+//			A[node] *= sqrt((double) pow(2, optree.nLeaves()) * S.size()/2.) ;
 		}
 	}
 }
 
-Tensord buildOperator(const MLOd& M, const Leaf& leaf) {
+Tensord buildOperator(const MLOd& M, const Leaf& leaf, bool adjoint) {
 
 	size_t mode = leaf.mode();
 	Matrixd I = identityMatrixd(leaf.dim());
@@ -95,21 +96,26 @@ Tensord buildOperator(const MLOd& M, const Leaf& leaf) {
 		Matrixd op_rep = toMatrix(op, leaf);
 		I = op_rep * I;
 	}
+	if (adjoint) { I = I.adjoint(); }
 	Tensord Itens({leaf.dim() * leaf.dim(), 1});
 	for (size_t i = 0; i < Itens.shape().totalDimension(); ++i) {
 		Itens[i] = I[i];
 	}
 	return Itens;
+
 }
 
 double prodnorm(const MLOd& Ml, const MLOd& Mm, const Tree& tree) {
 	double x = 1.;
 	for (size_t k = 0; k < tree.nLeaves(); ++k) {
 		const Leaf& leaf = tree.getLeaf(k);
-		Tensord ml = buildOperator(Ml, leaf);
-		Tensord mm = buildOperator(Mm, leaf);
+		Tensord ml = buildOperator(Ml, leaf, false);
+		Tensord mm = buildOperator(Mm, leaf, false);
+/*		cout << "leaf: " << k << endl;
+		ml.print();
+		mm.print();*/
 		Matrixd prod = ml.dotProduct(mm);
-		x *= abs(prod(0, 0));
+		x *= prod(0, 0);
 	}
 	return x;
 }
@@ -151,9 +157,11 @@ double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 
 	double normS = norm(S, optree);
 	double err = normA + normS - overlap;
+	if (normS < 1e-15) { cerr << "norm of SOP operator too small.\n"; exit(1); }
 //	double err = normA + 1 - overlap/sqrt(normS);
+//	os << "normS: " << normS << endl;
 	err /= normS;
-	cout << err << " = " << normA/normS << " - " << overlap / normS << " + " << normS / normS << endl;
+//	os << err << " = " << normA/normS << " - " << overlap / normS << " + " << normS / normS << endl;
 
 	return err;
 }
