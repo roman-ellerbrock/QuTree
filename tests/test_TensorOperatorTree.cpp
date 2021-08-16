@@ -2,18 +2,14 @@
 // Created by Roman Ellerbrock on 5/23/20.
 //
 
+#include <UnitTest++/UnitTest++.h>
 #include "TreeOperators/TensorOperators/TensorOperatorTree.h"
 #include "TreeShape/TreeFactory.h"
-#include "TreeOperators/TensorOperators/MatrixListTree.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
-#include "TreeClasses/TensorTreeFunctions.h"
-#include "TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h"
-#include <UnitTest++/UnitTest++.h>
-#include "TreeOperators/TensorOperators/TTNOMatrixTree.h"
-#include "TreeOperators/TensorOperators/TTNOHoleTree.h"
 #include "TreeShape/LeafTypes/SpinGroup.h"
 #include "TreeOperators/TensorOperators/contractSOP.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
+#include "TreeOperators/TensorOperators/TTNOrepresentation.h"
 
 SUITE (TensorOperatorTree) {
 
@@ -136,5 +132,14 @@ SUITE (TensorOperatorTree) {
 		TensorOperatorTree B = contractSOP(A, S, 30, optree, nullptr);
 		double err = error(B, S, optree);
 			CHECK_EQUAL(1, (err < 1e-12));
+
+		cout << "TTNO:\n" << endl;
+		B.print(optree);
+		getchar();
+		cout << "====================================\n" << endl;
+		TTNOrepresentation rep(tree, optree);
+		TensorTreed Psi(gen, tree);
+		rep.calculate(Psi, B, Psi, optree);
+		rep.print(optree);
 	}
 }

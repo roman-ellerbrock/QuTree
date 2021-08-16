@@ -35,6 +35,7 @@ set(QuTree_SOURCE_FILES
     src/TreeOperators/TensorOperators/TTNOMatrixTree.cpp
     src/TreeOperators/TensorOperators/TTNOHoleTree.cpp
     src/TreeOperators/TensorOperators/contractSOP.cpp
+    src/TreeOperators/TensorOperators/TTNOrepresentation.cpp
 
     src/TreeShape/Leaf.cpp
     src/TreeShape/LeafTypes/DVRBasis.cpp

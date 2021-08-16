@@ -50,6 +50,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeOperators/TensorOperators/TensorOperatorTree.h
     include/TreeOperators/TensorOperators/TensorOperatorRepresentation.h
     include/TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h
+    include/TreeOperators/TensorOperators/TTNOrepresentation.h
 
     include/TreeShape/AbstractNode.h
     include/TreeShape/Edge.h
