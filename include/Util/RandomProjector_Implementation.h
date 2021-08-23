@@ -5,7 +5,7 @@
 #ifndef RANDOMPROJECTOR_IMPLEMENTATION_H
 #define RANDOMPROJECTOR_IMPLEMENTATION_H
 #include "Util/RandomProjector.h"
-#include "Core/MatrixBLAS.h"
+//#include "Core/MatrixBLAS.h"
 
 namespace Random {
 
@@ -48,9 +48,9 @@ namespace Random {
 		Matrix<T> Y = product(A, Omega.adjoint(), mem);
 		/// Y = QR
 		/// YY^ = QRR^Q^
-//		auto Q2 = qr(Y);
-		auto Q2(Y);
-		qrBLAS(Q2, Y);
+		auto Q2 = qr(Y);
+//		auto Q2(Y);
+//		qrBLAS(Q2, Y);
 
 		auto Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 		return Q;
@@ -115,9 +115,9 @@ namespace Random {
 			for (size_t i = 0; i < power; ++i) {
 //			Matrix<T> Y = A * Q;
 				Matrix<T> Y = product(A, Q, mem);
-//				auto Q2 = qr(Y);
-				auto Q2(Y);
-				qrBLAS(Q2, Y);
+				auto Q2 = qr(Y);
+//				auto Q2(Y);
+//				qrBLAS(Q2, Y);
 				Q = subMatrix(Q2, Y.dim1(), Y.dim2());
 			}
 

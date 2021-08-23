@@ -7,7 +7,7 @@
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
 #include "TreeClasses/SparseTensorTree.h"
-#include "Core/TensorBLAS.h"
+//#include "Core/TensorBLAS.h"
 
 namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
@@ -24,10 +24,11 @@ namespace TreeFunctions {
 
 		apply(hKet, hmat, (const SparseMatrixTree<T>*) nullptr,
 			(const MatrixTree<T>*) nullptr, Ket, hmat.sparseTree(), node, node.parentIdx(), &workKet);
-		Matrix<T> mat(Ket.shape().lastDimension(), Ket.shape().lastDimension());
-		contractionBLAS(mat, workBra, workKet, Bra, hKet, Ket.shape().lastIdx());
-		return mat;
+//		Matrix<T> mat(Ket.shape().lastDimension(), Ket.shape().lastDimension());
+//		contractionBLAS(mat, workBra, workKet, Bra, hKet, Ket.shape().lastIdx());
+//		return mat;
 		//return contractionBLAS(Bra, hKet, hKet.shape().lastIdx());
+		return contraction(Bra, hKet, hKet.shape().lastIdx());
 	}
 
 	template<typename T>
@@ -37,7 +38,8 @@ namespace TreeFunctions {
 		Tensor<T> workKet(Ket.shape(), mem->work1_, false, false);
 		Tensor<T> workBra(Bra.shape(), mem->work2_, false, false);
 		Matrix<T> mat(Bra.shape().lastDimension(), Ket.shape().lastDimension());
-		contractionBLAS(mat, workBra, workKet, Bra, MKet, Ket.shape().lastIdx());
+//		contractionBLAS(mat, workBra, workKet, Bra, MKet, Ket.shape().lastIdx());
+		contraction(mat, Bra, MKet, Ket.shape().lastIdx());
 		return mat;
 //		return Bra.dotProduct(MKet);
 	}
@@ -176,7 +178,8 @@ namespace TreeFunctions {
 					exit(1);
 				}
 				/// <Bra|mats|Ket>_(p)
-				contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
+//				contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
+				contraction(holes[node], Bra[parent], hKet, node.childIdx());
 			} else {
 				holes[node] = identityMatrix<T>(node.shape().lastDimension());
 			}
@@ -292,7 +295,8 @@ namespace TreeFunctions {
 		for (size_t k = 0; k < node.nChildren(); ++k) {
 			const Node& child = node.child(k);
 			if ((k == skip) || !mat.isActive(child)) { continue; }
-			matrixTensorBLAS(*out, *work, mat[child], *in, child.childIdx(), true);
+//			matrixTensorBLAS(*out, *work, mat[child], *in, child.childIdx(), true);
+			matrixTensor(*out, mat[child], *in, child.childIdx(), true);
 			swap(in, out);
 		}
 		if (!node.isToplayer() && (skip != node.parentIdx()) && (holes != nullptr)) {
@@ -301,9 +305,11 @@ namespace TreeFunctions {
 				exit(1);
 			}
 			if (!stree.isActive(node) && (rho != nullptr)) {
-				matrixTensorBLAS(*out, *work, (*rho)[node], *in, node.parentIdx(), true);
+//				matrixTensorBLAS(*out, *work, (*rho)[node], *in, node.parentIdx(), true);
+				matrixTensor(*out, (*rho)[node], *in, node.parentIdx(), true);
 			} else {
-				matrixTensorBLAS(*out, *work, (*holes)[node], *in, node.parentIdx(), true);
+//				matrixTensorBLAS(*out, *work, (*holes)[node], *in, node.parentIdx(), true);
+				matrixTensor(*out, (*holes)[node], *in, node.parentIdx(), true);
 			}
 		} else {
 			swap(in, out);
@@ -335,8 +341,8 @@ namespace TreeFunctions {
 			const Node& child = parent.child(k);
 			size_t childidx = child.childIdx();
 			if ((childidx == drop) || (!mats.isActive(child))) { continue; }
-//			Phi = matrixTensor(mats[child], Phi, childidx);
-			Phi = matrixTensorBLAS(mats[child], Phi, childidx);
+			Phi = matrixTensor(mats[child], Phi, childidx);
+//			Phi = matrixTensorBLAS(mats[child], Phi, childidx);
 		}
 		return Phi;
 	}
