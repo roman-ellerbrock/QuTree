@@ -23,6 +23,7 @@ double error(const TensorTreeOperator& A, const vector<MatrixTreed>& rep,
 	const vector<TensorTreeOperator>& SU,
 	const SOPd& S, const Tree& optree) {
 	const Node& top = optree.topNode();
+	return 0.;
 }
 
 double iterateCircuit(TensorTreeOperator& A, const TensorTreeOperator& U,
@@ -48,6 +49,7 @@ double iterateCircuit(TensorTreeOperator& A, const TensorTreeOperator& U,
 		}
 		gramSchmidt(phi);
 	}
+	return 0.;
 }
 
 
