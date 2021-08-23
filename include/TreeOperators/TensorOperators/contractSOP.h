@@ -4,14 +4,14 @@
 
 #ifndef CONTRACTSOP_H
 #define CONTRACTSOP_H
-#include "TreeOperators/TensorOperators/TensorOperatorTree.h"
-#include "TreeOperators/TensorOperators/TTNOMatrixTree.h"
-#include "TreeOperators/TensorOperators/TTNOHoleTree.h"
+#include "TreeOperators/TensorOperators/TensorTreeOperator.h"
+#include "TreeOperators/TensorOperators/TTOMatrixTree.h"
+#include "TreeOperators/TensorOperators/TTOHoleTree.h"
 
-TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, size_t maxIter, const Tree& optree, ostream *os);
+TensorTreeOperator contractSOP(TensorTreeOperator A, const SOPd& S, size_t maxIter, const Tree& optree, ostream *os);
 
-void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree);
+void iterate(TensorTreeOperator& A, const SOPd& S, const Tree& optree);
 
-double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree);
+double error(const TensorTreeOperator& A, const SOPd& S, const Tree& optree);
 
 #endif //CONTRACTSOP_H

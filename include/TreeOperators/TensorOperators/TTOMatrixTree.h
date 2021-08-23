@@ -2,9 +2,9 @@
 // Created by Roman Ellerbrock on 8/4/21.
 //
 
-#ifndef TTNOMATRIXTREE_H
-#define TTNOMATRIXTREE_H
-#include "TensorOperatorTree.h"
+#ifndef TTOMATRIXTREE_H
+#define TTOMATRIXTREE_H
+#include "TensorTreeOperator.h"
 #include "TreeClasses/MatrixTree.h"
 #include "TreeOperators/SumOfProductsOperator.h"
 
@@ -13,12 +13,16 @@ Tensord toTensor(const SOPd& S, const Leaf& leaf);
 
 double prodMk(const vector<size_t>& idx, const vector<Matrixd>& Mk, size_t l, int skip = -1);
 
-class TTNOMatrixTree: public MatrixTreed {
+class TTOMatrixTree: public MatrixTreed {
+	/**
+	 * \brief this class calculates the matrix representation required to contract SOPs into a TTNO
+	 * \ingroup TTNO
+	 */
 	using MatrixTreed::NodeAttribute<Matrix<double>>::attributes_;
 public:
 	using MatrixTreed::NodeAttribute<Matrix<double>>::operator[];
 
-	TTNOMatrixTree(const SOPd& S, const Tree& tree) {
+	TTOMatrixTree(const SOPd& S, const Tree& tree) {
 		size_t npart = S.size();
 		attributes_.clear();
 		for (const Node& node : tree) {
@@ -28,7 +32,7 @@ public:
 		}
 	}
 
-	~TTNOMatrixTree() = default;
+	~TTOMatrixTree() = default;
 
 	vector<Matrixd> gatherMk(const Node& node) const {
 		vector<Matrixd> Mk;
@@ -41,7 +45,7 @@ public:
 		return Mk;
 	}
 
-	void representLayer(const TensorOperatorTree& A, const SOPd& S, const Node& node) {
+	void representLayer(const TensorTreeOperator& A, const SOPd& S, const Node& node) {
 		auto& mrep = (*this)[node];
 		mrep.zero();
 		if (node.isBottomlayer()) {
@@ -64,7 +68,7 @@ public:
 		}
 	}
 
-	void represent(const TensorOperatorTree& A, const SOPd& S, const Tree& tree) {
+	void represent(const TensorTreeOperator& A, const SOPd& S, const Tree& tree) {
 		for (const Node& node : tree) {
 			representLayer(A, S, node);
 		}
@@ -80,4 +84,4 @@ public:
 };
 
 
-#endif //TTNOMATRIXTREE_H
+#endif //TTOMATRIXTREE_H

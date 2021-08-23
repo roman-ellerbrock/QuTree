@@ -46,11 +46,12 @@ set(QuTree_INCLUDE_FILES
     include/TreeOperators/SOPVector.h
     include/TreeOperators/SumOfProductsOperator.h
     include/TreeOperators/SumOfProductsOperator_Implementation.h
-    include/TreeOperators/TensorOperators/MatrixListTree.h
-    include/TreeOperators/TensorOperators/TensorOperatorTree.h
+    include/TreeOperators/TensorOperators/TensorTreeOperator.h
     include/TreeOperators/TensorOperators/TensorOperatorRepresentation.h
-    include/TreeOperators/TensorOperators/TensorOperatorTreeFunctions.h
-    include/TreeOperators/TensorOperators/TTNOrepresentation.h
+    include/TreeOperators/TensorOperators/TTOrepresentation.h
+    include/TreeOperators/TensorOperators/TTOcontraction.h
+    include/TreeOperators/TensorOperators/TTOHoleTree.h
+    include/TreeOperators/TensorOperators/TTOMatrixTree.h
 
     include/TreeShape/AbstractNode.h
     include/TreeShape/Edge.h

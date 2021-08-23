@@ -31,11 +31,12 @@ set(QuTree_SOURCE_FILES
     src/TreeOperators/MultiLeafOperator.cpp
     src/TreeOperators/SumOfProductsOperator.cpp
     src/TreeOperators/TreeStructured/TreeSOP.cpp
-    src/TreeOperators/TensorOperators/TensorOperatorTree.cpp
-    src/TreeOperators/TensorOperators/TTNOMatrixTree.cpp
-    src/TreeOperators/TensorOperators/TTNOHoleTree.cpp
+    src/TreeOperators/TensorOperators/TensorTreeOperator.cpp
+    src/TreeOperators/TensorOperators/TTOMatrixTree.cpp
+    src/TreeOperators/TensorOperators/TTOHoleTree.cpp
     src/TreeOperators/TensorOperators/contractSOP.cpp
-    src/TreeOperators/TensorOperators/TTNOrepresentation.cpp
+    src/TreeOperators/TensorOperators/contractCircuit.cpp
+    src/TreeOperators/TensorOperators/TTOrepresentation.cpp
 
     src/TreeShape/Leaf.cpp
     src/TreeShape/LeafTypes/DVRBasis.cpp

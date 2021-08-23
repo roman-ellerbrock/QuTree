@@ -2,18 +2,21 @@
 // Created by Roman Ellerbrock on 8/6/21.
 //
 
-#ifndef TTNOHOLETREE_H
-#define TTNOHOLETREE_H
-#include "TTNOMatrixTree.h"
+#ifndef TTOHOLETREE_H
+#define TTOHOLETREE_H
+#include "TTOMatrixTree.h"
 
-class TTNOHoleTree: public MatrixTreed {
-	using MatrixTreed::NodeAttribute<Matrix<double>>::
-	attributes_;
+class TTOHoleTree: public MatrixTreed {
+	/**
+	 * \brief This class is the contraction required to contract a SOP into a TTNO.
+	 * \ingroup TTNO
+	 */
+	using MatrixTreed::NodeAttribute<Matrix<double>>::attributes_;
 public:
-	TTNOHoleTree() = default;
-	~TTNOHoleTree() = default;
+	TTOHoleTree() = default;
+	~TTOHoleTree() = default;
 
-	TTNOHoleTree(const SOPd& S, const Tree& tree) {
+	TTOHoleTree(const SOPd& S, const Tree& tree) {
 		size_t npart = S.size();
 		attributes_.clear();
 		for (const Node& node : tree) {
@@ -34,7 +37,7 @@ public:
 		}
 	}
 
-	void represent(const TensorOperatorTree& A, const TTNOMatrixTree& M, const Tree& tree) {
+	void represent(const TensorTreeOperator& A, const TTOMatrixTree& M, const Tree& tree) {
 		for (int no = tree.nNodes() - 2; no >= 0; no--) {
 			const Node& node = tree.getNode(no);
 			const Node& parent = node.parent();
@@ -62,4 +65,4 @@ public:
 };
 
 
-#endif //TTNOHOLETREE_H
+#endif //TTOHOLETREE_H

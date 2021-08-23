@@ -4,7 +4,8 @@
 #include "TreeOperators/TensorOperators/contractSOP.h"
 #include "TreeClasses/TensorTreeFunctions.h"
 
-TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, size_t maxIter, const Tree& optree, ostream *os) {
+TensorTreeOperator contractSOP(TensorTreeOperator A, const SOPd& S,
+	size_t maxIter, const Tree& optree, ostream *os) {
 
 //	size_t maxIter = 1;
 	double eps = 1e-10;
@@ -22,14 +23,14 @@ TensorOperatorTree contractSOP(TensorOperatorTree A, const SOPd& S, size_t maxIt
 	return A;
 }
 
-Tensord applyLayer(const TTNOMatrixTree& rep, const TTNOHoleTree& hole,
+Tensord applyLayer(const TTOMatrixTree& rep, const TTOHoleTree& hole,
 	const SOPd& S, const Node& node) {
 
 	const TensorShape& shape = node.shape();
 	Tensord Bnew(shape);
 
 	if (node.isBottomlayer()) {
-		Matrixd shole = hole[node];
+		const Matrixd& shole = hole[node];
 
 		for (size_t l = 0; l < S.size(); ++l) {
 			Tensord sterm = S.coeff(l) * toTensor(S, node.getLeaf());
@@ -59,9 +60,9 @@ Tensord applyLayer(const TTNOMatrixTree& rep, const TTNOHoleTree& hole,
 	return Bnew;
 }
 
-void iterate(TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
-	TTNOMatrixTree rep(S, optree);
-	TTNOHoleTree hole(S, optree);
+void iterate(TensorTreeOperator& A, const SOPd& S, const Tree& optree) {
+	TTOMatrixTree rep(S, optree);
+	TTOHoleTree hole(S, optree);
 	rep.represent(A, S, optree);
 	hole.represent(A, rep, optree);
 
@@ -102,7 +103,6 @@ Tensord buildOperator(const MLOd& M, const Leaf& leaf, bool adjoint) {
 		Itens[i] = I[i];
 	}
 	return Itens;
-
 }
 
 double prodnorm(const MLOd& Ml, const MLOd& Mm, const Tree& tree) {
@@ -133,9 +133,9 @@ double norm(const SOPd& S, const Tree& tree) {
 	return norm;
 }
 
-double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
+double error(const TensorTreeOperator& A, const SOPd& S, const Tree& optree) {
 	auto AA = TreeFunctions::dotProduct(A, A, optree);
-	TTNOMatrixTree AS(S, optree);
+	TTOMatrixTree AS(S, optree);
 	AS.represent(A, S, optree);
 
 	auto aa = AA[optree.topNode()];
@@ -157,7 +157,10 @@ double error(const TensorOperatorTree& A, const SOPd& S, const Tree& optree) {
 
 	double normS = norm(S, optree);
 	double err = normA + normS - overlap;
-	if (normS < 1e-15) { cerr << "norm of SOP operator too small.\n"; exit(1); }
+	if (normS < 1e-15) {
+		cerr << "norm of SOP operator too small.\n";
+		exit(1);
+	}
 //	double err = normA + 1 - overlap/sqrt(normS);
 //	os << "normS: " << normS << endl;
 	err /= normS;
