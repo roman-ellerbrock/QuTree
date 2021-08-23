@@ -22,12 +22,12 @@ set(QuTree_tests
         test_GradientDescent.cpp
         test_Integrator.cpp
         test_Matrix.cpp
-        test_MatrixBLAS.cpp
+#        test_MatrixBLAS.cpp
         test_MatrixTensorTree.cpp
         test_Tensor.cpp
         tests.cpp
         test_TensorTree.cpp
-        test_TensorBLAS.cpp
+#        test_TensorBLAS.cpp
         test_Operators.cpp
         test_SparseTree.cpp
         test_SymTensorTree.cpp
