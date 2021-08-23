@@ -472,7 +472,7 @@ void contraction(Matrix<T>& S, const Tensor<T>& A, const Tensor<T>& B,
 
 	typedef complex<double> cd;
 	typedef double d;
-	if constexpr(is_same<T, cd>::value) {
+	if (is_same<T, cd>::value) {
 		if (active1 == active2) {
 
 			int a = active1;
@@ -550,11 +550,11 @@ void matrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	typedef double d;
 
 	if (activeB == activeC) {
-		if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
+		if (is_same<U, cd>::value && is_same<T, cd>::value) {
 			matvec_((double *) &C[0], (double *) &B[0], (double *) &A[0],
 				&a, &b, &c, &add);
 			return;
-		} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
+		} else if (is_same<U, d>::value && is_same<T, d>::value) {
 			rmatvec_((double *) &C[0], (double *) &B[0], (double *) &A[0],
 				&a, &b, &c, &add);
 			return;
@@ -575,10 +575,10 @@ void tMatrixTensor(Tensor<T>& C, const Matrix<U>& A, const Tensor<T>& B,
 	int c = after;
 	typedef complex<double> cd;
 	typedef double d;
-	if constexpr(is_same<U, cd>::value && is_same<T, cd>::value) {
+	if (is_same<U, cd>::value && is_same<T, cd>::value) {
 		ctmatvec_((double *) &C[0], (double *) &B[0], (double *) &A[0],
 			&a, &b, &c, &add);
-//	} else if constexpr(is_same<U, d>::value && is_same<T, d>::value) {
+//	} else if (is_same<U, d>::value && is_same<T, d>::value) {
 //		rmatvec_((double*)&C[0], (double*)&B[0], (double*)&A[0],
 //			&a, &b, &c, &add);
 	} else {
