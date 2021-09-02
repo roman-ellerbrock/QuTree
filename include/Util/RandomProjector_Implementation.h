@@ -64,7 +64,7 @@ namespace Random {
 		Matrix<T> Y = product(A, Omega.adjoint(), mem);
 		/// Y = QR
 		/// YY^ = QRR^Q^
-//		auto Q2 = qr(Y); // for non-BLAS version of QuTree
+		//		auto Q2 = qr(Y); // for non-BLAS version of QuTree
 		auto Q2(Y);
 		qrBLAS(Q2, Y);
 
@@ -107,8 +107,8 @@ namespace Random {
 		auto& ew = x.second;
 		/// Build eigenvector of full matrix
 		auto U = Q * V;
-		return {U, ew};
-	}
+				return {U, ew};
+			}
 }
 
 
