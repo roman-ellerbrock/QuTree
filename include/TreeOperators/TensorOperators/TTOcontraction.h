@@ -8,12 +8,14 @@
 #include "TreeOperators/TensorOperators/TensorTreeOperator.h"
 #include "TreeOperators/TensorOperators/TTOrepresentation.h"
 
-class TTOcontraction: public NodeAttribute<vector<Matrixd>> {
+template <typename T>
+class TTOcontraction: public NodeAttribute<vector<Matrix<T>>> {
 	/**
 	 * \brief This class calculates the contraction of a TTNO representation
 	 * \ingroup TTNO
 	 *
 	 */
+	using NodeAttribute<vector<Matrix<T>>>::attributes_;
 public:
 	TTOcontraction(const Tree& tree, const Tree& optree) {
 		for (const Node& node : tree) {
@@ -22,8 +24,8 @@ public:
 				const
 				size_t nSPF = node.shape().lastDimension();
 				size_t nSPO = opnode.shape().lastDimension();
-				Matrixd h(nSPF, nSPF);
-				vector<Matrixd> hs(nSPO, h);
+				Matrix<T> h(nSPF, nSPF);
+				vector<Matrix<T>> hs(nSPO, h);
 				attributes_.emplace_back(hs);
 			}
 		}
@@ -31,37 +33,37 @@ public:
 
 	~TTOcontraction() = default;
 
-	Tensord applyMatrices(Tensord A, const vector<size_t>& ls, const TTOrepresentation& Hrep,
+	Tensor<T> applyMatrices(Tensor<T> A, const vector<size_t>& ls, const TTOrepresentation<T>& Hrep,
 		const Node& parent, size_t hole) {
 		for (size_t k = 0; k < parent.nChildren(); ++k) {
 			if (k == hole) { continue; }
 			const Node& child = parent.child(k);
-			const vector<Matrixd>& hrep = Hrep[child];
+			const vector<Matrix<T>>& hrep = Hrep[child];
 			A = matrixTensor(hrep[ls[k]], A, k);
 		}
 		if (!parent.isToplayer()) {
-			const vector<Matrixd> hholes = (*this)[parent];
+			const vector<Matrix<T>>& hholes = (*this)[parent];
 			size_t l0 = ls[parent.parentIdx()];
-			const Matrixd& hhole = hholes[l0];
+			const Matrix<T>& hhole = hholes[l0];
 			A = matrixTensor(hhole, A, parent.parentIdx());
 		}
 		return A;
 	}
 
-	void calculateLayer(const Tensord& Psi, const TensorTreeOperator& H,
-		const TTOrepresentation& Hrep, const Tensord& Chi, const Node& opnode) {
+	void calculateLayer(const Tensor<T>& Psi, const TensorTreeOperator<T>& H,
+		const TTOrepresentation<T>& Hrep, const Tensor<T>& Chi, const Node& opnode) {
 
 		if (opnode.isToplayer()) {
 			cerr << "Error: child may not be root.\n";
 			exit(1);
 		}
 		const Node& parent = opnode.parent();
-		const Tensord& B = H[parent];
+		const Tensor<T>& B = H[parent];
 		const TensorShape& opshape = B.shape();
 		size_t holeidx = opnode.childIdx();
 
-		vector<Matrixd>& hs = (*this)[opnode];
-		for (Matrixd& h : hs) {
+		vector<Matrix<T>>& hs = (*this)[opnode];
+		for (Matrix<T>& h : hs) {
 			h.zero();
 		}
 		for (size_t L = 0; L < opshape.totalDimension(); ++L) {
@@ -72,8 +74,8 @@ public:
 		}
 	}
 
-	void calculate(const TensorTreed& Psi, const TensorTreeOperator& H,
-		const TTOrepresentation& Hrep, const TensorTreed& Chi, const Tree& optree) {
+	void calculate(const TensorTree<T>& Psi, const TensorTreeOperator<T>& H,
+		const TTOrepresentation<T>& Hrep, const TensorTree<T>& Chi, const Tree& optree) {
 		for (int l = optree.nNodes() - 2; l >= 0; l--) {
 			const Node& node = optree.getNode(l);
 			if (node.isToplayer()) { continue; }
@@ -95,6 +97,8 @@ public:
 	}
 };
 
+typedef TTOcontraction<double> TTOcontractiond;
+typedef TTOcontraction<complex<double>> TTOcontractioncd;
 
 #endif //TTOCONTRACTION_H
 

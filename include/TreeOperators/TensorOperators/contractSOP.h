@@ -8,10 +8,14 @@
 #include "TreeOperators/TensorOperators/TTOMatrixTree.h"
 #include "TreeOperators/TensorOperators/TTOHoleTree.h"
 
-TensorTreeOperator contractSOP(TensorTreeOperator A, const SOPd& S, size_t maxIter, const Tree& optree, ostream *os);
+template <typename T>
+void contractSOP(TensorTreeOperator<T>& A, const SOP<T>& S,
+	size_t maxIter, const Tree& optree, ostream *os);
 
-void iterate(TensorTreeOperator& A, const SOPd& S, const Tree& optree);
+template <typename T>
+void iterate(TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree);
 
-double error(const TensorTreeOperator& A, const SOPd& S, const Tree& optree);
+template <typename T>
+double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree);
 
 #endif //CONTRACTSOP_H

@@ -7,7 +7,8 @@
 #include "TreeClasses/TensorTree.h"
 #include "TreeOperators/TensorOperators/TensorTreeOperator.h"
 
-class TTOrepresentation : public NodeAttribute<vector<Matrixd>> {
+template <typename T>
+class TTOrepresentation : public NodeAttribute<vector<Matrix<T>>> {
 	/**
 	 * \brief Representation of TTNO in TTN basis
 	 * \ingroup TTNO
@@ -15,25 +16,27 @@ class TTOrepresentation : public NodeAttribute<vector<Matrixd>> {
 	 * This class calculates the matrix representations of TTNO
 	 * that are required for applying TTNOs to wavefunctions.
 	 */
+	 using NodeAttribute<vector<Matrix<T>>>::attributes_;
 public:
+
 	TTOrepresentation(const Tree& tree, const Tree& optree) {
 		attributes_.clear();
 		for (const Node& node : tree) {
 			const Node& opnode = optree.getNode(node.address());
 			size_t nSPF = node.shape().lastDimension();
 			size_t nSPO = opnode.shape().lastDimension();
-			Matrixd h(nSPF, nSPF);
-			vector<Matrixd> hs(nSPO, h);
+			Matrix<T> h(nSPF, nSPF);
+			vector<Matrix<T>> hs(nSPO, h);
 			attributes_.emplace_back(hs);
 		}
 	}
 
 	~TTOrepresentation() = default;
 
-	Tensord applyMatrices(Tensord A, const Tensord& B, const size_t l,
+	Tensor<T> applyMatrices(Tensor<T> A, const Tensor<T>& B, const size_t l,
 		const Leaf& leaf) {
 		size_t dim = leaf.dim();
-		Matrixd h(dim, dim);
+		Matrix<T> h(dim, dim);
 		for (size_t I = 0; I < dim*dim; ++I) {
 			h[I] = B(I, l);
 		}
@@ -41,25 +44,25 @@ public:
 		return A;
 	}
 
-	Tensord applyMatrices(Tensord A, const vector<size_t>& ls,
+	Tensor<T> applyMatrices(Tensor<T> A, const vector<size_t>& ls,
 		const Node& opnode) {
 		for (size_t k = 0; k < opnode.nChildren(); ++k) {
 			const Node& child = opnode.child(k);
-			const vector<Matrixd>& hs = (*this)[child];
+			const vector<Matrix<T>>& hs = (*this)[child];
 			A = matrixTensor(hs[ls[k]], A, k);
 		}
 		return A;
 	}
 
-	void calculateLayer(const Tensord& Psi, const TensorTreeOperator& H,
-		const Tensord& Chi, const Node& opnode) {
+	void calculateLayer(const Tensor<T>& Psi, const TensorTreeOperator<T>& H,
+		const Tensor<T>& Chi, const Node& opnode) {
 
 		const TensorShape& shape = Psi.shape();
-		const Tensord& B = H[opnode];
+		const Tensor<T>& B = H[opnode];
 		const TensorShape& opshape = B.shape();
 
-		vector<Matrixd>& hs = (*this)[opnode];
-		for (Matrixd& h : hs) {
+		vector<Matrix<T>>& hs = (*this)[opnode];
+		for (Matrix<T>& h : hs) {
 			h.zero();
 		}
 		if (opnode.isBottomlayer()) {
@@ -80,7 +83,7 @@ public:
 		}
 	}
 
-	void calculate(const TensorTreed& Psi, const TensorTreeOperator& H, const TensorTreed& Chi,
+	void calculate(const TensorTree<T>& Psi, const TensorTreeOperator<T>& H, const TensorTree<T>& Chi,
 		const Tree& optree) {
 		for (const Node& node : optree) {
 			calculateLayer(Psi[node], H, Chi[node], node);
@@ -100,5 +103,7 @@ public:
 
 };
 
+typedef TTOrepresentation<complex<double>> TTOrepresentationcd;
+typedef TTOrepresentation<double> TTOrepresentationd;
 
 #endif //TTOREPRESENTATION_H
