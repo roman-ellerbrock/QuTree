@@ -33,10 +33,10 @@ set(QuTree_SOURCE_FILES
     src/TreeOperators/TreeStructured/TreeSOP.cpp
     src/TreeOperators/TensorOperators/TensorTreeOperator.cpp
     src/TreeOperators/TensorOperators/TTOMatrixTree.cpp
-    src/TreeOperators/TensorOperators/TTOHoleTree.cpp
     src/TreeOperators/TensorOperators/contractSOP.cpp
     src/TreeOperators/TensorOperators/contractCircuit.cpp
     src/TreeOperators/TensorOperators/TTOrepresentation.cpp
+    src/TreeOperators/TensorOperators/TTNO_instantiations.cpp
 
     src/TreeShape/Leaf.cpp
     src/TreeShape/LeafTypes/DVRBasis.cpp
@@ -51,6 +51,7 @@ set(QuTree_SOURCE_FILES
     src/TreeShape/TreeFactory.cpp
 
     src/Util/FFT.cpp
+    src/Util/GateOperators.cpp
     src/Util/SimultaneousDiagonalization.cpp
     src/Util/RandomMatrices.cpp
     src/Util/string_ext.cpp

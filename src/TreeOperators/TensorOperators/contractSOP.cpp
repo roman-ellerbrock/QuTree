@@ -4,9 +4,12 @@
 #include "TreeOperators/TensorOperators/contractSOP.h"
 #include "TreeClasses/TensorTreeFunctions.h"
 
-TensorTreeOperator contractSOP(TensorTreeOperator A, const SOPd& S,
+template<typename T>
+void contractSOP(TensorTreeOperator<T>& A, const SOP<T>& S,
 	size_t maxIter, const Tree& optree, ostream *os) {
 
+	TTOMatrixTree<T> rep(S, optree);
+	TTOHoleTree<T> hole(S, optree);
 //	size_t maxIter = 1;
 	double eps = 1e-10;
 	if (os) *os << "Initial error " << ": ";
@@ -14,26 +17,26 @@ TensorTreeOperator contractSOP(TensorTreeOperator A, const SOPd& S,
 	if (os) *os << err << endl;
 	for (size_t i = 0; i < maxIter; ++i) {
 		if (os) *os << "Iteration: " << i << endl;
-		iterate(A, S, optree);
+		iterate(A, rep, hole, S, optree);
 		if (os) *os << "Error after iteration " << i << ": ";
 		err = error(A, S, optree);
 		if (os) *os << err << endl;
-		if (err < 1e-10) { break; }
+		if (err < eps) { break; }
 	}
-	return A;
 }
 
-Tensord applyLayer(const TTOMatrixTree& rep, const TTOHoleTree& hole,
-	const SOPd& S, const Node& node) {
+template<typename T>
+Tensor<T> applyLayer(const TTOMatrixTree<T>& rep, const TTOHoleTree<T>& hole,
+	const SOP<T>& S, const Node& node) {
 
 	const TensorShape& shape = node.shape();
-	Tensord Bnew(shape);
+	Tensor<T> Bnew(shape);
 
 	if (node.isBottomlayer()) {
-		const Matrixd& shole = hole[node];
+		const Matrix<T>& shole = hole[node];
 
 		for (size_t l = 0; l < S.size(); ++l) {
-			Tensord sterm = S.coeff(l) * toTensor(S, node.getLeaf());
+			Tensor<T> sterm = S.coeff(l) * toTensor(S, node.getLeaf());
 			const TensorShape termShape = sterm.shape();
 			for (size_t I = 0; I < shape.totalDimension(); ++I) {
 				auto idx = indexMapping(I, termShape);
@@ -47,12 +50,12 @@ Tensord applyLayer(const TTOMatrixTree& rep, const TTOHoleTree& hole,
 		}
 	} else {
 
-		vector<Matrixd> Mk = rep.gatherMk(node);
+		vector<Matrix<T>> Mk = rep.gatherMk(node);
 		hole.gatherMk(Mk, node);
 		for (size_t l = 0; l < S.size(); ++l) {
 			for (size_t I = 0; I < shape.totalDimension(); ++I) {
 				auto idx = indexMapping(I, shape);
-				double factor = prodMk(idx, Mk, l);
+				T factor = prodMk(idx, Mk, l);
 				Bnew(I) += S.coeff(l) * factor;
 			}
 		}
@@ -60,82 +63,93 @@ Tensord applyLayer(const TTOMatrixTree& rep, const TTOHoleTree& hole,
 	return Bnew;
 }
 
-void iterate(TensorTreeOperator& A, const SOPd& S, const Tree& optree) {
-	TTOMatrixTree rep(S, optree);
-	TTOHoleTree hole(S, optree);
+template<typename T>
+void iterate(TensorTreeOperator<T>& A, TTOMatrixTree<T>& rep, TTOHoleTree<T>& hole,
+	const SOP<T>& S, const Tree& optree) {
+
+	/// avoid building these before start
 	rep.represent(A, S, optree);
 	hole.represent(A, rep, optree);
 
 	for (const Node& node : optree) {
-		const Tensord& B = A[node];
-
-		////////////
-//		if (node.isBottomlayer()) { continue; }
-//		if (node.isToplayer()) { continue; }
-
+		/// Apply layer
 		A[node] = applyLayer(rep, hole, S, node);
 
+		///
 		if (!node.isToplayer()) {
+			/// perform QR-decomposition on Tensor
 			A[node] = qr(A[node]);
+			/// Normalize bottomlayer with sqrt(dim)
+			/// a.) remove norm to build matrices
+			if (node.isBottomlayer()) {
+				A[node] /= sqrt(sqrt((double) node.shape().lastBefore()));
+			}
+			/// b.) rebuild representation
 			rep.representLayer(A, S, node);
-		} else {
-//			A[node] = qr(A[node]);
-//			gramSchmidt(A[node]);
-//			A[node] *= sqrt((double) pow(2, optree.nLeaves()) * S.size()/2.) ;
+			/// c.) normalize (and account for previous un-normalization)
+			if (node.isBottomlayer()) {
+				A[node] *= sqrt((double) node.shape().lastBefore());
+			}
 		}
 	}
+
+	/// @TODO: add top-down cycle
 }
 
-Tensord buildOperator(const MLOd& M, const Leaf& leaf, bool adjoint) {
+template<typename T>
+Tensor<T> buildOperator(const MLO<T>& M, const Leaf& leaf, bool adjoint) {
 
 	size_t mode = leaf.mode();
-	Matrixd I = identityMatrixd(leaf.dim());
+	Matrix<T> I = identityMatrix<T>(leaf.dim());
 	for (size_t i = 0; i < M.size(); ++i) {
 		if (!M.isActive(i, mode)) { continue; }
 		const auto& op_ptr = M[i];
-		const LeafOperatord& op = *op_ptr;
-		Matrixd op_rep = toMatrix(op, leaf);
+		const LeafOperator<T>& op = *op_ptr;
+		Matrix<T> op_rep = toMatrix(op, leaf);
 		I = op_rep * I;
 	}
 	if (adjoint) { I = I.adjoint(); }
-	Tensord Itens({leaf.dim() * leaf.dim(), 1});
+	Tensor<T> Itens({leaf.dim() * leaf.dim(), 1});
 	for (size_t i = 0; i < Itens.shape().totalDimension(); ++i) {
 		Itens[i] = I[i];
 	}
 	return Itens;
 }
 
-double prodnorm(const MLOd& Ml, const MLOd& Mm, const Tree& tree) {
-	double x = 1.;
+template<typename T>
+T prodnorm(const MLO<T>& Ml, const MLO<T>& Mm, const Tree& tree) {
+	T x = 1.;
 	for (size_t k = 0; k < tree.nLeaves(); ++k) {
 		const Leaf& leaf = tree.getLeaf(k);
-		Tensord ml = buildOperator(Ml, leaf, false);
-		Tensord mm = buildOperator(Mm, leaf, false);
+		Tensor<T> ml = buildOperator(Ml, leaf, false);
+		Tensor<T> mm = buildOperator(Mm, leaf, false);
 /*		cout << "leaf: " << k << endl;
 		ml.print();
 		mm.print();*/
-		Matrixd prod = ml.dotProduct(mm);
+		Matrix<T> prod = ml.dotProduct(mm);
 		x *= prod(0, 0);
 	}
 	return x;
 }
 
-double norm(const SOPd& S, const Tree& tree) {
+template<typename T>
+double norm(const SOP<T>& S, const Tree& tree) {
 	double norm = 0.;
 	for (size_t m = 0; m < S.size(); ++m) {
-		const MLOd& Mm = S[m];
+		const MLO<T>& Mm = S[m];
 		for (size_t l = 0; l < S.size(); ++l) {
-			const MLOd& Ml = S[l];
-			double factor = prodnorm(Ml, Mm, tree);
-			norm += S.coeff(l) * S.coeff(m) * factor;
+			const MLO<T>& Ml = S[l];
+			T factor = prodnorm(Ml, Mm, tree);
+			norm += abs(S.coeff(l) * S.coeff(m) * factor);
 		}
 	}
 	return norm;
 }
 
-double error(const TensorTreeOperator& A, const SOPd& S, const Tree& optree) {
+template<typename T>
+double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree) {
 	auto AA = TreeFunctions::dotProduct(A, A, optree);
-	TTOMatrixTree AS(S, optree);
+	TTOMatrixTree<T> AS(S, optree);
 	AS.represent(A, S, optree);
 
 	auto aa = AA[optree.topNode()];
@@ -144,14 +158,14 @@ double error(const TensorTreeOperator& A, const SOPd& S, const Tree& optree) {
 	double normA = 0;
 	for (size_t j = 0; j < aa.dim2(); ++j) {
 		for (size_t i = 0; i < aa.dim1(); ++i) {
-			normA += aa(i, j);
+			normA += abs(aa(i, j));
 		}
 	}
 
 	double overlap = 0;
 	for (size_t j = 0; j < as.dim2(); ++j) {
 		for (size_t i = 0; i < as.dim1(); ++i) {
-			overlap += 2 * S.coeff(j) * as(i, j);
+			overlap += real(2. * S.coeff(j) * as(i, j));
 		}
 	}
 
@@ -169,3 +183,13 @@ double error(const TensorTreeOperator& A, const SOPd& S, const Tree& optree) {
 	return err;
 }
 
+typedef double d;
+typedef complex<double> cd;
+
+template void contractSOP(TensorTreeOperator<d>& A, const SOP<d>& S,
+	size_t maxIter, const Tree& optree, ostream *os);
+template void contractSOP<cd>(TensorTreeOperator<cd>& A, const SOP<cd>& S,
+	size_t maxIter, const Tree& optree, ostream *os);
+
+template double error(const TensorTreeOperator<d>& A, const SOP<d>& S, const Tree& optree);
+template double error(const TensorTreeOperator<cd>& A, const SOP<cd>& S, const Tree& optree);

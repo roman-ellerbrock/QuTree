@@ -4,25 +4,28 @@
 
 #include "TreeOperators/TensorOperators/TensorTreeOperator.h"
 
-Matrixd toMatrix(const MLOd& M, const Leaf& leaf) {
-	Matrixd sigma = identityMatrixd(leaf.dim());
+template<typename T>
+Matrix<T> toMatrix(const MLO<T>& M, const Leaf& leaf) {
+	Matrix<T> sigma = identityMatrix<T>(leaf.dim());
 	for (size_t k = 0; k < M.size(); ++k) {
 		if (M.isActive(k, leaf.mode())) {
 			const auto& L = M[k];
-			const Matrixd mk = toMatrix(*L, leaf);
+			const Matrix<T> mk = toMatrix(*L, leaf);
 			sigma = mk * sigma;
 		}
 	}
 	return sigma;
 }
 
-void toTensor(Tensord& A, const Matrixd& M, size_t part, const Leaf& leaf) {
+template <typename T>
+void toTensor(Tensor<T>& A, const Matrix<T>& M, size_t part, const Leaf& leaf) {
 	for (size_t i = 0; i < A.shape().lastBefore(); ++i) {
 		A(i, part) = M[i];
 	}
 }
 
-void toTensor(Tensord& A, const MLOd& M, size_t part, const Leaf& leaf) {
+template<typename T>
+void toTensor(Tensor<T>& A, const MLO<T>& M, size_t part, const Leaf& leaf) {
 	/**
 	 * Rationale:
 	 * Build Tensor representation of the LeafOperator that acts on 'leaf' and store it in A(:,part).
@@ -33,28 +36,30 @@ void toTensor(Tensord& A, const MLOd& M, size_t part, const Leaf& leaf) {
 	toTensor(A, sigma, part, leaf);
 }
 
-Matrixd toMatrix(const Tensord& B, size_t l, const Leaf& leaf) {
+template<typename T>
+Matrix<T> toMatrix(const Tensor<T>& B, size_t l, const Leaf& leaf) {
 	size_t dim = leaf.dim();
-	Matrixd h(dim, dim);
+	Matrix<T> h(dim, dim);
 	for (size_t I = 0; I < dim*dim; ++I) {
 		h[I] = B(I, l);
 	}
 	return h;
 }
 
-TensorTreeOperator product(const MLOd& M, TensorTreeOperator A, const Tree& tree) {
+template<typename T>
+TensorTreeOperator<T> product(const MLO<T>& M, TensorTreeOperator<T> A, const Tree& tree) {
 	for (const Node& node : tree) {
 		if(node.isBottomlayer()) {
 			const Leaf& leaf = node.getLeaf();
 			size_t mode = leaf.mode();
 			if (!M.isActive(mode)) { continue; }
-			Tensord& phi = A[node];
+			Tensor<T>& phi = A[node];
 			const TensorShape& shape = phi.shape();
 			///
-			Matrixd mat = toMatrix(M, leaf);
+			Matrix<T> mat = toMatrix(M, leaf);
 			///
 			for (size_t l = 0; l < shape.lastDimension(); ++l) {
-				Matrixd hphi = toMatrix(phi, l, leaf);
+				Matrix<T> hphi = toMatrix(phi, l, leaf);
 				hphi = mat * hphi;
 				toTensor(phi, hphi, l, leaf);
 			}
@@ -63,7 +68,8 @@ TensorTreeOperator product(const MLOd& M, TensorTreeOperator A, const Tree& tree
 	return A;
 }
 
-TensorTreeOperator::TensorTreeOperator(const MLOd& M,
+template<typename T>
+TensorTreeOperator<T>::TensorTreeOperator(const MLO<T>& M,
 	const Tree& tree)
 	: TensorTreeOperator(tree) {
 	occupy(tree);
@@ -74,33 +80,36 @@ TensorTreeOperator::TensorTreeOperator(const MLOd& M,
 		const Leaf& leaf = tree.getLeaf(mode);
 		const auto& node = (const Node&) leaf.parent();
 
-		const shared_ptr<LeafOperator<double>>& h = M[k];
-		Matrixd hmat = toMatrix(*h, leaf);
+		const shared_ptr<LeafOperator<T>>& h = M[k];
+		Matrix<T> hmat = toMatrix(*h, leaf);
 
 		setLeafOperator(hmat, idxs[mode], node);
 		idxs[mode]++;
 	}
 }
 
-TensorTreeOperator::TensorTreeOperator(const SOPd& S,
+template<typename T>
+TensorTreeOperator<T>::TensorTreeOperator(const SOP<T>& S,
 	const Tree& tree)
 	: TensorTreeOperator(tree) {
 	occupy(tree);
 	assert(S.size() > 0);
 }
 
-TensorTreeOperator::TensorTreeOperator(const Tree& tree) {
+template<typename T>
+TensorTreeOperator<T>::TensorTreeOperator(const Tree& tree) {
 	attributes_.clear();
 	for (const Node& node : tree) {
 		const TensorShape& shape = node.shape();
-		attributes_.emplace_back(Tensord(shape));
+		attributes_.emplace_back(Tensor<T>(shape));
 	}
 	occupy(tree);
 }
 
-void TensorTreeOperator::occupy(const Tree& tree) {
+template<typename T>
+void TensorTreeOperator<T>::occupy(const Tree& tree) {
 	for (const Node& node : tree) {
-		Tensord& Phi = operator[](node);
+		Tensor<T>& Phi = operator[](node);
 		Phi.zero();
 		for (size_t i = 0; i < Phi.shape().lastDimension(); ++i) {
 			Phi(i, i) = 1.;
@@ -111,35 +120,38 @@ void TensorTreeOperator::occupy(const Tree& tree) {
 				exit(1);
 			}
 			size_t dim = sqrt(1e-10 + Phi.shape().lastBefore());
-			setLeafOperator(identityMatrixd(dim), 0, node);
+			setLeafOperator(identityMatrix<T>(dim), 0, node);
 		}
 	}
 }
 
-void TensorTreeOperator::print(const Tree& tree) const {
+template<typename T>
+void TensorTreeOperator<T>::print(const Tree& tree) const {
 	for (const Node& node : tree) {
 		node.info();
 		attributes_[node.address()].print();
 	}
 }
 
-void TensorTreeOperator::setLeafOperator(const Matrixd& m,
+template<typename T>
+void TensorTreeOperator<T>::setLeafOperator(const Matrix<T>& m,
 	size_t operator_idx, const Node& node) {
 
 	const TensorShape& shape = node.shape();
 	assert(m.dim1() * m.dim2() == shape.lastBefore());
 	assert(operator_idx < shape.lastDimension());
 
-	Tensord& h = operator[](node);
+	Tensor<T>& h = operator[](node);
 	for (size_t i = 0; i < shape.lastBefore(); ++i) {
 		h(i, operator_idx) = m[i];
 	}
 }
 
-void TensorTreeOperator::occupy(const Tree& tree, mt19937& gen) {
+template<typename T>
+void TensorTreeOperator<T>::occupy(const Tree& tree, mt19937& gen) {
 	uniform_real_distribution<double> dist(-1., 1.);
 	for (const Node& node : tree) {
-		Tensord& A = (*this)[node];
+		Tensor<T>& A = (*this)[node];
 		const TensorShape& shape = A.shape();
 		for (size_t i = 0; i < shape.totalDimension(); ++i) {
 			A[i] = dist(gen);
@@ -147,4 +159,23 @@ void TensorTreeOperator::occupy(const Tree& tree, mt19937& gen) {
 		A = qr(A, shape.lastIdx());
 	}
 }
+
+
+template class TensorTreeOperator<double>;
+template class TensorTreeOperator<complex<double>>;
+
+typedef double d;
+typedef complex<double> cd;
+
+template void toTensor(Tensor<d>& A, const MLO<d>& M, size_t part, const Leaf& leaf);
+template void toTensor(Tensord& A, const Matrixd& M, size_t part, const Leaf& leaf);
+template Matrixd toMatrix(const MLOd& M, const Leaf& leaf);
+template Matrixd toMatrix(const Tensord& B, size_t l, const Leaf& leaf);
+template TensorTreeOperator<d> product(const MLO<d>& M, TensorTreeOperator<d> A, const Tree& tree);
+
+template void toTensor(Tensorcd& A, const MLOcd& M, size_t part, const Leaf& leaf);
+template void toTensor(Tensorcd& A, const Matrixcd& M, size_t part, const Leaf& leaf);
+template Matrixcd toMatrix(const MLOcd& M, const Leaf& leaf);
+template Matrixcd toMatrix(const Tensorcd& B, size_t l, const Leaf& leaf);
+template TensorTreeOperator<cd> product(const MLO<cd>& M, TensorTreeOperator<cd> A, const Tree& tree);
 

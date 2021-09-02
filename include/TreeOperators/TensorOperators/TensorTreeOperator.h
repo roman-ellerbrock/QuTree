@@ -10,12 +10,17 @@
 #include "TreeOperators/MultiLeafOperator.h"
 #include "TreeOperators/SumOfProductsOperator.h"
 
-void toTensor(Tensord& A, const MLOd& M, size_t part, const Leaf& leaf);
-void toTensor(Tensord& A, const Matrixd& M, size_t part, const Leaf& leaf);
-Matrixd toMatrix(const MLOd& M, const Leaf& leaf);
-Matrixd toMatrix(const Tensord& B, size_t l, const Leaf& leaf);
+template <typename T>
+void toTensor(Tensor<T>& A, const MLO<T>& M, size_t part, const Leaf& leaf);
+template <typename T>
+void toTensor(Tensor<T>& A, const Matrix<T>& M, size_t part, const Leaf& leaf);
+template <typename T>
+Matrix<T> toMatrix(const MLO<T>& M, const Leaf& leaf);
+template <typename T>
+Matrix<T> toMatrix(const Tensor<T>& B, size_t l, const Leaf& leaf);
 
-class TensorTreeOperator : public TensorTreed {
+template <typename T>
+class TensorTreeOperator : public TensorTree<T> {
 	/**
 	 * \brief This class is a tree tensor network operator (TTNO)
 	 *
@@ -29,8 +34,8 @@ public:
 	: TensorTreeOperator(optree) {
 		occupy(optree, gen);
 	}
-	TensorTreeOperator(const MLOd& M, const Tree& optree);
-	TensorTreeOperator(const SOPd& S, const Tree& optree);
+	TensorTreeOperator(const MLO<T>& M, const Tree& optree);
+	TensorTreeOperator(const SOP<T>& S, const Tree& optree);
 
 	~TensorTreeOperator() = default;
 
@@ -40,16 +45,22 @@ public:
 
 	void print(const Tree& optree) const;
 
-	void setLeafOperator(const Matrixd& M,
+	void setLeafOperator(const Matrix<T>& M,
 		size_t operator_idx, const Node& node);
 
-	void setLeafOperator(const LeafMatrixd& M,
+	void setLeafOperator(const LeafMatrix<T>& M,
 		size_t operator_idx, const Node& node) {
-		setLeafOperator(M.matrix(), operator_idx, node);
+		this->setLeafOperator(M.matrix(), operator_idx, node);
 	}
 
+	using TensorTree<T>::attributes_;
+	using TensorTree<T>::operator[];
 };
 
-TensorTreeOperator product(const MLOd& M, TensorTreeOperator A, const Tree& tree);
+template <typename T>
+TensorTreeOperator<T> product(const MLO<T>& M, TensorTreeOperator<T> A, const Tree& tree);
+
+typedef TensorTreeOperator<double> TensorTreeOperatord;
+typedef TensorTreeOperator<complex<double>> TensorTreeOperatorcd;
 
 #endif //TENSORTREEOPERATOR_H

@@ -68,11 +68,16 @@ endif()
 #####################################################################
 # Target Installation setup
 #####################################################################
+# Set up BLAS include
+set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+
 # Set up headers in include/ for install & build and src/ for just building
 target_include_directories(QuTree
     PUBLIC
         $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${BLAS_INCLUDE}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
@@ -130,9 +135,7 @@ endif()
 #find_package(BLAS REQUIRED)
 #set(BLA_VENDOR Intel10_64lp)
 #find_package(LAPACK REQUIRED)
-set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
 #set(BLAS_LIBRARIES "/opt/intel/oneapi/mkl/2021.2.0/lib/libmkl_intel_lp64.dylib")
-
 #target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} "${MKL_DIR}/libmkl_intel_lp64.dylib")
 target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
 
