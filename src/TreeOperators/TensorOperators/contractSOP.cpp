@@ -38,6 +38,7 @@ Tensor<T> applyLayer(const TTOMatrixTree<T>& rep, const TTOHoleTree<T>& hole,
 		for (size_t l = 0; l < S.size(); ++l) {
 			Tensor<T> sterm = S.coeff(l) * toTensor(S, node.getLeaf());
 			const TensorShape termShape = sterm.shape();
+			auto idx = indexMapping(0, termShape);
 			for (size_t I = 0; I < shape.totalDimension(); ++I) {
 				auto idx = indexMapping(I, termShape);
 				size_t i0 = idx[node.parentIdx()];
@@ -52,9 +53,10 @@ Tensor<T> applyLayer(const TTOMatrixTree<T>& rep, const TTOHoleTree<T>& hole,
 
 		vector<Matrix<T>> Mk = rep.gatherMk(node);
 		hole.gatherMk(Mk, node);
-		for (size_t l = 0; l < S.size(); ++l) {
-			for (size_t I = 0; I < shape.totalDimension(); ++I) {
-				auto idx = indexMapping(I, shape);
+		auto idx = indexMapping(0, shape);
+		for (size_t I = 0; I < shape.totalDimension(); ++I) {
+			indexMapping(idx, I, shape);
+			for (size_t l = 0; l < S.size(); ++l) {
 				T factor = prodMk(idx, Mk, l);
 				Bnew(I) += S.coeff(l) * factor;
 			}
@@ -72,6 +74,7 @@ void iterate(TensorTreeOperator<T>& A, TTOMatrixTree<T>& rep, TTOHoleTree<T>& ho
 	hole.represent(A, rep, optree);
 
 	for (const Node& node : optree) {
+		if (node.shape().lastDimension() == node.shape().lastBefore()) { continue; }
 		/// Apply layer
 		A[node] = applyLayer(rep, hole, S, node);
 
@@ -148,6 +151,8 @@ double norm(const SOP<T>& S, const Tree& tree) {
 
 template<typename T>
 double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree) {
+	/// @TODO: doesn't work for electronic structure anymore - fix this!
+
 	auto AA = TreeFunctions::dotProduct(A, A, optree);
 	TTOMatrixTree<T> AS(S, optree);
 	AS.represent(A, S, optree);
@@ -169,7 +174,11 @@ double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree
 		}
 	}
 
+//	double err = abs(normA - 0.5 * overlap);
+//	return err;
+
 	double normS = norm(S, optree);
+//	double normS = 1.;
 	double err = normA + normS - overlap;
 	if (normS < 1e-15) {
 		cerr << "norm of SOP operator too small.\n";
@@ -178,12 +187,14 @@ double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree
 //	double err = normA + 1 - overlap/sqrt(normS);
 //	os << "normS: " << normS << endl;
 	err /= normS;
-//	os << err << " = " << normA/normS << " - " << overlap / normS << " + " << normS / normS << endl;
+	cout << err << " = " << normA / normS << " - " << overlap / normS << " + " << normS / normS << endl;
+//	cout << err << " = " << normA << " - " << overlap << " + " << normS << endl;
 
 	return err;
 }
 
 typedef double d;
+
 typedef complex<double> cd;
 
 template void contractSOP(TensorTreeOperator<d>& A, const SOP<d>& S,

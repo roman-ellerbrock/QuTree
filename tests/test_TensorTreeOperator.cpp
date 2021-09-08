@@ -90,18 +90,21 @@ SUITE (TensorTreeOperator) {
 		Tree tree = TreeFactory::balancedTree(32, 2, 3);
 		Tree optree = TreeFactory::operatorTree(tree);
 
+		/// Build examplary operator
 		for (size_t l = 0; l < tree.nLeaves(); l++) {
 			Matrixd sigma = JordanWigner::sigmaX();
 			MLOd M(sigma, l);
 			S.push_back(M, 1.);
 		}
 
+		/// Initialize random TTNO
 		mt19937 gen(time(NULL));
 		TensorTreeOperatord A(optree, gen);
 
 		orthogonal(A, optree);
 		orthonormal(A, optree);
 
+		/// Check error > 0, then contract, then check that error < eps
 		double err0 = error(A, S, optree);
 			CHECK_EQUAL(1, (err0 > 1e-1));
 		contractSOP(A, S, 2, optree, nullptr);
@@ -226,6 +229,16 @@ SUITE (TensorTreeOperator) {
 		/// @TODO: switch qubit order to even / uneven
 		size_t nleaves = 4;
 		Tree tree = TreeFactory::balancedTree(nleaves, 2, 4);
+
+		map<size_t,size_t> idx;
+		for (size_t l = 0; l < nleaves/2; ++l) {
+			idx[l] = 2*l;
+		}
+		for (size_t l = 0; l < nleaves/2; ++l) {
+			idx[l+nleaves/2] = 2*l+1;
+		}
+		tree.reindexLeafModes(idx);
+
 		Tree optree = TreeFactory::operatorTree(tree, 4);
 		auto qft = QFT(0, nleaves);
 

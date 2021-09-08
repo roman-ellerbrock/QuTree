@@ -6,7 +6,7 @@
 #define TTOHOLETREE_H
 #include "TTOMatrixTree.h"
 
-template <typename T>
+template<typename T>
 class TTOHoleTree: public NodeAttribute<Matrix<T>> {
 	/**
 	 * \brief This class is the contraction required to contract a SOP into a TTNO.
@@ -53,10 +53,11 @@ public:
 			auto& mrep = (*this)[node];
 			mrep.zero();
 
-			for (size_t l = 0; l < mrep.dim2(); ++l) {
-				for (size_t I = 0; I < shape.totalDimension(); ++I) {
-					auto idx = indexMapping(I, shape);
-					size_t ik = idx[skip];
+			auto idx = indexMapping(0, shape);
+			for (size_t I = 0; I < shape.totalDimension(); ++I) {
+				indexMapping(idx, I, shape);
+				size_t ik = idx[skip];
+				for (size_t l = 0; l < mrep.dim2(); ++l) {
 					T factor = prodMk(idx, ms, l, (int) skip);
 					mrep(ik, l) += B(I) * factor;
 				}
@@ -66,6 +67,7 @@ public:
 };
 
 typedef TTOHoleTree<double> TTOHoleTreed;
+
 typedef TTOHoleTree<complex<double>> TTOHoleTreecd;
 
 #endif //TTOHOLETREE_H

@@ -7,8 +7,8 @@
 #include "TreeClasses/TensorTree.h"
 #include "TreeOperators/TensorOperators/TensorTreeOperator.h"
 
-template <typename T>
-class TTOrepresentation : public NodeAttribute<vector<Matrix<T>>> {
+template<typename T>
+class TTOrepresentation: public NodeAttribute<vector<Matrix<T>>> {
 	/**
 	 * \brief Representation of TTNO in TTN basis
 	 * \ingroup TTNO
@@ -16,10 +16,16 @@ class TTOrepresentation : public NodeAttribute<vector<Matrix<T>>> {
 	 * This class calculates the matrix representations of TTNO
 	 * that are required for applying TTNOs to wavefunctions.
 	 */
-	 using NodeAttribute<vector<Matrix<T>>>::attributes_;
+	using NodeAttribute<vector<Matrix<T>>>::attributes_;
 public:
 
+	TTOrepresentation() = default;
+
 	TTOrepresentation(const Tree& tree, const Tree& optree) {
+		initialize(tree, optree);
+	}
+
+	void initialize(const Tree& tree, const Tree& optree) {
 		attributes_.clear();
 		for (const Node& node : tree) {
 			const Node& opnode = optree.getNode(node.address());
@@ -33,24 +39,30 @@ public:
 
 	~TTOrepresentation() = default;
 
-	Tensor<T> applyMatrices(Tensor<T> A, const Tensor<T>& B, const size_t l,
-		const Leaf& leaf) {
+	[[nodiscard]] Tensor<T> applyMatrices(Tensor<T> A, const Tensor<T>& B,
+		const size_t l, const Leaf& leaf) const {
 		size_t dim = leaf.dim();
 		Matrix<T> h(dim, dim);
-		for (size_t I = 0; I < dim*dim; ++I) {
+		for (size_t I = 0; I < dim * dim; ++I) {
 			h[I] = B(I, l);
 		}
 		A = matrixTensor(h, A, 0);
 		return A;
 	}
 
-	Tensor<T> applyMatrices(Tensor<T> A, const vector<size_t>& ls,
-		const Node& opnode) {
+	[[nodiscard]] Tensor<T> applyMatrices(Tensor<T> A, const Tensor<T>& B,
+		const vector<size_t>& ls, const Node& opnode, int hole) const {
+		if (opnode.isBottomlayer()) {
+			const Leaf& leaf = opnode.getLeaf();
+			return applyMatrices(A, B, ls.back(), leaf);
+		}
 		for (size_t k = 0; k < opnode.nChildren(); ++k) {
+			if (k == hole) { continue; }
 			const Node& child = opnode.child(k);
 			const vector<Matrix<T>>& hs = (*this)[child];
 			A = matrixTensor(hs[ls[k]], A, k);
 		}
+		A *= B(ls);
 		return A;
 	}
 
@@ -67,18 +79,18 @@ public:
 		}
 		if (opnode.isBottomlayer()) {
 			const Leaf& leaf = opnode.getLeaf();
-			leaf.info();
 			for (size_t l = 0; l < opshape.lastDimension(); ++l) {
 				auto hChi = applyMatrices(Chi, H[opnode], l, leaf);
 				auto hij = Psi.dotProduct(hChi);
-				hs[l] = hij;
+				hs[l] += hij;
 			}
 		} else {
+			auto ls = indexMapping(0, opshape);
 			for (size_t L = 0; L < opshape.totalDimension(); ++L) {
-				auto ls = indexMapping(L, opshape);
-				auto hChi = applyMatrices(Chi, ls, opnode);
+				indexMapping(ls, L, opshape);
+				auto hChi = applyMatrices(Chi, H[opnode], ls, opnode, -1);
 				auto hij = Psi.dotProduct(hChi);
-				hs[ls[opnode.parentIdx()]] += B[L] * hij;
+				hs[ls[opnode.parentIdx()]] += hij;
 			}
 		}
 	}
@@ -90,7 +102,7 @@ public:
 		}
 	}
 
-	void print(const Tree& tree) {
+	void print(const Tree& tree) const {
 		for (const Node& node : tree) {
 			const auto& hs = (*this)[node];
 			node.info();
@@ -100,10 +112,10 @@ public:
 			}
 		}
 	}
-
 };
 
 typedef TTOrepresentation<complex<double>> TTOrepresentationcd;
+
 typedef TTOrepresentation<double> TTOrepresentationd;
 
 #endif //TTOREPRESENTATION_H

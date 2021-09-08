@@ -17,7 +17,13 @@ class TTOcontraction: public NodeAttribute<vector<Matrix<T>>> {
 	 */
 	using NodeAttribute<vector<Matrix<T>>>::attributes_;
 public:
+	TTOcontraction() = default;
+
 	TTOcontraction(const Tree& tree, const Tree& optree) {
+		initialize(tree, optree);
+	}
+
+	void initialize(const Tree& tree, const Tree& optree) {
 		for (const Node& node : tree) {
 			if (!node.isToplayer()) {
 				const Node& opnode = optree.getNode(node.address());
@@ -33,15 +39,18 @@ public:
 
 	~TTOcontraction() = default;
 
-	Tensor<T> applyMatrices(Tensor<T> A, const vector<size_t>& ls, const TTOrepresentation<T>& Hrep,
-		const Node& parent, size_t hole) {
-		for (size_t k = 0; k < parent.nChildren(); ++k) {
+	[[nodiscard]] Tensor<T> applyMatrices(Tensor<T> A, const vector<size_t>& ls,
+		const TensorTreeOperator<T>& H, const TTOrepresentation<T>& Hrep,
+		const Node& parent, int hole) const {
+/*		for (size_t k = 0; k < parent.nChildren(); ++k) {
 			if (k == hole) { continue; }
 			const Node& child = parent.child(k);
 			const vector<Matrix<T>>& hrep = Hrep[child];
 			A = matrixTensor(hrep[ls[k]], A, k);
-		}
-		if (!parent.isToplayer()) {
+		}*/
+		A = Hrep.applyMatrices(A, H[parent], ls, parent, hole);
+
+		if (!parent.isToplayer() && (hole != parent.parentIdx())) {
 			const vector<Matrix<T>>& hholes = (*this)[parent];
 			size_t l0 = ls[parent.parentIdx()];
 			const Matrix<T>& hhole = hholes[l0];
@@ -66,11 +75,13 @@ public:
 		for (Matrix<T>& h : hs) {
 			h.zero();
 		}
+		auto ls = indexMapping(0, opshape);
 		for (size_t L = 0; L < opshape.totalDimension(); ++L) {
-			auto ls = indexMapping(L, opshape);
-			auto hChi = applyMatrices(Chi, ls, Hrep, parent, holeidx);
+			indexMapping(ls, L, opshape);
+			auto hChi = applyMatrices(Chi, ls, H, Hrep, parent, holeidx);
 			auto hk = contraction(Psi, hChi, holeidx);
-			hs[ls[holeidx]] += B[L] * hk;
+//			hs[ls[holeidx]] += B[L] * hk;
+			hs[ls[holeidx]] += hk;
 		}
 	}
 
@@ -84,7 +95,7 @@ public:
 		}
 	}
 
-	void print(const Tree& tree) {
+	void print(const Tree& tree) const{
 		for (const Node& node : tree) {
 			if (node.isToplayer()) { continue; }
 			const auto& hs = (*this)[node];
@@ -96,6 +107,10 @@ public:
 		}
 	}
 };
+
+template <typename T>
+Tensor<T> apply(const Tensor<T>& Phi, const TensorTreeOperator<T>& H, const TTOrepresentation<T>& rep,
+	const TTOcontraction<T>& con, const Node& node);
 
 typedef TTOcontraction<double> TTOcontractiond;
 typedef TTOcontraction<complex<double>> TTOcontractioncd;

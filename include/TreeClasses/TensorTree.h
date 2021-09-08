@@ -23,7 +23,7 @@ class TensorTree:
 	 * \brief This class represents tensor trees.
 	 *
 	 * Usage:
-	 * TRBasis tree(12, 2, 2)
+	 * Tree tree = balancedTree(12, 2, 2);
 	 * // Create Tensor with Zero-entry tensors at every node
 	 * TensorTreecd Psi(tree);
 	 * Psi.Write("filename.dat");
