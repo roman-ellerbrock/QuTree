@@ -13,13 +13,14 @@ void contractSOP(TensorTreeOperator<T>& A, const SOP<T>& S,
 //	size_t maxIter = 1;
 	double eps = 1e-10;
 	if (os) *os << "Initial error " << ": ";
-	double err = error(A, S, optree);
+//	double err = error(A, S, optree);
+	double err = 1.;
 	if (os) *os << err << endl;
 	for (size_t i = 0; i < maxIter; ++i) {
 		if (os) *os << "Iteration: " << i << endl;
 		iterate(A, rep, hole, S, optree);
 		if (os) *os << "Error after iteration " << i << ": ";
-		err = error(A, S, optree);
+//		err = error(A, S, optree);
 		if (os) *os << err << endl;
 		if (err < eps) { break; }
 	}

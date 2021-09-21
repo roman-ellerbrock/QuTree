@@ -56,7 +56,7 @@ SUITE (TensorTree) {
 		}
 	}
 
-	TEST(DirectSum) {
+	TEST (DirectSum) {
 		Tree tree = TreeFactory::balancedTree(12, 2, 2);
 		mt19937 gen(234);
 		TensorTreecd Psi(gen, tree);
@@ -66,22 +66,58 @@ SUITE (TensorTree) {
 		for (const Node& node : tree) {
 			const TensorShape& shape = node.shape();
 			if (node.isToplayer()) {
-				CHECK_EQUAL(3, shape.order());
-				CHECK_EQUAL(1, shape.lastDimension());
-				CHECK_EQUAL(4*4, shape.lastBefore());
+					CHECK_EQUAL(3, shape.order());
+					CHECK_EQUAL(1, shape.lastDimension());
+					CHECK_EQUAL(4 * 4, shape.lastBefore());
 			} else if (node.isBottomlayer()) {
-				CHECK_EQUAL(2, shape.order());
-				CHECK_EQUAL(4, shape.lastDimension());
-				CHECK_EQUAL(2, shape.lastBefore());
-
+					CHECK_EQUAL(2, shape.order());
+					CHECK_EQUAL(4, shape.lastDimension());
+					CHECK_EQUAL(2, shape.lastBefore());
 			} else {
-				CHECK_EQUAL(3, shape.order());
-				CHECK_EQUAL(4, shape.lastDimension());
-				CHECK_EQUAL(4*4, shape.lastBefore());
-
+					CHECK_EQUAL(3, shape.order());
+					CHECK_EQUAL(4, shape.lastDimension());
+					CHECK_EQUAL(4 * 4, shape.lastBefore());
 			}
 		}
 	}
 
+	/// Calculate grid size in CDVR and sCDVR
+/*	TEST (GridSize) {
+		for (size_t nleaves = 2; nleaves <= pow(2, 11); nleaves*=2){
+			Tree tree = TreeFactory::balancedTree(nleaves, 10, 10);
+
+			/// sCDVR
+			size_t sgrid = 0;
+			for (const Node& node: tree) {
+				const TensorShape& shape = node.shape();
+				size_t loc = shape.totalDimension();
+				if (!node.isToplayer()) {
+					loc += shape.lastDimension()*shape.lastDimension();
+				}
+				sgrid += loc;
+			}
+			/// CDVR
+			size_t grid = 0;
+			for (Node& node: tree) {
+				const TensorShape& shape = node.shape();
+				size_t loc = shape.lastBefore();
+				if (node.isToplayer()) {
+					grid += loc;
+					break;
+				}
+				Node* p = &(node.parent());
+				while(true) {
+					const TensorShape& pshape = p->shape();
+					loc *= pshape.lastBefore() / pshape[p->childIdx()];
+					if (p->isToplayer()) { break; }
+					p = &(p->parent());
+				}
+				grid += loc;
+			}
+			cout << nleaves << " " << sgrid << " " << grid << endl;
+		}
+		exit(0);
+	}
+ */
 }
 

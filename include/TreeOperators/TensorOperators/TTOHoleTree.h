@@ -57,9 +57,13 @@ public:
 			for (size_t I = 0; I < shape.totalDimension(); ++I) {
 				indexMapping(idx, I, shape);
 				size_t ik = idx[skip];
+				if (ik != 0) { continue; }
 				for (size_t l = 0; l < mrep.dim2(); ++l) {
 					T factor = prodMk(idx, ms, l, (int) skip);
-					mrep(ik, l) += B(I) * factor;
+					for (size_t ik = 0; ik < shape[skip]; ++ik) {
+						size_t J = I + shape.before(skip) * ik;
+						mrep(ik, l) += B(J) * factor;
+					}
 				}
 			}
 		}

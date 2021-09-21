@@ -9,6 +9,13 @@ jobs:
     steps:
     - name: Checkout push
       uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: apt-get install liblapack3
+    - run: apt-get install liblapack-dev
+    - run: apt-get install libopenblas-base
+    - run: apt-get install libopenblas-dev
+    - run: apt-get install liblapacke-dev
+    - run: apt-get install liblapack-dev
     - name: run-cmake-debug
       uses: lukka/run-cmake@v1.4
       with:
