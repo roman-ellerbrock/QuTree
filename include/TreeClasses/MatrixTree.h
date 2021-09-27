@@ -9,6 +9,7 @@
 
 template <typename T>
 class MatrixTree: public NodeAttribute<Matrix<T>>{
+protected:
 	using NodeAttribute<Matrix<T>>::attributes_;
 public:
 
