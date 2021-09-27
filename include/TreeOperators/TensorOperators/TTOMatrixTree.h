@@ -23,9 +23,9 @@ class TTOMatrixTree: public MatrixTree<T> {
 	 * \brief this class calculates the matrix representation required to contract SOPs into a TTNO
 	 * \ingroup TTNO
 	 */
-	using MatrixTree<T>::template NodeAttribute<Matrix<T>>::attributes_;
+	using MatrixTree<T>::template MatrixTree<T>::attributes_;
 public:
-	using MatrixTree<T>::template NodeAttribute<Matrix<T>>::operator[];
+	using MatrixTree<T>::template MatrixTree<T>::operator[];
 
 	TTOMatrixTree(const SOP<T>& S, const Tree& tree) {
 		size_t npart = S.size();
