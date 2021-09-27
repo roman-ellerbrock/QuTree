@@ -113,6 +113,11 @@ public:
 		return coeffs_[idx];
 	}
 
+	inline T& operator[](const vector<size_t>& idxs) {
+		size_t I = indexMapping(idxs, shape());
+		return operator[](I);
+	}
+
 	//////////////////////////////////////////////////////////
 	// Math Operators
 	//////////////////////////////////////////////////////////

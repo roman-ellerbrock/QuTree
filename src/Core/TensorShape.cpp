@@ -191,11 +191,8 @@ size_t indexMapping(const vector<size_t>& idx, const TensorShape& shape) {
 
 void indexMapping(vector<size_t>& idxs, size_t I, const TensorShape& shape) {
 	size_t r = I;
-	size_t n = 0;
-	for (size_t k = 0; k < shape.order(); k++) {
-		size_t l = shape[k];
-		n = r % l;
-		r /= l;
-		idxs[k] = n;
+	for (size_t k = 0; k < shape.order(); ++k) {
+		idxs[k] = r % shape[k];
+		r /= shape[k];
 	}
 }

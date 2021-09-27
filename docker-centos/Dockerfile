@@ -12,6 +12,7 @@ RUN curl -sL https://rpm.nodesource.com/setup_12.x | bash -
 # Cmake3, GCC 7, Node.js 12
 RUN yum install -y cmake3 devtoolset-7 nodejs rh-git218
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
+RUN yum install -y lapack
 
 # Manually enable devtoolset-7 and git 2.18
 ENV PATH="/opt/rh/rh-git218/root/usr/bin:/opt/rh/devtoolset-7/root/usr/bin:${PATH}"

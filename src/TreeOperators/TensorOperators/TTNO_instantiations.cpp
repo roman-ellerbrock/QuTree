@@ -4,7 +4,7 @@
 #include "TreeOperators/TensorOperators/TensorTreeOperator.h"
 #include "TreeOperators/TensorOperators/TTOHoleTree.h"
 #include "TreeOperators/TensorOperators/TTOMatrixTree.h"
-#include "TreeOperators/TensorOperators/TTOcontraction.h"
+#include "TreeOperators/TensorOperators/TTOcontraction_Implementation.h"
 #include "TreeOperators/TensorOperators/TTOrepresentation.h"
 #include "TreeOperators/TensorOperators/contractSOP.h"
 
@@ -24,6 +24,11 @@ template class TTOrepresentation<cd>;
 
 template class TTOcontraction<d>;
 template class TTOcontraction<cd>;
+
+template Tensor<d> apply(const Tensor<d>& Phi, const TensorTreeOperator<d>& H,
+	const TTOrepresentation<d>& rep, const TTOcontraction<d>& con, const Node& node);
+template Tensor<cd> apply(const Tensor<cd>& Phi, const TensorTreeOperator<cd>& H,
+	const TTOrepresentation<cd>& rep, const TTOcontraction<cd>& con, const Node& node);
 
 /*
 template TensorTreeOperator<d> contractSOP(TensorTreeOperator<T> A, const SOP<T>& S,

@@ -23,9 +23,9 @@ template <typename T>
 T prodMk(const vector<size_t>& idx, const vector<Matrix<T>>& Mk, size_t l, int skip) {
 	T factor = 1.;
 	for (size_t k = 0; k < Mk.size(); ++k) {
-		if (k != skip) {
-			factor *= Mk[k](idx[k], l);
-		}
+		if (k == skip) { continue; }
+		const Matrix<T>& M = Mk[k];
+		factor *= M(idx[k], l);
 	}
 	return factor;
 }
