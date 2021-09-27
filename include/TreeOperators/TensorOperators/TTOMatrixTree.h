@@ -23,7 +23,7 @@ class TTOMatrixTree: public MatrixTree<T> {
 	 * \brief this class calculates the matrix representation required to contract SOPs into a TTNO
 	 * \ingroup TTNO
 	 */
-	using MatrixTree<T>::template MatrixTree<T>::attributes_;
+	using MatrixTree<T>::attributes_;
 public:
 	using MatrixTree<T>::template MatrixTree<T>::operator[];
 
