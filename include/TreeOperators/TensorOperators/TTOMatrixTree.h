@@ -24,8 +24,8 @@ class TTOMatrixTree: public MatrixTree<T> {
 	 * \ingroup TTNO
 	 */
 	using MatrixTree<T>::template NodeAttribute<Matrix<T>>::attributes_;
-	using MatrixTree<T>::template NodeAttribute<Matrix<T>>::operator[];
 public:
+	using MatrixTree<T>::template NodeAttribute<Matrix<T>>::operator[];
 
 	TTOMatrixTree(const SOP<T>& S, const Tree& tree) {
 		size_t npart = S.size();
