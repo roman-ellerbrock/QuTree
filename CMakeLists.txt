@@ -132,7 +132,7 @@ if (openmp)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
 endif()
 
-target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
+target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
 #####################################################################
 # Set Compiler Flags
