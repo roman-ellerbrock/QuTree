@@ -19,6 +19,7 @@ enable_language(CXX)
 enable_language(Fortran)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_policy(SET "CMP0042" NEW)
+# set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
 
 #####################################################################
 # Target setup
@@ -63,7 +64,6 @@ if (USE_INTERNAL_EIGEN OR NOT TARGET Eigen3::Eigen)
         EXPORT QuTree-export
         DESTINATION ${QuTree_INSTALL_INC_DIR})
 endif()
-#target_link_libraries(QuTree Eigen3::Eigen)
 
 #####################################################################
 # Target Installation setup
@@ -75,11 +75,6 @@ if (APPLE)
 elseif(UNIX)
     set(BLA_VENDER OpenBLAS)
     find_package(BLAS REQUIRED)
-    if(BLAS_FOUND)
-        message("OpenBLAS found.")
-#        include_directories(/opt/OpenBLAS/include/)
-        target_link_libraries(QuTree ${BLAS_LIBRARIES})
-    endif(BLAS_FOUND)
 endif()
 
 # Set up headers in include/ for install & build and src/ for just building
@@ -136,34 +131,16 @@ if (openmp)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
 endif()
 
-#find_package(OpenBLAS REQUIRED)
-#set(CMAKE_VERBOSE_MAKEFILE ON)
-#set(BLA_VENDOR OpenBLAS)
-
-#set(MKL_DIR "/opt/intel/oneapi/mkl/2021.2.0/lib")
-#find_library(MKL_LIB NAMES mkl_intel_lp64 PATHS ${MKL_DIR})
-#find_package(BLAS REQUIRED)
-#set(BLA_VENDOR Intel10_64lp)
-#find_package(LAPACK REQUIRED)
-#set(BLAS_LIBRARIES "/opt/intel/oneapi/mkl/2021.2.0/lib/libmkl_intel_lp64.dylib")
-#target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} "${MKL_DIR}/libmkl_intel_lp64.dylib")
 target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES})
-
-# @TODO: Install BLAS automatically if it cannot find it
-# Set paths automatically for BLAS
 
 #####################################################################
 # Set Compiler Flags
 #####################################################################
-# set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
 
 # Ensure C++14 standard (force downstream as well)
 target_compile_features(QuTree PUBLIC cxx_std_17)
 
-#set(FLAGS_VECTORIZE  "-fopenmp-simd -march=native -Rpass='loop|vect' -Rpass-missed='loop|vect' -Rpass-analysis='loop|vect'")
 set(FLAGS_VECTORIZE "-fopenmp-simd -march=native")
-#set(FLAGS_VECTORIZE "-fopenmp-simd -march=native -loop-vectorize")
-#set(FLAGS_VECTORIZE "-ftree-parallelize-loops=8 ${FLAGS_VECTORIZE}")
 set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math")
 
