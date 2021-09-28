@@ -68,13 +68,14 @@ endif()
 #####################################################################
 # Target Installation setup
 #####################################################################
-# Set up BLAS include
+# Set up BLAS / LAPACK
 if (APPLE)
     set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
     set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
 elseif(UNIX)
     set(BLA_VENDER OpenBLAS)
     find_package(BLAS REQUIRED)
+    find_package(LAPACK REQUIRED)
 endif()
 
 # Set up headers in include/ for install & build and src/ for just building
