@@ -72,6 +72,8 @@ endif()
 if (APPLE)
     set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
     set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+elseif(UNIX)
+    findBLAS()
 endif()
 
 # Set up headers in include/ for install & build and src/ for just building
