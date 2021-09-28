@@ -69,8 +69,10 @@ endif()
 # Target Installation setup
 #####################################################################
 # Set up BLAS include
-set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
-set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+if (APPLE)
+    set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+    set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+endif()
 
 # Set up headers in include/ for install & build and src/ for just building
 target_include_directories(QuTree
