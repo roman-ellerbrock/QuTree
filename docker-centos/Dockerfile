@@ -14,6 +14,9 @@ RUN yum install -y cmake3 devtoolset-7 nodejs rh-git218
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 RUN yum install -y lapack
 
+# BLAS, Lapack
+RUN yum install lapack lapack-devel blas blas-devel
+
 # Manually enable devtoolset-7 and git 2.18
 ENV PATH="/opt/rh/rh-git218/root/usr/bin:/opt/rh/devtoolset-7/root/usr/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/rh/httpd24/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib:/opt/rh/devtoolset-7/root/usr/lib64/dyninst:/opt/rh/devtoolset-7/root/usr/lib/dyninst:/opt/rh/devtoolset-7/root/usr/lib64:/opt/rh/devtoolset-7/root/usr/lib"
