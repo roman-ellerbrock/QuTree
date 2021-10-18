@@ -12,7 +12,7 @@ public:
 	WorkMemory() = default;
 	~WorkMemory() = default;
 
-	WorkMemory(const Tree& tree) {
+	explicit WorkMemory(const Tree& tree) {
 		TensorShape shape({1});
 		for (const Node& node : tree) {
 			if (node.shape().totalDimension() > shape.totalDimension()) {
@@ -24,7 +24,7 @@ public:
 		work3_ = Tensor<T>(shape);
 	}
 
-	WorkMemory(const SparseTree& stree) {
+	explicit WorkMemory(const SparseTree& stree) {
 
 		int sub_topnode = stree.size() - 1;
 		/// Find largest TensorShape in tree and allocate work memory
@@ -43,7 +43,7 @@ public:
 		work3_ = Tensor<T>(shape);
 	}
 
-	WorkMemory(const Node& node) {
+	explicit WorkMemory(const Node& node) {
 		TensorShape shape = node.shape();
 		if (!node.isToplayer()) {
 			const Node& parent = node.parent();
