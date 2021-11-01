@@ -9,17 +9,24 @@
 #include "TreeClasses/SpectralDecompositionTree.h"
 
 SUITE (SymTensorTree) {
+	/**
+	 * Rationale: Test Suite for Symmetric Tensor Trees
+	 * We are checking whether
+	 * - all contractions of weighted tensors are diagonal
+	 * - upwards normalized tensors are orthonormal
+	 * - downwards normalized tensors are orthonormal
+	 * - sqrt(rho) * up/down-normalized tensors equal weighted tensors
+	 * - regularization: setting unoccupied orbitals without changing the TT
+	 */
 	double eps = 1e-7;
 
 	class TTFactory {
-		public:
+	public:
 		TTFactory() {
 			tree_ = TreeFactory::balancedTree(10, 2, 3);
 			mt19937 gen(34676949);
-			psi_ = TensorTreecd(gen, tree_, true);
-			chi_ = TensorTreecd(gen, tree_, false);
-			spsi_ = SymTensorTree(psi_, tree_);
-			schi_ = SymTensorTree(chi_, tree_);
+			psi_ = SymTensorTree(gen, tree_, false);
+			chi_ = SymTensorTree(gen, tree_, true);
 
 			/// Operator initialization
 			auto I = &LeafInterface::identity;
@@ -32,190 +39,70 @@ SUITE (SymTensorTree) {
 		~TTFactory() = default;
 
 		Tree tree_;
-		TensorTreecd psi_;
-		TensorTreecd chi_;
-		SymTensorTree spsi_;
-		SymTensorTree schi_;
+		SymTensorTree psi_;
+		SymTensorTree chi_;
 
 		MLOcd I_;
 		shared_ptr<SparseTree> stree_;
 	};
 
-	TEST (TensorFlatten) {
+	TEST (Generate) {
+		mt19937 gen(34676949);
+		Tree tree = TreeFactory::balancedTree(10, 2, 3);
+		SymTensorTree psi(gen, tree, true);
+	}
+
+	TEST (RegularizeTensor) {
+		double delta = 1E-6;
+		mt19937 gen(1283);
 		TensorShape shape({2, 3, 4});
-		mt19937 gen(19239123);
 		Tensorcd A(shape);
-		uniform_real_distribution<double> dist(-1., 1.);
-		for (size_t I = 0; I < shape.totalDimension(); ++I) {
-			double x = dist(gen);
-			double y = dist(gen);
-			A(I) = complex<double>(x, y);
+		Tensor_Extension::generate(A, gen);
+		for (size_t k = 0; k < shape.lastBefore(); ++k) {
+			A(k) = 0.;
 		}
+		auto s = contraction(A, A, shape.lastIdx());
+			CHECK_CLOSE(0, abs(s(0, 0)), delta);
 
-		size_t k = 1;
-		auto Aflat = toMatrix(A, k);
-		auto A2 = toTensor(Aflat, A.shape(), k);
-		CHECK_CLOSE(0., residual(A, A2), eps);
+		A = Tensor_Extension::regularize(A, shape.lastIdx(), delta);
+		s = contraction(A, A, A.shape().lastIdx());
+			CHECK_EQUAL(true, (sqrt(abs(s(0, 0))) > delta / 2.));
 	}
 
-	TEST_FIXTURE(TTFactory, canonicalTensors) {
-		auto psis = {psi_, chi_};
-		/// Check whether all density matrices are diagonal
-		for (const auto& Psi : psis) {
-			SymTensorTree sPsi(Psi, tree_);
-			/// Check down
-			for (const Node& node : tree_) {
-				const Tensorcd& w = sPsi.weighted_[node];
-				if (node.isBottomlayer()) { continue; }
-				for (size_t k = 0; k < node.nChildren(); ++k) {
-					auto rho = contraction(w, w, k);
-					for (size_t l = 0; l < rho.dim1(); ++l) {
-						rho(l, l) = 0.;
-					}
-					CHECK_CLOSE(0., rho.frobeniusNorm(), eps);
-				}
-			}
-		}
-	}
+	TEST (NormalizeTensor) {
+		mt19937 gen(1283);
+		TensorShape shape({2, 3, 4});
+		Tensorcd A(shape);
+		Tensor_Extension::generate(A, gen);
 
-	TEST_FIXTURE (TTFactory, normalized) {
-		SymTensorTree sPsi(psi_, tree_);
-
-		/// Check normalization
-		for (const Node& node : tree_) {
-			if (node.isToplayer()) { continue; }
-			const Tensorcd& phi = sPsi.up_[node];
-			auto s = phi.dotProduct(phi);
-			CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim2())), eps);
-		}
-
-		for (const Node& node : tree_) {
-			if (node.isToplayer()) { continue; }
-			const Tensorcd& phi = sPsi.down_[node];
-			auto s = contraction(phi, phi, node.childIdx());
-			CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim2())), eps);
-		}
-	}
-
-	TEST_FIXTURE (TTFactory, canonicalRepresentation) {
-		/// Check Bottom-up overlap
-		auto psis = {psi_, chi_};
-		for (const auto& psi : psis) {
-			SymTensorTree sPsi(psi, tree_);
-			/// Check upwards coherence: sqrt(rho)*up_ = weighted
-			for (const Node& node : tree_) {
-				if (node.isToplayer()) { continue; }
-				const Tensorcd& w = sPsi.weighted_[node];
-				auto rho = contraction(w, w, node.parentIdx());
-				auto B = calculateB(sPsi.weighted_[node], node.parentIdx());
-//				auto w2 = MBatrixTensor(B, sPsi.up_[node], node.parentIdx());
-				auto w2 = tensorMatrix(sPsi.up_[node], B, node.parentIdx());
-					CHECK_CLOSE(0., residual(sPsi.weighted_[node], w2), eps);
-			}
-
-			/// Check downwards coherence: sqrt(rho)*down_ = weighted
-			for (const Node& node : tree_) {
-				if (node.isToplayer()) { continue; }
-				const Node& parent = node.parent();
-				auto B = calculateB(sPsi.weighted_[parent], node.childIdx());
-//				auto w2 = MatrixTensor(B, sPsi.down_[node], node.childIdx());
-				auto w2 = tensorMatrix(sPsi.down_[node], B, node.childIdx());
-				CHECK_CLOSE(0., residual(sPsi.weighted_[parent], w2), eps);
-			}
-		}
-	}
-
-	TEST_FIXTURE(TTFactory, Overlap) {
-		auto psis = {psi_, chi_};
-
-		for (auto psi : psis) {
-			canonicalTransformation(psi, tree_, true);
-			auto rho = TreeFunctions::contraction(psi, tree_, true);
-			SymTensorTree sPsi(psi, tree_);
-			auto psiup = sPsi.bottomUpNormalized(tree_);
-			auto S = TreeFunctions::dotProduct(psi, psiup, tree_);
-			auto s = S[tree_.topNode()];
+		for (size_t k = 0; k < shape.order(); ++k) {
+			auto Anorm = Tensor_Extension::normalize(A, k, eps);
+			auto s = contraction(Anorm, Anorm, k);
 				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
 		}
 	}
 
-	TEST_FIXTURE(TTFactory, OverlapNonCanonical) {
-		auto psis = {psi_, chi_};
+	TEST_FIXTURE (TTFactory, Normalization) {
+		MatrixTreecd Sup(tree_); // wazzzz suuuuuuuup???!!!
 
-		for (const auto& psi : psis) {
-			auto rho = TreeFunctions::contraction(psi, tree_, true);
-			SymTensorTree sPsi(psi, tree_);
-			auto psiup = sPsi.bottomUpNormalized(tree_);
-			auto S = TreeFunctions::dotProduct(psi, psiup, tree_);
-			auto s = S[tree_.topNode()];
-				CHECK_CLOSE(0., residual(s, identityMatrixcd(s.dim1())), eps);
-		}
-	}
-
-	TEST_FIXTURE(TTFactory, symOverlap) {
-		SymTensorTree spsi(psi_, tree_);
-		SymTensorTree schi(chi_, tree_);
-		auto S = TreeFunctions::symDotProduct(spsi, schi, tree_);
-		auto s_top = S[tree_.topNode()].trace();
-			CHECK_CLOSE(-0.00557989, real(s_top), eps);
-			CHECK_CLOSE(0., imag(s_top), eps);
+		TreeFunctions::contractionUp(Sup, psi_, psi_, tree_);
 		for (const Node& node : tree_) {
-			CHECK_CLOSE(0., abs(s_top - S[node].trace()), eps);
+			if (!node.isToplayer()) {
+				CHECK_CLOSE(0., residual(Sup[node], identityMatrixcd(Sup[node].dim1())), eps);
+			}
 		}
-	}
 
-	TEST_FIXTURE(TTFactory, symRepresent) {
-		/**
-		 * Rationale:
-		 * - Represent operator using sym-routine and compare
-		 *   to standard represent.
-		 */
-		SparseMatrixTreecd x1(stree_, tree_);
-		SparseMatrixTreecd x2(stree_, tree_);
-		SymMatrixTree mat({x1, x2});
-//		TreeFunctions::symRepresent(mat, spsi_, schi_, I_, tree_);
-
-//		auto hmat = TreeFunctions::Represent(I_, psi_, chi_, tree_);
-		SparseMatrixTreecd hmat(stree_, tree_);
-		auto S = TreeFunctions::dotProduct(psi_, chi_, tree_);
-//		cout << "s:\n";
-//		S.print(tree_);
-//		getchar();
-		TreeFunctions::represent(hmat, I_, psi_, chi_, tree_);
-//		SparseMatrixTreecd hhole(stree_, tree_);
-//		TreeFunctions::Contraction(hhole, psi_, chi_, hmat, tree_);
-
-		for (const Node* node_ptr : *stree_) {
-			const Node& node = *node_ptr;
-//			node.info();
-//			mat.first[node].print();
-//			hmat[node].print();
-//			CHECK_CLOSE(0., residual(mat.first[node], hmat[node]), eps);
-		}
-	}
-
-	TEST_FIXTURE(TTFactory, symRepresentOverlap) {
-		/**
-		 * Rationale:
-		 * - Calculate overlap via representing identity-operators and
-		 *   Applying them to wavefunction, then calculating overlap
-		 */
-		auto S = TreeFunctions::symDotProduct(spsi_, schi_, tree_);
-		SparseMatrixTreecd x1(stree_, tree_);
-		SparseMatrixTreecd x2(stree_, tree_);
-		SymMatrixTree mat({x1, x2});
-		TreeFunctions::symRepresent(mat, spsi_, schi_, I_, tree_);
-
-		auto Hschi_ = schi_;
+		MatrixTreecd Sdown(tree_); // wazzzz suuuuuuuup???!!!
+		TreeFunctions::contractionDown(Sdown, psi_, psi_, Sup, tree_);
 		for (const Node& node : tree_) {
-			Hschi_.weighted_[node] = TreeFunctions::symApply(
-				schi_.weighted_[node], mat, I_, node);
-		}
-
-		for (const Node& node : tree_) {
-			auto s = spsi_.weighted_[node].dotProduct(Hschi_.weighted_[node]);
-			CHECK_CLOSE(0., residual(s, S[node]), eps);
+			if (!node.isToplayer() && !node.isBottomlayer()) {
+				node.info();
+				Sdown[node].print();
+					CHECK_CLOSE(0., residual(Sdown[node], identityMatrixcd(Sdown[node].dim1())), eps);
+			}
 		}
 	}
 
+	TEST_FIXTURE (TTFactory, Apply) {
+	}
 }

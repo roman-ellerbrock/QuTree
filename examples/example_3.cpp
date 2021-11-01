@@ -35,7 +35,7 @@ TensorTreecd create_tensor_tree() {
     T_rand.print(tree);
 
     // 2. Read from an istream or file
-	T_rand.write("TT.dat");
+	T_rand.write("TT.dat", true);
     TensorTreecd T_rand2("TT.dat");
 
     return T_rand2;

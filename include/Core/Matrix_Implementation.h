@@ -652,7 +652,11 @@ template<typename T>
 SpectralDecomposition<T> sqrt(SpectralDecomposition<T> X) {
 	Vectord& lambda = X.second;
 	for (size_t i = 0; i < lambda.dim(); ++i) {
-		lambda(i) = sqrt(lambda(i));
+		if (lambda(i) >= 0) {
+			lambda(i) = sqrt(lambda(i));
+		} else {
+			lambda(i) = 0.;
+		}
 	}
 	return X;
 }
@@ -715,7 +719,7 @@ Matrix<T> regularize(const Matrix<T>& A, double eps) {
 	Matrix<T> B(A);
 	size_t dim = min(A.dim1(), A.dim2());
 	for (size_t i = 0; i < dim; i++) {
-		B(i, i) += eps * exp(-B(i, i) / eps);
+		B(i, i) += eps * exp(-abs(B(i, i)) / eps);
 	}
 	return B;
 }
@@ -841,6 +845,18 @@ SVDd svd(const Matrixd& A) {
 }
 
 Matrixcd toMatrix(const SVDcd& svd) {
+	const auto& U = get<0>(svd);
+	auto V = get<1>(svd);
+	const auto& sigma = get<2>(svd);
+	for (size_t i = 0; i < V.dim1(); ++i) {
+		for (size_t j = 0; j < V.dim2(); ++j) {
+			V(i, j) *= sigma(j);
+		}
+	}
+	return U * V.adjoint();
+}
+
+Matrixd toMatrix(const SVDd& svd) {
 	const auto& U = get<0>(svd);
 	auto V = get<1>(svd);
 	const auto& sigma = get<2>(svd);

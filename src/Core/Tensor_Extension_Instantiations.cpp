@@ -18,6 +18,10 @@ template void Tensor_Extension::weightedOuterProductAdd(Matrixcd& M, const Tenso
 template Matrix<cd> Tensor_Extension::map(const Tensor<cd>& A);
 template Matrix<d> Tensor_Extension::map(const Tensor<d>& A);
 
+template Tensor<cd> Tensor_Extension::regularize(Tensor<cd> A, size_t k, double eps);
+template Tensor<d> Tensor_Extension::regularize(Tensor<d> A, size_t k, double eps);
+
+
 template Tensor<cd> Tensor_Extension::doubleHoleContraction(const Tensor<cd>& A,
 	const Tensor<cd>& B, size_t k1, size_t k2);
 template Tensor<d> Tensor_Extension::doubleHoleContraction(const Tensor<d>& A,

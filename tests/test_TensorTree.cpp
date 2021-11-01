@@ -12,7 +12,7 @@ SUITE (TensorTree) {
 	TEST (TensorTree_FILE_IO) {
 		Tree tree = TreeFactory::balancedTree(12, 2, 4);
 		TensorTreecd T(tree);
-		T.write("TT.tmp.dat");
+		T.write("TT.tmp.dat", true);
 		TensorTreecd Q(tree);
 		ifstream is("TT.tmp.dat");
 		is >> Q;
@@ -28,7 +28,7 @@ SUITE (TensorTree) {
 		mt19937 gen(2468);
 		T.fillRandom(gen, tree, false);
 		string filename("TT.RNG.dat");
-		T.write(filename);
+		T.write(filename, true);
 		TensorTreecd Q(filename);
 			CHECK_EQUAL(T.size(), Q.size());
 		for (const Node& node : tree) {

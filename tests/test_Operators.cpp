@@ -16,6 +16,7 @@ SUITE (Operators) {
 		HelperFactory() {
 			Initialize();
 		}
+
 		~HelperFactory() = default;
 		Matrixcd X;
 		LeafMatrixcd x;
@@ -68,7 +69,7 @@ SUITE (Operators) {
 
 		/// Checking
 		string filename("MLO.apply.dat");
-		Psi.write(filename);
+		Psi.write(filename, false);
 		TensorTreecd Xi(filename);
 			CHECK_EQUAL(Xi.size(), Psi.size());
 		for (const Node& node : tree) {
@@ -83,7 +84,7 @@ SUITE (Operators) {
 		S.push_back(M2, 0.5);
 		auto M_sq = M * M;
 			CHECK_EQUAL(2, M_sq.size());
-		complex<double> c (0.5);
+		complex<double> c(0.5);
 		SOPcd cS = c * S;
 			CHECK_EQUAL(2, cS.size());
 		SOPcd SS = S * S;

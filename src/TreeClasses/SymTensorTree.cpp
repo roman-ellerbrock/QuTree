@@ -4,141 +4,150 @@
 
 #include "TreeClasses/SymTensorTree.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
+#include "Core/Tensor_Extension.h"
 
-void SymTensorTree::initializeFromTT(const TensorTreecd& Psi, const Tree& tree) {
-	/// First set up_ to conventional representation (SPFs orthonormal, Toplayer density-weighted)
-	up_ = Psi;
-//	QROrthogonal(up_, tree); //
-
-	/// Now create orthonormal down-tensors and simultaneously create weighted tensors
-	weighted_ = up_;
-	createWeighted(weighted_, down_, up_, tree);
-
-	down_ = up_;
-	normalizeCanonical(tree);
+void SymTensorTree::initialize(const Tree& tree) {
+	weighted_.initialize(tree);
+	up_.initialize(tree);
+	down_.initialize(tree);
 }
 
-void SymTensorTree::canonicalRepresentation(const Tree& tree) {
+SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
+	: SymTensorTree() {
+	initialize(tree);
+
 	for (const Node& node : tree) {
-		bool up = !node.isToplayer();
-		bool down = !node.isBottomlayer();
-		weighted_[node] = canonicalTensor(weighted_[node], up, down);
+		Tensor_Extension::generate(weighted_[node], gen);
+
+		Tensorcd& A = weighted_[node];
+		if (delta_lowest) {
+			for (size_t i = 0; i < node.shape().lastBefore(); ++i) {
+				A(i) = 0;
+			}
+			A(0) = 1.;
+		}
+		gramSchmidt(A);
 	}
+	normalizeUp(tree);
+	normalizeDown(tree);
 }
 
-void SymTensorTree::normalizeCanonical(const Node& node) {
-	const Tensorcd& W = weighted_[node];
-	/// Calculate new down-representation
-	if (!node.isBottomlayer()) {
-		for (size_t k = 0; k < node.nChildren(); ++k) {
-			const Node& child = node.child(k);
-			Matrixcd w = toMatrix(W, k);
-			SVDcd x = svd(w);
-			auto U = get<0>(x);
-			down_[child] = toTensor(U, W.shape(), k);
+void SymTensorTree::normalizeUp(const Tree& tree) {
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			up_[node] = Tensor_Extension::normalize(weighted_[node], node.parentIdx(), eps_);
 		}
 	}
-	/// Calculate new up-representation
-	if (!node.isToplayer()) {
-		Matrixcd w = toMatrix(W);
-		SVDcd x = svd(w);
-		Matrixcd U = get<0>(x);
-		up_[node] = toTensor(U, W.shape(), node.parentIdx());
-	}
-
-	/// Normalize
-	auto S = W.dotProduct(W);
-	auto norm = sqrt(abs(S.trace()));
-	weighted_[node] /= norm;
-
 }
 
-void SymTensorTree::normalizeCanonical(const Tree& tree) {
-	canonicalRepresentation(tree);
+void SymTensorTree::normalizeDown(const Tree& tree) {
 	for (const Node& node : tree) {
-		normalizeCanonical(node);
-	}
-}
-
-void SymTensorTree::print(const Tree& tree) {
-	for (const Node& node : tree) {
-		node.info();
-		weighted_[node].print();
-	}
-}
-
-Tensorcd canonicalTensor(Tensorcd w, bool up, bool down) {
-	if (down) {
-		for (size_t k = 0; k < (w.shape().order() - 1); ++k) {
-			auto rho = contraction(w, w, k);
-			auto U = get<0>(svd(rho));
-//		auto U = Diagonalize(rho).first;
-			w = tensorMatrix(w, U, k);
-		}
-	}
-	if (up) {
-		auto rho = contraction(w, w, w.shape().lastIdx());
-		auto U = get<0>(svd(rho));
-//		auto U = Diagonalize(rho).first;
-		w = tensorMatrix(w, U, w.shape().lastIdx());
-	}
-	return w;
-}
-
-Matrixcd calculateB(const Tensorcd& weighted, size_t k) {
-	Matrixcd rho = contraction(weighted, weighted, k);
-	return toMatrix(sqrt(diagonalize(rho)));
-}
-
-template<typename T>
-void createWeighted(TensorTree<T>& weighted, TensorTree<T>& down,
-	const TensorTreecd& up, const Tree& tree) {
-	/** Rationale:
-	 * a.) Performs an orthogonalization for Top-Down TensorTree.
-	 * b.) Has to be in topdown format, i.e. every Tensor is shifted one layer down.
-	 * c.) Meant to be used with MatrixTensorTree.
-	 * d.) Not tested and probably not working.
-	 */
-
-	for (auto it = tree.rbegin(); it != tree.rend(); ++it) {
-		const Node& node = *it;
 		if (!node.isToplayer()) {
 			const Node& parent = node.parent();
-
-			Matrixcd B = calculateB(weighted[parent], node.childIdx());
-			weighted[node] = tensorMatrix(weighted[node], B, node.parentIdx());
-//			weighted[node] = MatrixTensor(B, weighted[node], node.nChildren());
-
+			down_[node] = Tensor_Extension::normalize(weighted_[parent], node.childIdx(), eps_);
 		}
 	}
 }
 
-TensorTreecd SymTensorTree::bottomUpNormalized(const Tree& tree) const {
-	TensorTreecd Psi(tree);
-	for (const Node& node : tree) {
-		Psi[node] = up_[node];
-	}
-	Psi[tree.topNode()] = weighted_[tree.topNode()];
-	return Psi;
-}
-
-SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest) {
-	TensorTreecd tmp(gen, tree, delta_lowest);
-	initializeFromTT(tmp, tree);
-}
-
-SymTensorTree::SymTensorTree(mt19937& gen, const TensorTreecd& Psi,
-	const SparseTree& stree, const Tree& tree, bool delta_lowest) {
-	TensorTreecd tmp(gen, tree, delta_lowest);
-	for (const Node& node: tree) {
-		if (!stree.isActive(node)) {
-			tmp[node] = Psi[node];
-		}
-	}
-	initializeFromTT(tmp, tree);
+void SymTensorTree::normalize(const Tree& tree) {
+	normalizeUp(tree);
+	normalizeDown(tree);
 }
 
 namespace TreeFunctions {
+
+	///////////////////////////////////////////////////////////////////////
+	/// Tree Contractions
+	///////////////////////////////////////////////////////////////////////
+
+	void contractionUpLocal(MatrixTreecd& S, const Tensorcd& Bra, Tensorcd Ket,
+		const Node& node) {
+		for (size_t k = 0; k < node.nChildren(); ++k) {
+			if (!node.isBottomlayer()) {
+				const Node& child = node.child(k);
+				Ket = matrixTensor(S[child], Ket, k);
+			}
+		}
+		S[node] = Bra.dotProduct(Ket);
+	}
+
+	void contractionUp(MatrixTreecd& S, const SymTensorTree& Bra,
+		const SymTensorTree& Ket, const Tree& tree) {
+		for (const Node& node : tree) {
+			contractionUpLocal(S, Bra.up_[node], Ket.up_[node], node);
+		}
+	}
+
+	void contractionDownLocal(MatrixTreecd& Sdown, const Tensorcd& Bra, Tensorcd Ket,
+		const MatrixTreecd& S, const Node& child) {
+		const Node& node = child.parent();
+		assert(!node.isToplayer());
+		size_t hole = child.childIdx();
+		for (size_t k = 0; k < node.nChildren(); ++k) {
+			const Node& ochild = node.child(k);
+			if (k != hole) {
+				Ket = matrixTensor(S[ochild], Ket, k);
+			}
+		}
+		if (!node.isToplayer()) {
+			const Node& parent = node.parent();
+			Ket = matrixTensor(Sdown[parent], Ket, node.parentIdx());
+		}
+		Sdown[child] = contraction(Bra, Ket, hole);
+	}
+
+	void contractionDown(MatrixTreecd& Sdown, const SymTensorTree& Bra,
+		const SymTensorTree& Ket, const MatrixTreecd& S, const Tree& tree) {
+		for (int i = tree.nNodes() - 1; i >= 0; --i) {
+			const Node& node = tree.getNode(i);
+			if (!node.isToplayer()) {
+				const Node& parent = node.parent();
+				contractionDownLocal(Sdown, Bra.down_[parent], Ket.down_[parent], S, node);
+			}
+		}
+	}
+
+	Tensorcd symApply(Tensorcd Ket, const MatrixTreecd& Sup, const MatrixTreecd& Sdown,
+		const Node& node) {
+		if (!node.isBottomlayer()) {
+			for (size_t k = 0; k < node.nChildren(); ++k) {
+				const Node& child = node.child(k);
+				Ket = matrixTensor(Sup[child], Ket, k);
+			}
+		}
+		if (!node.isToplayer()) {
+			Ket = matrixTensor(Sdown[node.parent()], Ket, node.parentIdx());
+		}
+		return Ket;
+	}
+
+	 vector<double> dotProduct(const SymTensorTree& Bra, SymTensorTree Ket,
+		const Tree& tree) {
+		MatrixTreecd Sup(tree); // wazzzz suuuuuuuup???!!!
+		MatrixTreecd Sdown(tree);
+		contractionUp(Sup, Bra, Ket, tree);
+		contractionDown(Sdown, Bra, Ket, Sup, tree);
+
+		vector<double> eps;
+		for (const Node& node : tree) {
+			Tensorcd SKet = symApply(Ket.weighted_[node], Sup, Sdown, node);
+			Matrixcd s = Bra.weighted_[node].dotProduct(SKet);
+			eps.push_back(abs(s.trace()));
+		}
+		return eps;
+	}
+
+	double error(const vector<double>& vec) {
+		double val = 0.;
+		for (auto x : vec) {
+			val += pow(x, 2);
+		}
+		return sqrt(val);
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	/// Tree Functions
+	///////////////////////////////////////////////////////////////////////
 
 	void symContractionLocal(SparseMatrixTreecd& hole, const Tensorcd& Bra,
 		const Tensorcd& Ket, const SparseMatrixTreecd& mat, const Node& hchild) {
@@ -148,8 +157,9 @@ namespace TreeFunctions {
 		Tensorcd hKet = TreeFunctions::applyHole(mat, Ket, hchild);
 
 		if (!parent.isToplayer() && hole.isActive(parent)) {
-//			hKet = TensorMatrix(hKet, hole[parent], parent.childIdx());
+			//			hKet = TensorMatrix(hKet, hole[parent], parent.childIdx());
 			hKet = multStateAB(hole[parent], hKet);
+			//			hKet = matrixTensor(hole[parent], hKet, hchild.parentIdx());
 		}
 		hole[hchild] = contraction(Bra, hKet, hchild.childIdx());
 	}
@@ -183,11 +193,54 @@ namespace TreeFunctions {
 	////////////////////////////////////////////////////////////////////////
 	/// apply Operators
 	////////////////////////////////////////////////////////////////////////
+	/**
+	 * Idea:
+	 * - always perform normalize up right before building up-/down-matrices
+	 * - only perform once per operator to avoid multiple evaluations
+	 * - weighted Tensors store the important information
+	 * - allows to perform different 'normalization' for CDVR
+	 * 		- this can incorporate finding optimized x-basis sets
+	 */
+
+	/**
+	 *
+	 * @param HPsi
+	 * @param Psi
+	 * @param hmats
+	 * @param H
+	 * @param node
+	 */
+	void iterate(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
+		const SOPcd& H, const Tree& tree) {
+
+		symApply(HPsi, Psi, mats, H, tree);
+		HPsi.normalize(tree);
+		symRepresent(mats, HPsi, Psi, H, tree);
+
+	}
+
+	void ApplySCF(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
+		const SOPcd& H, const Tree& tree, double eps, size_t max_iter, ostream* os) {
+
+		auto HPsi_last = HPsi;
+		for (size_t i = 0; i < max_iter; ++i) {
+			iterate(HPsi, mats, Psi, H, tree);
+			double change = error(dotProduct(HPsi_last, HPsi, tree));
+			if (os) {
+				*os << "i = " << i << "\t" << change << endl;
+			}
+			if (change < eps) { break; }
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	/// apply Operators
+	////////////////////////////////////////////////////////////////////////
 
 	Tensorcd symApplyDownNew(const Tensorcd& Phi, const SparseMatrixTreecd& hHole,
 		const Node& node) {
 		if (node.isToplayer() || !hHole.isActive(node)) { return Phi; }
-//		return TensorMatrix(Phi, hHole[node], node.parentIdx()); @TODO: Check if this is correct
+		//		return TensorMatrix(Phi, hHole[node], node.parentIdx()); @TODO: Check if this is correct
 		return multStateAB(hHole[node], Phi);
 	}
 
@@ -211,75 +264,12 @@ namespace TreeFunctions {
 		const SOPcd& H, const Tree& tree) {
 		const SparseTree& stree = hmats[0].first.sparseTree();
 
-		for (const Node* node_ptr : stree) {
+		for (const Node *node_ptr : stree) {
 			const Node& node = *node_ptr;
 			symApply(HPsi.weighted_[node], Psi.weighted_[node], hmats, H, node);
 		}
 	}
 
-	void symContraction(MatrixTreecd& rho, const SymTensorTree& Bra,
-		const SymTensorTree& Ket, const MatrixTreecd& S, const Tree& tree) {
-		for (auto it = tree.rbegin(); it != tree.rend(); ++it) {
-			const Node& node = *it;
-			if (node.isToplayer()) { continue; }
-			const auto& bra = Bra.down_[node];
-			auto ket = Ket.down_[node];
-			const Node& parent = node.parent();
-			size_t child_idx = node.childIdx();
-			/// apply S with hole in childidx
-			for (size_t k = 0; k < parent.nChildren(); ++k) {
-				if (k != child_idx) {
-					const Node& child = parent.child(k);
-					ket = matrixTensor(S[child], ket, k);
-				}
-			}
-			if (!parent.isToplayer()) {
-				ket = multStateAB(rho[parent], ket);
-			}
-			rho[node] = contraction(bra, ket, node.childIdx());
-		}
-	}
-
-	Matrixcd DotProduct(const Tensorcd& Bra, Tensorcd Ket,
-		const MatrixTreecd& s_up, const MatrixTreecd& s_down, const Node& node) {
-		if (!node.isBottomlayer()) {
-			for (size_t k = 0; k < node.nChildren(); ++k) {
-				const Node& child = node.child(k);
-				Ket = matrixTensor(s_up[child], Ket, k);
-			}
-		}
-		if (!node.isToplayer()) {
-			Ket = multStateAB(s_down[node], Ket);
-//			Ket = MatrixTensor(s_down[node], Ket, node.parentIdx());
-		}
-		return Bra.dotProduct(Ket);
-	}
-
-	MatrixTreecd DotProduct(const TensorTreecd& wBra, const TensorTreecd& wKet,
-		const MatrixTreecd& s_up, const MatrixTreecd& s_down, const Tree& tree) {
-		MatrixTreecd S(tree);
-		for (const Node& node : tree) {
-			S[node] = DotProduct(wBra[node], wKet[node], s_up, s_down, node);
-		}
-		return S;
-	}
-
-	MatrixTreecd symDotProduct(const SymTensorTree& Bra, const SymTensorTree& Ket, const Tree& tree) {
-		/**
-		 * Rationale:
-		 * - Calculates dot-products in symmetric representation. First calculate up-, then down-overlaps
-		 *   (s_up, s_down). Use these to calculate overall overlaps S. If everything works correctly, all
-		 *   nodes should provide equal outputs abs(S[node_a]) == abs(S[node_b])
-		 */
-		MatrixTreecd s_up = TreeFunctions::dotProduct(Bra.up_, Ket.up_, tree);
-		MatrixTreecd s_down(tree);
-		symContraction(s_down, Bra, Ket, s_up, tree);
-		MatrixTreecd S(tree);
-		for (const Node& node : tree) {
-			S[node] = DotProduct(Bra.weighted_[node], Ket.weighted_[node], s_up, s_down, node);
-		}
-		return S;
-	}
 }
 
 double epsUpNormalization(const SymTensorTree& Psi, const Tree& tree) {

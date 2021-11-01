@@ -208,7 +208,7 @@ SUITE (TensorTreeOperator) {
 		contractSOP(A, circ, 10, optree, nullptr);
 
 		/// Perform same operators iteratively
-		auto U = contractCircuit(circuit, 5, optree, &cout);
+		auto U = contractCircuit(circuit, 5, optree, nullptr);
 		Matrixcd E(1, 1);
 		{
 			auto S_aa = TreeFunctions::dotProduct(A, A, optree);
@@ -242,13 +242,14 @@ SUITE (TensorTreeOperator) {
 		Tree optree = TreeFactory::operatorTree(tree, 4);
 		auto qft = QFT(0, nleaves);
 
-		auto A = contractCircuit(qft, 10, optree, &cout);
-		canonicalTransformation(A, optree);
-		cout << "QFT: =============>\n";
+//		auto A = contractCircuit(qft, 10, optree, &cout);
+//		canonicalTransformation(A, optree);
+/*		cout << "QFT: =============>\n";
 		A.print(optree);
 		cout << "<============= :QFT\n";
-		auto rho = TreeFunctions::contraction(A, optree, true);
-		rho.print(optree);
+		*/
+//		auto rho = TreeFunctions::contraction(A, optree, true);
+//		rho.print(optree);
 	}
 }
 

@@ -92,8 +92,12 @@ void TensorTree<T>::write(ostream& os) const {
 }
 
 template<typename T>
-void TensorTree<T>::write(const string& filename) const {
-	ofstream os(filename);
+void TensorTree<T>::write(const string& filename, bool append) const {
+	auto mod = ios::in;
+	if (append) {
+		mod = ios::in | ios::app;
+	}
+	ofstream os(filename, mod);
 	write(os);
 }
 

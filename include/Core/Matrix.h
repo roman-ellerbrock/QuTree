@@ -538,12 +538,14 @@ typedef tuple<Matrixcd, Matrixcd, Vectord> SVDcd;
 typedef tuple<Matrixd, Matrixd, Vectord> SVDd;
 
 SVDcd svd(const Matrixcd& A);
-Matrixcd toMatrix(const SVDcd& svd);
-
 SVDd svd(const Matrixd& A);
+
+Matrixcd toMatrix(const SVDcd& svd);
+Matrixd toMatrix(const SVDd& svd);
 
 Eigen::MatrixXd toEigen(Matrixd A);
 Eigen::MatrixXcd toEigen(Matrixcd A);
+
 Matrixd toQutree(const Eigen::MatrixXd& A);
 Matrixcd toQutree(const Eigen::MatrixXcd& A);
 

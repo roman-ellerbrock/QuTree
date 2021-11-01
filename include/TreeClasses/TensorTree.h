@@ -35,6 +35,7 @@ public:
 
 	/// Default constructor without memory allocation
 	TensorTree() = default;
+
 	/// Constructor with allocation of memory
 	explicit TensorTree(const Tree& tree);
 
@@ -64,7 +65,7 @@ public:
 	void write(ostream& os) const;
 
 	/// Write TensorTree to file (binary format)
-	void write(const string& filename) const;
+	void write(const string& filename, bool append = true) const;
 
 	/// Print info in human readable format
 	void print(const Tree& tree, ostream& os = cout) const;

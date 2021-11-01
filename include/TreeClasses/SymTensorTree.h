@@ -11,27 +11,20 @@ typedef SparseMatrixTreePairscd SymMatrixTrees;
 
 class SymTensorTree {
 public:
-	SymTensorTree() = default;
-	SymTensorTree(const Tree& tree) : weighted_(tree), up_(tree), down_(tree) {}
-	SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest);
-	SymTensorTree(mt19937& gen, const TensorTreecd& Psi, const SparseTree& stree, const Tree& tree, bool delta_lowest);
-	SymTensorTree(const TensorTreecd& Psi, const Tree& tree) {
-		initializeFromTT(Psi, tree);
-	}
-	~SymTensorTree() {}
+	explicit SymTensorTree(double eps = 1e-6) : eps_(eps) {}
+	~SymTensorTree() = default;
 
-	void initializeFromTT(const TensorTreecd& Psi, const Tree& tree);
+	void initialize(const Tree& tree);
+	SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
-	TensorTreecd bottomUpNormalized(const Tree& tree)const;
-	void canonicalRepresentation(const Tree& tree);
-	void normalizeCanonical(const Node& node);
-	void normalizeCanonical(const Tree& tree);
-
-	void print(const Tree& tree);
+	void normalizeUp(const Tree& tree);
+	void normalizeDown(const Tree& tree);
+	void normalize(const Tree& tree);
 
 	TensorTreecd weighted_;
 	TensorTreecd up_;
 	TensorTreecd down_;
+	double eps_;
 };
 
 Tensorcd canonicalTensor(Tensorcd w, bool up, bool down);
@@ -45,7 +38,16 @@ template<typename T>
 void createWeighted(TensorTree<T>& weighted, TensorTree<T>& down, const TensorTreecd& up, const Tree& tree);
 
 namespace TreeFunctions {
-	void symContractionLocal(SparseMatrixTreecd& hole, const Tensorcd& Bra,
+	void contractionUp(MatrixTreecd& S, const SymTensorTree& Bra,
+		const SymTensorTree& Ket, const Tree& tree);
+
+	void contractionDown(MatrixTreecd& Sdown, const SymTensorTree& Bra,
+		const SymTensorTree& Ket, const MatrixTreecd& S, const Tree& tree);
+
+	vector<double> dotProduct(const SymTensorTree& Bra, SymTensorTree Ket,
+		const Tree& tree);
+
+		void symContractionLocal(SparseMatrixTreecd& hole, const Tensorcd& Bra,
 		const Tensorcd& Ket, const SparseMatrixTreecd& mat, const Node& hchild);
 
 	void symContraction(SparseMatrixTreecd& hole, const TensorTreecd& Bra,
@@ -58,12 +60,19 @@ namespace TreeFunctions {
 	void symRepresent(SymMatrixTrees& mats, const SymTensorTree& Bra,
 		const SymTensorTree& Ket, const SOPcd& S, const Tree& tree);
 
+	void ApplySCF(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
+		const SOPcd& H, const Tree& tree, double eps, size_t max_iter, ostream* os = nullptr);
+
 	Tensorcd symApply(const Tensorcd& Ket,
 		const SymMatrixTree& mats, const MLOcd& M, const Node& node);
 
 	void symApply(SymTensorTree& HPsi, const SymTensorTree& Psi,
 		const SymMatrixTrees& hmats,
 		const SOPcd& H, const Tree& tree);
+
+	void symApply(Tensorcd& HPhi, const Tensorcd& Phi,
+		const SymMatrixTrees& hmats,
+		const SOPcd& H, const Node& node);
 
 	MatrixTreecd symDotProduct(const SymTensorTree& Bra, const SymTensorTree& Ket,
 		const Tree& tree);

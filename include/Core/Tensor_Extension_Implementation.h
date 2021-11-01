@@ -74,6 +74,31 @@ namespace Tensor_Extension {
 		return tuple<Matrixcd, Matrixcd, Vectord>(U, V, sigma);
 	}
 
+	template <typename T>
+	Tensor<T> regularize(Tensor<T> A, size_t k, double eps) {
+		Matrix<T> a = toMatrix(A, k);
+		auto x = svd(a);
+		auto& sing_val = get<1>(x);
+		sing_val = regularize(sing_val, eps);
+		a = toMatrix(x);
+		A = toTensor(a, A.shape(), A.shape().lastIdx());
+		return A;
+	}
+
+	Tensorcd normalize(Tensorcd A, size_t k, double eps) {
+		/**
+		 * \brief Normalize a tensor for the k-th leg while preserving its representation
+		 */
+		A = Tensor_Extension::regularize(A, k, eps);
+		auto a = toMatrix(A, k);
+		auto x = svd(a);
+		const Matrixcd& U = get<0>(x);
+		const Matrixcd& V = get<1>(x);
+		a = U * V.adjoint();
+		A = toTensor(a, A.shape(), k);
+		return A;
+	}
+
 	template<typename T>
 	Matrix<T> map(const Tensor<T>& A) {
 		const TensorShape& tdim = A.shape();

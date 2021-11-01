@@ -8,6 +8,11 @@ namespace Tensor_Extension {
 
 	tuple<Matrixcd, Matrixcd, Vectord> SVD(const Matrixcd& A);
 
+	template <typename T>
+	Tensor<T> regularize(Tensor<T> A, size_t k, double eps);
+
+	Tensorcd normalize(Tensorcd A, size_t k, double eps);
+
 	template<typename T>
 	Matrix<T> map(const Tensor<T>& A);
 
