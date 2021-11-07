@@ -279,6 +279,7 @@ namespace TreeFunctions {
 		 * Rationale:
 		 * - *the* routine for applying adjacent matrices (except 'skip') to a Tensor
 		 * - hPhi has to have correct dimensions and be initialized correctly
+		 * @TODO: should also take MLOcd
 		 */
 
 		Tensor<T> *in = &Phi;

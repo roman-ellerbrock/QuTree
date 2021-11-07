@@ -6,6 +6,12 @@
 #define TENSORBLAS_H
 #include "Tensor.h"
 
+
+
+
+
+
+
 void dgeem(Matrixd& h, const Matrixd& bra, const Matrixd& ket);
 
 template<typename T>

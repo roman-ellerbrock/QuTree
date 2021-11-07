@@ -56,7 +56,9 @@ public:
 		work3_ = Tensor<T>(shape);
 	}
 
-	Tensor<T> work1_, work2_, work3_;
+	mutable Tensor<T> work1_; /// state of workmem is irrelevant,
+	mutable Tensor<T> work2_; /// marked mutable to allow const even if work mem is member of classes
+	mutable Tensor<T> work3_;
 };
 
 typedef WorkMemory<complex<double>> WorkMemorycd;

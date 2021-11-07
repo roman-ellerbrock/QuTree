@@ -4,7 +4,7 @@
 
 #include "TreeClasses/SymTensorTree.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
-#include "Core/Tensor_Extension.h"
+#include "Core/Tensor_Functions.h"
 
 void SymTensorTree::initialize(const Tree& tree) {
 	weighted_.initialize(tree);
@@ -17,16 +17,13 @@ SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
 	initialize(tree);
 
 	for (const Node& node : tree) {
-		Tensor_Extension::generate(weighted_[node], gen);
-
 		Tensorcd& A = weighted_[node];
 		if (delta_lowest) {
-			for (size_t i = 0; i < node.shape().lastBefore(); ++i) {
-				A(i) = 0;
-			}
+			A.zero();
 			A(0) = 1.;
+		} else {
+			Tensor_Extension::generate(A, gen);
 		}
-		gramSchmidt(A);
 	}
 	normalizeUp(tree);
 	normalizeDown(tree);
@@ -47,6 +44,12 @@ void SymTensorTree::normalizeDown(const Tree& tree) {
 			down_[node] = Tensor_Extension::normalize(weighted_[parent], node.childIdx(), eps_);
 		}
 	}
+}
+
+TensorTreecd SymTensorTree::toConventional(const Tree& tree) const {
+	TensorTreecd psi = up_;
+	psi[tree.topNode()] = weighted_[tree.topNode()];
+	return psi;
 }
 
 void SymTensorTree::normalize(const Tree& tree) {
@@ -91,7 +94,9 @@ namespace TreeFunctions {
 		}
 		if (!node.isToplayer()) {
 			const Node& parent = node.parent();
-			Ket = matrixTensor(Sdown[parent], Ket, node.parentIdx());
+			if (!parent.isToplayer()) {
+				Ket = matrixTensor(Sdown[parent], Ket, node.parentIdx());
+			}
 		}
 		Sdown[child] = contraction(Bra, Ket, hole);
 	}
@@ -102,10 +107,14 @@ namespace TreeFunctions {
 			const Node& node = tree.getNode(i);
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
-				contractionDownLocal(Sdown, Bra.down_[parent], Ket.down_[parent], S, node);
+				contractionDownLocal(Sdown, Bra.down_[node], Ket.down_[node], S, node);
 			}
 		}
 	}
+
+	///////////////////////////////////////////////////////////////////////
+	/// dot product routines
+	///////////////////////////////////////////////////////////////////////
 
 	Tensorcd symApply(Tensorcd Ket, const MatrixTreecd& Sup, const MatrixTreecd& Sdown,
 		const Node& node) {
@@ -121,7 +130,7 @@ namespace TreeFunctions {
 		return Ket;
 	}
 
-	 vector<double> dotProduct(const SymTensorTree& Bra, SymTensorTree Ket,
+	vector<double> dotProduct(const SymTensorTree& Bra, SymTensorTree Ket,
 		const Tree& tree) {
 		MatrixTreecd Sup(tree); // wazzzz suuuuuuuup???!!!
 		MatrixTreecd Sdown(tree);
@@ -171,7 +180,7 @@ namespace TreeFunctions {
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = mat.sparseTree().node(n);
 			if (!node.isToplayer()) {
-				/// Use Bra/Ket[node] instead of [parent] since Trensors are moved down
+				/// Using Bra/Ket[node] instead of [parent] since Tensors are moved down
 				symContractionLocal(hole, Bra[node], Ket[node], mat, node);
 			}
 		}
@@ -190,6 +199,58 @@ namespace TreeFunctions {
 		}
 	}
 
+	void iterateUp(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
+		const SOPcd& H, const Tree& tree) {
+
+		SparseTree stree(H, tree, false);
+		for (const Node *node_ptr : stree) {
+			const Node& node = *node_ptr;
+			if (node.isToplayer()) { continue; }
+			/// a.) Apply
+			/// @TODO: only apply lower matrices?
+			node.info();
+			HPsi.up_[node].print();
+			cout << "-->\n";
+			symApply(HPsi.weighted_[node], Psi.weighted_[node], mats, H, node);
+
+			/// b.) normalize
+			HPsi.up_[node] = Tensor_Extension::normalize(HPsi.weighted_[node],
+				node.parentIdx(), HPsi.eps_);
+//			qr(HPsi.up_[node]);
+			HPsi.up_[node].print();
+
+			/// c.) represent
+			for (size_t l = 0; l < H.size(); ++l) {
+				WorkMemorycd mem(tree);
+				TreeFunctions::representLayer(mats[l].first, HPsi.up_[node], Psi.up_[node], H[l], node, &mem);
+			}
+		}
+	}
+
+	void iterateDown(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
+		const SOPcd& H, const Tree& tree) {
+
+		for (int n = tree.nNodes() - 2; n >= 0; --n) {
+			const Node& child = tree.getNode(n);
+			if (child.isToplayer()) { continue; }
+			const Node& node = child.parent();
+
+			/// a.) Apply
+			/// @TODO: only hole-apply?
+			symApply(HPsi.weighted_[node], Psi.weighted_[node], mats, H, node);
+
+			/// b.) normalize
+			HPsi.down_[child] = Tensor_Extension::normalize(HPsi.down_[node],
+				child.childIdx(), HPsi.eps_);
+
+			/// c.) represent
+			for (size_t l = 0; l < H.size(); ++l) {
+				TreeFunctions::symContractionLocal(mats[l].second, HPsi.down_[node],
+					Psi.down_[node], mats[l].second, child);
+			}
+		}
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	/// apply Operators
 	////////////////////////////////////////////////////////////////////////
@@ -203,7 +264,6 @@ namespace TreeFunctions {
 	 */
 
 	/**
-	 *
 	 * @param HPsi
 	 * @param Psi
 	 * @param hmats
@@ -213,22 +273,41 @@ namespace TreeFunctions {
 	void iterate(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
 		const SOPcd& H, const Tree& tree) {
 
-		symApply(HPsi, Psi, mats, H, tree);
-		HPsi.normalize(tree);
+		iterateUp(HPsi, mats, Psi, H, tree);
 		symRepresent(mats, HPsi, Psi, H, tree);
 
+		//		iterateDown(HPsi, mats, Psi, H, tree);
+		/*		symRepresent(mats, HPsi, Psi, H, tree);
+				symApply(HPsi, Psi, mats, H, tree);
+				HPsi.normalize(tree);*/
 	}
 
-	void ApplySCF(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
-		const SOPcd& H, const Tree& tree, double eps, size_t max_iter, ostream* os) {
+	/**
+	 * @param HPsi
+	 * @param mats
+	 * @param Psi
+	 * @param H
+	 * @param tree
+	 * @param eps
+	 * @param max_iter
+	 * @param os
+	 */
+	void applySCF(SymTensorTree& HPsi, SymMatrixTrees& mats,
+		const SymTensorTree& Psi, const SOPcd& H, const Tree& tree,
+		double eps, size_t max_iter, ostream *os) {
 
 		auto HPsi_last = HPsi;
+		symRepresent(mats, HPsi, Psi, H, tree);
+		mats.print(tree);
+		getchar();
 		for (size_t i = 0; i < max_iter; ++i) {
 			iterate(HPsi, mats, Psi, H, tree);
-			double change = error(dotProduct(HPsi_last, HPsi, tree));
-			if (os) {
-				*os << "i = " << i << "\t" << change << endl;
+			auto change_tree = dotProduct(HPsi_last, HPsi, tree);
+			for (auto x : change_tree) {
+				cout << x << endl;
 			}
+			double change = error(change_tree);
+			if (os) { *os << "i = " << i << "\t" << change << endl; }
 			if (change < eps) { break; }
 		}
 	}
@@ -241,13 +320,24 @@ namespace TreeFunctions {
 		const Node& node) {
 		if (node.isToplayer() || !hHole.isActive(node)) { return Phi; }
 		//		return TensorMatrix(Phi, hHole[node], node.parentIdx()); @TODO: Check if this is correct
-		return multStateAB(hHole[node], Phi);
+		auto hPhi = matrixTensor(hHole[node], Phi, node.parentIdx());
+		return hPhi;
+//		return multStateAB(hHole[node], Phi);
 	}
 
 	Tensorcd symApply(const Tensorcd& Ket,
 		const SymMatrixTree& mats, const MLOcd& M, const Node& node) {
 		Tensorcd hKet = TreeFunctions::apply(mats.first, Ket, M, node);
-		return symApplyDownNew(hKet, mats.second, node);
+		cout << "apply lower:\n";
+		hKet.print();
+		hKet = symApplyDownNew(hKet, mats.second, node);
+		if (!node.isToplayer() && mats.second.isActive(node)) {
+			cout << "hole-rep:\n";
+			mats.second[node].print();
+		}
+		cout << "apply upper:\n";
+		hKet.print();
+		return hKet;
 	}
 
 	void symApply(Tensorcd& HPhi, const Tensorcd& Phi,
@@ -255,7 +345,9 @@ namespace TreeFunctions {
 		const SOPcd& H, const Node& node) {
 		HPhi.zero();
 		for (size_t l = 0; l < H.size(); ++l) {
-			HPhi += H.coeff(l) * symApply(Phi, hmats[l], H[l], node);
+			cout << "l = " << l << endl;
+			auto hPhi = H.coeff(l) * symApply(Phi, hmats[l], H[l], node);
+			HPhi += hPhi;
 		}
 	}
 
@@ -270,6 +362,13 @@ namespace TreeFunctions {
 		}
 	}
 
+	void generate(SymTensorTree& psi, mt19937& gen, const SparseTree& stree, const Tree& tree) {
+		for (const Node *node_ptr : stree) {
+			const Node& node = *node_ptr;
+			Tensor_Extension::generate(psi.weighted_[node], gen);
+		}
+		psi.normalize(tree);
+	}
 }
 
 double epsUpNormalization(const SymTensorTree& Psi, const Tree& tree) {

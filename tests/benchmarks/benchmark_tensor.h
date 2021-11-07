@@ -6,7 +6,7 @@
 #define BENCHMARK_TENSOR_H
 #include "Core/Tensor.h"
 #include <random>
-#include "Core/Tensor_Extension.h"
+#include "Core/Tensor_Functions.h"
 #include "benchmark_helper.h"
 
 namespace benchmark {

@@ -248,8 +248,8 @@ void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const 
 		cerr << "matrix Tensor error: after dimension wrong.\n";
 		exit(1);
 	}
-	if (tdimC.totalDimension() != workC.shape().totalDimension()) {
-		cerr << "matrix Tensor error: work array has wrong dimension.\n";
+	if (tdimC.totalDimension() > workC.shape().totalDimension()) {
+		cerr << "matrix Tensor error: work array too small.\n";
 		exit(1);
 	}
 
@@ -299,12 +299,12 @@ void contractionBLAS(Matrix<T>& h, Tensor<T>& workA, Tensor<T>& workB, const Ten
 		exit(1);
 	}
 
-	if (tdimA.totalDimension() != workA.shape().totalDimension()) {
-		cerr << "contraction error: work array A has wrong dimension.\n";
+	if (tdimA.totalDimension() > workA.shape().totalDimension()) {
+		cerr << "contraction error: work array A too small.\n";
 		exit(1);
 	}
-	if (tdimB.totalDimension() != workB.shape().totalDimension()) {
-		cerr << "contraction error: work array B has wrong dimension.\n";
+	if (tdimB.totalDimension() > workB.shape().totalDimension()) {
+		cerr << "contraction error: work array B too small.\n";
 		exit(1);
 	}
 

@@ -19,23 +19,24 @@ endif()
 include_directories(${UTPP_INCLUDE_DIRS})
 
 set(QuTree_tests
-        test_GradientDescent.cpp
-        test_Integrator.cpp
-        test_Matrix.cpp
-        test_MatrixBLAS.cpp
-        test_MatrixTensorTree.cpp
+#        test_GradientDescent.cpp
+#        test_Integrator.cpp
+#        test_Matrix.cpp
+#        test_MatrixBLAS.cpp
+#        test_MatrixTensorTree.cpp
         test_Tensor.cpp
         tests.cpp
-        test_TensorTree.cpp
-        test_TensorBLAS.cpp
-        test_Operators.cpp
-        test_SparseTree.cpp
-        test_SymTensorTree.cpp
-        test_TensorTreeBasis.cpp
-        test_TensorTreeOperator.cpp
-        test_MatrixTree.cpp
-        test_SparseMatrixTree.cpp
-        test_RandomMatrices.cpp)
+#        test_TensorTree.cpp
+#        test_TensorBLAS.cpp
+#        test_Operators.cpp
+#        test_SparseTree.cpp
+#        test_SymTensorTree.cpp
+#        test_TensorTreeBasis.cpp
+#        test_TensorTreeOperator.cpp
+#        test_MatrixTree.cpp
+#        test_SparseMatrixTree.cpp
+#        test_RandomMatrices.cpp
+        )
 
 add_executable(TestQuTree ${QuTree_tests})
 target_link_libraries(TestQuTree QuTree)

@@ -1,9 +1,9 @@
 //#include "Core/Tensor.h"
-#include "Core/Tensor_Implementation.h"
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
 #include "Util/QMConstants.h"
-#include "Core/Tensor_Extension.h"
+#include "Core/Tensor_Implementation.h"
+//#include "Core/Tensor_Functions.h"
 
 using namespace std;
 
@@ -94,7 +94,7 @@ SUITE (Tensor) {
 			CHECK_EQUAL(2, tdim.lastDimension());
 	}
 
-	TEST (Tensor_Constructor) {
+/*	TEST (Tensor_Constructor) {
 		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));
 		Tensorcd A(tdim);
 		Tensorcd B(tdim);
@@ -251,4 +251,5 @@ SUITE (Tensor) {
 				CHECK_CLOSE(0., residual(S1, identityMatrixcd(S1.dim1())), eps);
 		}
 	}
+ */
 }

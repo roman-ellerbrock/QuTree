@@ -4,7 +4,7 @@
 
 #include "Core/TensorBLAS.h"
 #include <UnitTest++/UnitTest++.h>
-#include "Core/Tensor_Extension.h"
+#include "Core/Tensor_Functions.h"
 
 
 using namespace std;

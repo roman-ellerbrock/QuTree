@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2020-01-23.
 //
 #include "TensorTree.h"
-#include "Core/Tensor_Extension.h"
+#include "Core/Tensor_Functions.h"
 
 template<typename T>
 TensorTree<T>::TensorTree(const Tree& tree) {

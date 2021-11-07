@@ -14,4 +14,3 @@ using namespace std;
 double conj(double x);
 int conj(const int d);
 
-
