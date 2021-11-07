@@ -260,45 +260,6 @@ void Tensor<T>::read(const string& filename) {
 	read(is);
 }
 
-//////////////////////////////////////////////////////////
-// Math Operators
-//////////////////////////////////////////////////////////
-
-template<typename T>
-Tensor<T>& Tensor<T>::operator+=(const Tensor& A) {
-	assert(A.shape_.totalDimension() == shape_.totalDimension());
-	T const *Ax = A.coeffs_;
-	for (size_t i = 0; i < A.shape_.totalDimension(); i++) {
-		coeffs_[i] += Ax[i];
-	}
-	return *this;
-}
-
-template<typename T>
-Tensor<T>& Tensor<T>::operator-=(const Tensor& A) {
-	assert(A.shape_.totalDimension() == shape_.totalDimension());
-	for (size_t i = 0; i < A.shape_.totalDimension(); i++) {
-		(*this)(i) -= A(i);
-	}
-	return *this;
-}
-
-template<typename T>
-Tensor<T>& Tensor<T>::operator*=(T a) {
-	for (size_t i = 0; i < shape_.totalDimension(); i++) {
-		operator()(i) = a * operator()(i);
-	}
-	return *this;
-}
-
-template<typename T>
-Tensor<T>& Tensor<T>::operator/=(T a) {
-	for (size_t i = 0; i < shape_.totalDimension(); i++) {
-		operator()(i) = operator()(i) / a;
-	}
-	return *this;
-}
-
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 	assert(A.shape_.totalDimension() == B.shape_.totalDimension());
@@ -481,12 +442,6 @@ void gramSchmidt(Tensor<T>& A, size_t k) {
 template<typename T>
 Tensor<T> conj(Tensor<T> A) {
 	return elementwise(A, conj);
-}
-
-template<typename T>
-double residual(Tensor<T> A, const Tensor<T>& B) {
-	A -= B;
-	return A.norm();
 }
 
 template<typename T>

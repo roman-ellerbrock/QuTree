@@ -2,13 +2,14 @@
 set(QuTree_INCLUDE_FILES
     QuTree.h
 
-    include/Core/Matrix.h
-    include/Core/Matrix_Implementation.h
+#    include/Core/Matrix.h
+#    include/Core/Matrix_Implementation.h
     include/Core/Tensor.h
-    include/Core/TensorMath.h
+    include/Core/TensorBLAS1.h
+#    include/Core/TensorMath.h
     include/Core/TensorShape.h
-    include/Core/Tensor_Functions.h
-    include/Core/Tensor_Functions_Implementation.h
+#    include/Core/Tensor_Functions.h
+#    include/Core/Tensor_Functions_Implementation.h
     include/Core/Tensor_Implementation.h
 #    include/Core/Vector.h
 #    include/Core/Vector_Implementation.h

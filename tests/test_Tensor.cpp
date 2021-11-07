@@ -3,6 +3,7 @@
 #include <UnitTest++/UnitTest++.h>
 #include "Util/QMConstants.h"
 #include "Core/Tensor_Implementation.h"
+#include "Core/TensorBLAS1.h"
 //#include "Core/Tensor_Functions.h"
 
 using namespace std;
@@ -93,6 +94,98 @@ SUITE (Tensor) {
 			CHECK_EQUAL(3 * 4 * 5, tdim.lastBefore());
 			CHECK_EQUAL(2, tdim.lastDimension());
 	}
+
+	TEST_FIXTURE (TensorFactory, nrm2) { /// ||A||_2
+		auto norm = nrm2(B);
+		complex<double> y = 0.;
+		for (size_t i = 0; i < B.shape_.totalDimension(); ++i) {
+			y += pow(B(i), 2);
+		}
+		y = sqrt(y);
+			CHECK_CLOSE(0, abs(norm - y), eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, axpy) { /// vec qdd
+		Tensorcd D(A.shape_);
+		complex<double> alpha = -0.5;
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			D(i) = alpha * A(i) + B(i);
+		}
+
+		axpy(A, B, alpha);
+
+		double res = 0.;
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			res += pow(abs(D(i) - B(i)), 2);
+		}
+		res = sqrt(res);
+
+			CHECK_CLOSE(0., res, eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, add) {
+		Tensorcd D(A.shape_);
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			D(i) = A(i) + B(i);
+		}
+
+		A += B;
+
+		double res = 0.;
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			res += pow(abs(D(i) - A(i)), 2);
+		}
+		res = sqrt(res);
+
+			CHECK_CLOSE(0., res, eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, subst) {
+		Tensorcd D(A.shape_);
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			D(i) = A(i) - B(i);
+		}
+
+		A -= B;
+
+		double res = 0.;
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			res += pow(abs(D(i) - A(i)), 2);
+		}
+		res = sqrt(res);
+
+			CHECK_CLOSE(0., res, eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, residual) {
+		Tensorcd D(A);
+		D -= B;
+
+		double res = 0.;
+		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
+			res += pow(abs(D(i) - A(i)), 2);
+		}
+		res = sqrt(res);
+
+		double res2 = abs(residual(D, A));
+			CHECK_CLOSE(0., abs(res - res2), eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, plus_op) {
+		Tensorcd AaddB = A + B;
+		Tensorcd ApB = A;
+		ApB += B;
+			CHECK_CLOSE(0., abs(residual(AaddB, ApB)), eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, minus_op) {
+		Tensorcd AB = A - B;
+		Tensorcd AmB = A;
+		AmB -= B;
+			CHECK_CLOSE(0., abs(residual(AB, AmB)), eps);
+	}
+
+
 
 /*	TEST (Tensor_Constructor) {
 		TensorShape tdim(vector<size_t>({3, 4, 5, 2}));

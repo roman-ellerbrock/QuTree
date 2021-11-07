@@ -70,8 +70,12 @@ endif()
 #####################################################################
 # Set up BLAS / LAPACK
 if (APPLE)
-    set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
-    set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+#    set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+#    set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+
+    # BETA: try using blas++/lapack++
+    set(BLAS_LIBRARIES "/opt/slate/lib/libblaspp.so")
+    set(BLAS_INCLUDE "/opt/slate/include/")
 elseif(UNIX)
     set(BLA_VENDER OpenBLAS)
     find_package(BLAS REQUIRED)

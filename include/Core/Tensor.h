@@ -115,34 +115,6 @@ public:
 	}
 
 	//////////////////////////////////////////////////////////
-	// Math Operators
-	//////////////////////////////////////////////////////////
-	friend Tensor<T> operator+(const Tensor<T>& A, const Tensor<T>& B) {
-		assert(A.shape().totalDimension() == B.shape().totalDimension());
-		Tensor C(A.shape());
-		for (int i = 0; i < A.shape().totalDimension(); i++) {
-			C(i) = A(i) + B(i);
-		}
-		return C;
-	}
-
-	friend Tensor operator-(const Tensor& A, const Tensor& B) {
-		Tensor C(A.shape());
-		for (int i = 0; i < A.shape().totalDimension(); i++) {
-			C(i) = A(i) - B(i);
-		}
-		return C;
-	}
-
-	Tensor& operator+=(const Tensor& A);
-
-	Tensor& operator-=(const Tensor& A);
-
-	Tensor& operator*=(T a);
-
-	Tensor& operator/=(T a);
-
-	//////////////////////////////////////////////////////////
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
@@ -205,9 +177,6 @@ void gramSchmidt(Tensor<T>& A);
 
 template<typename T>
 Tensor<T> conj(Tensor<T> A);
-
-template<typename T>
-double residual(Tensor<T> A, const Tensor<T>& B);
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A);
