@@ -1,4 +1,4 @@
-#include"Core/TensorShape.h"
+#include"Tensor/TensorShape.h"
 
 size_t ContractDimensionsBefore(const vector<size_t>& dim, size_t k) {
 	size_t bef = 1;
@@ -19,7 +19,7 @@ vector<size_t> ContractDimensionsBefore(const vector<size_t>& dim) {
 size_t ContractDimensionsAfter(const vector<size_t>& dim, size_t k) {
 	size_t aft = 1;
 	for (size_t i = k + 1; i < dim.size(); i++) {
-		 aft *= dim[i];
+		aft *= dim[i];
 	}
 	return aft;
 }
@@ -38,7 +38,7 @@ TensorShape::TensorShape(const vector<size_t>& dim)
 }
 
 TensorShape::TensorShape(const initializer_list<size_t>& dims)
-	: TensorShape(vector<size_t>(dims)){ }
+	: TensorShape(vector<size_t>(dims)) {}
 
 TensorShape::TensorShape(istream& is)
 	: TensorShape() {
@@ -101,7 +101,7 @@ void TensorShape::readDim(istream& is) {
 	int32_t dim_now;
 	for (size_t k = 0; k < order; k++) {
 		is.read((char *) &dim_now, sizeof(int32_t));
-		dim_read[k]=dim_now;
+		dim_read[k] = dim_now;
 	}
 
 	// Create this Tensor
@@ -140,7 +140,7 @@ void TensorShape::print(ostream& os) const {
 			os << this->operator[](k) << ", ";
 		}
 		os << this->operator[](order() - 1);
-		os <<  ")" << endl;
+		os << ")" << endl;
 	}
 }
 
@@ -195,4 +195,40 @@ void indexMapping(vector<size_t>& idxs, size_t I, const TensorShape& shape) {
 		idxs[k] = r % shape[k];
 		r /= shape[k];
 	}
+}
+
+/**
+ * \brief performs [..., k, ...] -> [..., ..., k]
+ * @param back if (back) perform the mapping backwards
+ */
+TensorShape transpose(TensorShape shape, size_t k, bool back) {
+	if (!back) {
+		size_t dim_k = shape[k];
+		shape.erase(shape.begin() + k);
+		shape.push_back(dim_k);
+	} else {
+		size_t dim_k = shape.lastDimension();
+		shape.insert(shape.begin() + k, dim_k);
+		shape.pop_back();
+	}
+	shape.initialize(shape);
+	return shape;
+}
+
+TensorShape transposeToFront(TensorShape shape, size_t k, bool back) {
+	/**
+	 * \brief performs [..., k, ...] -> [k, ..., ...]
+	 * @param back if (back) perform the mapping backwards
+	 */
+	if (!back) {
+		size_t dim_k = shape[k];
+		shape.erase(shape.begin() + k);
+		shape.insert(shape.begin(), dim_k);
+	} else {
+		size_t dim_k = shape.front();
+		shape.erase(shape.begin());
+		shape.insert(shape.begin() + k, dim_k);
+	}
+	shape.initialize(shape);
+	return shape;
 }

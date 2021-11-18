@@ -66,28 +66,6 @@ void transpose2(T *dest, const T *src, size_t lda, size_t ldb) {
 	}
 }
 
-template<typename T>
-void transposeAB(T *dest, const T *src, size_t A, size_t B, size_t C) {
-	// dest[b, a, c] = src[a, b, c]
-	for (size_t c = 0; c < C; ++c) {
-		//	transpose2<T,4>(&dest[c * A * B], &src[c * A * B], A, B);
-		transpose(&dest[c * A * B], &src[c * A * B], A, B);
-	}
-}
-
-template<typename T>
-void transposeBC(T *dest, const T *src, size_t A, size_t B, size_t C) {
-	// dest[a, c, b] = src[a, b, c]
-	for (size_t c = 0; c < C; ++c) {
-		for (size_t b = 0; b < B; ++b) {
-			memcpy(&dest[c * A + b * A * C], &src[b * A + c * A * B], A * sizeof(T));
-/*			for (size_t a = 0; a < A; ++a) {
-				dest[a + c * A + b * A * C] = src[a + b * A + c * A * B];
-			}*/
-		}
-	}
-}
-
 template<typename T, typename U>
 void matrixTensor1(Tensor<T>& C, const Matrix<U>& h, const Tensor<T>& B,
 	size_t before, size_t active, size_t activeC, size_t after, bool zero) {

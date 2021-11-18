@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/stdafx.h"
+#include "stdafx.h"
 
 class NodePosition: public vector<size_t>
 	/**

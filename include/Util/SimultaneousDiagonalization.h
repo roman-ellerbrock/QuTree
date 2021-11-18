@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
-#include "Core/stdafx.h"
+#include "stdafx.h"
 #include <random>
 #include "JacobiRotationFramework.h"
 

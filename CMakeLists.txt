@@ -76,6 +76,8 @@ if (APPLE)
     # BETA: try using blas++/lapack++
     set(BLAS_LIBRARIES "/opt/slate/lib/libblaspp.so")
     set(BLAS_INCLUDE "/opt/slate/include/")
+    set(LAPACK_LIBRARIES "/opt/slate/lib/liblapackpp.so")
+    set(LAPACK_INCLUDE "/opt/slate/include/")
 elseif(UNIX)
     set(BLA_VENDER OpenBLAS)
     find_package(BLAS REQUIRED)

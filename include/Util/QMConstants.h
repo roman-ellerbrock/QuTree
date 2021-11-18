@@ -4,7 +4,7 @@
 
 #ifndef QMCONSTANTS_H
 #define QMCONSTANTS_H
-#include "Core/stdafx.h"
+#include "stdafx.h"
 
 namespace QM {
 	// Math constants

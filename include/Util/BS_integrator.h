@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/stdafx.h"
+#include "stdafx.h"
 #include <functional>
 #include "Core/Tensor.h"
 

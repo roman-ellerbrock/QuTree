@@ -67,8 +67,22 @@ protected:
 };
 
 vector<size_t> indexMapping(size_t I, const TensorShape& shape);
+
 size_t indexMapping(const vector<size_t>& idxs, const TensorShape& shape);
+
 void indexMapping(vector<size_t>& idxs, size_t I, const TensorShape& shape);
+
+/**
+ * \brief performs [..., k, ...] -> [..., ..., k]
+ * @param back if (back) perform the mapping backwards
+ */
+TensorShape transpose(TensorShape shape, size_t k, bool back = false);
+
+/**
+ * \brief performs [..., k, ...] -> [k, ..., ...]
+ * @param back if (back) perform the mapping backwards
+ */
+TensorShape transposeToFront(TensorShape shape, size_t k, bool back = false);
 
 TensorShape replaceDimension(TensorShape shape, size_t target, size_t new_dimension);
 

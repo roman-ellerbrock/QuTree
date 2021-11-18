@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Vector.h"
-#include "Core/stdafx.h"
+#include "stdafx.h"
 #include "Core/Tensor.h"
 #include <bitset>
 

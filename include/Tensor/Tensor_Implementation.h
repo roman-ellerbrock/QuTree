@@ -2,7 +2,6 @@
 #include "Tensor.h"
 #include "TensorShape.h"
 #include "stdafx.h"
-//#include <omp.h> //TODO: have this here by default?
 
 template<typename T>
 Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
@@ -17,13 +16,13 @@ Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
 // Construct from external tensor that holds the memory
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, Tensor<T>& A, bool ownership, bool InitZero)
-	: Tensor<T>(dim, &A[0], ownership, false){
+	: Tensor<T>(dim, &A[0], ownership, false) {
 	if (dim.totalDimension() > A.shape_.totalDimension()) {
 		cerr << "Error: memory too small for tensor.\n";
 		ownership_ = false;
 		exit(1);
 	}
-	if (ownership &! A.ownership_) {
+	if (ownership & !A.ownership_) {
 		cerr << "Error: cannot transfer ownership, since original tensor was not owning memory.\n";
 		ownership_ = false;
 		exit(1);
@@ -34,11 +33,9 @@ Tensor<T>::Tensor(const TensorShape& dim, Tensor<T>& A, bool ownership, bool Ini
 	if (InitZero) { zero(); }
 }
 
-
 template<typename T>
 Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
 	:shape_(dim), coeffs_((T *) malloc(dim.totalDimension() * sizeof(T))), ownership_(true) {
-//	:shape_(dim), coeffs_(new T[dim.totalDimension()]), ownership_(true) {
 	if (InitZero) { zero(); }
 }
 
@@ -156,8 +153,6 @@ inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
-	// @TODO: remove when tested
-	assert(idx < shape_.totalDimension());
 	return coeffs_[idx];
 }
 
@@ -170,8 +165,6 @@ inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t l
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
-	// @TODO: remove when tested
-	assert(idx < shape_.totalDimension());
 	return coeffs_[idx];
 }
 
@@ -260,16 +253,6 @@ void Tensor<T>::read(const string& filename) {
 	read(is);
 }
 
-template<typename T>
-Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
-	assert(A.shape_.totalDimension() == B.shape_.totalDimension());
-	Tensor<T> C(A.shape_);
-	for (size_t i = 0; i < A.shape_.totalDimension(); i++) {
-		C(i) = A(i) * B(i);
-	}
-	return C;
-}
-
 //////////////////////////////////////////////////////////
 // Adjust Dimensions
 //////////////////////////////////////////////////////////
@@ -333,10 +316,25 @@ Tensor<T> Tensor<T>::adjustStateDim(size_t n) const {
 }
 
 template<typename T>
-void Tensor<T>::reshape(const TensorShape& new_dim) {
+void Tensor<T>::reshape(const TensorShape& newShape) {
 	/// Check that total size is the same
-	assert(shape_.totalDimension() == new_dim.totalDimension());
-	shape_ = new_dim;
+	assert(shape_.totalDimension() == newShape.totalDimension());
+	shape_ = newShape;
+}
+
+template<typename T>
+void Tensor<T>::resize(const TensorShape& newShape) {
+	/// resize if required
+	if (shape_.totalDimension() < newShape.totalDimension()) {
+		/// allocate larger memory
+		T *new_coeffs = ((T *) malloc(newShape.totalDimension() * sizeof(T)));
+		/// copy old memory to new ptr
+		memcpy(new_coeffs, coeffs_, shape_.totalDimension() * sizeof(T));
+		/// swap & delete unused memory
+		std::swap(coeffs_, new_coeffs);
+		delete[] new_coeffs;
+	}
+	shape_ = newShape;
 }
 
 //////////////////////////////////////////////////////////
@@ -347,103 +345,27 @@ void Tensor<T>::zero() {
 	memset(coeffs_, 0, shape_.totalDimension() * sizeof(T));
 }
 
+///  f(A(i))
+template<typename T>
+void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f) {
+	assert(A.Dim1() == res.Dim1());
+	assert(A.Dim2() == res.Dim2());
+	for (size_t i = 0; i < A.Dim1() * A.Dim2(); ++i) {
+		res[i] = f(A[i]);
+	}
+}
+
+///  = f(A(i))
+template<typename T>
+Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f) {
+	Tensor<T> res(A.Dim1(), A.Dim2(), false);
+	elementwise(res, A, f);
+	return res;
+}
+
 //////////////////////////////////////////////////////////
 /// Non-member functions
 //////////////////////////////////////////////////////////
-template<typename T>
-T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
-	TensorShape tdima(A.shape_);
-	TensorShape tdimb(B.shape_);
-
-	size_t nmax = tdima.lastDimension();
-	size_t mmax = tdimb.lastDimension();
-	size_t npart = tdima.lastBefore();
-
-	// Every tensor can have different amount of states but same dimpart
-	assert(npart == tdimb.lastBefore());
-	assert(n < nmax);
-	assert(m < mmax);
-
-	T result = 0;
-#pragma omp parallel for reduction(+:result)
-	for (size_t i = 0; i < npart; i++) {
-		result += conj(A(i, n)) * B(i, m);
-	}
-	return result;
-}
-
-
-template<typename T, typename U>
-void multAdd(Tensor<T>& A, const Tensor<T>& B, U coeff) {
-	const TensorShape& tdim = A.shape_;
-	const TensorShape& tdim_2 = A.shape_;
-	size_t dimtot = tdim.totalDimension();
-	assert(dimtot == tdim_2.totalDimension());
-	for (size_t i = 0; i < dimtot; ++i) {
-		A(i) += coeff * B(i);
-	}
-}
-
-template<typename T>
-void gramSchmidt(Tensor<T>& A) {
-	// @TODO: Fill in auto-refill
-
-	// control parameters
-	size_t maxiter = 15;
-	double conver = 1e-12;
-	double errorconver = 1e-9;
-
-	TensorShape tdim(A.shape_);
-	size_t ntensor = tdim.lastDimension();
-	size_t dimpart = tdim.lastBefore();
-
-	for (size_t n = 0; n < ntensor; n++) {
-		size_t iter = 0;
-		double accumoverlap = 1.;
-		// orthogonalize on all previous ones and then normalize
-		while ((accumoverlap > conver) && (iter < maxiter)) {
-			iter++;
-			accumoverlap = 0;
-			for (size_t m = 0; m < n; m++) {
-				// orthogonalize
-				T overlap = singleDotProd(A, A, m, n);
-				accumoverlap += abs(overlap);
-				for (size_t i = 0; i < dimpart; i++) {
-					A(i, n) -= overlap * A(i, m);
-				}
-			}
-
-			// renormalize
-			T norm = singleDotProd(A, A, n, n);
-			if (abs(norm) != 0) {
-				norm = sqrt(real(norm));
-				for (size_t i = 0; i < dimpart; i++) {
-					A(i, n) /= norm;
-				}
-			}
-		}
-		// Error message
-		if (accumoverlap >= errorconver) {
-			cout << "Error: No orthogonality in Gram-Schmidt" << endl;
-			cout << "Error measurement: " << conver << endl;
-			cout << "Present error: " << accumoverlap << endl;
-			cout << "Error acceptance: " << errorconver << endl;
-
-			assert(0);
-		}
-	}
-}
-
-template<typename T>
-void gramSchmidt(Tensor<T>& A, size_t k) {
-
-}
-
-template<typename T>
-Tensor<T> conj(Tensor<T> A) {
-	return elementwise(A, conj);
-}
-
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A) {
 	A.write(os);
@@ -465,18 +387,3 @@ bool operator==(const Tensor<T>& A, const Tensor<T>& B) {
 	return true;
 }
 
-template<typename T>
-void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f) {
-	assert(A.Dim1() == res.Dim1());
-	assert(A.Dim2() == res.Dim2());
-	for (size_t i = 0; i < A.Dim1() * A.Dim2(); ++i) {
-		res[i] = f(A[i]);
-	}
-}
-
-template<typename T>
-Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f) {
-	Tensor<T> res(A.Dim1(), A.Dim2(), false);
-	elementwise(res, A, f);
-	return res;
-}

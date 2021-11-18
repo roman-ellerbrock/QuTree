@@ -13,7 +13,7 @@
 #include"Core/Matrix_Extension.h"
 #include"Core/Matrix_Extension_Implementation.h"
 #include"Core/Matrix_Implementation.h"
-#include"Core/stdafx.h"
+#include"stdafx.h"
 #include"Core/Tensor.h"
 #include"Core/Tensor_Functions.h"
 #include"Core/Tensor_Functions_Implementation.h"

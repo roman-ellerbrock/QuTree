@@ -5,11 +5,12 @@ set(QuTree_SOURCE_FILES
         #    src/Core/MatrixBLAS.cpp
         src/Core/TensorShape.cpp
         src/Core/TensorBLAS1.cpp
+        src/Core/TensorBLAS2.cpp
         #    src/Core/TensorBLAS.cpp
         #    src/Core/Tensor_Functions_Instantiations.cpp
         src/Core/Tensor_Instantiations.cpp
         #    src/Core/Vector_Instantiations.cpp
-        #    src/Core/stdafx.cpp
+        src/Core/stdafx.cpp
 
         #    src/Core/LA_lib.f
         #

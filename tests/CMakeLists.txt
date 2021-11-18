@@ -25,6 +25,7 @@ set(QuTree_tests
 #        test_MatrixBLAS.cpp
 #        test_MatrixTensorTree.cpp
         test_Tensor.cpp
+        test_TensorBLAS2.cpp
         tests.cpp
 #        test_TensorTree.cpp
 #        test_TensorBLAS.cpp

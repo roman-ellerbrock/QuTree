@@ -13,16 +13,19 @@ class Tensor
 /**
  * \class Tensor
  * \ingroup Core
- * \brief This class represents a set of mathematical Tensors of n-th order.
+ * \brief This class represents an n-th order tensor
  *
- * The class allows to handle arithmentic operations on Tensors like
- * matrix-products, etc. The set of tensors can be interpreted simultaneously
- * as a set of vectors and thus operations are available like orthogonalizations,
- * Dot-products, etc. Superindex mappings are used frequently throughout the
- * class functions.
+ * The class provides tensor reshaping & flattening operations,
+ * as well as specific cases of tensor-dot products that are
+ * relevant in the context of tree tensor network states.
+ * The tensor can be reinterpreted as a matrix by choosing a specific
+ * target index k and by flattening all other indices into a compound
+ * index I, resulting in A(k, I). The class uses this mapping to extend
+ * matrix factorizations to tensors. If not other stated, the last index
+ * is chosen and all previous indices are combined.
  *
- * Usage:
- * TensorDim dim_({2, 3, 4}, 1);
+ * Usage Examples:
+ * TensorDim dim_({2, 3, 4, 1});
  * Tensorcd A(dim_);
  *
  * */
@@ -127,7 +130,10 @@ public:
 	Tensor<T> adjustStateDim(size_t n)const;
 
 	// Reshape the tensor but keep the total size
-	void reshape(const TensorShape& tdim);
+	void reshape(const TensorShape& newShape);
+
+	// Reshape the tensor and resize memory if required
+	void resize(const TensorShape& newShape);
 
 	//////////////////////////////////////////////////////////
 	// Operations on Tensors
@@ -147,36 +153,12 @@ typedef Tensor<double> Tensord;
 //////////////////////////////////////////////////////////
 // Non-member functions
 //////////////////////////////////////////////////////////
-template<typename T>
-Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
-
-template <typename T, typename U>
-void multAdd(Tensor<T>& A, const Tensor<T>& B, U coeff);
 
 template<typename T>
-T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m);
+void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f);
 
 template<typename T>
-void gramSchmidt(Tensor<T>& A);
-
-// @TODO: add this!
-//template<typename T>
-//void gramSchmidt(Tensor<T>& A, size_t k);
-
-// @TODO: add this!
-//template<typename T>
-//void transpose();
-
-// @TODO: add this!
-//template<typename T>
-//Tensor<T> qr(const Tensor<T>& A);
-
-// @TODO: add this!
-//template<typename T>
-//Tensor<T> qr(const Tensor<T>& A, size_t mode);
-
-template<typename T>
-Tensor<T> conj(Tensor<T> A);
+Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f);
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A);
@@ -186,16 +168,3 @@ istream& operator>>(istream& is, Tensor<T>& A);
 
 template<typename T>
 bool operator==(const Tensor<T>& A, const Tensor<T>& B);
-
-template<typename T>
-Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f);
-
-template<typename T>
-void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f);
-
-/**
- * @TODOs:
- * - remove unnecessary functions
- * - Introduce inheritance
- *
- **/
