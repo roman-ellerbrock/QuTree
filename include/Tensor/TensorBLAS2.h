@@ -7,22 +7,28 @@
 #include "Tensor/TensorBLAS1.h"
 #include <lapack.hh>
 
+
+/// ===================== Matrix/Tensor Products ====================
+
+/**
+ * \brief c = beta * c + alpha * op_a(a) * op_b(b)
+ * default: c = a*b
+ * @tparam T
+ * @param c
+ * @param a
+ * @param b
+ * @param alpha
+ * @param beta
+ * @param op_a
+ * @param op_b
+ */
 template<typename T>
 void gemm(Tensor<T>& c, const Tensor<T>& a, const Tensor<T>& b,
-	T alpha, T beta,
-	blas::Op op_a, blas::Op op_b);
+	T alpha = 1., T beta = 0., blas::Op op_a = blas::Op::NoTrans, blas::Op op_b = blas::Op::NoTrans);
 
 template<typename T>
-Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b,
-	T alpha, blas::Op op_a, blas::Op op_b);
-
-template<typename T>
-void gemmRef(Tensor<T>& c, Tensor<T> a, Tensor<T> b,
-	T alpha, T beta, blas::Op op_a, blas::Op op_b);
-
-template<typename T, typename U>
-void matrixTensorRef(Tensor<T>& C, const Tensor<U>& h, const Tensor<T>& B,
-	size_t k, bool zero = true);
+Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b, T alpha = 1.,
+	blas::Op op_a = blas::Op::NoTrans, blas::Op op_b = blas::Op::NoTrans);
 
 /**
   * \brief Perform matrix-tensor product on k-th index.
@@ -58,10 +64,6 @@ template <typename T>
 Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& B,
 	size_t k, T alpha, T beta, blas::Op op_h);
 
-template<typename T>
-void contractionRef(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
-	size_t k, T alpha = 1., T beta = 0.);
-
 /**
  * \brief Perform tensor-hole contraction leaving out k-th index.
  *
@@ -93,54 +95,6 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 template<typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t k, T alpha = 1.);
-
-
-
-/**
- * \brief calculates the QR-decomposition of a Tensor A.
- *
- * Treats A (A(i_1,i_2,...,i_d)) as a flattened matrix A_(Ji_d) and calculates A=Q*R
- * @param Q
- * @param A
- */
-template<typename T>
-void qr(Tensor<T>& Q, const Tensor<T>& A);
-
-template<typename T>
-Tensor<T> qr(const Tensor<T>& A);
-
-template<typename T>
-Tensor<T> qr(Tensor<T> A, size_t k);
-
-template<typename T>
-void gramSchmidt(Tensor<T>& A);
-
-template<typename T>
-void gramSchmidt(Tensor<T>& A, size_t k);
-
-/// SVD
-template <typename T>
-using SVD = tuple<Tensor<T>, Tensor<T>, Tensord>;
-typedef SVD<complex<double>> SVDcd;
-typedef SVD<double> SVDd;
-
-template<typename T>
-void svd(Tensor<T>& AthenU, Tensor<T>& V, Tensord& sigma);
-
-template<typename T>
-SVD<T> svd(Tensor<T> A);
-
-template<typename T>
-SVD<T> svd(Tensor<T> A, size_t k);
-
-/// Eigenvectors/-values
-template <typename T>
-using SpectralDecomposition = pair<Tensor<T>, Tensord>;
-typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
-typedef SpectralDecomposition<double> SpectralDecompositiond;
-
-template <typename T>
-void diagonalize(SpectralDecomposition<T>& x);
 
 
 #endif //TENSORBLAS2_H

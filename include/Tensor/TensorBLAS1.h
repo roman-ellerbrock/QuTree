@@ -104,4 +104,7 @@ Tensor<T> transpose(const Tensor<T>& src, size_t k, bool back = false);
 template<typename T>
 double isCloseToIdentity(const Tensor<T>& A);
 
+size_t nrows(const TensorShape& shape, blas::Op op = blas::Op::NoTrans);
+size_t ncols(const TensorShape& shape, blas::Op op = blas::Op::NoTrans);
+
 #endif //TENSORBLAS1_H

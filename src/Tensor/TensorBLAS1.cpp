@@ -301,3 +301,16 @@ double isCloseToIdentity(const Tensor<T>& A) {
 
 template double isCloseToIdentity(const Tensor<d>& A);
 template double isCloseToIdentity(const Tensor<cd>& A);
+
+size_t nrows(const TensorShape& shape, blas::Op op) {
+	size_t n = shape.lastBefore();
+	if (op != blas::Op::NoTrans) { n = shape.lastDimension(); }
+	return n;
+}
+
+size_t ncols(const TensorShape& shape, blas::Op op) {
+	size_t n = shape.lastDimension();
+	if (op != blas::Op::NoTrans) { n = shape.lastBefore(); }
+	return n;
+}
+

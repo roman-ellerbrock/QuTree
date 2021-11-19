@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
-#include "Tensor/Tensor_Implementation.h"
-#include "Util/QMConstants.h"
 #include "Tensor/TensorBLAS2.h"
+#include "Tensor/TensorSlow.h"
+#include "Util/QMConstants.h"
 
 
 using namespace std;
@@ -132,7 +132,28 @@ SUITE (TensorBLAS2) {
 	}
 
 	TEST_FIXTURE(TensorFactory, gemm_return) {
+		auto op_as = {blas::Op::NoTrans, blas::Op::ConjTrans};
+		auto op_bs = {blas::Op::NoTrans, blas::Op::ConjTrans};
+		complex<double> alpha = 1.5;
 
+		for (auto op_a : op_as) {
+			for (auto op_b : op_bs) {
+				Tensorcd a({5, 7});
+				fill(a);
+				if (op_a == blas::Op::ConjTrans) {
+					a = adjoint(a);
+				}
+				Tensorcd b({7, 9});
+				fill(b);
+				if (op_b == blas::Op::ConjTrans) {
+					b = adjoint(b);
+				}
+
+				auto c = gemm(a, b, alpha, op_a, op_b);
+				auto c2 = gemmRef(a, b, alpha, op_a, op_b);
+					CHECK_CLOSE(0., residual(c, c2), eps);
+			}
+		}
 	}
 
 	TEST_FIXTURE (TensorFactory, matrixTensor_plain) {
@@ -232,102 +253,5 @@ SUITE (TensorBLAS2) {
 		}
 	}
 
-	/// QR
-	TEST_FIXTURE (TensorFactory, qr_tensor) {
-		Tensorcd Q(A.shape_);
-		qr(Q, A);
-		auto x = contraction(Q, Q, A.shape_.lastIdx());
-			CHECK_CLOSE(0., isCloseToIdentity(x), eps);
-	}
-
-	TEST_FIXTURE (TensorFactory, qr_tensor_return) {
-		auto Q = qr(A);
-		auto x = contraction(Q, Q, A.shape_.lastIdx());
-			CHECK_CLOSE(0., isCloseToIdentity(x), eps);
-	}
-
-	TEST_FIXTURE (TensorFactory, qr_tensor_k) {
-		for (size_t k = 0; k < A.shape_.order(); ++k) {
-			auto Q = qr(A, k);
-			auto x = contraction(Q, Q, k);
-				CHECK_CLOSE(0., isCloseToIdentity(x), eps);
-		}
-	}
-
-	/// SVD
-	TEST_FIXTURE (TensorFactory, svd_tensor) {
-		const TensorShape& shape = A.shape_;
-		Tensorcd U = A;
-		Tensord sigma({shape.lastDimension()});
-		Tensorcd VT({shape.lastDimension(), shape.lastDimension()});
-		svd(U, VT, sigma);
-		auto x = contraction(U, U, shape.lastIdx());
-			CHECK_CLOSE(0., isCloseToIdentity(x), eps);
-		auto y = contraction(VT, VT, VT.shape_.lastIdx());
-			CHECK_CLOSE(0., isCloseToIdentity(y), eps);
-	}
-
-	TEST_FIXTURE (TensorFactory, svd_tensor_return) {
-		SVDcd x = svd(A);
-
-		const TensorShape& shape = A.shape_;
-		Tensorcd U = A;
-		Tensord sigma({shape.lastDimension()});
-		Tensorcd VT({shape.lastDimension(), shape.lastDimension()});
-		svd(U, VT, sigma);
-
-			CHECK_CLOSE(0., residual(get<0>(x), U), eps);
-			CHECK_CLOSE(0., residual(get<1>(x), VT), eps);
-			CHECK_CLOSE(0., residual(get<2>(x), sigma), eps);
-	}
-
-	TEST_FIXTURE (TensorFactory, gramschmidt) {
-		gramSchmidt(A);
-		auto s = contraction(A, A, A.shape_.lastIdx());
-			CHECK_CLOSE(0., isCloseToIdentity(s), eps);
-	}
-
-	TEST_FIXTURE (TensorFactory, gramschmidt_k) {
-		for (size_t k = 0; k < A.shape_.order(); ++k) {
-			Tensorcd B(A);
-			gramSchmidt(B, k);
-			auto s = contraction(B, B, k);
-				CHECK_CLOSE(0., isCloseToIdentity(s), eps);
-		}
-	}
-
-/*	TEST_FIXTURE (TensorFactory, heev) {
-		for (size_t k = 0; k < A.shape_.order(); ++k) {
-			cout << "k=" << k << endl;
-			auto mat = createMatrix(A, k);
-			mat = 0.5 * (mat + adjoint(mat));
-
-			Tensord ev({mat.shape_[0]});
-			SpectralDecompositioncd spec({mat, ev});
-
-			diagonalize(spec);
-
-			/// U(i, k)
-			/// conj(U(k, i)) * U(k, j) = conj(U(i, k)) * evU(j, k);
-			auto iden = contraction((spec.first), (spec.first), 1);
-				CHECK_CLOSE(0., isCloseToIdentity(iden), eps);
-
-			/// reconstruct
-			Tensorcd evU(spec.first);
-			for (size_t i = 0; i < mat.shape_[0]; ++i) {
-				for (size_t j = 0; j < mat.shape_[1]; ++j) {
-					evU(i, j) *= spec.second(j);
-				}
-			}
-
-			auto mat_re = contraction(spec.first, evU, 1);
-//			auto mat_re = contraction(spec.first, evU, 1);
-
-			mat.print();
-			mat_re.print();
-				CHECK_CLOSE(0., residual(mat, mat_re), eps);
-
-		}
-	}*/
 }
 

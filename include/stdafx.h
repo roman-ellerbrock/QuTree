@@ -1,3 +1,5 @@
+#ifndef STDAFX_H
+#define STDAFX_H
 //#include "targetver.h"
 #include <stdio.h>
 //#include <tchar.h>
@@ -13,3 +15,6 @@ using namespace std;
 
 double conj(double x);
 int conj(const int d);
+
+
+#endif // STDAFX_H

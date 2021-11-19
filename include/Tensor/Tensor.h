@@ -36,7 +36,7 @@ public:
 	//////////////////////////////////////////////////////////
 
 	// Standard Constructor
-	Tensor() : coeffs_(new T[1]) {}
+	Tensor() : coeffs_(new T[1]), ownership_(true) {}
 
 	Tensor(const initializer_list<size_t>& dim, bool InitZero = true);
 

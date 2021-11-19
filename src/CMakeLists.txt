@@ -3,14 +3,17 @@ set(QuTree_SOURCE_FILES
         #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/Matrix_Instantiations.cpp
         #    src/Core/MatrixBLAS.cpp
-        src/Core/TensorShape.cpp
-        src/Core/TensorBLAS1.cpp
-        src/Core/TensorBLAS2.cpp
+        src/Tensor/SVD.cpp
+        src/Tensor/TensorShape.cpp
+        src/Tensor/TensorBLAS1.cpp
+        src/Tensor/TensorBLAS2.cpp
+        src/Tensor/TensorLapack.cpp
+        src/Tensor/TensorSlow.cpp
         #    src/Core/TensorBLAS.cpp
         #    src/Core/Tensor_Functions_Instantiations.cpp
-        src/Core/Tensor_Instantiations.cpp
+        src/Tensor/Tensor_Instantiations.cpp
         #    src/Core/Vector_Instantiations.cpp
-        src/Core/stdafx.cpp
+        src/Tensor/stdafx.cpp
 
         #    src/Core/LA_lib.f
         #
