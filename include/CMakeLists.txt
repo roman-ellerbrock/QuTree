@@ -2,20 +2,21 @@
 set(QuTree_INCLUDE_FILES
         QuTree.h
 
-        #    include/Core/Matrix.h
-        #    include/Core/Matrix_Implementation.h
         include/Check.h
         include/Tensor/Tensor.h
         include/Tensor/TensorBLAS1.h
         include/Tensor/TensorBLAS2.h
-        #    include/Core/TensorMath.h
         include/Tensor/TensorShape.h
+        include/Tensor/Tensor_Implementation.h
+        include/Tensor/stdafx.h
+
+        #    include/Core/Matrix.h
+        #    include/Core/Matrix_Implementation.h
+        #    include/Core/TensorMath.h
         #    include/Core/Tensor_Functions.h
         #    include/Core/Tensor_Functions_Implementation.h
-        include/Tensor/Tensor_Implementation.h
         #    include/Core/Vector.h
         #    include/Core/Vector_Implementation.h
-        include/Tensor/stdafx.h
         #    include/QuTree.h
 
         #    include/TreeClasses/EdgeAttribute.h

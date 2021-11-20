@@ -21,13 +21,15 @@ include_directories(${UTPP_INCLUDE_DIRS})
 set(QuTree_tests
 #        test_GradientDescent.cpp
 #        test_Integrator.cpp
-#        test_Matrix.cpp
-#        test_MatrixBLAS.cpp
 #        test_MatrixTensorTree.cpp
+        # Tensor tests
         test_Tensor.cpp
         test_TensorBLAS1.cpp
         test_TensorBLAS2.cpp
         test_TensorLapack.cpp
+        # Tree tests
+
+
         tests.cpp
 #        test_TensorTree.cpp
 #        test_TensorBLAS.cpp

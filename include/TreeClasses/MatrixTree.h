@@ -7,7 +7,7 @@
 #include "NodeAttribute.h"
 #include "TreeShape/Tree.h"
 
-template <typename T>
+template <type
 class MatrixTree: public NodeAttribute<Matrix<T>>{
 protected:
 	using NodeAttribute<Matrix<T>>::attributes_;

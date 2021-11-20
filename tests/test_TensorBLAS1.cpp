@@ -13,68 +13,18 @@ SUITE (TensorBLAS1) {
 	class TensorFactory {
 	public:
 		TensorFactory() {
-			CreateTensors();
-		}
-
-		Tensorcd A;
-		Tensorcd B;
-		Tensorcd C_;
-		Tensorcd C2_;
-		TensorShape shape_c_;
-
-		void CreateTensorA() {
+			A = randomcd({2, 3, 4, 2}, rng::gen);
 			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-			A = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-				A(i) = i;
-			}
-		}
 
-		void CreateTensorB() {
-			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-			B = Tensorcd(tdim);
+			B = Tensorcd({2, 3, 4, 2});
 			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 				B(i) = i % 3;
 			}
 		}
 
-		void CreateTensorC() {
-			shape_c_ = TensorShape({2, 2, 2});
-			// C
-			C_ = Tensorcd(shape_c_);
-			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
-				for (size_t act = 0; act < shape_c_[1]; ++act) {
-					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
-						C_(bef, act, aft, 1) = (double) act * QM::im;
-					}
-				}
-			}
-			// C2
-			C2_ = Tensorcd(shape_c_);
-			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
-				for (size_t act = 0; act < shape_c_[1]; ++act) {
-					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
-						C2_(bef, act, aft, 1) = (double) aft * QM::im;
-					}
-				}
-			}
-		}
-
-		void CreateTensors() {
-			CreateTensorA();
-			CreateTensorB();
-			CreateTensorC();
-		}
+		Tensorcd A;
+		Tensorcd B;
 	};
-
-	Tensorcd NewTensor() {
-		TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-		Tensorcd tmp(tdim);
-		for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-			tmp(i) = i;
-		}
-		return tmp;
-	}
 
 	constexpr double eps = 1e-7;
 
@@ -337,7 +287,7 @@ SUITE (TensorBLAS1) {
 			CHECK_CLOSE(0., residual(C, A), eps);
 	}
 
-	TEST_FIXTURE(TensorFactory, transpose_return) {
+	TEST_FIXTURE (TensorFactory, transpose_return) {
 		Tensorcd ATref(A.shape_);
 		for (size_t k = 0; k < A.shape_.order(); ++k) {
 			transpose(ATref, A, k);
@@ -402,7 +352,7 @@ SUITE (TensorBLAS1) {
 		}
 	}
 
-	TEST(nRowsCols) {
+	TEST (nRowsCols) {
 		TensorShape shape({5, 10});
 			CHECK_EQUAL(5, nrows(shape));
 			CHECK_EQUAL(10, ncols(shape));
@@ -413,5 +363,4 @@ SUITE (TensorBLAS1) {
 			CHECK_EQUAL(10, nrows(shape, blas::Op::ConjTrans));
 			CHECK_EQUAL(5, ncols(shape, blas::Op::ConjTrans));
 	}
-
 }

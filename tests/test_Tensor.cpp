@@ -10,58 +10,9 @@ SUITE (Tensor) {
 	class TensorFactory {
 	public:
 		TensorFactory() {
-			CreateTensors();
+			A = arangecd({2, 3, 4, 2});
 		}
-
 		Tensorcd A;
-		Tensorcd B;
-		Tensorcd C_;
-		Tensorcd C2_;
-		TensorShape shape_c_;
-
-		void CreateTensorA() {
-			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-			A = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-				A(i) = i;
-			}
-		}
-
-		void CreateTensorB() {
-			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-			B = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-				B(i) = i % 3;
-			}
-		}
-
-		void CreateTensorC() {
-			shape_c_ = TensorShape({2, 2, 2});
-			// C
-			C_ = Tensorcd(shape_c_);
-			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
-				for (size_t act = 0; act < shape_c_[1]; ++act) {
-					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
-						C_(bef, act, aft, 1) = (double) act * QM::im;
-					}
-				}
-			}
-			// C2
-			C2_ = Tensorcd(shape_c_);
-			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
-				for (size_t act = 0; act < shape_c_[1]; ++act) {
-					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
-						C2_(bef, act, aft, 1) = (double) aft * QM::im;
-					}
-				}
-			}
-		}
-
-		void CreateTensors() {
-			CreateTensorA();
-			CreateTensorB();
-			CreateTensorC();
-		}
 	};
 
 	Tensorcd NewTensor() {
@@ -131,5 +82,4 @@ SUITE (Tensor) {
 		Tensorcd B("tensor1.dat");
 			CHECK_CLOSE(0., residual(A, B), eps);
 	}
-
 }

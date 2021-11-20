@@ -1,5 +1,5 @@
 #pragma once
-#include "Tensor.h"
+#include "Tensor/Tensor.h"
 #include <random>
 
 //! A Dot Product between two Tensors.

@@ -1,5 +1,6 @@
 #pragma once
 #include "TensorShape.h"
+#include "rng.h"
 
 /**
  * \defgroup Core
@@ -8,7 +9,7 @@
  * These datastructures include the Vector, Matrix, and Tensor classes.
  */
 
-template <typename T>
+template<typename T>
 class Tensor
 /**
  * \class Tensor
@@ -36,7 +37,8 @@ public:
 	//////////////////////////////////////////////////////////
 
 	// Standard Constructor
-	Tensor() : coeffs_(new T[1]), ownership_(true) {}
+	Tensor()
+		: coeffs_(new T[1]), ownership_(true) {}
 
 	Tensor(const initializer_list<size_t>& dim, bool InitZero = true);
 
@@ -44,7 +46,7 @@ public:
 	explicit Tensor(const TensorShape& dim, bool InitZero = true);
 
 	// Construct from external memory
-	explicit Tensor(const TensorShape& dim, T* ptr, bool ownership = true, bool InitZero = true);
+	explicit Tensor(const TensorShape& dim, T *ptr, bool ownership = true, bool InitZero = true);
 
 	explicit Tensor(const TensorShape& dim, Tensor<T>& ptr, bool ownership = true, bool InitZero = true);
 
@@ -59,13 +61,13 @@ public:
 	Tensor(const Tensor& old, T factor);
 
 	// Move constructor
-	Tensor(Tensor&& old)noexcept;
+	Tensor(Tensor&& old) noexcept;
 
 	// Copy Assignment Operator
 	Tensor& operator=(const Tensor& old);
 
 	// Move Assignment Operator
-	Tensor& operator=(Tensor&& old)noexcept;
+	Tensor& operator=(Tensor&& old) noexcept;
 
 	// Destructor
 	~Tensor();
@@ -73,11 +75,11 @@ public:
 	//////////////////////////////////////////////////////////
 	// File handling
 	//////////////////////////////////////////////////////////
-	void print(ostream& os = cout)const;
+	void print(ostream& os = cout) const;
 
-	void write(ostream& os)const;
+	void write(ostream& os) const;
 
-	void write(const string& filename)const;
+	void write(const string& filename) const;
 
 	void read(istream& is);
 
@@ -86,23 +88,23 @@ public:
 	//////////////////////////////////////////////////////////
 	// Bracket Operators
 	//////////////////////////////////////////////////////////
-	T& operator()(size_t i)const;
+	T& operator()(size_t i) const;
 
 	T& operator()(size_t i);
 
-	const T& operator()(size_t i, size_t n)const;
+	const T& operator()(size_t i, size_t n) const;
 
 	T& operator()(size_t i, size_t n);
 
 	T& operator()(size_t bef, size_t j, size_t aft, size_t leaf);
 
-	const T& operator()(size_t bef, size_t j, size_t aft, size_t leaf)const;
+	const T& operator()(size_t bef, size_t j, size_t aft, size_t leaf) const;
 
 	T& operator()(const vector<size_t>& dims);
 
 	const T& operator()(const vector<size_t>& dims) const;
 
-	inline const T& operator[](const size_t idx)const {
+	inline const T& operator[](const size_t idx) const {
 		// Fast bracket operator
 		return coeffs_[idx];
 	}
@@ -121,13 +123,13 @@ public:
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
-	Tensor<T> adjustDimensions(const TensorShape& newTDim)const;
+	Tensor<T> adjustDimensions(const TensorShape& newTDim) const;
 
 	// Adjust the number of the active_ mode
-	Tensor<T> adjustActiveDim(size_t active, size_t mode)const;
+	Tensor<T> adjustActiveDim(size_t active, size_t mode) const;
 
 	// Adjust the number of Tensors
-	Tensor<T> adjustStateDim(size_t n)const;
+	Tensor<T> adjustStateDim(size_t n) const;
 
 	// Reshape the tensor but keep the total size
 	void reshape(const TensorShape& newShape);
@@ -143,11 +145,12 @@ public:
 	void zero();
 
 	TensorShape shape_;
-	T* coeffs_;
+	T *coeffs_;
 	bool ownership_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;
+
 typedef Tensor<double> Tensord;
 
 //////////////////////////////////////////////////////////
@@ -168,3 +171,21 @@ istream& operator>>(istream& is, Tensor<T>& A);
 
 template<typename T>
 bool operator==(const Tensor<T>& A, const Tensor<T>& B);
+
+template<typename T>
+[[nodiscard]] Tensor<T> random(const TensorShape& shape, mt19937& gen = rng::gen);
+
+auto randomcd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
+	return random<complex<double>>(shape, gen);
+};
+auto randomd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
+	return random<double>(shape, gen);
+};
+
+template<typename T>
+[[nodiscard]] Tensor<T> arange(const TensorShape& shape);
+
+constexpr auto arangecd = arange<complex<double>>;
+
+constexpr auto aranged = arange<double>;
+

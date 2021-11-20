@@ -1,6 +1,5 @@
 #pragma once
 #include "Tensor.h"
-#include "TensorShape.h"
 #include "stdafx.h"
 
 template<typename T>
@@ -387,3 +386,21 @@ bool operator==(const Tensor<T>& A, const Tensor<T>& B) {
 	return true;
 }
 
+template<typename T>
+Tensor<T> random(const TensorShape& shape, mt19937& gen) {
+	Tensor<T> A(shape, false);
+	normal_distribution dist(0., 1.);
+	for (size_t i = 0; i < shape.totalDimension(); ++i) {
+		A[i] = dist(gen);
+	}
+	return A;
+}
+
+template<typename T>
+[[nodiscard]] Tensor<T> arange(const TensorShape& shape) {
+	Tensor<T> A(shape, false);
+	for (size_t i = 0; i < shape.totalDimension(); ++i) {
+		A[i] = i;
+	}
+	return A;
+}

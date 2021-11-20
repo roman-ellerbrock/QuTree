@@ -9,7 +9,10 @@ typedef complex<double> cd;
 template class Tensor<d>;
 template class Tensor<cd>;
 
+template Tensor<cd> random(const TensorShape& shape, mt19937& gen);
+template Tensor<d> random(const TensorShape& shape, mt19937& gen);
 
-
+template Tensor<cd> arange(const TensorShape& shape);
+template Tensor<d> arange(const TensorShape& shape);
 
 
