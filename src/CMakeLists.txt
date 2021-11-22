@@ -1,22 +1,22 @@
 # Easily regenerate with find src -name '*.cpp' | sort
 set(QuTree_SOURCE_FILES
-        #    src/Core/JacobiRotationFramework.cpp
-        #    src/Core/Matrix_Instantiations.cpp
-        #    src/Core/MatrixBLAS.cpp
+        # Tensor/
         src/Tensor/SVD.cpp
         src/Tensor/TensorShape.cpp
         src/Tensor/TensorBLAS1.cpp
         src/Tensor/TensorBLAS2.cpp
         src/Tensor/TensorLapack.cpp
         src/Tensor/TensorSlow.cpp
-        #    src/Core/TensorBLAS.cpp
-        #    src/Core/Tensor_Functions_Instantiations.cpp
         src/Tensor/Tensor_Instantiations.cpp
-        #    src/Core/Vector_Instantiations.cpp
         src/Tensor/stdafx.cpp
 
+        # Tree/
+        src/Tree/PrimitiveBasis/DVR.cpp
+        src/Tree/PrimitiveBasis/HarmonicOscillator.cpp
+
+
+        #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/LA_lib.f
-        #
         #    src/TreeClasses/MatrixTensorTree.cpp
         #    src/TreeClasses/MatrixTensorTreeFunctions.cpp
         #    src/TreeClasses/MatrixTree.cpp

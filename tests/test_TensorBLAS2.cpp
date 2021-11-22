@@ -24,15 +24,12 @@ SUITE (TensorBLAS2) {
 	class TensorFactory {
 	public:
 		TensorFactory() {
-			CreateTensors();
+			A = arangecd({2, 3, 4, 2});
+			CreateTensorB();
 		}
 
 		Tensorcd A;
 		Tensorcd B;
-		Tensorcd C_;
-		Tensorcd C2_;
-		Tensorcd mat_;
-		TensorShape shape_c_;
 
 		Tensorcd constructMatrix(const Tensorcd& A, size_t k) {
 			size_t dim = A.shape_[k];
@@ -58,48 +55,12 @@ SUITE (TensorBLAS2) {
 			return mat;
 		}
 
-		void CreateTensorA() {
-			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-			A = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-				A(i) = i;
-			}
-		}
-
 		void CreateTensorB() {
 			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
 			B = Tensorcd(tdim);
 			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
 				B(i) = i % 3;
 			}
-		}
-
-		void CreateTensorC() {
-			shape_c_ = TensorShape({2, 2, 2});
-			// C
-			C_ = Tensorcd(shape_c_);
-			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
-				for (size_t act = 0; act < shape_c_[1]; ++act) {
-					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
-						C_(bef, act, aft, 1) = (double) act * QM::im;
-					}
-				}
-			}
-			// C2
-			C2_ = Tensorcd(shape_c_);
-			for (size_t bef = 0; bef < shape_c_.before(1); ++bef) {
-				for (size_t act = 0; act < shape_c_[1]; ++act) {
-					for (size_t aft = 0; aft < shape_c_.after(1); ++aft) {
-						C2_(bef, act, aft, 1) = (double) aft * QM::im;
-					}
-				}
-			}
-		}
-
-		void CreateTensors() {
-			CreateTensorA();
-			CreateTensorB();
-			CreateTensorC();
 		}
 	};
 
@@ -154,6 +115,15 @@ SUITE (TensorBLAS2) {
 					CHECK_CLOSE(0., residual(c, c2), eps);
 			}
 		}
+	}
+
+	TEST(unitarySimilarityTransform) {
+		auto a = arangecd({3, 3});
+		auto u = arangecd({3, 3});
+		auto res = unitarySimilarityTrafo(a, u);
+		auto resRef = gemm(a, u);
+		resRef = gemm(adjoint(u), resRef);
+			CHECK_CLOSE(0., residual(res, resRef), eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, matrixTensor_plain) {

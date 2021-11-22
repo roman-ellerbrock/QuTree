@@ -1,5 +1,5 @@
 #pragma once
-#include "LeafInterface.h"
+#include "PrimitiveBasis.h"
 #include "Core/Matrix.h"
 #include "Core/Vector.h"
 #include "Core/Tensor.h"

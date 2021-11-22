@@ -21,6 +21,7 @@ SUITE (TensorLapack) {
 	class TensorFactory {
 	public:
 		TensorFactory() {
+			A = arangecd({2, 3, 4, 2});
 			CreateTensors();
 		}
 
@@ -30,34 +31,6 @@ SUITE (TensorLapack) {
 		Tensorcd C2_;
 		Tensorcd mat_;
 		TensorShape shape_c_;
-
-		Tensorcd constructMatrix(const Tensorcd& A, size_t k) {
-			size_t dim = A.shape_[k];
-			Tensorcd mat({dim, dim});
-			return mat;
-		}
-
-		void fill(Tensorcd& mat) {
-			for (size_t i = 0; i < mat.shape_[1]; ++i) {
-				for (size_t j = 0; j < mat.shape_[0]; ++j) {
-					mat(j, i) = (i + 1) * j + i;
-				}
-			}
-		}
-
-		void fill(Tensord& mat) {
-			for (size_t j = 0; j < mat.shape_[0]; ++j) {
-				mat(j) = j;
-			}
-		}
-
-		void CreateTensorA() {
-			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
-			A = Tensorcd(tdim);
-			for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-				A(i) = i;
-			}
-		}
 
 		void CreateTensorB() {
 			TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
@@ -90,7 +63,6 @@ SUITE (TensorLapack) {
 		}
 
 		void CreateTensors() {
-			CreateTensorA();
 			CreateTensorB();
 			CreateTensorC();
 		}
@@ -147,8 +119,7 @@ SUITE (TensorLapack) {
 	}
 
 	TEST_FIXTURE (TensorFactory, svd_weaktest1) {
-		Tensorcd mat({10, 5});
-		fill(mat);
+		Tensorcd mat = arangecd({10, 5});
 		SVDcd x(mat.shape_);
 		svd(x, mat);
 
@@ -162,8 +133,7 @@ SUITE (TensorLapack) {
 	}
 
 	TEST_FIXTURE (TensorFactory, svd_strong) {
-		Tensorcd mat({10, 5});
-		fill(mat);
+		Tensorcd mat = arangecd({10, 5});
 		SVDcd x(mat.shape_);
 		svd(x, mat);
 
@@ -172,10 +142,8 @@ SUITE (TensorLapack) {
 	}
 
 	TEST_FIXTURE (TensorFactory, toTensor_Eigen) {
-		Tensorcd U({5, 5});
-		Tensord ev({5});
-		fill(U);
-		fill(ev);
+		Tensorcd U = arangecd({5, 5});
+		Tensord ev = aranged({5});
 		SpectralDecompositioncd diag({5, 5});
 		diag.U() = U;
 		diag.ev() = ev;
@@ -184,9 +152,20 @@ SUITE (TensorLapack) {
 			CHECK_CLOSE(0., residual(mat, matRef), eps);
 	}
 
+	TEST_FIXTURE (TensorFactory, phaseconvention) {
+		Tensorcd U = arangecd({3, 3});
+		U(0,0) = 1.;
+		Tensorcd URef = U;
+		for (size_t i =0; i < 3; ++i) {
+			U(i, 0) *= -1.;
+			U(i, 2) *= -1.;
+		}
+		phaseConvention(U);
+			CHECK_CLOSE(0., residual(URef, U), eps);
+	}
+
 	TEST_FIXTURE (TensorFactory, heev) {
-		Tensorcd mat({5, 5});
-		fill(mat);
+		Tensorcd mat = arangecd({5, 5});
 		mat = 0.5 * (mat + adjoint(mat));
 		SpectralDecompositioncd diag(mat.shape_);
 		diag.U() = mat;
@@ -195,4 +174,17 @@ SUITE (TensorLapack) {
 			CHECK_CLOSE(0., residual(mat, mat2), eps);
 	}
 
+	TEST_FIXTURE (TensorFactory, heev_return) {
+		Tensorcd mat = arangecd({5, 5});
+		mat = 0.5 * (mat + adjoint(mat));
+
+		SpectralDecompositioncd diag_ref(mat.shape_);
+		diag_ref.U() = mat;
+		heev(diag_ref);
+		Tensorcd res_ref = toTensor(diag_ref);
+
+		auto diag = heev(mat);
+		Tensorcd res = toTensor(diag);
+			CHECK_CLOSE(0., residual(res_ref, res), eps);
+	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "DVRBasis.h"
+#include "DVR.h"
 
 class LegendrePolynomials
 	: public DVRBasis {

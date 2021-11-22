@@ -30,6 +30,10 @@ template<typename T>
 Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b, T alpha = 1.,
 	blas::Op op_a = blas::Op::NoTrans, blas::Op op_b = blas::Op::NoTrans);
 
+/// perform u^cT a u
+template<typename T>
+Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u);
+
 /**
   * \brief Perform matrix-tensor product on k-th index.
   *
@@ -62,7 +66,7 @@ void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
   */
 template <typename T>
 Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& B,
-	size_t k, T alpha, T beta, blas::Op op_h);
+	size_t k, T alpha = 1., T beta = 0., blas::Op op_h = blas::Op::NoTrans);
 
 /**
  * \brief Perform tensor-hole contraction leaving out k-th index.

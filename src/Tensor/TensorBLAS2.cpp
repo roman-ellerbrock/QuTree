@@ -6,6 +6,7 @@
 #include <errno.h>
 
 typedef complex<double> cd;
+
 typedef double d;
 
 template<typename T>
@@ -37,7 +38,6 @@ template void gemm(Tensor<cd>& c, const Tensor<cd>& a, const Tensor<cd>& b,
 template void gemm(Tensor<d>& c, const Tensor<d>& a, const Tensor<d>& b,
 	d alpha, d beta, blas::Op op_a, blas::Op op_b);
 
-
 template<typename T>
 Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b,
 	T alpha, blas::Op op_a, blas::Op op_b) {
@@ -54,6 +54,15 @@ template Tensor<cd> gemm(const Tensor<cd>& a, const Tensor<cd>& b,
 	cd alpha, blas::Op op_a, blas::Op op_b);
 template Tensor<d> gemm(const Tensor<d>& a, const Tensor<d>& b,
 	d alpha, blas::Op op_a, blas::Op op_b);
+
+template<typename T>
+Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u) {
+	a = gemm(a, u);
+	return gemm(adjoint(u), a);
+}
+
+template Tensor<cd> unitarySimilarityTrafo(Tensor<cd> a, const Tensor<cd>& u);
+template Tensor<d> unitarySimilarityTrafo(Tensor<d> a, const Tensor<d>& u);
 
 template<typename T>
 void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,

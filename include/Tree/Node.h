@@ -3,13 +3,13 @@
 #include "AbstractNode.h"
 #include "Leaf.h"
 #include "NodePosition.h"
-
+#include "Tensor/Tensor"
 
 class Node
 	: public AbstractNode
 /**
  * \class Node
- * \ingroup TTBasis
+ * \ingroup Tree
  * \brief This class manages a node in the tree-structured TTBasis representation.
  *
  * The class holds the tensor-dimensions (TensorDim) at the current node and holds the
@@ -133,18 +133,14 @@ public:
 	Node& topNode();
 
 protected:
-	// number of nodes under the current node plus this node (n_children+1)
-	size_t nTotalNodes_;
-	size_t nNodes_;
-	size_t nLeaves_;
-
 	// TensorDim that belongs to this node
 	TensorShape tensorDim_;
 
 	// pointer to the upwards node
 	AbstractNode *parent_;
 	// vector of references to the children nodes
-	vector<unique_ptr<AbstractNode>> child_;
+	vector<Node> child_;
+	vector<Leaf> leaves_;
 
 	// reference to the last_ node that was pointed at at a sweep through the layer_
 	int nextNodeNum_;

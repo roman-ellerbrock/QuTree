@@ -47,8 +47,14 @@ SVD<T> svd(Tensor<T> A, size_t k);
 template<typename T>
 Tensor<T> toTensor(const SpectralDecomposition<T>& X);
 
+template<typename T>
+void phaseConvention(Tensor<T>& mat);
+
 template <typename T>
 void heev(SpectralDecomposition<T>& x);
+
+template <typename T>
+SpectralDecomposition<T> heev(const Tensor<T>& A);
 
 
 #endif //TENSORLAPACK_H

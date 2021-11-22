@@ -1,9 +1,8 @@
 #include "TreeShape/Node.h"
 
 Node::Node()
-	: nTotalNodes_(1), nLeaves_(0),
-	  nNodes_(1), nodeType_(1), bottomLayer_(false),
-	  nextNodeNum_(0), nextNodeNumFortran_(0), address_(-100), parent_(nullptr) {
+	: nodeType_(1), bottomLayer_(false), nextNodeNum_(0),
+	nextNodeNumFortran_(0), address_(-100), parent_(nullptr) {
 }
 
 // Copy constructor

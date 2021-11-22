@@ -10,6 +10,9 @@ set(QuTree_INCLUDE_FILES
         include/Tensor/Tensor_Implementation.h
         include/Tensor/stdafx.h
 
+        include/Tree/PrimitiveBasis/HarmonicOscillator.h
+        include/Tree/PrimitiveBasis/DVR.h
+
         #    include/Core/Matrix.h
         #    include/Core/Matrix_Implementation.h
         #    include/Core/TensorMath.h

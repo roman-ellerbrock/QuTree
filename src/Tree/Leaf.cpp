@@ -6,10 +6,10 @@
 #include "TreeShape/LeafTypes/SpinGroup.h"
 
 Leaf::Leaf()
-	: dim_(-1), type_(0), mode_(-1), subType_(0), parent_(nullptr), nodeType_(0) {}
+	: dim_(-1), type_(0), mode_(-1), subType_(0), parent_(nullptr), {}
 
 Leaf::Leaf(istream& file, AbstractNode *up_, NodePosition position_)
-	: parent_(up_), position_(move(position_)), type_(0), subType_(0), nodeType_(0), dim_(0), mode_(0) {
+	: parent_(up_), position_(move(position_)), type_(0), subType_(0), dim_(0), mode_(0) {
 	// read basis size information
 	file >> dim_;
 	file >> type_;
@@ -22,7 +22,7 @@ Leaf::Leaf(istream& file, AbstractNode *up_, NodePosition position_)
 
 Leaf::Leaf(const Leaf& old)
 	: dim_(old.dim_), type_(old.type_), mode_(old.mode_), subType_(old.subType_),
-	  nodeType_(old.nodeType_), parent_(old.parent_), position_(old.position_) {
+	  parent_(old.parent_), position_(old.position_) {
 	CreatePrimitiveBasis(type_, subType_, dim_);
 	par_ = old.par_;
 	interface_->initialize(par_.omega(), par_.r0(), par_.wfr0(), par_.wfOmega());
@@ -61,7 +61,7 @@ Leaf& Leaf::operator=(const Leaf& old) {
 Leaf::Leaf(size_t dim, size_t mode, size_t type, size_t subtype,
 	PhysPar par)
 	: type_(type), subType_(subtype), dim_(dim), par_(par),
-	  mode_(mode), nodeType_(0), parent_(nullptr) {
+	  mode_(mode), parent_(nullptr) {
 	CreatePrimitiveBasis(type, subtype, dim);
 }
 

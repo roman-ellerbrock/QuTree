@@ -10,18 +10,28 @@
 //////////////////////////////////////////////////////////
 /// Level 1 Tensor BLAS (operations with O(n^d))
 //////////////////////////////////////////////////////////
-
-/// Part 0: creation, I/O
-
-/// Part 1: Fundamental creation, copy, move, +,-,*,/, ||.||, etc.
+/**
+ * Rationale:
+ * Routines that operate on Tensors that have runtime
+ * O(n^d) or less and where the TensorShape
+ * is {n, ..., n} (d-th order).
+ * Includes fundamental creation, copy, move, +,-,*,/, ||.||, etc.
+ */
 
 /**
+ * \brief Calculate 2-norm of a Tensor
  * @param incr increment in loop
  * @return returns the 2-norm of a Tensor, i.e. ||A||_2
  */
 template<typename T>
 T nrm2(const Tensor<T>& A, size_t incr = 1);
 
+/**
+ * \brief Perform vector addition
+ * @param inc_a increment in loop for a
+ * @param inc_b increment in loop for b
+ * @return returns alpha*(a+b)
+ */
 template<typename T>
 void axpy(const Tensor<T>& A, Tensor<T>& B, T alpha = 1., size_t inc_a = 1, size_t inc_b = 1);
 

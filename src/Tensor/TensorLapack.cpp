@@ -220,6 +220,20 @@ template Tensor<cd> toTensor(const SpectralDecomposition<cd>& X);
 template Tensor<d> toTensor(const SpectralDecomposition<d>& X);
 
 template<typename T>
+void phaseConvention(Tensor<T>& mat) {
+	for (size_t i = 0; i < mat.shape_.lastDimension(); ++i) {
+		if (real(mat(0, i)) < 0.) {
+			for (size_t j = 0; j < mat.shape_.lastBefore(); ++j) {
+				mat(j, i) = -mat(j, i);
+			}
+		}
+	}
+}
+
+template void phaseConvention(Tensor<cd>& mat);
+template void phaseConvention(Tensor<d>& mat);
+
+template<typename T>
 void heev(SpectralDecomposition<T>& x) {
 	Tensor<T>& A = x.U();
 	Tensor<d>& ev = x.ev();
@@ -234,8 +248,20 @@ void heev(SpectralDecomposition<T>& x) {
 	auto uplo = lapack::Uplo::Upper;
 
 	CHECK(lapack::heev(jobz, uplo, n, A.coeffs_, n, ev.coeffs_));
+
+	phaseConvention(A);
 }
 
 template void heev(SpectralDecompositioncd& x);
 template void heev(SpectralDecompositiond& x);
 
+template <typename T>
+SpectralDecomposition<T> heev(const Tensor<T>& A) {
+	SpectralDecomposition<T> x(A.shape_);
+	x.U() = A;
+	heev(x);
+	return x;
+}
+
+template SpectralDecomposition<cd> heev(const Tensor<cd>& A);
+template SpectralDecomposition<d> heev(const Tensor<d>& A);
