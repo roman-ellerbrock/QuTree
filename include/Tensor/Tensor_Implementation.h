@@ -404,3 +404,14 @@ template<typename T>
 	}
 	return A;
 }
+
+template<typename T>
+[[nodiscard]] Tensor<T> identity(const TensorShape& shape) {
+	Tensor<T> A(shape, true);
+	size_t n = (shape.lastDimension() < shape.lastBefore()) ? shape.lastDimension() : shape.lastBefore();
+	for (size_t i = 0; i < n; ++i) {
+		A(i, i) = 1.;
+	}
+	return A;
+}
+

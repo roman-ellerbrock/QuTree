@@ -220,4 +220,16 @@ SUITE (PrimitiveBasis) {
 		Tensorcd R = 0.5 * gemm(P, P);
 			CHECK_CLOSE(0., residual(R, T), eps);
 	}
+
+	TEST_FIXTURE (Prim, FFT_unitary) {
+		Tensorcd I = gemm(ft_.trafo_, adjoint(ft_.trafo_));
+		Tensorcd R = identitycd({3, 3});
+			CHECK_CLOSE(0., residual(I, R), eps);
+	}
+
+	// ==================================================
+	// ==== Spins =======================================
+	// ==================================================
+
+	// ---
 }

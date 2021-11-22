@@ -186,6 +186,11 @@ template<typename T>
 [[nodiscard]] Tensor<T> arange(const TensorShape& shape);
 
 constexpr auto arangecd = arange<complex<double>>;
-
 constexpr auto aranged = arange<double>;
+
+template<typename T>
+[[nodiscard]] Tensor<T> identity(const TensorShape& shape);
+
+constexpr auto identitycd = identity<complex<double>>;
+constexpr auto identityd = identity<double>;
 

@@ -3,7 +3,7 @@
 #include "PrimitiveBasis.h"
 
 class DVR
-	: public LeafInterface {
+	: public PrimitiveBasis {
 public:
 	DVR() = default;
 	~DVR() = default;

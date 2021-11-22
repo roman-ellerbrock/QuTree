@@ -15,4 +15,6 @@ template Tensor<d> random(const TensorShape& shape, mt19937& gen);
 template Tensor<cd> arange(const TensorShape& shape);
 template Tensor<d> arange(const TensorShape& shape);
 
+template Tensor<cd> identity(const TensorShape& shape);
+template Tensor<d> identity(const TensorShape& shape);
 

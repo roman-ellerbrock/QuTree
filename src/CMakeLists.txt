@@ -15,8 +15,17 @@ set(QuTree_SOURCE_FILES
         src/Tree/PrimitiveBasis/HarmonicOscillator.cpp
         src/Tree/PrimitiveBasis/LegendrePolynomials.cpp
         src/Tree/PrimitiveBasis/FFTGrid.cpp
+        src/Tree/PrimitiveBasis/SpinGroup.cpp
+        #src/TreeShape/Leaf.cpp
+        #src/TreeShape/LeafTypes/FFTGrid.cpp
+        #src/TreeShape/LeafTypes/SpinGroup.cpp
+        #src/TreeShape/LinearizedLeaves.cpp
+        #src/TreeShape/Node.cpp
+        #src/TreeShape/NodePosition.cpp
+        #src/TreeShape/Tree.cpp
+        #src/TreeShape/TreeFactory.cpp
 
-
+        #
         #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/LA_lib.f
         #    src/TreeClasses/MatrixTensorTree.cpp
@@ -44,15 +53,6 @@ set(QuTree_SOURCE_FILES
         #    src/TreeOperators/TensorOperators/contractCircuit.cpp
         #    src/TreeOperators/TensorOperators/TTOrepresentation.cpp
         #    src/TreeOperators/TensorOperators/TTNO_instantiations.cpp
-        #
-        #    src/TreeShape/Leaf.cpp
-        #    src/TreeShape/LeafTypes/FFTGrid.cpp
-        #    src/TreeShape/LeafTypes/SpinGroup.cpp
-        #    src/TreeShape/LinearizedLeaves.cpp
-        #    src/TreeShape/Node.cpp
-        #    src/TreeShape/NodePosition.cpp
-        #    src/TreeShape/Tree.cpp
-        #    src/TreeShape/TreeFactory.cpp
         #
         #    src/Util/FFT.cpp
         #    src/Util/GateOperators.cpp

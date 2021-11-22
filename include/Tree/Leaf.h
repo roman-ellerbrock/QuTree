@@ -49,8 +49,8 @@ public:
 
 	int type() const { return nodeType_; }
 
-	LeafInterface& interface() { return *interface_; }
-	const LeafInterface& interface() const { return *interface_; }
+	PrimitiveBasis& interface() { return *interface_; }
+	const PrimitiveBasis& interface() const { return *interface_; }
 
 	// This is not a GetNode& to avoid circular dependencies
 	Node& parent() const { return *parent_; };
@@ -82,6 +82,6 @@ public:
 	PhysPar par_;
 	NodePosition position_;
 protected:
-	unique_ptr<LeafInterface> interface_;
+	unique_ptr<PrimitiveBasis> interface_;
 };
 

@@ -12,6 +12,7 @@ SUITE (Tensor) {
 		TensorFactory() {
 			A = arangecd({2, 3, 4, 2});
 		}
+
 		Tensorcd A;
 	};
 
@@ -81,5 +82,21 @@ SUITE (Tensor) {
 		A.write("tensor1.dat");
 		Tensorcd B("tensor1.dat");
 			CHECK_CLOSE(0., residual(A, B), eps);
+	}
+
+	TEST (Identity) {
+		Tensord Id = identityd({3, 3});
+		Tensord Rd({3, 3});
+		Rd(0, 0) = 1.;
+		Rd(1, 1) = 1.;
+		Rd(2, 2) = 1.;
+			CHECK_CLOSE(0., residual(Rd, Id), eps);
+
+		Tensorcd Icd = identitycd({3, 3});
+		Tensorcd Rcd({3, 3});
+		Rcd(0, 0) = 1.;
+		Rcd(1, 1) = 1.;
+		Rcd(2, 2) = 1.;
+			CHECK_CLOSE(0., residual(Rcd, Icd), eps);
 	}
 }

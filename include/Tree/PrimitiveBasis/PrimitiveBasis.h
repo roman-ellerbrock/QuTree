@@ -22,10 +22,10 @@ struct BasisParameters {
 	double par0_, par1_, par2_, par3_;
 };
 
-class LeafInterface {
+class PrimitiveBasis {
 public:
-	LeafInterface() = default;
-	~LeafInterface() = default;
+	PrimitiveBasis() = default;
+	~PrimitiveBasis() = default;
 
 	virtual void initialize(size_t dim, const BasisParameters& par) = 0;
 	virtual void occupy(Tensorcd& A) const = 0;
