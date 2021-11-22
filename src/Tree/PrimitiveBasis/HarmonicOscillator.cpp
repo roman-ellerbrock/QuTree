@@ -53,11 +53,3 @@ Tensorcd HarmonicOscillator::buildKin(size_t dim) const {
 	}
 	return Kin;
 }
-
-Tensorcd HarmonicOscillator::buildW(size_t dim) const {
-	Tensorcd w({dim});
-	for (int i = 0; i < dim; i++) {
-		w(i) = trafo_(0, i) / exp(-0.5 * par_.omega() * pow(x_(i) - par_.r0(), 2));
-	}
-	return w;
-}

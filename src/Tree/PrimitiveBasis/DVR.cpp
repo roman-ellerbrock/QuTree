@@ -1,15 +1,7 @@
 #include "Tree/PrimitiveBasis/DVR.h"
 #include "Tensor/Tensor"
 
-void DVR::resize(size_t dim) {
-	trafo_ = Tensorcd({dim, dim});
-	kin_ = Tensorcd({dim, dim});
-	p_ = Tensorcd({dim, dim});
-	x_ = Tensord({dim});
-}
-
 void DVR::initialize(size_t dim, const BasisParameters& par) {
-	resize(dim);
 	par_ = par;
 
 	Tensorcd xmat = buildX(dim);
@@ -28,11 +20,21 @@ void DVR::initialize(size_t dim, const BasisParameters& par) {
 	w_ = buildW(dim);
 }
 
+void DVR::shift(Tensord& x, double delta) const {
+	for (size_t i = 0; i < x.shape_.totalDimension(); ++i) {
+		x(i) = transformX(x(i), true);
+		x(i) += delta;
+		x(i) = transformX(x(i), false);
+	}
+}
+
+
 void DVR::occupy(Tensorcd& phi) const {
 	// set ground state wf
 	const TensorShape& shape = phi.shape_;
 	for (int i = 0; i < shape.lastBefore(); i++) {
-		phi(i, 0) = w_(i) * exp(-0.5 * par_.wfomega() * pow(x_(i) - par_.wfr0(), 2));
+		double x = transformX(x_(i), true) - par_.wfr0();
+		phi(i, 0) = w_(i) * exp(-0.5 * par_.wfomega() * pow(x, 2));
 	}
 
 	// excitations
@@ -49,6 +51,7 @@ void DVR::occupy(Tensorcd& phi) const {
 void DVR::applyX(Tensorcd& xPhi, const Tensorcd& phi) const {
 	const TensorShape& tdim = phi.shape_;
 	assert(tdim.order() == 2);
+	assert(x_.shape_[0] == tdim.lastBefore());
 
 	for (size_t n = 0; n < tdim.lastDimension(); n++) {
 		for (size_t i = 0; i < tdim.lastBefore(); i++) {
@@ -84,4 +87,15 @@ void DVR::toGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 
 void DVR::fromGrid(Tensorcd& uPhi, const Tensorcd& phi) const {
 	uPhi = matrixTensor(trafo_, phi, 0);
+}
+
+Tensorcd DVR::buildW(size_t dim) const {
+	Tensorcd w({dim});
+	for (int i = 0; i < dim; i++) {
+		double x = transformX(x_(i), true);
+		x -= par_.r0();
+		x = transformX(x, false);
+		w(i) = trafo_(0, i) / exp(-0.5 * par_.omega() * pow(x, 2));
+	}
+	return w;
 }

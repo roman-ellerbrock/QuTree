@@ -1,40 +1,19 @@
 #pragma once
-#include "PrimitiveBasis.h"
-#include "Core/Matrix.h"
-#include "Core/Vector.h"
-#include "Core/Tensor.h"
+#include "Tree/PrimitiveBasis/DVR.h"
 
-class FFTGrid :
-	public LeafInterface
-{
+class FFTGrid : public DVR {
 public:
-	explicit FFTGrid(int dim);
-	~FFTGrid() override = default;
+	FFTGrid() = default;
+	~FFTGrid() = default;
 
-	void initialize(double omega, double r0, double wfr0, double wfomega) override;
+	void initialize(size_t dim, const BasisParameters& par) override;
 
-	void applyX(Tensorcd& uA, const Tensorcd & A)const override;
-	void applyX2(Tensorcd& uA, const Tensorcd & A)const override;
-	void applyP(Tensorcd& uA, const Tensorcd & A)const override;
-	void applyKin(Tensorcd& uA, const Tensorcd & A)const override;
-	void initSPF(Tensorcd & A)const override;
+	[[nodiscard]] Tensord buildXvec(size_t dim)const;
+	[[nodiscard]] Tensorcd buildU(size_t dim)const;
 
-	const Vectord& getX()const override { return x_; }
-	Vectord& getX() override { return x_; }
+	[[nodiscard]] Tensorcd buildP(size_t dim)const override;
+	[[nodiscard]] Tensorcd buildKin(size_t dim) const override;
+	[[nodiscard]] Tensorcd buildW(size_t dim) const override;
 
-	void toGrid(Tensorcd& uA, const Tensorcd& A)const override;
-	void fromGrid(Tensorcd& uA, const Tensorcd& A)const override;
-	int oSQR()const override {return -1;}//added by TW 30.07.17
-	bool hasDVR()const override {return true;}
-
-protected:
-	
-	Vectord x_;
-	Vectord p_;
-	Matrixcd trafo_;
-
-	double x0_, x1_, wfr0_, wfomega_;
-
-	int dim_;
 };
 

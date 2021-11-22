@@ -13,6 +13,8 @@ set(QuTree_SOURCE_FILES
         # Tree/
         src/Tree/PrimitiveBasis/DVR.cpp
         src/Tree/PrimitiveBasis/HarmonicOscillator.cpp
+        src/Tree/PrimitiveBasis/LegendrePolynomials.cpp
+        src/Tree/PrimitiveBasis/FFTGrid.cpp
 
 
         #    src/Core/JacobiRotationFramework.cpp
@@ -44,10 +46,7 @@ set(QuTree_SOURCE_FILES
         #    src/TreeOperators/TensorOperators/TTNO_instantiations.cpp
         #
         #    src/TreeShape/Leaf.cpp
-        #    src/TreeShape/LeafTypes/DVRBasis.cpp
         #    src/TreeShape/LeafTypes/FFTGrid.cpp
-        #    src/TreeShape/LeafTypes/HO_Basis.cpp
-        #    src/TreeShape/LeafTypes/LegendrePolynomials.cpp
         #    src/TreeShape/LeafTypes/SpinGroup.cpp
         #    src/TreeShape/LinearizedLeaves.cpp
         #    src/TreeShape/Node.cpp

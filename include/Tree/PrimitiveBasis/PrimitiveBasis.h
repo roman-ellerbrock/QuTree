@@ -27,7 +27,6 @@ public:
 	LeafInterface() = default;
 	~LeafInterface() = default;
 
-	virtual void resize(size_t dim) = 0;
 	virtual void initialize(size_t dim, const BasisParameters& par) = 0;
 	virtual void occupy(Tensorcd& A) const = 0;
 

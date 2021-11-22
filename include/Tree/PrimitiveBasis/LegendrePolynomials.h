@@ -2,21 +2,22 @@
 #include <iostream>
 #include "DVR.h"
 
-class LegendrePolynomials
-	: public DVRBasis {
+class LegendrePolynomials : public DVR {
 public:
-	explicit LegendrePolynomials(int dim)
-		: DVRBasis(dim) {};
-	void initialize(double omega, double r0, double wfr0, double wfomega) override;
-	void initSPF(Tensorcd& Acoeffs) const override;
+	LegendrePolynomials() = default;
+	~LegendrePolynomials() = default;
 
-	void applyP(Tensorcd& pA, const Tensorcd& A) const override {
-		cerr << "ApplyP of LegendrePolynomials has been called.\n";
-		cerr << "This function is not defined for LegendrePolynomials.\n";
-		exit(1);
+	[[nodiscard]] double transformX(double x, bool forth) const override {
+		if (forth) {
+			return acos(x);
+		} else {
+			return cos(x);
+		}
 	}
 
-protected:
-	Matrixd InitXmat();
-	Matrixd InitKin();
+
+	[[nodiscard]] Tensorcd buildX(size_t dim)const override;
+	[[nodiscard]] Tensorcd buildKin(size_t dim) const override;
+	[[nodiscard]] Tensorcd buildW(size_t dim) const override;
+
 };

@@ -4,22 +4,28 @@
 
 #include <UnitTest++/UnitTest++.h>
 #include "Tree/PrimitiveBasis/HarmonicOscillator.h"
+#include "Tree/PrimitiveBasis/LegendrePolynomials.h"
+#include "Tree/PrimitiveBasis/FFTGrid.h"
 #include "Tensor/Tensor"
 #include "Util/QMConstants.h"
 
 SUITE (PrimitiveBasis) {
 	double eps = 1e-7;
 
-	class HarmOss {
+	class Prim {
 	public:
-		HarmOss() {
-			BasisParameters par = {1., 0., 0., 1.};
-			ho_.initialize(3, par);
+		Prim() {
+			BasisParameters par_ho = {1., 1., 1., 1.};
+			ho_.initialize(3, par_ho);
+			BasisParameters par_lp = {1., 0.3, 1., 1.};
+			lp_.initialize(3, par_lp);
 		}
 
-		~HarmOss() = default;
+		~Prim() = default;
 
 		HarmonicOscillator ho_;
+		LegendrePolynomials lp_;
+		FFTGrid fft_;
 	};
 
 	TEST (BasisParameters) {
@@ -38,18 +44,19 @@ SUITE (PrimitiveBasis) {
 			CHECK_CLOSE(4., par.wfr0(), eps);
 	}
 
-	TEST (HarmonicOscillator_x) {
-		HarmonicOscillator ho;
-		BasisParameters par = {1., 0., 0., 1.};
-		ho.initialize(3, par);
+	// ==================================================
+	// ==== Harmonic Oscillator =========================
+	// ==================================================
+	TEST_FIXTURE (Prim, HarmonicOscillator_x) {
 		Tensord x({3});
-		x(0) = -1.22474;
-		x(1) = 0.;
-		x(2) = 1.22474;
-			CHECK_CLOSE(0., residual(x, ho.x_), 1e-5);
+		double r0 = 1.;
+		x(0) = -1.22474 + r0;
+		x(1) = 0. + r0;
+		x(2) = 1.22474 + r0;
+			CHECK_CLOSE(0., residual(x, ho_.x_), 1e-5);
 	}
 
-	TEST_FIXTURE (HarmOss, HarmonicOscillator_U) {
+	TEST_FIXTURE (Prim, HarmonicOscillator_U) {
 		Tensorcd U({3, 3});
 		U(0, 0) = 0.408248;
 		U(1, 0) = -0.707107;
@@ -65,7 +72,7 @@ SUITE (PrimitiveBasis) {
 			CHECK_CLOSE(0., residual(U, ho_.trafo_), 1e-5);
 	}
 
-	TEST_FIXTURE (HarmOss, HarmonicOscillator_P) {
+	TEST_FIXTURE (Prim, HarmonicOscillator_P) {
 		Tensorcd P({3, 3});
 		P(1, 0) = 0.816497;
 		P(2, 0) = -0.408248;
@@ -79,7 +86,7 @@ SUITE (PrimitiveBasis) {
 			CHECK_CLOSE(0., residual(P, ho_.p_), 1e-5);
 	}
 
-	TEST_FIXTURE (HarmOss, HarmonicOscillator_Kin) {
+	TEST_FIXTURE (Prim, HarmonicOscillator_Kin) {
 		Tensorcd T({3, 3});
 		T(0, 0) = 0.66666666;
 		T(1, 0) = -0.4166666;
@@ -95,7 +102,7 @@ SUITE (PrimitiveBasis) {
 			CHECK_CLOSE(0., residual(T, ho_.kin_), 1e-5);
 	}
 
-	TEST_FIXTURE (HarmOss, HarmonicOscillator_w) {
+	TEST_FIXTURE (Prim, HarmonicOscillator_w) {
 		Tensorcd w({3});
 		w(0) = 0.864262;
 		w(1) = 0.816497;
@@ -103,16 +110,74 @@ SUITE (PrimitiveBasis) {
 			CHECK_CLOSE(0., residual(w, ho_.w_), 1e-5);
 	}
 
-	TEST_FIXTURE (HarmOss, HarmonicOscillator_occupy) {
+	TEST_FIXTURE (Prim, HarmonicOscillator_occupy) {
 		ho_.initialize(3, BasisParameters({1., 2., 1.1, 2.1}));
 		Tensorcd phi({3, 1});
 		ho_.occupy(phi);
-		phi.print();
 		Tensorcd phiR({3, 1});
 		phiR(0) = 0.337127;
 		phiR(1) = 0.831582;
 		phiR(2) = 0.441380;
 			CHECK_CLOSE(0., residual(phiR, phi), 1e-5);
+	}
+
+	// ==================================================
+	// ==== Legendre Polynomials ========================
+	// ==================================================
+	TEST_FIXTURE (Prim, Legendre_U) {
+		Tensorcd U({3, 3});
+		U(0, 0) = 0.527046;
+		U(1, 0) = -1. / sqrt(2.);
+		U(2, 0) = 0.471405;
+
+		U(0, 1) = 2. / 3.;
+		U(1, 1) = 0.;
+		U(2, 1) = -0.745356;
+
+		U(0, 2) = U(0, 0);
+		U(1, 2) = -U(1, 0);
+		U(2, 2) = U(2, 0);
+			CHECK_CLOSE(0., residual(U, lp_.trafo_), 1e-5);
+	}
+
+	TEST_FIXTURE (Prim, Legendre_X) {
+		Tensord x({3});
+		double r0 = 0.3;
+		x(0) = cos(acos(-0.774597) + r0);
+		x(1) = cos(acos(1e-17) + r0);
+		x(2) = cos(acos(0.774597) + r0);
+			CHECK_CLOSE(0., residual(x, lp_.x_), 1e-5);
+	}
+
+	TEST_FIXTURE (Prim, Legendre_T) {
+		Tensorcd T({3, 3});
+		T(0, 0) = 7./6.;
+		T(1, 0) = -1.05409;
+		T(2, 0) = 1./6.;
+
+		T(0, 1) = conj(T(1, 0));
+		T(1, 1) = 5./3.;
+		T(2, 1) = T(1, 0);
+
+		T(0, 2) = conj(T(2, 0));
+		T(1, 2) = conj(T(2, 1));
+		T(2, 2) = T(0, 0);
+			CHECK_CLOSE(0., residual(T, lp_.kin_), 1e-5);
+	}
+
+	TEST_FIXTURE (Prim, Legendre_W) {
+		Tensorcd w({3});
+		w(0) = 0.711438;
+		w(1) = 2./3;
+		w(2) = w(0);
+			CHECK_CLOSE(0., residual(w, lp_.w_), 1e-5);
+	}
+
+	// ==================================================
+	// ==== FFT Grid/Basis ==============================
+	// ==================================================
+	TEST_FIXTURE(Prim, FFT) {
+
 	}
 
 }

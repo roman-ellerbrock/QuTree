@@ -12,6 +12,7 @@ set(QuTree_INCLUDE_FILES
 
         include/Tree/PrimitiveBasis/HarmonicOscillator.h
         include/Tree/PrimitiveBasis/DVR.h
+        include/Tree/PrimitiveBasis/FFTGrid.h
 
         #    include/Core/Matrix.h
         #    include/Core/Matrix_Implementation.h
