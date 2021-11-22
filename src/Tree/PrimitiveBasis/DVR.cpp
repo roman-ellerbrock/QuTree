@@ -28,7 +28,6 @@ void DVR::shift(Tensord& x, double delta) const {
 	}
 }
 
-
 void DVR::occupy(Tensorcd& phi) const {
 	// set ground state wf
 	const TensorShape& shape = phi.shape_;

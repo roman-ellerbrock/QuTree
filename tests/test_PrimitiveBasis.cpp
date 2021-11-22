@@ -19,13 +19,15 @@ SUITE (PrimitiveBasis) {
 			ho_.initialize(3, par_ho);
 			BasisParameters par_lp = {1., 0.3, 1., 1.};
 			lp_.initialize(3, par_lp);
+			BasisParameters par_ft = {0., 1, 0.5, 1.};
+			ft_.initialize(3, par_ft);
 		}
 
 		~Prim() = default;
 
 		HarmonicOscillator ho_;
 		LegendrePolynomials lp_;
-		FFTGrid fft_;
+		FFTGrid ft_;
 	};
 
 	TEST (BasisParameters) {
@@ -151,12 +153,12 @@ SUITE (PrimitiveBasis) {
 
 	TEST_FIXTURE (Prim, Legendre_T) {
 		Tensorcd T({3, 3});
-		T(0, 0) = 7./6.;
+		T(0, 0) = 7. / 6.;
 		T(1, 0) = -1.05409;
-		T(2, 0) = 1./6.;
+		T(2, 0) = 1. / 6.;
 
 		T(0, 1) = conj(T(1, 0));
-		T(1, 1) = 5./3.;
+		T(1, 1) = 5. / 3.;
 		T(2, 1) = T(1, 0);
 
 		T(0, 2) = conj(T(2, 0));
@@ -168,7 +170,7 @@ SUITE (PrimitiveBasis) {
 	TEST_FIXTURE (Prim, Legendre_W) {
 		Tensorcd w({3});
 		w(0) = 0.711438;
-		w(1) = 2./3;
+		w(1) = 2. / 3;
 		w(2) = w(0);
 			CHECK_CLOSE(0., residual(w, lp_.w_), 1e-5);
 	}
@@ -176,8 +178,46 @@ SUITE (PrimitiveBasis) {
 	// ==================================================
 	// ==== FFT Grid/Basis ==============================
 	// ==================================================
-	TEST_FIXTURE(Prim, FFT) {
-
+	// @TODO: check for consistency with my/uwe's code
+	TEST_FIXTURE (Prim, FFT_x) {
+		Tensord x = ft_.buildXvec(3);
+		Tensord xR({3});
+		xR(0) = 0.;
+		xR(1) = 0.5;
+		xR(2) = 1.;
+			CHECK_CLOSE(0., residual(xR, x), 1e-5);
 	}
 
+	TEST_FIXTURE (Prim, FFT_p) {
+		Tensorcd p = ft_.buildP(3);
+		Tensorcd pR({3, 3});
+		pR(0, 0) = -4.18879;
+		pR(1, 1) = 0.;
+		pR(2, 2) = -pR(0, 0);
+			CHECK_CLOSE(0., residual(pR, p), 1e-5);
+	}
+
+	TEST_FIXTURE (Prim, FFT_U) {
+		Tensorcd U = ft_.buildU(3);
+		Tensorcd R({3, 3});
+		R(0, 0) = 0.57735;
+		R(1, 0) = 0.57735;
+		R(2, 0) = 0.57735;
+
+		R(0, 1) = complex<double>(-0.288675, 0.5);
+		R(1, 1) = R(1, 0);
+		R(2, 1) = complex<double>(-0.288675, -0.5);
+
+		R(0, 2) = conj(R(0, 1));
+		R(1, 2) = R(1, 1);
+		R(2, 2) = conj(R(2, 1));
+			CHECK_CLOSE(0., residual(R, U), 1e-5);
+	}
+
+	TEST_FIXTURE (Prim, FFT_T) {
+		Tensorcd T = ft_.buildKin(3);
+		Tensorcd P = ft_.buildP(3);
+		Tensorcd R = 0.5 * gemm(P, P);
+			CHECK_CLOSE(0., residual(R, T), eps);
+	}
 }
