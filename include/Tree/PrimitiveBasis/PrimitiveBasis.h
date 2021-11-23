@@ -7,7 +7,7 @@ struct BasisParameters {
 	 */
 	~BasisParameters() = default;
 
-	void read(istream& file) {
+	void readTail(istream& file) {
 		file >> par0_;
 		file >> par1_;
 		file >> par2_;
@@ -16,18 +16,26 @@ struct BasisParameters {
 
 	[[nodiscard]] double omega() const { return par0_; }
 	[[nodiscard]] double r0() const { return par1_; }
-	[[nodiscard]] double wfomega() const { return par2_; }
-	[[nodiscard]] double wfr0() const { return par3_; }
+	[[nodiscard]] double wfr0() const { return par2_; }
+	[[nodiscard]] double wfomega() const { return par3_; }
 
-	double par0_, par1_, par2_, par3_;
+	double par0_ = 1.;
+	double par1_ = 0.;
+	double par2_ = 0.;
+	double par3_ = 1.;
+
+	size_t dim_ = 3;
+	size_t type_ = 0;
+	size_t mode_ = 0;
+	size_t subtype_ = 0;
 };
 
 class PrimitiveBasis {
 public:
-	PrimitiveBasis() = default;
-	~PrimitiveBasis() = default;
+	PrimitiveBasis() : par_() {}
+	virtual ~PrimitiveBasis() = default;
 
-	virtual void initialize(size_t dim, const BasisParameters& par) = 0;
+	virtual void initialize(const BasisParameters& par) = 0;
 	virtual void occupy(Tensorcd& A) const = 0;
 
 	virtual void occupy(Tensord& A) const {
@@ -48,6 +56,10 @@ public:
 		for (size_t i = 0; i < Phi.shape_.totalDimension(); ++i) {
 			IPhi(i) = Phi(i);
 		}
+	}
+
+	void write(ostream& os) const {
+		os << par_.dim_ << "\t" << par_.type_ << "\t" << par_.mode_ << "\n";
 	}
 
 	virtual const Tensord& getX() const = 0;

@@ -73,6 +73,7 @@ void matrixTensorRef(Tensor<T>& C, const Tensor<U>& h, const Tensor<T>& B,
 	size_t after = shape.after(k);
 	if (zero) { C.zero(); }
 
+	/// C[bef, actC, aft] += h[actC, act] * B[bef, act, aft]
 	size_t dimafter = active * before;
 	size_t dimafterC = activeC * before;
 	for (size_t aft = 0; aft < after; ++aft) {

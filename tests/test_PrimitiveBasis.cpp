@@ -6,6 +6,7 @@
 #include "Tree/PrimitiveBasis/HarmonicOscillator.h"
 #include "Tree/PrimitiveBasis/LegendrePolynomials.h"
 #include "Tree/PrimitiveBasis/FFTGrid.h"
+#include "Tree/PrimitiveBasis/LeafAPI.h"
 #include "Tensor/Tensor"
 #include "Util/QMConstants.h"
 
@@ -16,11 +17,14 @@ SUITE (PrimitiveBasis) {
 	public:
 		Prim() {
 			BasisParameters par_ho = {1., 1., 1., 1.};
-			ho_.initialize(3, par_ho);
+			ho_.initialize(par_ho);
 			BasisParameters par_lp = {1., 0.3, 1., 1.};
-			lp_.initialize(3, par_lp);
+			lp_.initialize(par_lp);
 			BasisParameters par_ft = {0., 1, 0.5, 1.};
-			ft_.initialize(3, par_ft);
+			ft_.initialize(par_ft);
+
+			par_ = BasisParameters({1., 0., 0., 1.,
+							10, 2, 0});
 		}
 
 		~Prim() = default;
@@ -28,22 +32,24 @@ SUITE (PrimitiveBasis) {
 		HarmonicOscillator ho_;
 		LegendrePolynomials lp_;
 		FFTGrid ft_;
+
+		BasisParameters par_;
 	};
 
 	TEST (BasisParameters) {
 		BasisParameters par;
-			CHECK_CLOSE(0., par.omega(), eps);
+			CHECK_CLOSE(1., par.omega(), eps);
 			CHECK_CLOSE(0., par.r0(), eps);
-			CHECK_CLOSE(0., par.wfomega(), eps);
 			CHECK_CLOSE(0., par.wfr0(), eps);
+			CHECK_CLOSE(1., par.wfomega(), eps);
 	}
 
 	TEST (BasisParameters_list) {
 		BasisParameters par = {1., 2., 3., 4.};
 			CHECK_CLOSE(1., par.omega(), eps);
 			CHECK_CLOSE(2., par.r0(), eps);
-			CHECK_CLOSE(3., par.wfomega(), eps);
-			CHECK_CLOSE(4., par.wfr0(), eps);
+			CHECK_CLOSE(3., par.wfr0(), eps);
+			CHECK_CLOSE(4., par.wfomega(), eps);
 	}
 
 	// ==================================================
@@ -113,13 +119,13 @@ SUITE (PrimitiveBasis) {
 	}
 
 	TEST_FIXTURE (Prim, HarmonicOscillator_occupy) {
-		ho_.initialize(3, BasisParameters({1., 2., 1.1, 2.1}));
+		ho_.initialize(BasisParameters({1., 2., 1.1, 2.1}));
 		Tensorcd phi({3, 1});
 		ho_.occupy(phi);
 		Tensorcd phiR({3, 1});
-		phiR(0) = 0.337127;
-		phiR(1) = 0.831582;
-		phiR(2) = 0.441380;
+		phiR(0) = 0.911595;
+		phiR(1) = 0.410993;
+		phiR(2) = 0.00889652;
 			CHECK_CLOSE(0., residual(phiR, phi), 1e-5);
 	}
 
@@ -232,4 +238,37 @@ SUITE (PrimitiveBasis) {
 	// ==================================================
 
 	// ---
+
+	// ==================================================
+	// ==== Leaf API ====================================
+	// ==================================================
+
+	TEST_FIXTURE (Prim, LeafAPI) {
+		LeafAPI api;
+		api.initialize(par_);
+			CHECK_EQUAL(1., api.basis()->par_.omega());
+			CHECK_EQUAL(10, api.basis()->par_.dim_);
+	}
+
+	TEST_FIXTURE (Prim, LeafAPI_copy) {
+		LeafAPI api;
+		api.initialize(par_);
+		LeafAPI api2(api);
+			CHECK_EQUAL(1., api2.basis()->par_.omega());
+			CHECK_EQUAL(10, api2.basis()->par_.dim_);
+	}
+
+	TEST_FIXTURE (Prim, LeafAPI_equal) {
+		LeafAPI api;
+		api.initialize(par_);
+		LeafAPI api2 = api;
+			CHECK_EQUAL(1., api2.basis()->par_.omega());
+			CHECK_EQUAL(10, api2.basis()->par_.dim_);
+	}
+
+	TEST_FIXTURE (Prim, LeafAPO_) {
+		LeafAPI api;
+	}
+
+
 }

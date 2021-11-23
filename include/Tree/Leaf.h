@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "NodePosition.h"
-#include "PrimitiveBasis/PrimitiveBasis.h"
+#include "PrimitiveBasis/LeafAPI.h"
 
 class Node;
 
@@ -18,70 +18,25 @@ class Leaf
 	 */
 {
 public:
-	Leaf();
+	Leaf()
+		: parent_(nullptr), position_(), api_() {};
 
-//	Leaf(istream& file, Node *up, NodePosition position);
-//	Leaf(size_t dim, size_t mode, size_t type, size_t subtype,
-//		PhysPar par);
-//	Leaf(const Leaf&);
-//	Leaf(Leaf&&) = default;
-//	Leaf& operator=(const Leaf&);
-//	Leaf& operator=(Leaf&&) = default;
 	~Leaf() = default;
 
-	void CreatePrimitiveBasis(size_t type, size_t subtype, size_t dim);
+	void initialize(const BasisParameters& par) {
+		api_.initialize(par);
+	}
 
-	void info(ostream& os = cout) const ;
-	void write(ostream& os = cout) const ;
+	void info(ostream& os = cout) const { position_.info(os); }
 
-	size_t nNodes() const { return 0; }
+	void write(ostream& os) const {
+		for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
+		api_.write(os);
+	}
 
-	size_t nLeaves() const { return 1; }
+	[[nodiscard]] Node& parent() const { return *parent_; };
 
-	// Getter & Setter
-	size_t mode() const { return mode_; }
-
-	int& mode() { return mode_; }
-
-	size_t Type() const { return type_; }
-
-	size_t dim() const { return dim_; }
-
-	int type() const { return nodeType_; }
-
-	PrimitiveBasis& interface() { return *interface_; }
-	const PrimitiveBasis& interface() const { return *interface_; }
-
-	// This is not a GetNode& to avoid circular dependencies
-	Node& parent() const { return *parent_; };
-
-	void setPar(PhysPar par) { par_ = par; }
-
-	PhysPar par() const { return par_; }
-
-	double omega() const { return par_.omega(); }
-
-	double r0() const { return par_.r0(); }
-
-	double wfr0() const { return par_.wfr0(); }
-
-	double wfOmega() const { return par_.wfOmega(); }
-
-	void update(const NodePosition& p);
-
-	void updatePosition(const NodePosition& p);
-
-	// Danger zone
-	void setParent(Node *node) { parent_ = node; }
-
-	int dim_, type_, mode_;
-	int subType_;
-	int nodeType_;
-	// This is not a GetNode& to avoid circular dependencies
 	Node *parent_;
-	PhysPar par_;
 	NodePosition position_;
-protected:
-	unique_ptr<PrimitiveBasis> interface_;
+	LeafAPI api_;
 };
-

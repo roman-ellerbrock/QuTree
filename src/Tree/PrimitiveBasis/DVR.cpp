@@ -1,23 +1,23 @@
 #include "Tree/PrimitiveBasis/DVR.h"
 #include "Tensor/Tensor"
 
-void DVR::initialize(size_t dim, const BasisParameters& par) {
+void DVR::initialize(const BasisParameters& par) {
 	par_ = par;
 
-	Tensorcd xmat = buildX(dim);
+	Tensorcd xmat = buildX(par.dim_);
 	auto diag = heev(xmat);
 	trafo_ = diag.U();
 	x_ = diag.ev();
 
 	shift(x_, par.r0());
 
-	kin_ = buildKin(dim);
+	kin_ = buildKin(par.dim_);
 	kin_ = unitarySimilarityTrafo(kin_, trafo_);
 
-	p_ = buildP(dim);
+	p_ = buildP(par.dim_);
 	p_ = unitarySimilarityTrafo(p_, trafo_);
 
-	w_ = buildW(dim);
+	w_ = buildW(par.dim_);
 }
 
 void DVR::shift(Tensord& x, double delta) const {

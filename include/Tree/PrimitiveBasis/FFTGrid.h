@@ -6,7 +6,7 @@ public:
 	FFTGrid() = default;
 	~FFTGrid() = default;
 
-	void initialize(size_t dim, const BasisParameters& par) override;
+	void initialize(const BasisParameters& par) override;
 
 	[[nodiscard]] Tensord buildXvec(size_t dim)const;
 	[[nodiscard]] Tensorcd buildU(size_t dim)const;

@@ -5,7 +5,6 @@ class HarmonicOscillator
 	: public DVR {
 public:
 	HarmonicOscillator() = default;
-	~HarmonicOscillator() = default;
 
 protected:
 	[[nodiscard]] Tensorcd buildX(size_t dim)const override;

@@ -6,9 +6,8 @@ class DVR
 	: public PrimitiveBasis {
 public:
 	DVR() = default;
-	~DVR() = default;
 
-	void initialize(size_t dim, const BasisParameters& par) override;
+	void initialize(const BasisParameters& par) override;
 
 	void occupy(Tensorcd& A) const override;
 

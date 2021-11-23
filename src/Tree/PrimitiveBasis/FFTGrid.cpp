@@ -2,10 +2,11 @@
 #include "Tensor/Tensor"
 #include "Util/QMConstants.h"
 
-void FFTGrid::initialize(size_t dim, const BasisParameters& par) {
+void FFTGrid::initialize(const BasisParameters& par) {
 	par_ = par;
 
 	/// The order is important.
+	size_t dim = par.dim_;
 	x_ = buildXvec(dim);
 	p_ = buildP(dim);
 	kin_ = buildKin(dim);

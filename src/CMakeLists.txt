@@ -10,13 +10,15 @@ set(QuTree_SOURCE_FILES
         src/Tensor/Tensor_Instantiations.cpp
         src/Tensor/stdafx.cpp
 
-        # Tree/
+        # Primitve Basis / LeafAPI
         src/Tree/PrimitiveBasis/DVR.cpp
         src/Tree/PrimitiveBasis/HarmonicOscillator.cpp
         src/Tree/PrimitiveBasis/LegendrePolynomials.cpp
         src/Tree/PrimitiveBasis/FFTGrid.cpp
         src/Tree/PrimitiveBasis/SpinGroup.cpp
-        #src/TreeShape/Leaf.cpp
+        src/Tree/PrimitiveBasis/LeafAPI.cpp
+
+        # Tree/
         #src/TreeShape/LeafTypes/FFTGrid.cpp
         #src/TreeShape/LeafTypes/SpinGroup.cpp
         #src/TreeShape/LinearizedLeaves.cpp

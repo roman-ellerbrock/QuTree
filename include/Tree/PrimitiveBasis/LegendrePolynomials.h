@@ -15,7 +15,6 @@ public:
 		}
 	}
 
-
 	[[nodiscard]] Tensorcd buildX(size_t dim)const override;
 	[[nodiscard]] Tensorcd buildKin(size_t dim) const override;
 	[[nodiscard]] Tensorcd buildW(size_t dim) const override;

@@ -45,7 +45,7 @@ namespace JordanWigner {
 	}
 }
 
-void SpinGroup::initialize(size_t dim, const BasisParameters& par) {
+void SpinGroup::initialize(const BasisParameters& par) {
 	par_ = par;
 	alpha_ = par_.par2_ * QM::pi;
 }
