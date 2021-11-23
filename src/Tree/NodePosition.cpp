@@ -1,4 +1,4 @@
-#include "TreeShape/NodePosition.h"
+#include "Tree/NodePosition.h"
 
 void NodePosition::info(ostream& os, bool print_layer) const {
 	if (print_layer) {

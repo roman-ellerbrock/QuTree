@@ -266,9 +266,17 @@ SUITE (PrimitiveBasis) {
 			CHECK_EQUAL(10, api2.basis()->par_.dim_);
 	}
 
-	TEST_FIXTURE (Prim, LeafAPO_) {
+	TEST_FIXTURE	(Prim, LeafAPI_par) {
+		BasisParameters par({1., 0., 0., 1.,
+								10, 2, 3});
 		LeafAPI api;
+		api.initialize(par);
+			CHECK_EQUAL(1., api.basis()->par_.omega());
+			CHECK_EQUAL(0., api.basis()->par_.r0());
+			CHECK_EQUAL(0., api.basis()->par_.wfr0());
+			CHECK_EQUAL(1., api.basis()->par_.wfomega());
+			CHECK_EQUAL(10, api.basis()->par_.dim_);
+			CHECK_EQUAL(2, api.basis()->par_.type_);
+			CHECK_EQUAL(3, api.basis()->par_.mode_);
 	}
-
-
 }

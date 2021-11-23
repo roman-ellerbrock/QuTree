@@ -13,6 +13,24 @@ struct BasisParameters {
 		file >> par2_;
 		file >> par3_;
 	}
+	void readDimline(istream& file) {
+		file >> dim_;
+		file >> type_;
+		file >> mode_;
+		subtype_ = 0;
+	}
+
+	bool operator==(const BasisParameters& par)const {
+		if (par0_ != par.par0_) { return false; }
+		if (par1_ != par.par1_) { return false; }
+		if (par2_ != par.par2_) { return false; }
+		if (par3_ != par.par3_) { return false; }
+		if (dim_ != par.dim_) { return false; }
+		if (type_ != par.type_) { return false; }
+		if (mode_ != par.mode_) { return false; }
+		if (subtype_ != par.subtype_) { return false; }
+		return true;
+	}
 
 	[[nodiscard]] double omega() const { return par0_; }
 	[[nodiscard]] double r0() const { return par1_; }

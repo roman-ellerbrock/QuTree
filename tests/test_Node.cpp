@@ -4,26 +4,51 @@
 #include <iostream>
 #include <UnitTest++/UnitTest++.h>
 #include "Tree/Leaf.h"
+#include "Tree/Node.h"
 
+SUITE (Nodes) {
 
-SUITE(Nodes) {
+	class lf {
+	public:
+		lf() {
+			par_ = BasisParameters({1., 0., 0., 1.,
+									10, 2, 0});
+			leaf_.initialize(par_);
+		}
 
-	TEST(Leaf) {
-		BasisParameters par({1., 0., 0., 1.,
-							 10, 2, 0});
-		Leaf leaf;
-		leaf.initialize(par);
-			CHECK_EQUAL(true, leaf.parent_ == nullptr);
-			CHECK_EQUAL(0, leaf.api_.basis()->par_.mode_);
-			CHECK_EQUAL(2, leaf.api_.basis()->par_.type_);
+		BasisParameters par_;
+		Leaf leaf_;
+	};
+
+	// ==================================================
+	// ==== Leaf ========================================
+	// ==================================================
+
+	TEST_FIXTURE (lf, Leaf) {
+			CHECK_EQUAL(true, leaf_.parent_ == nullptr);
+			CHECK_EQUAL(true, par_ == leaf_.api_.basis()->par_);
+	}
+
+	TEST_FIXTURE(lf, leaf_copy) {
+		Leaf l2 (leaf_);
+			CHECK_EQUAL(true, l2.parent_ == nullptr);
+			CHECK_EQUAL(true, par_ == l2.api_.basis()->par_);
+	}
+
+	TEST_FIXTURE(lf, leaf_equal) {
+		Leaf l2 = leaf_;
+			CHECK_EQUAL(true, l2.parent_ == nullptr);
+			CHECK_EQUAL(true, par_ == l2.api_.basis()->par_);
 	}
 
 
+	// ==================================================
+	// ==== Node ========================================
+	// ==================================================
 
-/*	TEST(Node_construct_default) {
+	TEST(Node) {
 		Node node;
-			CHECK_EQUAL(0, node.nChildren());
-			CHECK_EQUAL(1, node.isRoot());
-	}*/
+	}
+
 
 }

@@ -16,13 +16,9 @@ public:
 	~NodePosition() = default;
 
 	friend NodePosition operator*(NodePosition p, size_t k);
-
 	friend NodePosition operator*(NodePosition p, NodePosition q);
-
 	void info(ostream& os = cout, bool print_layer = false) const;
-
 	size_t childIdx() const;
-
 	size_t layer() const { return size() - 1; }
 };
 

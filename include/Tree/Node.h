@@ -1,12 +1,10 @@
 #pragma once
 #include "stdafx.h"
-#include "AbstractNode.h"
 #include "Leaf.h"
 #include "NodePosition.h"
 #include "Tensor/Tensor"
 
 class Node
-	: public AbstractNode
 /**
  * \class Node
  * \ingroup Tree
@@ -23,49 +21,50 @@ class Node
 {
 public:
 	Node();
-	Node(istream& file, Node *up, const NodePosition& position);
 	Node(const Node& node);
 	Node(Node&& node) noexcept;
 	Node& operator=(const Node& old);
 	Node& operator=(Node&& old) noexcept;
-	Node(const Leaf& leaf, size_t ntensor);
-	~Node() override = default;
+	~Node() = default;
 
-	// Initialize node
+	Node(istream& file, Node *up, const NodePosition& position);
+	Node(const Leaf& leaf, size_t ntensor);
+
 	void initialize(istream& file, Node *up, const NodePosition& position);
 
 	// print out information to this node
-	void info(ostream& os = cout) const override;
+	void info(ostream& os = cout) const;
 	// Write the node information
-	void write(ostream& os) const override;
+	void write(ostream& os) const;
 
-	// Setter & Getter
-	// number of sublaying nodes
-	size_t nTotalNodes() const override { return nTotalNodes_; }
+	[[nodiscard]] size_t nNodes() const {
+		size_t n = 1;
+		for (const Node& child : child_) {
+			n += child.nNodes();
+		}
+		return n;
+	}
 
-	// number of sublaying mctdhNodes
-	size_t nNodes() const override { return nNodes_; }
-
-	// Number of Physical Nodes at bottom under this node
-	size_t nLeaves() const override { return nLeaves_; }
-
-	// Type of node
-	int type() const override { return nodeType_; }
+	[[nodiscard]] size_t nLeaves() const {
+		size_t n = 0;
+		for (const Node& child : child_) {
+			n += child.nLeaves();
+		}
+		for (const Leaf& leaf : leaves_) {
+			n += 1;
+		}
+		return n;
+	}
 
 	// True if this node is a bottomLayer_-node, otherwise false
-	bool isBottomlayer() const { return bottomLayer_; }
+	[[nodiscard]] bool isBottomlayer() const { return (!leaves_.empty()); }
 
 	// True if this node is a toplayer-node, otherwise false
-	bool isToplayer() const;
-	// Getter for the Physical Coordinate (only if this is a bottomLayer_ node)
-	Leaf& getLeaf();
-	const Leaf& getLeaf() const;
+	[[nodiscard]] bool isToplayer() const { return (parent_ == nullptr); }
+
 	// Getter for Parent-AbstractNode
 	const Node& parent() const;
 	Node& parent();
-	// Return reference to the i-th child
-	const Node& child(size_t i) const;
-	Node& child(size_t i);
 
 	// Returns the index in the vector of children of the parent
 	// (e.g. this is the 2nd child: this getter returns "1")
@@ -75,26 +74,11 @@ public:
 	// Getter for the number of children of this node
 	int nChildren() const { return child_.size(); }
 
-	// Getter for the TensorDim
-	TensorShape& shape() { return tensorDim_; }
-
-	const TensorShape& shape() const { return tensorDim_; }
-
 	// Expand one of the children node in the multilayer representation
-	void expandChild(size_t i);
+//	void expandChild(size_t i);
 
 	// Get position_ index
 	NodePosition position() const { return position_; }
-
-	void push_back(const Node& node);
-
-	vector<unique_ptr<AbstractNode>>::const_iterator begin() const {
-		return child_.begin();
-	}
-
-	vector<unique_ptr<AbstractNode>>::const_iterator end() const {
-		return child_.end();
-	}
 
 	// Danger-zone (take care what you do here!)
 	// Do not access the functions below, unless you really know what you are doing!
@@ -105,52 +89,33 @@ public:
 	int address() const { return address_; }
 
 	// pointer to the next node in sweep
-	AbstractNode *nextNode() override;
+	Node *nextNode();
 
 	// sween for pointer to the next node in sweep. Same sweep like
 	// in Uwe Manthe's fortran code
-	AbstractNode *nextNodeManthe() override;
-	// Move getter for unique_ptr to children
-	unique_ptr<AbstractNode> downUnique(size_t i);
+	Node *nextNodeManthe();
 
-	// Set the upwards pointer
-	void setParent(AbstractNode *up) override { parent_ = up; }
-
-	// Replace a Child
-	void replace(Node& new_child, size_t idx);
 	// Update counters, position indices
-	void update(const NodePosition& p) override;
+	void update(const NodePosition& p);
+
 	// Update position_ index
 	void updatePosition(const NodePosition& p);
-	// Update nTotalNodes_, nNodes_ and nLeaves_
-	void updatennodes();
-	// Update the TensorDim
-	void updateTDim();
+
 	// Reset all counters for the swipe
 	void resetCounters();
 
-	// Get a reference to the top-node
-	Node& topNode();
+	void reconnect();
 
-protected:
-	// TensorDim that belongs to this node
-	TensorShape tensorDim_;
+	TensorShape shape_;
+	int address_;
 
-	// pointer to the upwards node
-	AbstractNode *parent_;
-	// vector of references to the children nodes
+	Node *parent_;
 	vector<Node> child_;
 	vector<Leaf> leaves_;
 
+	NodePosition position_;
+protected:
 	// reference to the last_ node that was pointed at at a sweep through the layer_
 	int nextNodeNum_;
 	size_t nextNodeNumFortran_;
-
-	// position object
-	NodePosition position_;
-	int address_;
-
-	// type of this node (PhysicalNode=0, GetNode=1, oSQRNode=2)
-	int nodeType_;
-	bool bottomLayer_;
 };

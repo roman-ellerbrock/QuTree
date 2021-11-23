@@ -19,11 +19,9 @@ set(QuTree_SOURCE_FILES
         src/Tree/PrimitiveBasis/LeafAPI.cpp
 
         # Tree/
-        #src/TreeShape/LeafTypes/FFTGrid.cpp
-        #src/TreeShape/LeafTypes/SpinGroup.cpp
+        src/Tree/NodePosition.cpp
+        src/Tree/Node.cpp
         #src/TreeShape/LinearizedLeaves.cpp
-        #src/TreeShape/Node.cpp
-        #src/TreeShape/NodePosition.cpp
         #src/TreeShape/Tree.cpp
         #src/TreeShape/TreeFactory.cpp
 

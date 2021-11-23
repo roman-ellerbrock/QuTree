@@ -20,8 +20,17 @@ class Leaf
 public:
 	Leaf()
 		: parent_(nullptr), position_(), api_() {};
-
 	~Leaf() = default;
+
+	Leaf(istream& is, Node* parent, const NodePosition& pos) {
+		//@TODO: add test!
+		parent_ = parent;
+		position_ = pos;
+
+		BasisParameters par;
+		par.readDimline(is);
+		initialize(par);
+	}
 
 	void initialize(const BasisParameters& par) {
 		api_.initialize(par);
