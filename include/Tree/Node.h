@@ -86,7 +86,7 @@ public:
 	void setAddress(int newaddress) { address_ = newaddress; }
 
 	// Getter for the address_ of this node
-	int address() const { return address_; }
+	[[nodiscard]] int address() const { return address_; }
 
 	// pointer to the next node in sweep
 	Node *nextNode();
