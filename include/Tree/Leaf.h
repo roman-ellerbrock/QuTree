@@ -43,7 +43,7 @@ public:
 		api_.write(os);
 	}
 
-	[[nodiscard]] Node& parent() const { return *parent_; };
+	[[nodiscard]] const Node& parent() const { return *parent_; };
 
 	Node *parent_;
 	NodePosition position_;

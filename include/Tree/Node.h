@@ -27,15 +27,13 @@ public:
 	Node& operator=(Node&& old) noexcept;
 	~Node() = default;
 
-	Node(istream& file, Node *up, const NodePosition& position);
+	Node(istream& file, Node *up,
+		const NodePosition& position);
 	Node(const Leaf& leaf, size_t ntensor);
 
-	void initialize(istream& file, Node *up, const NodePosition& position);
-
-	// print out information to this node
-	void info(ostream& os = cout) const;
-	// Write the node information
 	void write(ostream& os) const;
+
+	void info(ostream& os = cout) const;
 
 	[[nodiscard]] size_t nNodes() const {
 		size_t n = 1;
@@ -50,61 +48,49 @@ public:
 		for (const Node& child : child_) {
 			n += child.nLeaves();
 		}
-		for (const Leaf& leaf : leaves_) {
-			n += 1;
-		}
+		n += leaves_.size();
 		return n;
 	}
 
-	// True if this node is a bottomLayer_-node, otherwise false
 	[[nodiscard]] bool isBottomlayer() const { return (!leaves_.empty()); }
 
-	// True if this node is a toplayer-node, otherwise false
 	[[nodiscard]] bool isToplayer() const { return (parent_ == nullptr); }
 
-	// Getter for Parent-AbstractNode
+	void push_back(const Node& child) {
+		child_.push_back(child);
+		reconnect();
+	}
+
+	void push_back(const Leaf& leaf) {
+		leaves_.push_back(leaf);
+		reconnect();
+	}
+
 	const Node& parent() const;
 	Node& parent();
 
 	// Returns the index in the vector of children of the parent
 	// (e.g. this is the 2nd child: this getter returns "1")
 	int childIdx() const { return position_.childIdx(); }
-	size_t parentIdx() const { return nChildren(); }
 
-	// Getter for the number of children of this node
+	size_t parentIdx() const {
+		return nChildren() + leaves_.size();
+	}
+
 	int nChildren() const { return child_.size(); }
 
-	// Expand one of the children node in the multilayer representation
-//	void expandChild(size_t i);
-
-	// Get position_ index
 	NodePosition position() const { return position_; }
 
-	// Danger-zone (take care what you do here!)
-	// Do not access the functions below, unless you really know what you are doing!
-	// Setter for the address_ of this node
-	void setAddress(int newaddress) { address_ = newaddress; }
-
-	// Getter for the address_ of this node
-	[[nodiscard]] int address() const { return address_; }
-
-	// pointer to the next node in sweep
-	Node *nextNode();
 
 	// sween for pointer to the next node in sweep. Same sweep like
 	// in Uwe Manthe's fortran code
-	Node *nextNodeManthe();
+//	Node *nextNodeManthe();
 
-	// Update counters, position indices
-	void update(const NodePosition& p);
-
-	// Update position_ index
 	void updatePosition(const NodePosition& p);
-
-	// Reset all counters for the swipe
 	void resetCounters();
-
 	void reconnect();
+
+	const Node *get(NodePosition p) const;
 
 	TensorShape shape_;
 	int address_;
@@ -119,3 +105,6 @@ protected:
 	int nextNodeNum_;
 	size_t nextNodeNumFortran_;
 };
+
+Node* sweep(Node* last);
+Node read(istream& file, Node *up = nullptr, const NodePosition& position = NodePosition());

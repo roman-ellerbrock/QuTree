@@ -32,7 +32,7 @@ Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b, T alpha = 1.,
 
 /// perform u^cT a u
 template<typename T>
-Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u);
+[[nodiscard]] Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u);
 
 /**
   * \brief Perform matrix-tensor product on k-th index.

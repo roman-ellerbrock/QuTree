@@ -24,7 +24,7 @@ SUITE (PrimitiveBasis) {
 			ft_.initialize(par_ft);
 
 			par_ = BasisParameters({1., 0., 0., 1.,
-							10, 2, 0});
+									10, 2, 0});
 		}
 
 		~Prim() = default;
@@ -35,6 +35,16 @@ SUITE (PrimitiveBasis) {
 
 		BasisParameters par_;
 	};
+
+	Tensorcd genP(const Tensord& x, double x0, double p) {
+		size_t dim = x.shape_.front();
+		Tensorcd A({dim, 1});
+		for (size_t i = 0; i < dim; ++i) {
+			A(i) = exp(QM::im * p * x(i));
+		}
+		gramSchmidt(A);
+		return A;
+	}
 
 	TEST (BasisParameters) {
 		BasisParameters par;
@@ -188,36 +198,51 @@ SUITE (PrimitiveBasis) {
 	TEST_FIXTURE (Prim, FFT_x) {
 		Tensord x = ft_.buildXvec(3);
 		Tensord xR({3});
-		xR(0) = 0.;
+		xR(0) = 1. / 6.;
 		xR(1) = 0.5;
-		xR(2) = 1.;
+		xR(2) = 5. / 6.;
 			CHECK_CLOSE(0., residual(xR, x), 1e-5);
 	}
 
 	TEST_FIXTURE (Prim, FFT_p) {
 		Tensorcd p = ft_.buildP(3);
 		Tensorcd pR({3, 3});
-		pR(0, 0) = -4.18879;
+		pR(0, 0) = -QM::two_pi;
 		pR(1, 1) = 0.;
-		pR(2, 2) = -pR(0, 0);
+		pR(2, 2) = QM::two_pi;
 			CHECK_CLOSE(0., residual(pR, p), 1e-5);
 	}
 
 	TEST_FIXTURE (Prim, FFT_U) {
-		Tensorcd U = ft_.buildU(3);
+		Tensorcd U = ft_.trafo_;
 		Tensorcd R({3, 3});
-		R(0, 0) = 0.57735;
+
+		R(0, 0) = complex<double>(0.288675, 0.5);
 		R(1, 0) = 0.57735;
-		R(2, 0) = 0.57735;
+		R(2, 0) = conj(R(0, 0));
 
-		R(0, 1) = complex<double>(-0.288675, 0.5);
+		R(0, 1) = -R(1, 0);
 		R(1, 1) = R(1, 0);
-		R(2, 1) = complex<double>(-0.288675, -0.5);
+		R(2, 1) = -R(1, 0);
 
-		R(0, 2) = conj(R(0, 1));
+		R(0, 2) = conj(R(0, 0));
 		R(1, 2) = R(1, 1);
-		R(2, 2) = conj(R(2, 1));
+		R(2, 2) = R(0, 0);
 			CHECK_CLOSE(0., residual(R, U), 1e-5);
+	}
+
+	TEST(FFT_expect_p) {
+		BasisParameters par_ft = {-3.8, 3.8, 0., 1., 22, 2, 0};
+		FFTGrid ft;
+		ft.initialize(par_ft);
+		double pval = 1.2401;
+		Tensorcd A = genP(ft.getX(), 0., pval);
+		auto p = ft.p_;
+
+		Tensorcd pA(A.shape_);
+		ft.applyP(pA, A);
+		Tensorcd expect = contraction(A, pA, 1);
+			CHECK_CLOSE(pval, real(expect(0)), 1e-4);
 	}
 
 	TEST_FIXTURE (Prim, FFT_T) {
@@ -266,9 +291,9 @@ SUITE (PrimitiveBasis) {
 			CHECK_EQUAL(10, api2.basis()->par_.dim_);
 	}
 
-	TEST_FIXTURE	(Prim, LeafAPI_par) {
+	TEST_FIXTURE (Prim, LeafAPI_par) {
 		BasisParameters par({1., 0., 0., 1.,
-								10, 2, 3});
+							 10, 2, 3});
 		LeafAPI api;
 		api.initialize(par);
 			CHECK_EQUAL(1., api.basis()->par_.omega());

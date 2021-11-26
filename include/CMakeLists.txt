@@ -14,6 +14,9 @@ set(QuTree_INCLUDE_FILES
         include/Tree/PrimitiveBasis/DVR.h
         include/Tree/PrimitiveBasis/FFTGrid.h
 
+        include/Tree/Leaf.h
+        include/Tree/Node.h
+
         #    include/Core/Matrix.h
         #    include/Core/Matrix_Implementation.h
         #    include/Core/TensorMath.h

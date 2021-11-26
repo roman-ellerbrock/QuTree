@@ -11,8 +11,8 @@ void FFTGrid::initialize(const BasisParameters& par) {
 	p_ = buildP(dim);
 	kin_ = buildKin(dim);
 	trafo_ = buildU(dim);
-	unitarySimilarityTrafo(p_, trafo_);
-	unitarySimilarityTrafo(kin_, trafo_);
+	p_ = unitarySimilarityTrafo(p_, trafo_);
+	kin_ = unitarySimilarityTrafo(kin_, trafo_);
 }
 
 Tensorcd FFTGrid::buildU(size_t dim) const {
@@ -21,7 +21,8 @@ Tensorcd FFTGrid::buildU(size_t dim) const {
 	complex<double> imag(0., 1.);
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			U(j, i) = exp(-imag * (x_(i) - x0) * p_(j, j)) / sqrt(1. * dim);
+			U(j, i) = exp(-imag * x_(i) * p_(j, j)) / sqrt((double) dim);
+//	U(j, i) = exp(-imag * (x_(i) - x0) * p_(j, j)) / sqrt(1. * dim);
 
 	return U;
 }
@@ -30,9 +31,9 @@ Tensord FFTGrid::buildXvec(size_t dim) const {
 	Tensord x({dim});
 	double x1 = par_.par1_;
 	double x0 = par_.par0_;
-	double dx = (x1 - x0) / (dim - 1);
+	double dx = (x1 - x0) / dim;
 	for (int i = 0; i < dim; i++) {
-		x(i) = x0 + i * dx;
+		x(i) = x0 + (i + 0.5) * dx;
 	}
 	return x;
 }
@@ -42,12 +43,12 @@ Tensorcd FFTGrid::buildP(size_t dim) const {
 	// Set p_ values
 	double x1 = par_.par1_;
 	double x0 = par_.par0_;
-	double dx = (x1 - x0) / (dim - 1);
+	double dx = (x1 - x0) / dim;
 	double dp = QM::two_pi / (dx * dim);
-	double prange = (dim - 1) * dp;
+	double prange = dim * dp;
 	double p0 = -prange / 2.;
 	for (int i = 0; i < dim; i++) {
-		p(i, i) = p0 + i * dp;
+		p(i, i) = p0 + (i + 0.5) * dp;
 	}
 	return p;
 }
