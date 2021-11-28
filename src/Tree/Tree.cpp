@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2020-01-21.
 //
-#include "TreeShape/Tree.h"
+#include "Tree/Tree.h"
 
 Tree::Tree(const Tree& T)
 	: root_(T.root_) {
@@ -24,89 +24,25 @@ Tree& Tree::operator=(Tree&& T) noexcept {
 	return *this;
 }
 
-Tree::Tree(const string& filename) {
-	read(filename);
-}
-
-Tree::Tree(istream& is) {
-	read(is);
-}
-
-void Tree::resetLeafModes() {
-	size_t n_modes = this->nLeaves();
-	assert(n_modes > 0);
-	int mode = n_modes - 1;
-	for (Node& node : *this) {
-		if (node.isBottomlayer()) {
-			Leaf& leaf = node.getLeaf();
-			leaf.mode() = mode--;
-		}
-	}
-	update();
-}
-
-void Tree::reindexLeafModes(map<size_t, size_t> Map) {
-	for (Node& node : *this) {
-		if (node.isBottomlayer()) {
-			Leaf& leaf = node.getLeaf();
-			leaf.mode() = Map[leaf.mode()];
-		}
-	}
-	update();
-}
-
-void Tree::expandNode(Node& node) {
-	assert(!node.isToplayer());
-	assert(!node.isBottomlayer());
-
-	Node& parent = node.parent();
-	size_t childIdx = node.childIdx();
-	parent.expandChild(childIdx);
-	linearizeNodes();
-}
-
 void Tree::update() {
-	// Tree is assumed to be updated, but the rest not:
-	// Update everything
-	root_.update(NodePosition());
-	linearizeLeaves();
+	root_.updatePosition(NodePosition());
 	linearizeNodes();
-}
-
-void Tree::replaceNode(Node& old_node, Node& new_node) {
-	// The old node must not be the toplayer node, otherwise change the
-	// whole tree
-	assert(!old_node.isToplayer());
-
-	// Replace the node
-	Node& parent = old_node.parent();
-	parent.replace(new_node, old_node.childIdx());
-
-	Node& topnode = topNode();
-	topnode.updatePosition(NodePosition());
-	topnode.updatennodes();
-	linearizeLeaves();
-	linearizeNodes();
+	leafArray_ = LeafArray(root_);
 }
 
 void Tree::linearizeNodes() {
-	// block has to be cleared, because logical block
-	// must be resistant to re-feed (important for e.g. expand node)
-	// This routine adds every mctdh node to the logical block
-	linearizedNodes_.clear();
-	int counter = 0;
-	for (int i = 0; i < nTotalNodes(); i++) {
-		AbstractNode& abstract_node = nextNode();
-		if (abstract_node.type() == 1) {
-			auto& node = (Node&) (abstract_node);
-			node.setAddress(counter);
-			counter++;
-			linearizedNodes_.push_back(node);
-		}
+	nodeArray_.clear();
+	Node* node = &root_;
+	while(node) {
+		nodeArray_.emplace_back(*node);
+		node = sweep(node);
+	}
+	for (size_t i = 0; i < nodeArray_.size(); ++i) {
+		nodeArray_[i].get().address_ = i;
 	}
 
 	edges_.clear();
-	for (const Node& node : linearizedNodes_) {
+	for (const Node& node : nodeArray_) {
 		if (!node.isToplayer()) {
 			const Node& parent = node.parent();
 			edges_.emplace_back(Edge(node, parent));
@@ -114,41 +50,28 @@ void Tree::linearizeNodes() {
 	}
 }
 
-void Tree::linearizeLeaves() {
-	// This routine attends physical coordinates to the linearizedLeaves_ block
-	linearizedLeaves_.clear();
-	linearizedLeaves_.resizeaddress(nLeaves());
-
-	for (int i = 0; i < nTotalNodes(); i++) {
-		AbstractNode& abstract_node = nextNode();
-		// If this node is a physical mode push it back
-		if (abstract_node.type() == 0) {
-			auto& leaf = (Leaf&) (abstract_node);
-			linearizedLeaves_.push_back(leaf);
-			// @TODO: Check leaf-index mapping
-//			reference_wrapper<Leaf> newphysmode(physnode);
-//			linearizedLeaves_(physnode.Mode()) = newphysmode;
-		}
-	}
+Leaf& Tree::getLeaf(size_t i) {
+	return leafArray_[i];
 }
 
+const Leaf& Tree::getLeaf(size_t i) const {
+	return leafArray_[i];
+}
+
+Node& Tree::getNode(size_t i) {
+	return nodeArray_[i];
+}
+
+const Node& Tree::getNode(size_t i) const {
+	return nodeArray_[i];
+}
+
+
 /// I/O
-
 void Tree::read(istream& is) {
-	// feed linearizedLeaves_ and logical block with references
-	root_.initialize(is, nullptr, NodePosition());
+	root_ = readNode(is);
 	update();
-
-	// Add new PhysPar for every physical coordinate
-	for (int i = 0; i < linearizedLeaves_.size(); i++) {
-		// Set parameters
-		PhysPar par(is);
-		linearizedLeaves_[i].setPar(par);
-
-		// Initialize primitive grid (HO, FFT, Legendre, ...)
-		LeafInterface& primitivebasis = linearizedLeaves_[i].interface();
-		primitivebasis.initialize(par.omega(), par.r0(), par.wfr0(), par.wfOmega());
-	}
+	leafArray_.readPars(is);
 }
 
 void Tree::read(const string& filename) {
@@ -160,16 +83,6 @@ void Tree::write(ostream& os) const {
 	root_.write(os);
 }
 
-ostream& operator<<(ostream& os, Tree& basis) {
-	basis.write(os);
-	return os;
-}
-
-istream& operator<<(istream& is, Tree& basis) {
-	basis.read(is);
-	return is;
-}
-
 void Tree::info(ostream& os) const {
 	os << "List of Leaves:" << endl;
 	for (size_t i = 0; i < this->nLeaves(); i++) {
@@ -179,18 +92,69 @@ void Tree::info(ostream& os) const {
 	}
 	os << endl;
 
-	// ... and now for every logical node
 	os << "List of upper nodes:" << endl;
 	for (int i = nNodes() - 1; i >= 0; i--){
 		const Node& node = getNode(i);
 		node.info();
-		node.shape().print(os);
+		node.shape_.print(os);
 		os << endl;
 	}
 	os << "Number of Nodes = " << nNodes() << endl;
 }
 
-bool Tree::isWorking() {
+void Tree::print(ostream& os) const {
+	for (auto it = this->rbegin(); it !=  this->rend(); it++) {
+		const Node& node = *it;
+		node.info(os);
+		node.shape_.print(os);
+		os << endl;
+	}
+}
+
+ostream& operator<<(ostream& os, Tree& tree) {
+	tree.write(os);
+	return os;
+}
+
+istream& operator<<(istream& is, Tree& tree) {
+	tree.read(is);
+	return is;
+}
+
+ostream& operator<<(ostream& os, const Tree& tree) {
+	if(&os == &cout) {
+		tree.info(os);
+	} else {
+		tree.write(os);
+	}
+	return os;
+}
+
+istream& operator>>(istream& is, Tree& tree) {
+	tree.read(is);
+	return is;
+}
+
+
+
+
+
+/*void Tree::replaceNode(Node& old_node, Node& new_node) {
+	// The old node must not be the toplayer node, otherwise change the
+	// whole tree
+	assert(!old_node.isToplayer());
+
+	// Replace the node
+	Node& parent = old_node.parent();
+	parent.replace(new_node, old_node.childIdx());
+
+	Node& topnode = topNode();
+	topnode.updatePosition(NodePosition());
+	linearizeLeaves();
+	linearizeNodes();
+}*/
+
+/*bool Tree::isWorking() {
 
 	bool works = true;
 	int counter = 0;
@@ -257,44 +221,27 @@ bool Tree::isWorking() {
 	}
 
 	return true;
-}
-
-Leaf& Tree::getLeaf(size_t i) {
-	return linearizedLeaves_[i];
-}
-
-const Leaf& Tree::getLeaf(size_t i) const {
-	return linearizedLeaves_[i];
-}
-
-Node& Tree::getNode(size_t i) {
-	return linearizedNodes_[i];
-}
-
-const Node& Tree::getNode(size_t i) const {
-	return linearizedNodes_[i];
-}
-
-void Tree::print(ostream& os) const {
-	for (auto it = this->rbegin(); it !=  this->rend(); it++) {
-		const Node& node = *it;
-		node.info(os);
-		node.shape().print(os);
-		os << endl;
+}*/
+/*void Tree::resetLeafModes() {
+	size_t n_modes = this->nLeaves();
+	assert(n_modes > 0);
+	int mode = n_modes - 1;
+	for (Node& node : *this) {
+		if (node.isBottomlayer()) {
+			Leaf& leaf = node.getLeaf();
+			leaf.mode() = mode--;
+		}
 	}
-}
+	update();
+}*/
 
-ostream& operator<<(ostream& os, const Tree& basis) {
-	if(&os == &cout) {
-		basis.info(os);
-	} else {
-		basis.write(os);
+/*void Tree::reindexLeafModes(map<size_t, size_t> Map) {
+	for (Node& node : *this) {
+		if (node.isBottomlayer()) {
+			Leaf& leaf = node.getLeaf();
+			leaf.mode() = Map[leaf.mode()];
+		}
 	}
-	return os;
-}
-
-istream& operator>>(istream& is, Tree& basis) {
-	basis.read(is);
-	return is;
-}
+	update();
+}*/
 

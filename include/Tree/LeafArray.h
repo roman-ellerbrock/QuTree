@@ -1,0 +1,29 @@
+#pragma once
+#include "Leaf.h"
+#include "Node.h"
+
+class LeafArray
+	/**
+	 * \class LinearizedLeaves
+	 * \ingroup Tree
+	 * \brief The class holds a vector of references to the leaves in the Tree.
+	 */
+{
+public:
+	LeafArray() = default;
+	~LeafArray() = default;
+	explicit LeafArray(Node& root);
+
+	[[nodiscard]] size_t size()const { return leaves_.size(); }
+
+	void readPars(istream& is);
+
+	void push_back(Leaf& phys);
+	const Leaf& operator[](size_t mode)const;
+	Leaf& operator[](size_t mode);
+
+protected:
+	vector<reference_wrapper<Leaf>> leaves_;
+	vector<int> address_;
+};
+

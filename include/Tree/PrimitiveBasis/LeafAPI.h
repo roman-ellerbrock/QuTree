@@ -62,6 +62,7 @@ public:
 	}
 
 	[[nodiscard]] const PrimitiveBasis* basis() const { return basis_; };
+	[[nodiscard]] PrimitiveBasis* basis() { return basis_; };
 
 protected:
 	PrimitiveBasis* basis_;

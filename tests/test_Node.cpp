@@ -5,6 +5,7 @@
 #include <UnitTest++/UnitTest++.h>
 #include "Tree/Leaf.h"
 #include "Tree/Node.h"
+#include "Tree/LeafArray.h"
 
 SUITE (Nodes) {
 
@@ -29,12 +30,12 @@ SUITE (Nodes) {
 			 *	 		1	-1
 			 *	 			1	0	0
 			 *	 		1	-1
-			 *	 			1	0	1
+			 *	 			1	0	0
 			 *	 	1	-2
 			 *	 		1	-1
-			 *	 			1	0	2
+			 *	 			1	0	0
 			 *	 		1	-1
-			 *	 			1	0	3
+			 *	 			1	0	0
 			 */
 			Node inter;
 			Node bottom;
@@ -69,6 +70,12 @@ SUITE (Nodes) {
 		Leaf l2 = leaf_;
 			CHECK_EQUAL(true, l2.parent_ == nullptr);
 			CHECK_EQUAL(true, par_ == l2.api_.basis()->par_);
+
+		BasisParameters par2 = par_;
+		par2.mode_ = par_.mode_ + 1;
+			CHECK_EQUAL(false, par_ == par2);
+		l2.par() = par2;
+			CHECK_EQUAL(false, leaf_ == l2);
 	}
 
 	// ==================================================
@@ -229,21 +236,81 @@ SUITE (Nodes) {
 			CHECK_EQUAL(6, n);
 	}
 
-	TEST(Node_read) {
-		string file("			1	-2"
-					"				 	1	-2"
-					"				 		1	-1"
-					"			 				1	0	0"
-					"				 		1	-1"
-					"				 			1	0	1"
-					"				 	1	-2"
-					"				 		1	-1"
-					"				 			1	0	2"
-					"				 		1	-1"
-					"				 			1	0	3");
+	TEST (Node_read) {
+		string file("1	-2"
+					"	 	1	-2"
+					"	 		1	-1"
+					" 				1	0	0"
+					"	 		1	-1"
+					"	 			1	0	1"
+					"	 	1	-2"
+					"	 		1	-1"
+					"	 			1	0	2"
+					"	 		1	-1"
+					"	 			1	0	3");
 		stringstream is(file);
-		Node root = read(is);
+		Node root = readNode(is);
 			CHECK_EQUAL(7, root.nNodes());
+			CHECK_EQUAL(4, root.nLeaves());
 	}
 
+	TEST_FIXTURE (small_tree, node_copy) {
+		Node node;
+		node = root_;
+			CHECK_EQUAL(root_.nNodes(), node.nNodes());
+	}
+
+	TEST_FIXTURE (small_tree, node_move) {
+		Node tmp = root_;
+		Node node = move(tmp);
+			CHECK_EQUAL(root_.nNodes(), node.nNodes());
+	}
+
+	TEST_FIXTURE (small_tree, node_moveassign) {
+		Node tmp = root_;
+		Node node(move(tmp));
+			CHECK_EQUAL(root_.nNodes(), node.nNodes());
+	}
+
+	TEST_FIXTURE (small_tree, node_copyconstr) {
+		Node node(root_);
+			CHECK_EQUAL(root_.nNodes(), node.nNodes());
+	}
+
+	TEST_FIXTURE (small_tree, node_equal) {
+		Node root = root_;
+			CHECK_EQUAL(true, root == root_);
+		Node root2;
+		root2.push_back(Node());
+			CHECK_EQUAL(false, root2 == root_);
+	}
+
+	TEST_FIXTURE (small_tree, node_notequal) {
+		Node root = root_;
+			CHECK_EQUAL(false, root != root_);
+		Node root2;
+		root2.push_back(Node());
+			CHECK_EQUAL(true, root2 != root_);
+	}
+
+	TEST (LinearizdLeaves) {
+		string file("1	-2"
+					"	 	1	-2"
+					"	 		1	-1"
+					" 				1	0	0"
+					"	 		1	-1"
+					"	 			1	0	1"
+					"	 	1	-2"
+					"	 		1	-1"
+					"	 			1	0	2"
+					"	 		1	-1"
+					"	 			1	0	3");
+		stringstream is(file);
+		Node root = readNode(is);
+		LeafArray linearizedLeaves(root);
+			CHECK_EQUAL(4, linearizedLeaves.size());
+		for (size_t i = 0; i < 4; ++i) {
+				CHECK_EQUAL(i, linearizedLeaves[i].api_.basis()->par_.mode_);
+		}
+	}
 }

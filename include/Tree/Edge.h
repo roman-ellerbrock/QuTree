@@ -4,7 +4,7 @@
 
 #ifndef EDGE_H
 #define EDGE_H
-#include "TreeShape/Node.h"
+#include "Tree/Node.h"
 
 
 class Edge {

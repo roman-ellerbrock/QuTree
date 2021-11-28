@@ -22,21 +22,28 @@ Node::Node(Node&& node) noexcept
 	  child_(move(node.child_)),
 	  leaves_(move(node.leaves_)),
 	  position_(node.position_),
+	  shape_(node.shape_),
 	  address_(node.address_) {
 	reconnect();
 }
 
-Node& Node::operator=(const Node& old) {
-	Node node(old);
-	swap(*this, node);
+Node& Node::operator=(const Node& other) {
+	if (this == &other) {
+		return *this;
+	}
+
+	parent_ = other.parent_;
+	child_ = other.child_;
+	leaves_ = other.leaves_;
+	position_ = other.position_;
+	shape_ = other.shape_;
+	address_ = other.address_;
 	reconnect();
+
 	return *this;
 }
 
 Node& Node::operator=(Node&& old) noexcept {
-	if (this == &old) {
-		return *this;
-	}
 	swap(*this, old);
 	reconnect();
 	return *this;
@@ -60,7 +67,7 @@ Node::Node(istream& file, Node *up,
 	  position_(position),
 	  address_(-100) {
 
-	read(file, up, position_);
+	readNode(file, up, position_);
 }
 
 void Node::info(ostream& os) const {
@@ -131,7 +138,7 @@ Node *sweep(Node *p) {
 	}
 }
 
-Node read(istream& file, Node *up,
+Node readNode(istream& file, Node *up,
 	const NodePosition& position) {
 	Node node;
 	node.parent_ = up;
@@ -164,7 +171,7 @@ Node read(istream& file, Node *up,
 		NodePosition newposition = node.position_ * i;
 
 		if (newf < 0) {
-			node.child_.emplace_back(read(file, &node, newposition));
+			node.child_.emplace_back(readNode(file, &node, newposition));
 		} else {
 			node.leaves_.emplace_back(Leaf(file, &node, newposition));
 		}
@@ -176,100 +183,18 @@ Node read(istream& file, Node *up,
 	return node;
 }
 
-/*Node::Node(const Leaf& leaf, size_t ntensor)
-	: Node() {
-	leaves_.push_back(leaf);
-	reconnect();
-
-	shape_ = TensorShape({leaf.api_.basis()->par_.dim_, ntensor});
-}*/
-
-/*Node *Node::nextNode() {
-
-	Node *result;
-	if (nextNodeNum_ >= 0) {
-		result = child_[nextNodeNum_].nextNode();
-		if (result == &child_[nextNodeNum_]) {
-			nextNodeNum_--;
-		}
-	} else {
-		nextNodeNum_ = child_.size() - 1;
-		result = this;
-	}
-
-	return result;
+bool operator==(const Node& a, const Node& b) {
+	/// only test for parent equality if a||b is nullptr
+	if ((a.parent_== nullptr) && (b.parent_!=nullptr)) { return false; }
+	if ((b.parent_== nullptr) && (a.parent_!=nullptr)) { return false; }
+	if (a.shape_ != b.shape_) { return false; }
+	if (a.address_ != b.address_) { return false; }
+	if (a.position_ != b.position_) { return false; }
+	if (a.child_ != b.child_) { return false; }
+	if (a.leaves_ != b.leaves_) { return false; }
+	return true;
 }
 
-Node *Node::nextNodeManthe() {
-
-	Node *result;
-	if (nextNodeNumFortran_ < child_.size()) {
-		result = child_[nextNodeNumFortran_].nextNodeManthe();
-		if (result == &child_[nextNodeNumFortran_]) {
-			++nextNodeNumFortran_;
-		}
-	} else {
-		nextNodeNumFortran_ = 0;
-		result = this;
-	}
-
-	return result;
-}*/
-
-
-/*void Node::expandChild(size_t i) {
-	assert(!isBottomlayer());
-	assert(i < child_.size());
-
-	// Make a new "down_new" by adding all old children
-	// except the expanded node and adding the expanded node's children
-	// at the right place
-
-	vector<unique_ptr<AbstractNode>> down_new;
-	// move nodes until expanded node to down_new
-	for (size_t j = 0; j < i; j++) {
-		down_new.push_back(move(child_[j]));
-	}
-
-	// append the children of the expanded node to down_new
-	Node& child = this->child(i);
-	assert(!child.isBottomlayer());
-	size_t nchildren = child.nChildren();
-	for (size_t j = 0; j < nchildren; j++) {
-		// Update parent-ptr of new children
-		Node& subnode = child.child(j);
-		subnode.setParent(this);
-		// Update subnodes positionindices
-		int child_nr = down_new.size();
-		subnode.updatePosition(position_ * child_nr);
-
-		// Save the unique_ptr to the new vector
-		unique_ptr<AbstractNode> subchild = child.downUnique(j);
-		down_new.push_back(move(subchild));
-	}
-
-	// move the rest of the old children to down_new
-	for (size_t j = i + 1; j < nChildren(); j++) {
-		down_new.push_back(move(child_[j]));
-	}
-
-	// move down_new to down_
-	child_ = move(down_new);
-
-	// Adjust TensorDim
-	updateTDim();
-
-	// Update position
-	updatePosition(position_);
-
-	// update nTotalNodes_: All nTotalNodes_ of the nodes above change
-	// so go to the topnode and update from there downwards
-	Node& topnode = topNode();
-	topnode.updatennodes();
-
-	// Set the nextNodeNum_ for a correct nextNode() sweep that starts
-	// at the last_ node
-	nextNodeNum_ = child_.size() - 1;
+bool operator!=(const Node& a, const Node& b) {
+	return !(a == b);
 }
-*/
-

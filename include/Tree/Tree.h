@@ -1,15 +1,14 @@
 //
 // Created by Roman Ellerbrock on 2020-01-21.
 //
-
 #ifndef TREE_H
 #define TREE_H
 #include "Node.h"
 #include "Edge.h"
-#include "LinearizedLeaves.h"
+#include "LeafArray.h"
 #include <map>
 
-typedef vector<reference_wrapper<Node>> LinearizedNodes;
+typedef vector<reference_wrapper<Node>> NodeArray;
 
 class Tree {
 	/**
@@ -17,29 +16,22 @@ class Tree {
 	 * \ingroup Tree
 	 * \brief This class manages the tensor tree tree.
 	 *
-	 * TensorTreeBasis (TTBasis) holds and manages the tree structure
-	 * and holds tensor dimensions at every node. It provides iterators
-	 * for swiping over every node in a tree. For a bottom-up swipe though
-	 * the tree use the iterator; for a top-down swipe use a regular for loop
-	 * and get Nodes via GetNode(i).
+	 * Tree holds and manages the tree topology
+	 * and TensorShape at every node. It provides random access
+	 * to nodes and forward/backward iterators
 	 *
 	 * Usage:
 	 * Tree tree(n_leaves dim_leaves, dim_nodes); // Create close to balanced tree
-	 * for (const Node& node : tree) {
+	 * for (const Node& node : tree.bottomUp()) {
 	 * 		// Do something - bottom-up swipe
 	 * }
 	 *
-	 * for (int i = tree.nNodes() - 1; i > 0; --i) {
-	 * 		const Node& node = tree.GetNode(i);
+	 * for (const Node& node : tree.topDown()) {
 	 * 		// Do something - Top-child swipe
 	 * }
 	 * or
-	 * for (auto it = tree.rbegin(); it != tree.rend(); it++) {
 	 *
-	 * }
-	 *
-	 * for (size_t l = 0; l < nLeaves; ++l) {
-	 * 		const Leaf& leaf = GetLeaf(l);
+	 * for (const Leaf& leaf : tree.leaves()) {
 	 * 		// Do something - for every leaf
 	 * }
 	 */
@@ -50,128 +42,92 @@ public:
 	/// Default Destructor
 	~Tree() = default;
 
-	/// File constructor
-	explicit Tree(istream& is);
+	explicit Tree(istream& is) { read(is); }
+	explicit Tree(const string& filename) { read(filename); }
 
-	/// Stream constructor
-	explicit Tree(const string& filename);
-
-	/// Copy constructor
 	Tree(const Tree& T);
-
-	/// Move constructor
 	Tree(Tree&& T) noexcept;
-
-	/// Copy assignment operator
 	Tree& operator=(const Tree& T);
-
-	/// Move assignment operator
 	Tree& operator=(Tree&& T) noexcept;
 
-	/// read Basis from ASCII-file
+	/// read from ASCII-file
 	void read(istream& is);
 	void read(const string& filename);
 
-	/// Write the tree to a stream in ASCII output
+	/// Write in ASCII format
 	void write(ostream& os = cout) const;
-
-	/// re-initialize the tree from Tree
-	void update();
 
 	/// Print out tree information
 	void info(ostream& os = cout) const;
 
-	/// number of Nodes
-	size_t nTotalNodes() const { return root_.nTotalNodes(); }
-
-	/// number of logical nodes
-	size_t nNodes() const { return root_.nNodes(); }
-
-	/// number of physical nodes
-	size_t nLeaves() const { return root_.nLeaves(); }
-
-	/// Number of states
-	size_t nStates() const { return topNode().shape().lastDimension(); }
-
-	/// Return the reference to the next node.
-	/// This routine is only used for initialization once.
-	/// Please use the iterator, or mctdhNode(i) functions to address nodes!
-	AbstractNode& nextNode() { return *root_.nextNode(); }
-
-	/// get reference to Physical Coordinate i/nPhysNodes
-	Leaf& getLeaf(size_t i);
-	const Leaf& getLeaf(size_t i) const;
-
-	/// get reference to mctdh-node i/nmctdhNodes
-	Node& getNode(size_t i);
-	const Node& getNode(size_t i) const;
-
-	/// get reference to the mctdh topnode
-	Node& topNode() { return linearizedNodes_.back(); }
-
-	const Node& topNode() const { return linearizedNodes_.back(); }
-
-	/// Assign new indices to leaves
-	void reindexLeafModes(map<size_t, size_t> Map);
-
-	/// Reset indices of leaves
-	void resetLeafModes();
-
-	/// Expand a node in the Basis
-	void expandNode(Node& node);
-
-	/// replace a node in the tree with a new node
-	void replaceNode(Node& old_node, Node& new_node);
-
-	/// Set the root of the tree and update the TreeShape
-	void setRoot(Node& root) {
-		root_ = root;
-		root_.updatePosition(NodePosition());
-		update();
-	}
-
-	/// Bottom-up iterator over all nodes in the mctdh-tree
-	/// For top-up iteration examples refer to e.g. the density-matrix class.
-	vector<reference_wrapper<Node>>::const_iterator begin() const {
-		return linearizedNodes_.begin();
-	}
-
-	/// Bottom-up const iterator over all nodes in the mctdh-tree
-	/// For top-up iteration examples refer to e.g. the density-matrix class.
-	vector<reference_wrapper<Node>>::const_iterator end() const {
-		return linearizedNodes_.end();
-	}
-
-	/// Top-down iterator over all nodes in the mctdh-tree
-	vector<reference_wrapper<Node>>::const_reverse_iterator rbegin() const {
-		return linearizedNodes_.rbegin();
-	}
-
-	/// Bottom-up const iterator over all nodes in the mctdh-tree
-	vector<reference_wrapper<Node>>::const_reverse_iterator rend() const {
-		return linearizedNodes_.rend();
-	}
-
-	/// Check whether TensorTreeBasis is working correctly
-	bool isWorking();
-
 	/// Human readable output of the tree shape
 	void print(ostream& os = cout) const;
 
-	const vector<Edge>& edges() const { return edges_; }
+	/// number of logical nodes
+	[[nodiscard]] size_t nNodes() const { return root_.nNodes(); }
 
-	const LinearizedNodes& nodes() const { return linearizedNodes_; }
+	/// number of physical nodes
+	[[nodiscard]] size_t nLeaves() const { return root_.nLeaves(); }
+
+	/// Number of states
+	[[nodiscard]] size_t nStates() const { return root().shape_.lastDimension(); }
+
+	[[nodiscard]] Leaf& getLeaf(size_t mode);
+	[[nodiscard]] const Leaf& getLeaf(size_t mode) const;
+
+	/// get reference to mctdh-node i/nmctdhNodes
+	[[nodiscard]] Node& getNode(size_t address);
+	[[nodiscard]] const Node& getNode(size_t address) const;
+
+	[[nodiscard]] Node& root() { return nodeArray_.back(); }
+
+	[[nodiscard]] const Node& root() const { return nodeArray_.back(); }
+
+//	[[nodiscard]] auto bottomUp() const;
+
+	[[nodiscard]] auto topDown() const { return nodeArray_; }
+
+	[[nodiscard]] const NodeArray& nodes() const { return nodeArray_; }
+
+	[[nodiscard]] const vector<Edge>& edges() const { return edges_; }
+
+	/// Set the root of the tree and update the Tree
+	void setRoot(Node& root) {
+		root_ = root;
+		update();
+	}
+
+	/// Bottom-up iterator over all nodes in the tree
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_iterator begin() const {
+		return nodeArray_.begin();
+	}
+
+	/// Bottom-up const iterator over all nodes in the mctdh-tree
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_iterator end() const {
+		return nodeArray_.end();
+	}
+
+	/// Top-down iterator over all nodes in the mctdh-tree
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_reverse_iterator rbegin() const {
+		return nodeArray_.rbegin();
+	}
+
+	/// Bottom-up const iterator over all nodes in the mctdh-tree
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_reverse_iterator rend() const {
+		return nodeArray_.rend();
+	}
 
 protected:
+	/// reinitialize from root node
+	void update();
+
 	void linearizeNodes();
 
-	void linearizeLeaves();
+	/// Reference block to leaves
+	LeafArray leafArray_;
 
-	/// Reference block to physical coordinates
-	LinearizedLeaves linearizedLeaves_;
-
-	/// Reference block to mctdh-nodes
-	LinearizedNodes linearizedNodes_;
+	/// Reference block to nodes
+	NodeArray nodeArray_;
 
 	vector<Edge> edges_;
 
@@ -181,5 +137,15 @@ protected:
 
 ostream& operator<<(ostream& os, const Tree& tree);
 istream& operator>>(istream& is, Tree& tree);
+
+/// Assign new indices to leaves
+//	void reindexLeafModes(map<size_t, size_t> Map);
+/// Reset indices of leaves
+//	void resetLeafModes();
+
+/// replace a node in the tree with a new node
+//	void replaceNode(Node& old_node, Node& new_node);
+//	void expandNode(Node& node);
+
 
 #endif //TREE_H

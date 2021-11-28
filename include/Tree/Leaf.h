@@ -43,9 +43,30 @@ public:
 		api_.write(os);
 	}
 
+	BasisParameters& par() {
+		assert(api_.basis());
+		return api_.basis()->par_;
+	}
+
+	[[nodiscard]] const BasisParameters& par() const {
+		assert(api_.basis());
+		return api_.basis()->par_;
+	}
+
 	[[nodiscard]] const Node& parent() const { return *parent_; };
+
+	bool operator==(const Leaf& b) const {
+		if (this->position_ != b.position_) { return false; }
+		if (this->par() != b.par()) { return false; }
+		return true;
+	}
+
+	bool operator!=(const Leaf& b) const {
+		return !(*this == b);
+	}
 
 	Node *parent_;
 	NodePosition position_;
 	LeafAPI api_;
 };
+

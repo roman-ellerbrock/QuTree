@@ -29,7 +29,6 @@ public:
 
 	Node(istream& file, Node *up,
 		const NodePosition& position);
-	Node(const Leaf& leaf, size_t ntensor);
 
 	void write(ostream& os) const;
 
@@ -66,31 +65,25 @@ public:
 		reconnect();
 	}
 
-	const Node& parent() const;
+	[[nodiscard]] const Node& parent() const;
 	Node& parent();
 
 	// Returns the index in the vector of children of the parent
 	// (e.g. this is the 2nd child: this getter returns "1")
-	int childIdx() const { return position_.childIdx(); }
+	[[nodiscard]] size_t childIdx() const { return position_.childIdx(); }
 
-	size_t parentIdx() const {
+	[[nodiscard]] size_t parentIdx() const {
 		return nChildren() + leaves_.size();
 	}
 
-	int nChildren() const { return child_.size(); }
+	[[nodiscard]] size_t nChildren() const { return child_.size(); }
 
-	NodePosition position() const { return position_; }
-
-
-	// sween for pointer to the next node in sweep. Same sweep like
-	// in Uwe Manthe's fortran code
-//	Node *nextNodeManthe();
+	[[nodiscard]] NodePosition position() const { return position_; }
 
 	void updatePosition(const NodePosition& p);
-	void resetCounters();
 	void reconnect();
 
-	const Node *get(NodePosition p) const;
+	[[nodiscard]] const Node *get(NodePosition p) const;
 
 	TensorShape shape_;
 	int address_;
@@ -100,11 +93,10 @@ public:
 	vector<Leaf> leaves_;
 
 	NodePosition position_;
-protected:
-	// reference to the last_ node that was pointed at at a sweep through the layer_
-	int nextNodeNum_;
-	size_t nextNodeNumFortran_;
 };
 
 Node* sweep(Node* last);
-Node read(istream& file, Node *up = nullptr, const NodePosition& position = NodePosition());
+Node readNode(istream& file, Node *up = nullptr, const NodePosition& position = NodePosition());
+
+bool operator==(const Node& a, const Node& b);
+bool operator!=(const Node& a, const Node& b);

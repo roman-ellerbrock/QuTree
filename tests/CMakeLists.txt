@@ -28,7 +28,7 @@ set(QuTree_tests
         # Tree tests
         test_PrimitiveBasis.cpp
         test_Node.cpp
-#        test_Tree.cpp
+        test_Tree.cpp
 
         # all tests
         tests.cpp

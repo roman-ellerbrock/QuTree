@@ -21,9 +21,9 @@ set(QuTree_SOURCE_FILES
         # Tree/
         src/Tree/NodePosition.cpp
         src/Tree/Node.cpp
-        #src/TreeShape/LinearizedLeaves.cpp
-        #src/TreeShape/Tree.cpp
-        #src/TreeShape/TreeFactory.cpp
+        src/Tree/LinearizedLeaves.cpp
+        src/Tree/Tree.cpp
+        #src/Tree/TreeFactory.cpp
 
         #
         #    src/Core/JacobiRotationFramework.cpp
