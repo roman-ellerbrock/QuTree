@@ -5,7 +5,7 @@ void NodePosition::info(ostream& os, bool print_layer) const {
 	os << "{ " << layer() << " ; ";
 	} else {
 		if (empty()) {
-			os << "{ r }";
+			os << "{ r";
 		} else {
 			os << "{ r, ";
 		}

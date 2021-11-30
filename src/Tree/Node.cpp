@@ -43,8 +43,18 @@ Node& Node::operator=(const Node& other) {
 	return *this;
 }
 
-Node& Node::operator=(Node&& old) noexcept {
-	swap(*this, old);
+Node& Node::operator=(Node&& other) noexcept {
+	if (this == &other) {
+		return *this;
+	}
+
+	parent_ = other.parent_;
+	child_ = other.child_;
+	leaves_ = other.leaves_;
+	position_ = other.position_;
+	shape_ = other.shape_;
+	address_ = other.address_;
+
 	reconnect();
 	return *this;
 }
@@ -77,11 +87,14 @@ void Node::info(ostream& os) const {
 
 void Node::write(ostream& os) const {
 	const TensorShape& tdim = shape_;
-	for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
-	os << tdim.lastDimension() << "\t-" << nChildren() << "\n";
-	for (const Node& child: child_) {
-		child.write(os);
-	}
+		for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
+		os << tdim.lastDimension() << "\t-" << nChildren()+leaves_.size() << "\n";
+		for (const Node& child: child_) {
+			child.write(os);
+		}
+		for (const Leaf& leaf : leaves_) {
+			leaf.write(os);
+		}
 }
 
 Node& Node::parent() {
@@ -144,11 +157,9 @@ Node readNode(istream& file, Node *up,
 	node.parent_ = up;
 	node.position_ = position;
 
-	// Variables needed to read input file
 	int nstates, f;
 	vector<size_t> dim;
 
-	// read input file
 	file >> nstates;
 	assert(nstates > 0);
 	file >> f;
@@ -156,8 +167,8 @@ Node readNode(istream& file, Node *up,
 	assert(f > 0);
 
 	for (int i = 0; i < f; i++) {
-		// check wether physical or logical coord
-		// and reset stream to old position_
+		// check whether line contains node or leaf
+		// and reset stream to old position
 		int newstate, newf;
 		auto mark = file.tellg();
 		file >> newstate;
@@ -167,7 +178,7 @@ Node readNode(istream& file, Node *up,
 
 		dim.push_back(newstate);
 
-		// generate position_ for the new node
+		// generate position for the new node
 		NodePosition newposition = node.position_ * i;
 
 		if (newf < 0) {
@@ -177,7 +188,7 @@ Node readNode(istream& file, Node *up,
 		}
 	}
 
-	// create a TensorDim after dimensions were read
+	// create a Tensorshape after dimensions were read
 	dim.push_back(nstates);
 	node.shape_ = TensorShape(dim);
 	return node;

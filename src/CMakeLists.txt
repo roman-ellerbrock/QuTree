@@ -21,7 +21,7 @@ set(QuTree_SOURCE_FILES
         # Tree/
         src/Tree/NodePosition.cpp
         src/Tree/Node.cpp
-        src/Tree/LinearizedLeaves.cpp
+        src/Tree/LeafArray.cpp
         src/Tree/Tree.cpp
         #src/Tree/TreeFactory.cpp
 

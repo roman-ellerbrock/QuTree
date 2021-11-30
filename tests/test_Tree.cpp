@@ -11,18 +11,19 @@ SUITE (Tree) {
 	class root {
 	public:
 		root() {
-			BasisParameters par = BasisParameters({1., 0., 0., 1.,
-												   10, 2, 0});
-			Node inter;
-			Node bottom;
-			Leaf leaf;
-			leaf.initialize(par);
-			bottom.push_back(leaf);
-			inter.push_back(bottom);
-			inter.push_back(bottom);
-
-			root_.push_back(inter);
-			root_.push_back(inter);
+			string file("1	-2"
+						"	 	1	-2"
+						"	 		1	-1"
+						" 				1	0	0"
+						"	 		1	-1"
+						"	 			1	0	1"
+						"	 	1	-2"
+						"	 		1	-1"
+						"	 			1	0	2"
+						"	 		1	-1"
+						"	 			1	0	3");
+			stringstream is(file);
+			root_ = readNode(is);
 
 			Node *p = &root_;
 			size_t addr = 0;
@@ -45,7 +46,64 @@ SUITE (Tree) {
 		}
 	}
 
-	TEST_FIXTURE(root, ){
+	class tree : root {
+	public:
+		tree() {
+			tree_.setRoot(root_);
+		}
 
+		Tree tree_;
+	};
+
+	TEST_FIXTURE(tree, copy){
+		Tree tree(tree_);
+		CHECK_EQUAL(true, tree == tree_);
+	}
+
+	TEST_FIXTURE(tree, assign){
+		Tree tree = tree_;
+			CHECK_EQUAL(true, tree == tree_);
+	}
+
+	TEST_FIXTURE(tree, mconstruct){
+		Tree tree2(tree_);
+		Tree tree(move(tree2));
+			CHECK_EQUAL(true, tree == tree_);
+	}
+
+	TEST_FIXTURE(tree, massign){
+		Tree tree2 = tree_;
+		Tree tree =move(tree2);
+			CHECK_EQUAL(true, tree == tree_);
+	}
+
+	TEST_FIXTURE(tree, read) {
+		/// prepare tree_
+		for (size_t l = 0; l < tree_.nLeaves(); ++l) {
+			Leaf& leaf = tree_.leafArray()[l];
+			leaf.par().par0_ = 1.;
+			leaf.par().par1_ = 0.;
+			leaf.par().par2_ = 0.;
+			leaf.par().par3_ = 1.;
+		}
+
+		string file("1	-2\n"
+					"	 	1	-2\n"
+					"	 		1	-1\n"
+					" 				1	0	0\n"
+					"	 		1	-1\n"
+					"	 			1	0	1\n"
+					"	 	1	-2\n"
+					"	 		1	-1\n"
+					"	 			1	0	2\n"
+					"	 		1	-1\n"
+					"	 			1	0	3\n"
+					"1.	0.	0.	1.\n"
+					"1.	0.	0.	1.\n"
+					"1.	0.	0.	1.\n"
+					"1.	0.	0.	1.\n");
+		stringstream is(file);
+		Tree tree(is);
+			CHECK_EQUAL(tree_, tree);
 	}
 }

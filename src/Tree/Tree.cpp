@@ -26,48 +26,11 @@ Tree& Tree::operator=(Tree&& T) noexcept {
 
 void Tree::update() {
 	root_.updatePosition(NodePosition());
-	linearizeNodes();
+	nodeArray_ = NodeArray(root_);
 	leafArray_ = LeafArray(root_);
+	edgeArray_ = EdgeArray(nodeArray_);
 }
 
-void Tree::linearizeNodes() {
-	nodeArray_.clear();
-	Node* node = &root_;
-	while(node) {
-		nodeArray_.emplace_back(*node);
-		node = sweep(node);
-	}
-	for (size_t i = 0; i < nodeArray_.size(); ++i) {
-		nodeArray_[i].get().address_ = i;
-	}
-
-	edges_.clear();
-	for (const Node& node : nodeArray_) {
-		if (!node.isToplayer()) {
-			const Node& parent = node.parent();
-			edges_.emplace_back(Edge(node, parent));
-		}
-	}
-}
-
-Leaf& Tree::getLeaf(size_t i) {
-	return leafArray_[i];
-}
-
-const Leaf& Tree::getLeaf(size_t i) const {
-	return leafArray_[i];
-}
-
-Node& Tree::getNode(size_t i) {
-	return nodeArray_[i];
-}
-
-const Node& Tree::getNode(size_t i) const {
-	return nodeArray_[i];
-}
-
-
-/// I/O
 void Tree::read(istream& is) {
 	root_ = readNode(is);
 	update();
@@ -81,20 +44,21 @@ void Tree::read(const string& filename) {
 
 void Tree::write(ostream& os) const {
 	root_.write(os);
+	leafArray_.writePars(os);
 }
 
 void Tree::info(ostream& os) const {
 	os << "List of Leaves:" << endl;
 	for (size_t i = 0; i < this->nLeaves(); i++) {
-		const Leaf& node = getLeaf(i);
-		node.info(os);
+		const Leaf& leaf = leafArray_[i];
+		leaf.info(os);
 		os << endl;
 	}
 	os << endl;
 
 	os << "List of upper nodes:" << endl;
-	for (int i = nNodes() - 1; i >= 0; i--){
-		const Node& node = getNode(i);
+	for (int i = nNodes() - 1; i >= 0; i--) {
+		const Node& node = nodeArray_[i];
 		node.info();
 		node.shape_.print(os);
 		os << endl;
@@ -103,7 +67,7 @@ void Tree::info(ostream& os) const {
 }
 
 void Tree::print(ostream& os) const {
-	for (auto it = this->rbegin(); it !=  this->rend(); it++) {
+	for (auto it = this->rbegin(); it != this->rend(); it++) {
 		const Node& node = *it;
 		node.info(os);
 		node.shape_.print(os);
@@ -122,7 +86,7 @@ istream& operator<<(istream& is, Tree& tree) {
 }
 
 ostream& operator<<(ostream& os, const Tree& tree) {
-	if(&os == &cout) {
+	if (&os == &cout) {
 		tree.info(os);
 	} else {
 		tree.write(os);
@@ -135,7 +99,12 @@ istream& operator>>(istream& is, Tree& tree) {
 	return is;
 }
 
-
+bool operator==(const Tree& a, const Tree& b) {
+	if (a.root() != b.root()) { return false; }
+	if (a.leafArray().size() != b.leafArray().size()) { return false; }
+	if (a.nodeArray().size() != b.nodeArray().size()) { return false; }
+	return true;
+}
 
 
 

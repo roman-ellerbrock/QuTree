@@ -32,6 +32,10 @@ public:
 		initialize(par);
 	}
 
+	void readPar(istream& is) {
+		api_.basis()->par_.readPar(is);
+	}
+
 	void initialize(const BasisParameters& par) {
 		api_.initialize(par);
 	}
@@ -41,6 +45,10 @@ public:
 	void write(ostream& os) const {
 		for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
 		api_.write(os);
+	}
+
+	void writePar(ostream& os) const {
+		api_.basis()->par_.writePar(os);
 	}
 
 	BasisParameters& par() {

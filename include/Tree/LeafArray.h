@@ -16,7 +16,17 @@ public:
 
 	[[nodiscard]] size_t size()const { return leaves_.size(); }
 
-	void readPars(istream& is);
+	void readPars(istream& is) {
+		for (Leaf& leaf : leaves_) {
+			leaf.readPar(is);
+		}
+	}
+
+	void writePars(ostream& os) const {
+		for (const Leaf& leaf : leaves_) {
+			leaf.writePar(os);
+		}
+	}
 
 	void push_back(Leaf& phys);
 	const Leaf& operator[](size_t mode)const;

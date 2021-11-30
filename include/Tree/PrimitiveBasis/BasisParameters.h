@@ -12,12 +12,20 @@ struct BasisParameters {
 	 */
 	~BasisParameters() = default;
 
-	void readTail(istream& file) {
+	void readPar(istream& file) {
 		file >> par0_;
 		file >> par1_;
 		file >> par2_;
 		file >> par3_;
 	}
+
+	void writePar(ostream& os) const {
+		os << par0_ << "\t";
+		os << par1_ << "\t";
+		os << par2_ << "\t";
+		os << par3_ << "\n";
+	}
+
 	void readDimline(istream& file) {
 		file >> dim_;
 		file >> type_;

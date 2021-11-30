@@ -3,12 +3,10 @@
 //
 #ifndef TREE_H
 #define TREE_H
-#include "Node.h"
-#include "Edge.h"
 #include "LeafArray.h"
+#include "EdgeArray.h"
+#include "NodeArray.h"
 #include <map>
-
-typedef vector<reference_wrapper<Node>> NodeArray;
 
 class Tree {
 	/**
@@ -36,14 +34,11 @@ class Tree {
 	 * }
 	 */
 public:
-	/// Default constructor
 	Tree() = default;
-
-	/// Default Destructor
-	~Tree() = default;
-
 	explicit Tree(istream& is) { read(is); }
 	explicit Tree(const string& filename) { read(filename); }
+
+	~Tree() = default;
 
 	Tree(const Tree& T);
 	Tree(Tree&& T) noexcept;
@@ -67,17 +62,16 @@ public:
 	[[nodiscard]] size_t nNodes() const { return root_.nNodes(); }
 
 	/// number of physical nodes
-	[[nodiscard]] size_t nLeaves() const { return root_.nLeaves(); }
+	[[nodiscard]] size_t nLeaves() const { return leafArray_.size(); }
 
 	/// Number of states
 	[[nodiscard]] size_t nStates() const { return root().shape_.lastDimension(); }
 
-	[[nodiscard]] Leaf& getLeaf(size_t mode);
-	[[nodiscard]] const Leaf& getLeaf(size_t mode) const;
+	[[nodiscard]] const LeafArray& leafArray() const { return leafArray_; }
+	[[nodiscard]] LeafArray& leafArray() { return leafArray_; }
+	[[nodiscard]] const NodeArray& nodeArray() const { return nodeArray_; }
+	[[nodiscard]] const EdgeArray& edgeArray() const { return edgeArray_; }
 
-	/// get reference to mctdh-node i/nmctdhNodes
-	[[nodiscard]] Node& getNode(size_t address);
-	[[nodiscard]] const Node& getNode(size_t address) const;
 
 	[[nodiscard]] Node& root() { return nodeArray_.back(); }
 
@@ -89,7 +83,7 @@ public:
 
 	[[nodiscard]] const NodeArray& nodes() const { return nodeArray_; }
 
-	[[nodiscard]] const vector<Edge>& edges() const { return edges_; }
+	[[nodiscard]] const EdgeArray& edges() const { return edgeArray_; }
 
 	/// Set the root of the tree and update the Tree
 	void setRoot(Node& root) {
@@ -121,17 +115,9 @@ protected:
 	/// reinitialize from root node
 	void update();
 
-	void linearizeNodes();
-
-	/// Reference block to leaves
 	LeafArray leafArray_;
-
-	/// Reference block to nodes
 	NodeArray nodeArray_;
-
-	vector<Edge> edges_;
-
-	/// MCTDH tree holds memory
+	EdgeArray edgeArray_;
 	Node root_;
 };
 
@@ -147,5 +133,6 @@ istream& operator>>(istream& is, Tree& tree);
 //	void replaceNode(Node& old_node, Node& new_node);
 //	void expandNode(Node& node);
 
+bool operator==(const Tree& a, const Tree& b);
 
 #endif //TREE_H

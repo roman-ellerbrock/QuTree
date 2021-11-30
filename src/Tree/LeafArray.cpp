@@ -44,14 +44,3 @@ Leaf& LeafArray::operator[](size_t mode) {
 	return leaves_[addr].get();
 }
 
-void LeafArray::readPars(istream& is) {
-	for (size_t i = 0; i < size(); ++i) {
-		double par0, par1, par2, par3;
-		is >> par0 >> par1 >> par2 >> par3;
-		BasisParameters& def = operator[](i).par();
-		def.par0_ = par0;
-		def.par1_ = par1;
-		def.par2_ = par2;
-		def.par3_ = par3;
-	}
-}

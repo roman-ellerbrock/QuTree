@@ -250,8 +250,28 @@ SUITE (Nodes) {
 					"	 			1	0	3");
 		stringstream is(file);
 		Node root = readNode(is);
+		CHECK_EQUAL(7, root.nNodes());
+		CHECK_EQUAL(4, root.nLeaves());
+	}
+
+	TEST(Node_moveassign){
+		string file("1	-2"
+					"	 	1	-2"
+					"	 		1	-1"
+					" 				1	0	0"
+					"	 		1	-1"
+					"	 			1	0	1"
+					"	 	1	-2"
+					"	 		1	-1"
+					"	 			1	0	2"
+					"	 		1	-1"
+					"	 			1	0	3");
+		Node root;
+		stringstream is(file);
+		root = readNode(is);
 			CHECK_EQUAL(7, root.nNodes());
 			CHECK_EQUAL(4, root.nLeaves());
+
 	}
 
 	TEST_FIXTURE (small_tree, node_copy) {
