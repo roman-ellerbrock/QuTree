@@ -133,6 +133,22 @@ void Node::updatePosition(const NodePosition& p) {
 	}
 }
 
+size_t Node::idx(const Node &node) const {
+	for (const Node& child : child_) {
+		if (child.address_ == node.address_) {
+			return child.childIdx();
+		}
+	}
+	if (parent_) {
+		if (parent_->address_ == node.address_) {
+			return parentIdx();
+		}
+	}
+	cerr << "Node with address: " << node << " is not connected to referred node.\n";
+	cerr << "Make sure the node ptr belongs to the same instance of the tree.\n";
+	exit(1);
+}
+
 Node *askParent(const Node *p) {
 	if (p->parent_ == nullptr) { return nullptr; }
 	size_t next = p->childIdx() + 1;
@@ -208,4 +224,9 @@ bool operator==(const Node& a, const Node& b) {
 
 bool operator!=(const Node& a, const Node& b) {
 	return !(a == b);
+}
+
+ostream& operator<<(ostream& os, const Node& node) {
+	node.write(os);
+	return os;
 }

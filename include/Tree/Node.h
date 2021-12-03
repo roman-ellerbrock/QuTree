@@ -85,6 +85,8 @@ public:
 
 	[[nodiscard]] const Node *get(NodePosition p) const;
 
+	size_t idx(const Node& node) const;
+
 	TensorShape shape_;
 	int address_;
 
@@ -100,3 +102,5 @@ Node readNode(istream& file, Node *up = nullptr, const NodePosition& position = 
 
 bool operator==(const Node& a, const Node& b);
 bool operator!=(const Node& a, const Node& b);
+
+ostream& operator<<(ostream& os, const Node& node);

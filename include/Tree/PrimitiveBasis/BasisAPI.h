@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 11/22/21.
 //
 
-#ifndef LEAFAPI_H
-#define LEAFAPI_H
+#ifndef BASISAPI_H
+#define BASISAPI_H
 #include "PrimitiveBasis.h"
 #include "DVR.h"
 #include "FFTGrid.h"
@@ -11,40 +11,40 @@
 #include "LegendrePolynomials.h"
 #include "SpinGroup.h"
 
-class LeafAPI {
+class BasisAPI {
 public:
-	LeafAPI() : basis_(nullptr) {}
-	~LeafAPI() {
-		delete basis_;
+	BasisAPI() : ptr_(nullptr) {}
+	~BasisAPI() {
+		delete ptr_;
 	}
 
-	LeafAPI(const LeafAPI& prev) : LeafAPI() {
-		initialize(prev.basis_->par_);
+	BasisAPI(const BasisAPI& prev) : BasisAPI() {
+		initialize(prev.ptr_->par_);
 	}
 
-	LeafAPI& operator=(const LeafAPI& prev) {
+	BasisAPI& operator=(const BasisAPI& prev) {
 		if (&prev == this) {
 			return *this;
 		}
-		initialize(prev.basis_->par_);
+		initialize(prev.ptr_->par_);
 		return *this;
 	}
 
-	LeafAPI(LeafAPI&&) = delete;
-	LeafAPI& operator=(LeafAPI&&) = delete;
+	BasisAPI(BasisAPI&&) = delete;
+	BasisAPI& operator=(BasisAPI&&) = delete;
 
 	void initialize(const BasisParameters& par) {
 
-		delete basis_;
+		delete ptr_;
 		size_t type = par.type_;
 		if (type == 0) {
-			basis_ = new HarmonicOscillator;
+			ptr_ = new HarmonicOscillator;
 		} else if (type == 1) {
-			basis_ = new FFTGrid;
+			ptr_ = new FFTGrid;
 		} else if (type == 2) {
-			basis_ = new LegendrePolynomials;
+			ptr_ = new LegendrePolynomials;
 		} else if (type == 6) {
-			basis_ = new SpinGroup;
+			ptr_ = new SpinGroup;
 		} else {
 			cout << "Error: This Basis Type is not in the known list of "
 			<< "Typs. The iplemented ones are: \n"
@@ -54,19 +54,19 @@ public:
 			<< "6 = Spin Group\n";
 			exit(1);
 		}
-		basis_->initialize(par);
+		ptr_->initialize(par);
 	}
 
 	void write(ostream& os) const {
-		basis_->write(os);
+		ptr_->write(os);
 	}
 
-	[[nodiscard]] const PrimitiveBasis* basis() const { return basis_; };
-	[[nodiscard]] PrimitiveBasis* basis() { return basis_; };
+	[[nodiscard]] const PrimitiveBasis* ptr() const { return ptr_; };
+	[[nodiscard]] PrimitiveBasis* ptr() { return ptr_; };
 
 protected:
-	PrimitiveBasis* basis_;
+	PrimitiveBasis* ptr_;
 };
 
 
-#endif //LEAFAPI_H
+#endif //BASISAPI_H

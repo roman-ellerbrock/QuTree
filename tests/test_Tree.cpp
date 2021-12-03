@@ -62,19 +62,19 @@ SUITE (Tree) {
 
 	TEST_FIXTURE(tree, assign){
 		Tree tree = tree_;
-			CHECK_EQUAL(true, tree == tree_);
+		CHECK_EQUAL(true, tree == tree_);
 	}
 
 	TEST_FIXTURE(tree, mconstruct){
 		Tree tree2(tree_);
 		Tree tree(move(tree2));
-			CHECK_EQUAL(true, tree == tree_);
+		CHECK_EQUAL(true, tree == tree_);
 	}
 
 	TEST_FIXTURE(tree, massign){
 		Tree tree2 = tree_;
 		Tree tree =move(tree2);
-			CHECK_EQUAL(true, tree == tree_);
+		CHECK_EQUAL(true, tree == tree_);
 	}
 
 	TEST_FIXTURE(tree, read) {
@@ -104,6 +104,26 @@ SUITE (Tree) {
 					"1.	0.	0.	1.\n");
 		stringstream is(file);
 		Tree tree(is);
-			CHECK_EQUAL(tree_, tree);
+		CHECK_EQUAL(tree_, tree);
 	}
+
+	/**
+		Tree tree
+		for (const Node& node : tree.nodes()) {}
+		for (const Node& node : tree.nodes.reverse()) {}
+		for (const Edge& edge : tree.edges()) {}
+		for (const Edge& edge : tree.edges().reverse()) {}
+
+		Node node;
+		for (const Edge& edge : tree.incoming(node)) {}
+		for (const Edge& edge : tree.outgoing(node)) {}
+
+		Edge e;
+		for (const Edge& edge : tree.prior(e)) {}
+
+
+	 	/// Usage examples:
+	 	Psi[node] = Tensorcd();
+	 	S[edge] = Tensorcd();
+	**/
 }

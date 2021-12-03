@@ -7,20 +7,31 @@
 #include "Edge.h"
 #include "NodeArray.h"
 
-class EdgeArray: public vector<Edge> {
+class EdgeArray {
 public:
 	EdgeArray() = default;
 	~EdgeArray() = default;
 
 	explicit EdgeArray(const NodeArray& nodeArray) {
-		clear();
+		down_.clear();
 		for (const Node& node : nodeArray) {
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
-				emplace_back(Edge(node, parent));
+				down_.emplace_back(Edge(parent, node));
+			}
+		}
+
+		up_.clear();
+		for (const Node& node : nodeArray.reverse_) {
+			if (!node.isToplayer()) {
+				const Node& parent = node.parent();
+				up_.emplace_back(Edge(node, parent));
 			}
 		}
 	}
+
+	vector<Edge> up_;
+	vector<Edge> down_;
 };
 
 

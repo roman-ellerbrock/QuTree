@@ -20,7 +20,14 @@ public:
 		for (size_t i = 0; i < size(); ++i) {
 			operator[](i).get().address_ = i;
 		}
+
+		reverse_.clear();
+		for (auto it = rbegin(); it != rend();++it) {
+			reverse_.emplace_back(*it);
+		}
 	}
+
+	vector<reference_wrapper<Node>> reverse_;
 };
 
 

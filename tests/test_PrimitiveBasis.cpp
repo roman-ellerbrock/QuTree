@@ -6,7 +6,7 @@
 #include "Tree/PrimitiveBasis/HarmonicOscillator.h"
 #include "Tree/PrimitiveBasis/LegendrePolynomials.h"
 #include "Tree/PrimitiveBasis/FFTGrid.h"
-#include "Tree/PrimitiveBasis/LeafAPI.h"
+#include "Tree/PrimitiveBasis/BasisAPI.h"
 #include "Tensor/Tensor"
 #include "Util/QMConstants.h"
 
@@ -269,39 +269,39 @@ SUITE (PrimitiveBasis) {
 	// ==================================================
 
 	TEST_FIXTURE (Prim, LeafAPI) {
-		LeafAPI api;
+		BasisAPI api;
 		api.initialize(par_);
-			CHECK_EQUAL(1., api.basis()->par_.omega());
-			CHECK_EQUAL(10, api.basis()->par_.dim_);
+			CHECK_EQUAL(1., api.ptr()->par_.omega());
+			CHECK_EQUAL(10, api.ptr()->par_.dim_);
 	}
 
 	TEST_FIXTURE (Prim, LeafAPI_copy) {
-		LeafAPI api;
+		BasisAPI api;
 		api.initialize(par_);
-		LeafAPI api2(api);
-			CHECK_EQUAL(1., api2.basis()->par_.omega());
-			CHECK_EQUAL(10, api2.basis()->par_.dim_);
+		BasisAPI api2(api);
+			CHECK_EQUAL(1., api2.ptr()->par_.omega());
+			CHECK_EQUAL(10, api2.ptr()->par_.dim_);
 	}
 
 	TEST_FIXTURE (Prim, LeafAPI_equal) {
-		LeafAPI api;
+		BasisAPI api;
 		api.initialize(par_);
-		LeafAPI api2 = api;
-			CHECK_EQUAL(1., api2.basis()->par_.omega());
-			CHECK_EQUAL(10, api2.basis()->par_.dim_);
+		BasisAPI api2 = api;
+			CHECK_EQUAL(1., api2.ptr()->par_.omega());
+			CHECK_EQUAL(10, api2.ptr()->par_.dim_);
 	}
 
 	TEST_FIXTURE (Prim, LeafAPI_par) {
 		BasisParameters par({1., 0., 0., 1.,
 							 10, 2, 3});
-		LeafAPI api;
+		BasisAPI api;
 		api.initialize(par);
-			CHECK_EQUAL(1., api.basis()->par_.omega());
-			CHECK_EQUAL(0., api.basis()->par_.r0());
-			CHECK_EQUAL(0., api.basis()->par_.wfr0());
-			CHECK_EQUAL(1., api.basis()->par_.wfomega());
-			CHECK_EQUAL(10, api.basis()->par_.dim_);
-			CHECK_EQUAL(2, api.basis()->par_.type_);
-			CHECK_EQUAL(3, api.basis()->par_.mode_);
+			CHECK_EQUAL(1., api.ptr()->par_.omega());
+			CHECK_EQUAL(0., api.ptr()->par_.r0());
+			CHECK_EQUAL(0., api.ptr()->par_.wfr0());
+			CHECK_EQUAL(1., api.ptr()->par_.wfomega());
+			CHECK_EQUAL(10, api.ptr()->par_.dim_);
+			CHECK_EQUAL(2, api.ptr()->par_.type_);
+			CHECK_EQUAL(3, api.ptr()->par_.mode_);
 	}
 }

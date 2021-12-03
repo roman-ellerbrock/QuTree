@@ -9,7 +9,7 @@ LeafArray::LeafArray(Node& root) {
 	while(node) {
 		for (Leaf& leaf : node->leaves_) {
 			leaves_.emplace_back(reference_wrapper<Leaf>(leaf));
-			size_t mode = leaf.api_.basis()->par_.mode_;
+			size_t mode = leaf.basis_.ptr()->par_.mode_;
 			address_[mode] = leaves_.size() - 1;
 		}
 		node = sweep(node);
@@ -20,7 +20,7 @@ void LeafArray::push_back(Leaf& leaf) {
 	leaves_.emplace_back(reference_wrapper<Leaf>(leaf));
 
 	// Save address_ of this leafical mode
-	size_t mode = leaf.api_.basis()->par_.mode_;
+	size_t mode = leaf.basis_.ptr()->par_.mode_;
 	if (mode >= address_.size()) {
 		address_.resize(mode + 1);
 	}

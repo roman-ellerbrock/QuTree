@@ -57,19 +57,19 @@ SUITE (Nodes) {
 
 	TEST_FIXTURE (lf, Leaf) {
 			CHECK_EQUAL(true, leaf_.parent_ == nullptr);
-			CHECK_EQUAL(true, par_ == leaf_.api_.basis()->par_);
+			CHECK_EQUAL(true, par_ == leaf_.basis_.ptr()->par_);
 	}
 
 	TEST_FIXTURE (lf, leaf_copy) {
 		Leaf l2(leaf_);
 			CHECK_EQUAL(true, l2.parent_ == nullptr);
-			CHECK_EQUAL(true, par_ == l2.api_.basis()->par_);
+			CHECK_EQUAL(true, par_ == l2.basis_.ptr()->par_);
 	}
 
 	TEST_FIXTURE (lf, leaf_equal) {
 		Leaf l2 = leaf_;
 			CHECK_EQUAL(true, l2.parent_ == nullptr);
-			CHECK_EQUAL(true, par_ == l2.api_.basis()->par_);
+			CHECK_EQUAL(true, par_ == l2.basis_.ptr()->par_);
 
 		BasisParameters par2 = par_;
 		par2.mode_ = par_.mode_ + 1;
@@ -98,7 +98,7 @@ SUITE (Nodes) {
 		node.push_back(leaf);
 			CHECK_EQUAL(1, node.nLeaves());
 			CHECK_EQUAL(&node, node.leaves_[0].parent_);
-			CHECK_EQUAL(true, node.leaves_[0].api_.basis()->par_ == par_);
+			CHECK_EQUAL(true, node.leaves_[0].basis_.ptr()->par_ == par_);
 	}
 
 	TEST (Node_push_back) {
@@ -313,7 +313,11 @@ SUITE (Nodes) {
 			CHECK_EQUAL(true, root2 != root_);
 	}
 
-	TEST (LinearizdLeaves) {
+	// ==================================================
+	// ==== LeafArray =============================
+	// ==================================================
+
+	TEST (LeafArray) {
 		string file("1	-2"
 					"	 	1	-2"
 					"	 		1	-1"
@@ -327,10 +331,13 @@ SUITE (Nodes) {
 					"	 			1	0	3");
 		stringstream is(file);
 		Node root = readNode(is);
-		LeafArray linearizedLeaves(root);
-			CHECK_EQUAL(4, linearizedLeaves.size());
+		LeafArray leafarray(root);
+			CHECK_EQUAL(4, leafarray.size());
 		for (size_t i = 0; i < 4; ++i) {
-				CHECK_EQUAL(i, linearizedLeaves[i].api_.basis()->par_.mode_);
+				CHECK_EQUAL(i, leafarray[i].basis_.ptr()->par_.mode_);
 		}
 	}
+
+
+
 }

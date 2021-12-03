@@ -16,12 +16,13 @@ set(QuTree_SOURCE_FILES
         src/Tree/PrimitiveBasis/LegendrePolynomials.cpp
         src/Tree/PrimitiveBasis/FFTGrid.cpp
         src/Tree/PrimitiveBasis/SpinGroup.cpp
-        src/Tree/PrimitiveBasis/LeafAPI.cpp
+        src/Tree/PrimitiveBasis/BasisAPI.cpp
 
         # Tree/
         src/Tree/NodePosition.cpp
         src/Tree/Node.cpp
         src/Tree/LeafArray.cpp
+        src/Tree/Edge.cpp
         src/Tree/Tree.cpp
         #src/Tree/TreeFactory.cpp
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "NodePosition.h"
-#include "PrimitiveBasis/LeafAPI.h"
+#include "PrimitiveBasis/BasisAPI.h"
 
 class Node;
 
@@ -19,7 +19,7 @@ class Leaf
 {
 public:
 	Leaf()
-		: parent_(nullptr), position_(), api_() {};
+		: parent_(nullptr), position_(), basis_() {};
 	~Leaf() = default;
 
 	Leaf(istream& is, Node* parent, const NodePosition& pos) {
@@ -33,32 +33,32 @@ public:
 	}
 
 	void readPar(istream& is) {
-		api_.basis()->par_.readPar(is);
+		basis_.ptr()->par_.readPar(is);
 	}
 
 	void initialize(const BasisParameters& par) {
-		api_.initialize(par);
+		basis_.initialize(par);
 	}
 
 	void info(ostream& os = cout) const { position_.info(os); }
 
 	void write(ostream& os) const {
 		for (size_t l = 0; l < position_.layer(); l++) { os << "\t"; }
-		api_.write(os);
+		basis_.write(os);
 	}
 
 	void writePar(ostream& os) const {
-		api_.basis()->par_.writePar(os);
+		basis_.ptr()->par_.writePar(os);
 	}
 
 	BasisParameters& par() {
-		assert(api_.basis());
-		return api_.basis()->par_;
+		assert(basis_.ptr());
+		return basis_.ptr()->par_;
 	}
 
 	[[nodiscard]] const BasisParameters& par() const {
-		assert(api_.basis());
-		return api_.basis()->par_;
+		assert(basis_.ptr());
+		return basis_.ptr()->par_;
 	}
 
 	[[nodiscard]] const Node& parent() const { return *parent_; };
@@ -75,6 +75,6 @@ public:
 
 	Node *parent_;
 	NodePosition position_;
-	LeafAPI api_;
+	BasisAPI basis_;
 };
 
