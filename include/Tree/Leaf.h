@@ -32,6 +32,11 @@ public:
 		initialize(par);
 	}
 
+	explicit Leaf(const BasisParameters& par, Node* parent = nullptr, const NodePosition& pos = NodePosition())
+	: position_(pos), parent_(parent) {
+		initialize(par);
+	}
+
 	void readPar(istream& is) {
 		basis_.ptr()->par_.readPar(is);
 	}

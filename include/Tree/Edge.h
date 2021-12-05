@@ -99,6 +99,11 @@ public:
 		return down().address_ - 1;
 	}
 
+	[[nodiscard]] TensorShape shape() const {
+		size_t dim = from().shape_[outIdx()];
+		return TensorShape({dim, dim});
+	}
+
 private:
 	const Node *from_;
 	const Node *to_;

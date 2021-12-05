@@ -4,8 +4,8 @@
 
 #ifndef MATRIXTREEFUNCTIONS_H
 #define MATRIXTREEFUNCTIONS_H
-#include "TreeClasses/TensorTree.h"
-#include "TreeClasses/MatrixTree.h"
+#include "TensorTree.h"
+#include "MatrixTree.h"
 
 namespace TreeFunctions {
 

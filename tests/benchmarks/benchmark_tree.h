@@ -5,7 +5,7 @@
 #ifndef BENCHMARK_TREE_H
 #define BENCHMARK_TREE_H
 #include <random>
-#include "TreeClasses/MatrixTreeFunctions.h"
+#include "TensorNetwork/deprecated/MatrixTreeFunctions.h"
 
 namespace benchmark {
 	pair<double, double> holematrixtree(mt19937& gen, size_t dim, size_t nleaves,

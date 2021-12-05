@@ -30,6 +30,10 @@ set(QuTree_tests
         test_Node.cpp
         test_Edge.cpp
         test_Tree.cpp
+        test_TreeFactory.cpp
+
+        # Tensor Network classes
+        test_TensorTree.cpp
 
         # all tests
         tests.cpp

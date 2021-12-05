@@ -172,6 +172,7 @@ istream& operator>>(istream& is, Tensor<T>& A);
 template<typename T>
 bool operator==(const Tensor<T>& A, const Tensor<T>& B);
 
+
 template<typename T>
 [[nodiscard]] Tensor<T> random(const TensorShape& shape, mt19937& gen = rng::gen);
 
@@ -182,11 +183,13 @@ auto randomd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
 	return random<double>(shape, gen);
 };
 
+
 template<typename T>
 [[nodiscard]] Tensor<T> arange(const TensorShape& shape);
 
 constexpr auto arangecd = arange<complex<double>>;
 constexpr auto aranged = arange<double>;
+
 
 template<typename T>
 [[nodiscard]] Tensor<T> identity(const TensorShape& shape);

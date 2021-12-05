@@ -1,5 +1,6 @@
 # Easily regenerate with find src -name '*.cpp' | sort
 set(QuTree_SOURCE_FILES
+
         # Tensor/
         src/Tensor/SVD.cpp
         src/Tensor/TensorShape.cpp
@@ -10,7 +11,7 @@ set(QuTree_SOURCE_FILES
         src/Tensor/Tensor_Instantiations.cpp
         src/Tensor/stdafx.cpp
 
-        # Primitve Basis / LeafAPI
+        # Primitve Basis
         src/Tree/PrimitiveBasis/DVR.cpp
         src/Tree/PrimitiveBasis/HarmonicOscillator.cpp
         src/Tree/PrimitiveBasis/LegendrePolynomials.cpp
@@ -18,15 +19,18 @@ set(QuTree_SOURCE_FILES
         src/Tree/PrimitiveBasis/SpinGroup.cpp
         src/Tree/PrimitiveBasis/BasisAPI.cpp
 
-        # Tree/
+        # Tree
         src/Tree/NodePosition.cpp
         src/Tree/Node.cpp
         src/Tree/LeafArray.cpp
         src/Tree/Edge.cpp
         src/Tree/Tree.cpp
-        #src/Tree/TreeFactory.cpp
+        src/Tree/TreeFactory.cpp
 
-        #
+        # TensorNetwork
+        src/TensorNetwork/TensorTree.cpp
+        src/TensorNetwork/DotProduct.cpp
+
         #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/LA_lib.f
         #    src/TreeClasses/MatrixTensorTree.cpp

@@ -4,12 +4,20 @@ LeafArray::LeafArray(Node& root) {
 	address_.clear();
 	leaves_.clear();
 	address_.resize(root.nLeaves());
+	int pre = -1;
+	for (auto& x : address_) {
+		x = pre;
+	}
 
 	Node* node = &root;
 	while(node) {
 		for (Leaf& leaf : node->leaves_) {
 			leaves_.emplace_back(reference_wrapper<Leaf>(leaf));
 			size_t mode = leaf.basis_.ptr()->par_.mode_;
+			if (address_[mode] != pre) {
+				cerr << "LeafArray Error: non-unique leaf-mode.\n";
+				exit(1);
+			}
 			address_[mode] = leaves_.size() - 1;
 		}
 		node = sweep(node);

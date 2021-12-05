@@ -35,7 +35,9 @@ class Tree {
 	 */
 public:
 	Tree() = default;
+
 	explicit Tree(istream& is) { read(is); }
+
 	explicit Tree(const string& filename) { read(filename); }
 
 	~Tree() = default;
@@ -61,6 +63,9 @@ public:
 	/// number of logical nodes
 	[[nodiscard]] size_t nNodes() const { return root_.nNodes(); }
 
+	/// number of logical nodes
+	[[nodiscard]] size_t nEdges() const { return edgeArray_.up_.size(); }
+
 	/// number of physical nodes
 	[[nodiscard]] size_t nLeaves() const { return leafArray_.size(); }
 
@@ -68,22 +73,26 @@ public:
 	[[nodiscard]] size_t nStates() const { return root().shape_.lastDimension(); }
 
 	[[nodiscard]] const LeafArray& leafArray() const { return leafArray_; }
-	[[nodiscard]] LeafArray& leafArray() { return leafArray_; }
-	[[nodiscard]] const NodeArray& nodeArray() const { return nodeArray_; }
-	[[nodiscard]] const EdgeArray& edgeArray() const { return edgeArray_; }
 
+	[[nodiscard]] LeafArray& leafArray() { return leafArray_; }
+
+	[[nodiscard]] const NodeArray& nodeArray() const { return nodeArray_; }
+
+	[[nodiscard]] const EdgeArray& edgeArray() const { return edgeArray_; }
 
 	[[nodiscard]] Node& root() { return nodeArray_.back(); }
 
 	[[nodiscard]] const Node& root() const { return nodeArray_.back(); }
-
-//	[[nodiscard]] auto bottomUp() const;
 
 	[[nodiscard]] auto topDown() const { return nodeArray_; }
 
 	[[nodiscard]] const NodeArray& nodes() const { return nodeArray_; }
 
 	[[nodiscard]] const EdgeArray& edges() const { return edgeArray_; }
+
+	[[nodiscard]] const vector<Edge>& upEdges() const { return edgeArray_.up_; }
+
+	[[nodiscard]] const vector<Edge>& downEdges() const { return edgeArray_.down_; }
 
 	/// Set the root of the tree and update the Tree
 	void setRoot(Node& root) {

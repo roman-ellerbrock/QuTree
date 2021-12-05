@@ -27,6 +27,10 @@ public:
 	Node& operator=(Node&& old) noexcept;
 	~Node() = default;
 
+	explicit Node(const Leaf& leaf, const TensorShape& shape = TensorShape()) : shape_(shape) {
+		push_back(leaf);
+	}
+
 	Node(istream& file, Node *up,
 		const NodePosition& position);
 
