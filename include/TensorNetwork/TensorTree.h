@@ -13,8 +13,13 @@ public:
 	~TensorTree() = default;
 
 	explicit TensorTree(const Tree& tree)
-		: TreeAttribute<Tensor<T>>(tree) {}
+		: TreeAttribute<Tensor<T>>(tree) {
 
+	}
+
+	void normalize();
+
+	TensorTree(const Tree& tree, function<Tensor<T>(const TensorShape&)> generator);
 };
 
 typedef TensorTree<complex<double>> TensorTreecd;
@@ -27,10 +32,11 @@ constexpr auto sizedTensorTreecd = sizedTensorTree<complex<double>>;
 constexpr auto sizedTensorTreed = sizedTensorTree<double>;
 
 template <typename T>
-TensorTree<T> occupiedTensorTree(const Tree& tree);
+TensorTree<T> randomTensorTree(const Tree& tree);
 
-constexpr auto occupiedTensorTreecd = occupiedTensorTree<complex<double>>;
-constexpr auto occupiedTensorTreed  = occupiedTensorTree<double>;
+constexpr auto randomTensorTreecd = randomTensorTree<complex<double>>;
+constexpr auto randomTensorTreed  = randomTensorTree<double>;
+
 
 
 #endif //TENSORTREE_H

@@ -24,27 +24,17 @@ SUITE(TensorTree) {
 	}
 
 	TEST_FIXTURE(Trees, sized) {
-		TensorTreed Psi = sizedTensorTreed(tree_);
-		TensorShape s0({2, 2, 1});
-		TensorShape s1({2, 2, 2});
-		TensorShape s2({3, 2});
-		vector<TensorShape> shape({s0, s1, s2, s2, s1, s2, s2});
-		size_t i = 0;
+		TensorTreecd Psi(tree_, deltacd);
 		for (const Node& node : tree_) {
-				CHECK_EQUAL(shape[i++], Psi[node].shape_);
+				CHECK_EQUAL(node.shape_, Psi[node].shape_);
 		}
 
-		TensorShape eshape({2, 2});
-		for (const Edge& edge : tree_.downEdges()) {
-				CHECK_EQUAL(eshape, Psi[edge].shape_);
-		}
-
-		for (const Edge& edge : tree_.upEdges()) {
-				CHECK_EQUAL(eshape, Psi[edge].shape_);
+		for (const Edge& edge : tree_.edges()) {
+//				CHECK_EQUAL(edge.from().shape_, Psi[edge].shape_);
 		}
 	}
 
-	TEST_FIXTURE(Trees, a) {
+	TEST_FIXTURE(Trees, symmetricTTN) {
 
 	}
 

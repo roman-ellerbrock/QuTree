@@ -32,6 +32,9 @@ void gramSchmidt(Tensor<T>& A, size_t k);
 
 /// ===================== SVD ====================
 template<typename T>
+Tensor<T> toTensor(const SVD<T>& x, size_t k);
+
+template<typename T>
 Tensor<T> toTensor(const SVD<T>& x);
 
 template<typename T>
@@ -41,7 +44,16 @@ template<typename T>
 SVD<T> svd(Tensor<T> A);
 
 template<typename T>
-SVD<T> svd(Tensor<T> A, size_t k);
+SVD<T> svd(const Tensor<T>& A, size_t k);
+
+template<typename T>
+void regularize(SVD<T>& x, size_t k, double eps, mt19937& gen = rng::gen);
+
+template<typename T>
+void normalize(SVD<T>& x, size_t k, double eps, mt19937& gen = rng::gen);
+
+template<typename T>
+Tensor<T> normalize(const Tensor<T>& A, size_t k, double eps, mt19937& gen = rng::gen);
 
 /// ===================== Diagonalization ====================
 template<typename T>

@@ -13,10 +13,10 @@ public:
 	TreeAttribute() = default;
 	~TreeAttribute() = default;
 
-	explicit TreeAttribute(const Tree& tree) {
-		nodes_.resize(tree.nNodes());
-		upEdges_.resize(tree.nEdges());
-		downEdges_.resize(tree.nEdges());
+	explicit TreeAttribute(const Tree& tree)
+		: nodes_(tree.nNodes()),
+		  upEdges_(tree.nEdges()),
+		  downEdges_(tree.nEdges()) {
 	}
 
 	const C& operator[](const Node& node) const {

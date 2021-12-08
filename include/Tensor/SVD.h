@@ -12,7 +12,11 @@ public:
 	SVD() = default;
 	~SVD() = default;
 
-	explicit SVD(const TensorShape& shape);
+	explicit SVD(const TensorShape& shape)
+		: SVD(shape, shape.lastIdx()) {
+	}
+
+	SVD(const TensorShape& shape, size_t k);
 
 	explicit SVD(const tuple<Tensor<T>, Tensor<T>, Tensord>& tp) {
 		U() = get<0>(tp);
@@ -21,15 +25,20 @@ public:
 	}
 
 	[[nodiscard]] const Tensor<T>& U() const { return get<0>(*this); }
+
 	[[nodiscard]] const Tensor<T>& VT() const { return get<1>(*this); }
+
 	[[nodiscard]] const Tensor<double>& sigma() const { return get<2>(*this); }
 
 	Tensor<T>& U() { return get<0>(*this); }
+
 	Tensor<T>& VT() { return get<1>(*this); }
+
 	Tensor<double>& sigma() { return get<2>(*this); }
 };
 
 typedef SVD<complex<double>> SVDcd;
+
 typedef SVD<double> SVDd;
 
 template<typename T>
@@ -43,7 +52,6 @@ public:
 		ev() = get<1>(tp);
 	}
 
-
 	SpectralDecomposition(const TensorShape& shape) {
 		assert(shape.order() == 2);
 		assert(shape[0] == shape[1]);
@@ -53,13 +61,16 @@ public:
 	}
 
 	Tensor<T>& U() { return get<0>(*this); }
+
 	Tensor<double>& ev() { return get<1>(*this); }
 
 	[[nodiscard]] const Tensor<T>& U() const { return get<0>(*this); }
+
 	[[nodiscard]] const Tensor<double>& ev() const { return get<1>(*this); }
 };
 
 typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
+
 typedef SpectralDecomposition<double> SpectralDecompositiond;
 
 

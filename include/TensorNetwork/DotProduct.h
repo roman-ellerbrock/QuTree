@@ -8,7 +8,7 @@
 #include "TensorTree.h"
 
 template <typename T>
-Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T> Ket, const Edge& edge);
+Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& Ket, const Edge& edge);
 
 template <typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge);

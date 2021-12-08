@@ -18,3 +18,6 @@ template Tensor<d> arange(const TensorShape& shape);
 template Tensor<cd> identity(const TensorShape& shape);
 template Tensor<d> identity(const TensorShape& shape);
 
+template Tensor<cd> delta(const TensorShape& shape);
+template Tensor<d> delta(const TensorShape& shape);
+

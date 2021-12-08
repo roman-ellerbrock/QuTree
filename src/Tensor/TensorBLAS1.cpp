@@ -314,3 +314,18 @@ size_t ncols(const TensorShape& shape, blas::Op op) {
 	return n;
 }
 
+template<typename T, typename U>
+void vectorTensor(Tensor<T>& B, const Tensor<U>& vec, size_t k) {
+	for (size_t aft = 0; aft < B.shape_.after(k); ++aft) {
+		for (size_t act = 0; act < B.shape_[k]; ++act) {
+			for (size_t bef = 0; bef < B.shape_.before(k); ++bef) {
+				B(bef, act, aft, k) *= vec(act);
+			}
+		}
+	}
+}
+
+template void vectorTensor(Tensor<cd>& B, const Tensor<cd>& a, size_t k);
+template void vectorTensor(Tensor<cd>& B, const Tensor<d>& a, size_t k);
+template void vectorTensor(Tensor<d>& B, const Tensor<d>& a, size_t k);
+

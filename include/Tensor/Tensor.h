@@ -123,13 +123,13 @@ public:
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
-	Tensor<T> adjustDimensions(const TensorShape& newTDim) const;
+	[[nodiscard]] Tensor<T> adjustDimensions(const TensorShape& newTDim) const;
 
 	// Adjust the number of the active_ mode
-	Tensor<T> adjustActiveDim(size_t active, size_t mode) const;
+	[[nodiscard]] Tensor<T> adjustActiveDim(size_t active, size_t mode) const;
 
 	// Adjust the number of Tensors
-	Tensor<T> adjustStateDim(size_t n) const;
+	[[nodiscard]] Tensor<T> adjustStateDim(size_t n) const;
 
 	// Reshape the tensor but keep the total size
 	void reshape(const TensorShape& newShape);
@@ -196,4 +196,10 @@ template<typename T>
 
 constexpr auto identitycd = identity<complex<double>>;
 constexpr auto identityd = identity<double>;
+
+template<typename T>
+[[nodiscard]] Tensor<T> delta(const TensorShape& shape);
+
+constexpr auto deltacd = delta<complex<double>>;
+constexpr auto deltad = delta<double>;
 

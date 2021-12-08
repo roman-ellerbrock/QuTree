@@ -118,7 +118,7 @@ SUITE (TensorLapack) {
 			CHECK_EQUAL(5, x.sigma().shape_[0]);
 	}
 
-	TEST_FIXTURE (TensorFactory, svd_weaktest1) {
+	TEST_FIXTURE (TensorFactory, svd_U_VT_unitary) {
 		Tensorcd mat = arangecd({10, 5});
 		SVDcd x(mat.shape_);
 		svd(x, mat);
@@ -132,13 +132,59 @@ SUITE (TensorLapack) {
 			CHECK_CLOSE(0., isCloseToIdentity(y), eps);
 	}
 
-	TEST_FIXTURE (TensorFactory, svd_strong) {
+	TEST_FIXTURE (TensorFactory, svd_toTensor) {
 		Tensorcd mat = arangecd({10, 5});
 		SVDcd x(mat.shape_);
 		svd(x, mat);
 
 		auto mat2 = toTensor(x);
 			CHECK_CLOSE(0., residual(mat, mat2), eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, svdTensor) {
+		Tensorcd A = arangecd({3, 4, 5});
+		for (size_t k = 0; k < A.shape_.order(); ++k) {
+			SVDcd x = svd(A, k);
+			Tensorcd A2 = toTensor(x, k);
+				CHECK_CLOSE(0., residual(A, A2), eps);
+		}
+	}
+
+	TEST_FIXTURE (TensorFactory, regularize) {
+		Tensorcd A = arangecd({3, 3, 3});
+		for (size_t k = 0; k < A.shape_.order(); ++k) {
+			SVDcd x = svd(A, k);
+			x.sigma()(1) = 0.;
+			x.sigma()(2) = 0.;
+			Tensorcd Aref = toTensor(x, k);
+
+			SVDcd xreg = x;
+			regularize(xreg, k, eps, rng::gen);
+			Tensorcd Areg = toTensor(xreg, k);
+
+				CHECK_EQUAL(true, residual(x.U(), xreg.U()) > eps);
+				CHECK_CLOSE(0., residual(Aref, Areg), eps);
+		}
+	}
+
+	TEST_FIXTURE (TensorFactory, normalize) {
+		Tensorcd A = arangecd({3, 3, 3});
+		for (size_t k = 0; k < A.shape_.order(); ++k) {
+			SVDcd xA = svd(A, k);
+			SVDcd xU = xA;
+			normalize(xU, k, eps, rng::gen);
+
+			for (size_t i = 0; i < A.shape_[k]; ++i) {
+				CHECK_CLOSE(1., xU.sigma()(i), eps);
+				if (xA.sigma()(i) > eps) {
+					xU.sigma()(i) = xA.sigma()(i);
+				} else {
+					xU.sigma()(i) = xA.sigma()(i) = 0.;
+				}
+			}
+			Tensorcd AU = toTensor(xU, k);
+				CHECK_CLOSE(0, residual(A, AU), eps);
+		}
 	}
 
 	TEST_FIXTURE (TensorFactory, toTensor_Eigen) {
@@ -154,9 +200,9 @@ SUITE (TensorLapack) {
 
 	TEST_FIXTURE (TensorFactory, phaseconvention) {
 		Tensorcd U = arangecd({3, 3});
-		U(0,0) = 1.;
+		U(0, 0) = 1.;
 		Tensorcd URef = U;
-		for (size_t i =0; i < 3; ++i) {
+		for (size_t i = 0; i < 3; ++i) {
 			U(i, 0) *= -1.;
 			U(i, 2) *= -1.;
 		}

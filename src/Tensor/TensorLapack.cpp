@@ -119,7 +119,7 @@ void gramSchmidt(Tensor<T>& A) {
 			cout << "Present error: " << accumoverlap << endl;
 			cout << "Error acceptance: " << errorconver << endl;
 
-			assert(0);
+			exit(1);
 		}
 	}
 }
@@ -139,19 +139,15 @@ template void gramSchmidt(Tensor<d>& A, size_t k);
 
 /// SVD
 template<typename T>
+Tensor<T> toTensor(const SVD<T>& x, size_t k) {
+	Tensor<T> A = x.U();
+	vectorTensor(A, x.sigma(), k);
+	return matrixTensor(adjoint(x.VT()), A, k);
+}
+
+template<typename T>
 Tensor<T> toTensor(const SVD<T>& x) {
-	const auto& U = x.U();
-	auto VT = x.VT();
-	const auto& sigma = x.sigma();
-	assert(U.shape_.order() == 2);
-	assert(U.shape_[1] == sigma.shape_[0]);
-	assert(VT.shape_[1] == sigma.shape_[0]);
-	for (size_t i = 0; i < VT.shape_[0]; ++i) {
-		for (size_t j = 0; j < VT.shape_[1]; ++j) {
-			VT(i, j) *= sigma(i);
-		}
-	}
-	return gemm(U, VT);
+	return toTensor(x, x.U().shape_.lastIdx());
 }
 
 template Tensor<cd> toTensor(const SVD<cd>& x);
@@ -192,7 +188,6 @@ template SVD<d> svd(Tensor<d> A);
 template<typename T>
 SVD<T> svd(const Tensor<T>& A, size_t k) {
 	auto AT = transpose(A, k);
-	transpose(AT, A, k);
 	SVD<T> x = svd(AT);
 	get<0>(x) = transpose(get<0>(x), k, true);
 	return x;
@@ -200,6 +195,48 @@ SVD<T> svd(const Tensor<T>& A, size_t k) {
 
 template SVD<cd> svd(const Tensor<cd>& A, size_t k);
 template SVD<d> svd(const Tensor<d>& A, size_t k);
+
+template<typename T>
+void regularize(SVD<T>& x, size_t k, double eps, mt19937& gen) {
+	Tensor<T>& U = x.U();
+	Tensord& sigma = x.sigma();
+
+	for(size_t aft = 0; aft < U.shape_.after(k); ++aft) {
+		for (size_t act = 0; act < U.shape_[k]; ++act) {
+			if (sigma(act) > eps) { continue; }
+			for (size_t bef = 0; bef < U.shape_.before(k); ++bef) {
+				U(bef, act, aft, k) = rng::normal(gen);
+			}
+		}
+	}
+	gramSchmidt(U, k);
+}
+
+template void regularize(SVD<cd>& x, size_t k, double eps, mt19937& gen);
+template void regularize(SVD<d>& x, size_t k, double eps, mt19937& gen);
+
+template<typename T>
+void normalize(SVD<T>& x, size_t k, double eps, mt19937& gen) {
+	regularize(x, k, eps, gen);
+
+	Tensord& sigma = x.sigma();
+	for (size_t i = 0; i < sigma.shape_[0]; ++i) {
+		sigma(i) = 1.;
+	}
+}
+
+template void normalize(SVD<cd>& x, size_t k, double eps, mt19937& gen);
+template void normalize(SVD<d>& x, size_t k, double eps, mt19937& gen);
+
+template<typename T>
+Tensor<T> normalize(const Tensor<T>& A, size_t k, double eps, mt19937& gen) {
+	SVD<T> x = svd(A, k);
+	normalize(x, k, eps, gen);
+	return toTensor(x, k);
+}
+
+template Tensor<cd> normalize(const Tensor<cd>& A, size_t k, double eps, mt19937& gen);
+template Tensor<d> normalize(const Tensor<d>& A, size_t k, double eps, mt19937& gen);
 
 /// Eigenvector/values
 template<typename T>
@@ -255,7 +292,7 @@ void heev(SpectralDecomposition<T>& x) {
 template void heev(SpectralDecompositioncd& x);
 template void heev(SpectralDecompositiond& x);
 
-template <typename T>
+template<typename T>
 SpectralDecomposition<T> heev(const Tensor<T>& A) {
 	SpectralDecomposition<T> x(A.shape_);
 	x.U() = A;

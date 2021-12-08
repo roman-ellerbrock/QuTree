@@ -117,4 +117,8 @@ double isCloseToIdentity(const Tensor<T>& A);
 size_t nrows(const TensorShape& shape, blas::Op op = blas::Op::NoTrans);
 size_t ncols(const TensorShape& shape, blas::Op op = blas::Op::NoTrans);
 
+// \brief B(I(k), i_k) *= a(i_k)
+template<typename T, typename U>
+void vectorTensor(Tensor<T>& B, const Tensor<U>& a, size_t k);
+
 #endif //TENSORBLAS1_H

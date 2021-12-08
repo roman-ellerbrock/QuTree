@@ -7,7 +7,7 @@
 #include "Edge.h"
 #include "NodeArray.h"
 
-class EdgeArray {
+class EdgeArray : public vector<Edge> {
 public:
 	EdgeArray() = default;
 	~EdgeArray() = default;
@@ -27,6 +27,14 @@ public:
 				const Node& parent = node.parent();
 				up_.emplace_back(Edge(node, parent));
 			}
+		}
+
+		clear();
+		for (const Edge& edge : up_) {
+			emplace_back(edge);
+		}
+		for (const Edge& edge : down_) {
+			emplace_back(edge);
 		}
 	}
 

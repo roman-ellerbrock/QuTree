@@ -363,4 +363,17 @@ SUITE (TensorBLAS1) {
 			CHECK_EQUAL(10, nrows(shape, blas::Op::ConjTrans));
 			CHECK_EQUAL(5, ncols(shape, blas::Op::ConjTrans));
 	}
+
+	TEST(vectorTensor) {
+		Tensord B({3, 3, 3});
+		for (size_t i = 0; i < 3; ++i) {
+			B({i, i, i}) = i;
+		}
+		Tensord twoB = 2. * B;
+		Tensord vec({3});
+		vec(0) = vec(1) = vec(2) = 2.;
+		vectorTensor(B, vec, 1);
+			CHECK_CLOSE(0, residual(B, twoB), eps);
+	}
+
 }

@@ -4,6 +4,26 @@
 
 #include "TensorNetwork/TensorTree.h"
 
+template<typename T>
+TensorTree<T>::TensorTree(const Tree& tree, function<Tensor<T>(const TensorShape&)> gen)
+	:TensorTree(tree)
+{
+	for (const Node& node : tree.nodes()) {
+		(*this)[node] = gen(node.shape_);
+	}
+
+}
+
+template<typename T>
+void TensorTree<T>::normalize() {
+
+	for (const Edge& edge: this->edges()) {
+//		(*this)[edge] = gen(edge.from().shape_);
+	}
+
+}
+
+
 template class TensorTree<double>;
 template class TensorTree<complex<double>>;
 
@@ -14,37 +34,33 @@ TensorTree<T> sizedTensorTree(const Tree& tree) {
 		psi[node] = Tensor<T>(node.shape_);
 	}
 
-	for (const Edge& edge: tree.upEdges()) {
-		psi[edge] = Tensor<T>(edge.shape());
+	for (const Edge& edge: tree.edges()) {
+		psi[edge] = Tensor<T>(edge.from().shape_);
 	}
 
-	for (const Edge& edge: tree.downEdges()) {
-		psi[edge] = Tensor<T>(edge.shape());
-	}
 	return psi;
 }
+
+
 
 template TensorTree<complex<double>> sizedTensorTree<complex<double>>(const Tree& tree);
 template TensorTree<double> sizedTensorTree<double>(const Tree& tree);
 
 
 template <typename T>
-TensorTree<T> occupiedTensorTree(const Tree& tree) {
+TensorTree<T> randomTensorTree(const Tree& tree) {
 	TensorTree<T> psi(tree);
 	for (const Node& node : tree.nodes()) {
 		psi[node] = random<T>(node.shape_);
 	}
 
 	for (const Edge& edge: tree.upEdges()) {
-		psi[edge] = random<T>(edge.shape());
+		psi[edge] = random<T>(edge.from().shape_);
 	}
 
-	for (const Edge& edge: tree.downEdges()) {
-		psi[edge] = random<T>(edge.shape());
-	}
 	return psi;
 }
 
-template TensorTree<complex<double>> occupiedTensorTree<complex<double>>(const Tree& tree);
-template TensorTree<double> occupiedTensorTree<double>(const Tree& tree);
+template TensorTree<complex<double>> randomTensorTree<complex<double>>(const Tree& tree);
+template TensorTree<double> randomTensorTree<double>(const Tree& tree);
 

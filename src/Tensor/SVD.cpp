@@ -5,16 +5,17 @@
 #include "Tensor/SVD.h"
 
 template <typename T>
-SVD<T>::SVD(const TensorShape& shape) {
-	size_t a = shape.lastBefore();
-	size_t b = shape.lastDimension();
-	assert(a >= b);
-	assert(shape.order() == 2);
-	size_t min_val = (a < b) ? a : b;
+SVD<T>::SVD(const TensorShape& shape, size_t k) {
+	size_t a = shape[k];
+	size_t b = shape.before(k) * shape.after(k);
+	assert(a <= b);
+//	size_t min_val = (a < b) ? a : b;
 
-	TensorShape left({a, min_val});
-	TensorShape right({min_val, b});
-	TensorShape sv({min_val});
+	const TensorShape& left(shape);
+	TensorShape right({a, a});
+	TensorShape sv({a});
+//	TensorShape right({min_val, b});
+//	TensorShape sv({min_val});
 
 	*this = SVD<T>({Tensor<T>(left), Tensor<T>(right), Tensord(sv)});
 }

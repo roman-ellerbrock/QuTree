@@ -415,3 +415,10 @@ template<typename T>
 	return A;
 }
 
+template<typename T>
+[[nodiscard]] Tensor<T> delta(const TensorShape& shape) {
+	Tensor<T> A(shape);
+	A(0) = 1.;
+	return A;
+}
+
