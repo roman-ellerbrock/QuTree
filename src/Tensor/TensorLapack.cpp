@@ -145,6 +145,9 @@ Tensor<T> toTensor(const SVD<T>& x, size_t k) {
 	return matrixTensor(adjoint(x.VT()), A, k);
 }
 
+template Tensor<cd> toTensor(const SVD<cd>& x, size_t k);
+template Tensor<d> toTensor(const SVD<d>& x, size_t k);
+
 template<typename T>
 Tensor<T> toTensor(const SVD<T>& x) {
 	return toTensor(x, x.U().shape_.lastIdx());

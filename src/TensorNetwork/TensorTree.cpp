@@ -3,64 +3,47 @@
 //
 
 #include "TensorNetwork/TensorTree.h"
+#include "Tensor/TensorLapack.h"
 
 template<typename T>
 TensorTree<T>::TensorTree(const Tree& tree, function<Tensor<T>(const TensorShape&)> gen)
-	:TensorTree(tree)
-{
+	:TensorTree(tree) {
 	for (const Node& node : tree.nodes()) {
 		(*this)[node] = gen(node.shape_);
 	}
-
+	normalize();
 }
 
 template<typename T>
-void TensorTree<T>::normalize() {
+void TensorTree<T>::normalize(double eps) {
 
 	for (const Edge& edge: this->edges()) {
-//		(*this)[edge] = gen(edge.from().shape_);
+		const Tensor<T>& phi = (*this)[edge.from()];
+		size_t k = edge.outIdx();
+		(*this)[edge] = ::normalize(phi, k, eps);
 	}
-
 }
 
-
-template class TensorTree<double>;
-template class TensorTree<complex<double>>;
-
-template <typename T>
-TensorTree<T> sizedTensorTree(const Tree& tree) {
-	TensorTree<T> psi(tree);
-	for (const Node& node : tree.nodes()) {
-		psi[node] = Tensor<T>(node.shape_);
+template<typename T>
+void TensorTree<T>::print() const {
+	cout << "Nodes:\n";
+	for (const Node& node : Tree::nodes()) {
+		node.info();
+		(*this)[node].print();
 	}
-
-	for (const Edge& edge: tree.edges()) {
-		psi[edge] = Tensor<T>(edge.from().shape_);
+	cout << "up-Edges:\n";
+	for (const Edge& edge : Tree::upEdges()) {
+		(*this)[edge].print();
 	}
-
-	return psi;
+	cout << "down-Edges:\n";
+	for (const Edge& edge : Tree::downEdges()) {
+		(*this)[edge].print();
+	}
 }
 
+template
+class TensorTree<double>;
 
-
-template TensorTree<complex<double>> sizedTensorTree<complex<double>>(const Tree& tree);
-template TensorTree<double> sizedTensorTree<double>(const Tree& tree);
-
-
-template <typename T>
-TensorTree<T> randomTensorTree(const Tree& tree) {
-	TensorTree<T> psi(tree);
-	for (const Node& node : tree.nodes()) {
-		psi[node] = random<T>(node.shape_);
-	}
-
-	for (const Edge& edge: tree.upEdges()) {
-		psi[edge] = random<T>(edge.from().shape_);
-	}
-
-	return psi;
-}
-
-template TensorTree<complex<double>> randomTensorTree<complex<double>>(const Tree& tree);
-template TensorTree<double> randomTensorTree<double>(const Tree& tree);
+template
+class TensorTree<complex<double>>;
 
