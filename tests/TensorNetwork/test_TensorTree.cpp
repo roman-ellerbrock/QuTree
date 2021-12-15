@@ -1,10 +1,10 @@
 //
 // Created by Roman Ellerbrock on 12/3/21.
 //
-#include "TensorNetwork/TensorTree.h"
 #include "UnitTest++/UnitTest++.h"
-#include "Tree/TreeFactory.h"
 #include "TensorNetwork/DotProduct.h"
+#include "TensorNetwork/TensorTree.h"
+#include "Tree/TreeFactory.h"
 
 SUITE (TensorTree) {
 

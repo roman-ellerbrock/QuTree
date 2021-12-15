@@ -20,20 +20,21 @@ include_directories(${UTPP_INCLUDE_DIRS})
 
 set(QuTree_tests
         # Tensor tests
-        test_Tensor.cpp
-        test_TensorBLAS1.cpp
-        test_TensorBLAS2.cpp
-        test_TensorLapack.cpp
+        Tensor/test_Tensor.cpp
+        Tensor/test_TensorBLAS1.cpp
+        Tensor/test_TensorBLAS2.cpp
+        Tensor/test_TensorLapack.cpp
 
         # Tree tests
-        test_PrimitiveBasis.cpp
-        test_Node.cpp
-        test_Edge.cpp
-        test_Tree.cpp
-        test_TreeFactory.cpp
+        Tree/test_PrimitiveBasis.cpp
+        Tree/test_Node.cpp
+        Tree/test_Edge.cpp
+        Tree/test_Tree.cpp
+        Tree/test_TreeFactory.cpp
 
         # Tensor Network classes
-        test_TensorTree.cpp
+        TensorNetwork/test_TensorTree.cpp
+        TensorNetwork/test_dotProduct.cpp
 
         # all tests
         tests.cpp
@@ -64,15 +65,16 @@ add_custom_command(TARGET TestQuTree
     COMMENT "Running unit tests")
 
 
-set(QuTree_benchmarks
-        benchmarks/benchmark_tensor.cpp
-        benchmarks/benchmark_tensor.h
-        benchmarks/benchmark_tree.cpp benchmarks/benchmark_tree.h
-        benchmarks/benchmark_helper.cpp benchmarks/benchmark_helper.h
-        benchmarks/optimize_matrixtensor.cpp benchmarks/optimize_matrixtensor.h
-        )
-
-add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QuTree_benchmarks})
-target_link_libraries(benchmarks QuTree /usr/local/opt/openblas/lib/libblas.dylib)
-target_compile_features(benchmarks PRIVATE cxx_std_14)
-
+#set(QuTree_benchmarks
+#        benchmarks/benchmark_tensor.cpp
+#        benchmarks/benchmark_tensor.h
+#        benchmarks/benchmark_tree.cpp benchmarks/benchmark_tree.h
+#        benchmarks/benchmark_helper.cpp benchmarks/benchmark_helper.h
+#        benchmarks/optimize_matrixtensor.cpp benchmarks/optimize_matrixtensor.h
+#        )
+#
+#add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QuTree_benchmarks})
+#target_link_libraries(benchmarks QuTree /usr/local/opt/openblas/lib/libblas.dylib)
+#target_compile_features(benchmarks PRIVATE cxx_std_14)
+#
+#

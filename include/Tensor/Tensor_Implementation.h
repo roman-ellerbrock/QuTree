@@ -70,9 +70,9 @@ Tensor<T>::Tensor(const Tensor& old, T factor)
 // Move constructor
 template<typename T>
 Tensor<T>::Tensor(Tensor&& old) noexcept
-	:shape_(old.shape_), coeffs_(old.coeffs_), ownership_(old.ownership_) {
-	old.coeffs_ = nullptr;
-	old.ownership_ = false;
+	: shape_(move(old.shape_)),
+	  coeffs_(exchange(old.coeffs_, nullptr)),
+	  ownership_(exchange(old.ownership_, false)) {
 }
 
 // Copy Assignment Operator
@@ -93,11 +93,11 @@ Tensor<T>& Tensor<T>::operator=(const Tensor& old) {
 template<typename T>
 Tensor<T>& Tensor<T>::operator=(Tensor&& old) noexcept {
 	delete[] coeffs_;
-	shape_ = old.shape_;
-	coeffs_ = old.coeffs_;
-	ownership_ = old.ownership_;
-	old.coeffs_ = nullptr;
-	old.ownership_ = false;
+	coeffs_ = exchange(old.coeffs_, nullptr);
+
+	ownership_ = exchange(old.ownership_, false);
+	shape_ = move(old.shape_);
+
 	return *this;
 }
 
@@ -182,6 +182,10 @@ const T& Tensor<T>::operator()(const vector<size_t>& dims) const {
 //////////////////////////////////////////////////////////
 template<typename T>
 void Tensor<T>::print(ostream& os) const {
+	if (shape_.empty()) {
+		os << "[ ]" << endl;
+		return;
+	}
 	for (size_t n = 0; n < shape_.lastDimension(); n++) {
 		for (size_t i = 0; i < shape_.lastBefore(); i++)
 			os << (*this)(i, n) << " ";

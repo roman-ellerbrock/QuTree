@@ -14,6 +14,6 @@ template <typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge);
 
 template <typename T>
-void dotProduct(TensorTree<T>& S, const TensorTree<T>& Bra, const TensorTree<T>& Ket);
+void dotProduct(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket);
 
 #endif //DOTPRODUCT_H

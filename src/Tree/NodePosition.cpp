@@ -1,6 +1,6 @@
 #include "Tree/NodePosition.h"
 
-void NodePosition::info(ostream& os, bool print_layer) const {
+void NodePosition::info(ostream& os, bool print_layer, const string& term) const {
 	if (print_layer) {
 	os << "{ " << layer() << " ; ";
 	} else {
@@ -15,7 +15,7 @@ void NodePosition::info(ostream& os, bool print_layer) const {
 		if (i++ > 0) { os << ", "; }
 		os << x;
 	}
-	os << " }" << endl;
+	os << " }" << term;
 }
 
 size_t NodePosition::childIdx() const {

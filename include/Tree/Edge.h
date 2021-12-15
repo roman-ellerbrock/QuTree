@@ -104,6 +104,12 @@ public:
 		return TensorShape({dim, dim});
 	}
 
+	void info(ostream& os = cout) const {
+		from_->position_.info(os, false, string(" "));
+		os << "--> ";
+		to_->position_.info(os);
+	}
+
 private:
 	const Node *from_;
 	const Node *to_;

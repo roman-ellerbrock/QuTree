@@ -14,7 +14,8 @@ public:
 	~TreeAttribute() = default;
 
 	explicit TreeAttribute(const Tree& tree)
-		: Tree(tree), nodes_(tree.nNodes()),
+		: Tree(tree),
+		  nodes_(tree.nNodes()),
 		  upEdges_(tree.nEdges()),
 		  downEdges_(tree.nEdges()) {
 	}

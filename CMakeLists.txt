@@ -181,4 +181,6 @@ endif ()
 #####################################################################
 # Excluded from default builds
 add_subdirectory(tests EXCLUDE_FROM_ALL)
+add_subdirectory(benchmark EXCLUDE_FROM_ALL)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
+
