@@ -2,7 +2,7 @@
 #include "LeafOperator.h"
 
 template<typename T>
-using LeafFun = function<void(const LeafInterface&, Tensor<T>&, const Tensor<T>&)>;
+using LeafFun = function<void(const BasisAPI&, Tensor<T>&, const Tensor<T>&)>;
 
 template<typename T>
 using LeafFunPair = pair<LeafFun<T>, LeafFun<T>>;
@@ -22,13 +22,13 @@ class LeafFunction
 public:
 	LeafFunction() = default;
 
-	explicit LeafFunction(const LeafFun<T> h)
+	LeafFunction(const LeafFun<T> h)
 		: h_(move(h)) {}
 
 	~LeafFunction() = default;
 
-	void apply(const LeafInterface& grid, Tensor<T>& hAcoeff,
-		const Tensor<T>& Acoeff) const override;
+	void apply(const BasisAPI& basis, Tensor<T>& hA,
+		const Tensor<T>& A) const override;
 
 protected:
 	LeafFun<T> h_;

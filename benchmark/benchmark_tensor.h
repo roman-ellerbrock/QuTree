@@ -5,4 +5,8 @@
 #ifndef BENCHMARK_TENSOR_H
 #define BENCHMARK_TENSOR_H
 
+namespace benchmarks {
+	void runTensor();
+}
+
 #endif //BENCHMARK_TENSOR_H

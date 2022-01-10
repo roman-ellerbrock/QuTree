@@ -24,11 +24,12 @@ Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& ed
 template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket, const Edge& edge);
 template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket, const Edge& edge);
 
-
 template <typename T>
 void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const Edge& edge) {
+	Tensor<T> sKet(Ket[edge].shape_);
 	for (const Edge& preEdge : preEdges(edge)) {
-		Ket[edge] = matrixTensor(S[preEdge], Ket[edge], preEdge);
+		sKet = matrixTensor(S[preEdge], Ket[edge], preEdge);
+		std::swap(sKet, Ket[edge]);
 	}
 }
 
@@ -54,22 +55,37 @@ TensorTree<T> dotProduct(const TensorTree<T>& Bra, TensorTree<T> Ket) {
 	return S;
 }
 
-
 template <typename T>
-void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const Node& node) {
+Tensor<T> apply(Tensor<T> Ket, const TensorTree<T>& S, const Node& node) {
+	Tensor<T> tmp(Ket.shape_);
 	for (const Edge& edge : incomingEdges(node)) {
-		Ket[node] = matrixTensor(S[edge], Ket[node], edge);
-	}
-}
-
-template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& S, const Node& );
-template void apply(TensorTree<d>& Ket, const TensorTree<d>& S, const Node&);
-
-
-template <typename T>
-TensorTree<T> product(const TensorTree<T>& S, TensorTree<T> Ket) {
-	for (const Node& node : Ket.nodes()) {
-		apply(Ket, S, node);
+		tmp = matrixTensor(S[edge], Ket, edge);
+		swap(tmp, Ket);
 	}
 	return Ket;
 }
+
+template Tensor<cd> apply(Tensor<cd> Ket, const TensorTree<cd>& S, const Node& );
+template Tensor<d> apply(Tensor<d> Ket, const TensorTree<d>& S, const Node&);
+
+template <typename T>
+TensorTree<T> product(const TensorTree<T>& S, TensorTree<T> Ket) {
+	TensorTree<T> Psi;
+	for (const Node& node : Ket.nodes()) {
+		Psi[node] = apply(Ket[node], S, node);
+	}
+	return Ket;
+}
+
+template <typename T>
+TensorTree<T> fullContraction(const TensorTree<T>& Bra, const TensorTree<T>& S, TensorTree<T> Ket) {
+	TensorTree<T> tr(S);
+	for (const Node& node : S.nodes()) {
+		Ket[node] = apply(Ket[node], S, node);
+		tr[node] = contraction(Bra[node], Ket[node]);
+	}
+	return tr;
+}
+
+template TensorTree<cd> fullContraction(const TensorTree<cd>& Bra, const TensorTree<cd>& S, TensorTree<cd> Ket);
+template TensorTree<d> fullContraction(const TensorTree<d>& Bra, const TensorTree<d>& S, TensorTree<d> Ket);

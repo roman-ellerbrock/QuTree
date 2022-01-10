@@ -3,7 +3,6 @@
 //
 
 #include "Tensor/TensorBLAS2.h"
-#include <errno.h>
 
 typedef complex<double> cd;
 
@@ -119,9 +118,10 @@ template void matrixTensor(Tensor<cd>& C, const Tensor<cd>& h, const Tensor<cd>&
 template<typename T>
 Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& B,
 	size_t k, T alpha, T beta, blas::Op op_h) {
-	TensorShape shape = B.shape_;
-	shape = replaceDimension(shape, k, h.shape_[0]);
-	Tensor<T> C(shape);
+//	TensorShape shape = B.shape_;
+//	shape = replaceDimension(shape, k, h.shape_[0]);
+//	Tensor<T> C(shape);
+	Tensor<T> C(B.shape_);
 	matrixTensor(C, h, B, k, alpha, beta, op_h);
 	return C;
 }
@@ -178,3 +178,53 @@ template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket,
 template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket,
 	size_t k, d alpha);
 
+
+template<typename T>
+void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	const vector<size_t>& holes, T alpha) {
+	if (holes.empty()) {
+		h = contraction(bra, ket, 0, alpha);
+		T val = 0.;
+		val = trace(h);
+		h = Tensor<T>({1});
+		h(0) = val;
+	} else if (holes.size() == 1) {
+		contraction(h, bra, ket, holes.front(), alpha);
+	} else {
+		cerr << "contraction only implemented for single or no holes.\n";
+		exit(1);
+	}
+}
+
+template void contraction(Tensor<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,
+	const vector<size_t>& holes, cd alpha);
+template void contraction(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
+	const vector<size_t>& holes, d alpha);
+
+template<typename T>
+Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
+	const vector<size_t>& holes, T alpha) {
+	if (holes.empty()){
+		Tensor<T> h({1});
+		contraction(h, bra, ket, holes, alpha);
+		return h;
+	} else if (holes.size() == 1){
+		return contraction(bra, ket, holes.front(), alpha);
+	} else {
+		cerr << "contraction only implemented for single or no holes.\n";
+		exit(1);
+	}
+}
+
+template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket,
+	const vector<size_t>& holes, cd alpha);
+template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket,
+	const vector<size_t>& holes, d alpha);
+
+template<typename T>
+Tensor<T> dotProduct(const Tensor<T>& bra, const Tensor<T>& ket) {
+	return contraction(bra, ket, bra.shape_.lastIdx());
+}
+
+template Tensor<cd> dotProduct(const Tensor<cd>& bra, const Tensor<cd>& ket);
+template Tensor<d> dotProduct(const Tensor<d>& bra, const Tensor<d>& ket);

@@ -4,7 +4,7 @@
 
 #ifndef COORDINATETRANSFORMATION_H
 #define COORDINATETRANSFORMATION_H
-#include "Core/Vector.h"
+#include "Tensor/Tensor"
 
 class CoordinateTransformation {
 public:

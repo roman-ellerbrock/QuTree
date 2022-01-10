@@ -197,9 +197,26 @@ template<typename T>
 constexpr auto identitycd = identity<complex<double>>;
 constexpr auto identityd = identity<double>;
 
+
 template<typename T>
 [[nodiscard]] Tensor<T> delta(const TensorShape& shape);
 
 constexpr auto deltacd = delta<complex<double>>;
 constexpr auto deltad = delta<double>;
+
+
+template <typename T>
+using Matrix = Tensor<T>;
+
+typedef Matrix<complex<double>> Matrixcd;
+
+typedef Matrix<double> Matrixd;
+
+
+template <typename T>
+using Vector = Tensor<T>;
+
+typedef Vector<complex<double>> Vectorcd;
+
+typedef Vector<double> Vectord;
 

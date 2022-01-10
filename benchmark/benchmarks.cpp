@@ -6,7 +6,7 @@
 
 namespace benchmarks {
 	void run() {
-
+		runTensor();
 	}
 }
 

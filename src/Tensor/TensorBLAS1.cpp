@@ -157,6 +157,34 @@ Tensor<T> conj(Tensor<T> A) {
 template Tensor<cd> conj(Tensor<cd> A);
 template Tensor<d> conj(Tensor<d> A);
 
+template<typename T>
+Tensor<T> diagonal(const Tensor<T>& A) {
+	size_t nrow = nrows(A.shape_);
+	size_t ncol = ncols(A.shape_);
+	size_t n = (nrow < ncol) ? nrow : ncol;
+	Tensor<T> diag({n});
+	for (size_t i = 0; i < n; ++i) {
+		diag(i) = A(i, i);
+	}
+	return diag;
+}
+
+template Tensor<cd> diagonal(const Tensor<cd>& A);
+template Tensor<d> diagonal(const Tensor<d>& A);
+
+template<typename T>
+T trace(const Tensor<T>& A) {
+	Tensor<T> diag = diagonal(A);
+	T tr = 0.;
+	for (size_t i = 0; i < diag.shape_.totalDimension(); ++i) {
+		tr += diag(i);
+	}
+	return tr;
+}
+
+template cd trace(const Tensor<cd>& A);
+template d trace(const Tensor<d>& A);
+
 /// dest[dim1, dim2] = beta * dest[dim1,dim2] + A[dim2, dim1]
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {

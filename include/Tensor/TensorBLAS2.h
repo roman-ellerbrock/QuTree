@@ -76,13 +76,13 @@ Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& B,
  * @param h resulting matrix
  * @param bra input tensor <Bra|
  * @param ket output tensor |Ket>
- * @param k hole-index left out in contraction
+ * @param hole index left out in contraction
  * @param alpha multiply contracted result by alpha
  * @param beta multiply previous h by beta
  */
 template<typename T>
 void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
-	size_t k, T alpha = 1., T beta = 0.);
+	size_t hole, T alpha = 1., T beta = 0.);
 
 /**
  * \brief Perform tensor-hole contraction leaving out k-th index.
@@ -92,13 +92,37 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
  * @param h resulting matrix
  * @param bra input tensor <Bra|
  * @param ket output tensor |Ket>
- * @param k hole-index left out in contraction
+ * @param hole index left out in contraction
  * @param alpha multiply contracted result by alpha
  * @param beta multiply previous h by beta
  */
 template<typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
-	size_t k, T alpha = 1.);
+	size_t hole, T alpha = 1.);
+
+/**
+ * \brief Perform tensor-hole contraction leaving out k-th index.
+ *
+ * Performs the operations h = alpha * tr(bra, ket)_(k) + beta * h
+ *
+ * @param h resulting matrix
+ * @param bra input tensor <Bra|
+ * @param ket output tensor |Ket>
+ * @param holes indices left out in contraction (can be empty)
+ * @param alpha multiply contracted result by alpha
+ * @param beta multiply previous h by beta
+ */
+
+template<typename T>
+void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	const vector<size_t>& holes, T alpha = 1.);
+
+template<typename T>
+Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
+	const vector<size_t>& holes = {}, T alpha = 1.);
+
+template<typename T>
+Tensor<T> dotProduct(const Tensor<T>& bra, const Tensor<T>& ket);
 
 
 #endif //TENSORBLAS2_H

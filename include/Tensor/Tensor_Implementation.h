@@ -33,8 +33,8 @@ Tensor<T>::Tensor(const TensorShape& dim, Tensor<T>& A, bool ownership, bool Ini
 }
 
 template<typename T>
-Tensor<T>::Tensor(const TensorShape& dim, const bool InitZero)
-	:shape_(dim), coeffs_((T *) malloc(dim.totalDimension() * sizeof(T))), ownership_(true) {
+Tensor<T>::Tensor(const TensorShape& shape, const bool InitZero)
+	:shape_(shape), coeffs_((T *) malloc(shape.totalDimension() * sizeof(T))), ownership_(true) {
 	if (InitZero) { zero(); }
 }
 
@@ -89,21 +89,20 @@ Tensor<T>& Tensor<T>::operator=(const Tensor& old) {
 	return *this;
 }
 
-// Move Assignment Operator
 template<typename T>
 Tensor<T>& Tensor<T>::operator=(Tensor&& old) noexcept {
-	delete[] coeffs_;
-	coeffs_ = exchange(old.coeffs_, nullptr);
-
-	ownership_ = exchange(old.ownership_, false);
-	shape_ = move(old.shape_);
-
+	std::swap(coeffs_, old.coeffs_);
+	std::swap(ownership_, old.ownership_);
+	std::swap(shape_, old.shape_);
 	return *this;
 }
 
 template<typename T>
 Tensor<T>::~Tensor() {
-	if (ownership_) { delete[] coeffs_; }
+	if (ownership_) {
+		delete[] coeffs_;
+		coeffs_ = nullptr;
+	}
 }
 
 //////////////////////////////////////////////////////////
@@ -112,14 +111,12 @@ Tensor<T>::~Tensor() {
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) const {
-	size_t dimtot = shape_.totalDimension();
 	assert(i < dimtot);
 	return coeffs_[i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) {
-	size_t dimtot = shape_.totalDimension();
 	assert(i < dimtot);
 	return coeffs_[i];
 }

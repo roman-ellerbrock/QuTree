@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
-#include "TreeOperators/Potential.h"
-#include "TreeOperators/CoordinateTransformation.h"
+#include "Operator/Potential.h"
+#include "Operator/CoordinateTransformation.h"
 
 /**
  * \class PotentialOperator

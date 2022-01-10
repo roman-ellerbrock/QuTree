@@ -31,6 +31,11 @@ set(QuTree_SOURCE_FILES
         src/TensorNetwork/TensorTree.cpp
         src/TensorNetwork/DotProduct.cpp
 
+        # Operators
+        src/Operator/LeafFunction.cpp
+        src/Operator/LeafMatrix.cpp
+        src/Operator/ProductOperator.cpp
+
         #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/LA_lib.f
         #    src/TreeClasses/MatrixTensorTree.cpp
@@ -46,7 +51,7 @@ set(QuTree_SOURCE_FILES
         #    src/TreeClasses/SymTensorTree.cpp
         #    src/TreeClasses/TensorTree_Instantiation.cpp
         #    src/TreeClasses/TreeIO.cpp
-        #
+
         #    src/TreeOperators/LeafFunction.cpp
         #    src/TreeOperators/LeafMatrix.cpp
         #    src/TreeOperators/MultiLeafOperator.cpp
@@ -58,7 +63,7 @@ set(QuTree_SOURCE_FILES
         #    src/TreeOperators/TensorOperators/contractCircuit.cpp
         #    src/TreeOperators/TensorOperators/TTOrepresentation.cpp
         #    src/TreeOperators/TensorOperators/TTNO_instantiations.cpp
-        #
+
         #    src/Util/FFT.cpp
         #    src/Util/GateOperators.cpp
         #    src/Util/SimultaneousDiagonalization.cpp

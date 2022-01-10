@@ -29,6 +29,7 @@ public:
 	}
 
 	void push_back(Leaf& phys);
+
 	const Leaf& operator[](size_t mode)const;
 	Leaf& operator[](size_t mode);
 

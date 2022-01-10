@@ -36,6 +36,10 @@ set(QuTree_tests
         TensorNetwork/test_TensorTree.cpp
         TensorNetwork/test_dotProduct.cpp
 
+        # Tensor Network classes
+        Operators/test_LeafOperator.cpp
+        Operators/test_ProductOperator.cpp
+
         # all tests
         tests.cpp
 

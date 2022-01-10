@@ -25,16 +25,22 @@ SUITE (dotProduct) {
 		TensorTreecd S(tree_);
 		dotProduct(S, psi_, psi_);
 		for (const Node& node : tree_.nodes()) {
-			CHECK_CLOSE(0., residual(S[node], Tensorcd()), eps);
+				CHECK_CLOSE(0., residual(S[node], Tensorcd()), eps);
 		}
 		for (const Edge& edge : tree_.edges()) {
-			CHECK_CLOSE(0., residual(S[edge], identitycd({2, 2})), eps);
+				CHECK_CLOSE(0., residual(S[edge], identitycd({2, 2})), eps);
 		}
 	}
 
-	TEST(loop) {
+	TEST_FIXTURE(Trees, fullContraction) {
+		TensorTreecd S(tree_);
+		dotProduct(S, psi_, psi_);
+		TensorTreecd tr = fullContraction(psi_, S, psi_);
+		Tensorcd h({1});
+		h(0) = 1;
+		for (const Node& node : psi_) {
+			CHECK_CLOSE(0., residual(h, tr[node]), eps);
+		}
 	}
-
-
 
 }

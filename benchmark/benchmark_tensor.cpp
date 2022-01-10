@@ -4,22 +4,50 @@
 
 #include "benchmark_tensor.h"
 #include "Tensor/Tensor"
+#include "Benchmark.h"
 
-void moveInPlace() {
-	Tensorcd mat({2, 2});
-	Tensorcd A({2, 2, 2});
+namespace benchmarks {
 
-	for (size_t i = 0; i < A.shape_.order(); ++i) {
-		A = matrixTensor(mat, A, i);
+	Tensorcd create(size_t dim, size_t order) {
+		vector<size_t> dims(order, dim);
+		TensorShape shape(dims);
+		return arangecd(shape);
 	}
 
-	Tensorcd Tmp({2, 2, 2});
-	Tensorcd *a = &A;
-	Tensorcd *tmp = &Tmp;
+	void moveReturn() {
 
-	for (size_t i = 0; i < A.shape_.order(); ++i) {
-		matrixTensor(*tmp, mat, *a, i);
-		swap(a, tmp);
+	}
+
+	void swapRef() {
+		size_t n = 10;
+		Tensorcd mat = create(n, 2);
+		Tensorcd A = create(n, 8);
+
+		Tensorcd Tmp(A.shape_);
+		for (size_t i = 0; i < A.shape_.order(); ++i) {
+			matrixTensor(Tmp, mat, A, i);
+			swap(A, Tmp);
+		}
+	}
+
+	void swapRV() {
+		size_t n = 10;
+		Tensorcd mat = create(n, 2);
+		Tensorcd A = create(n, 8);
+
+		Tensorcd Tmp(A.shape_);
+		cout << "critical --->\n";
+		for (size_t i = 0; i < A.shape_.order(); ++i) {
+			Tmp = matrixTensor(mat, A, i);
+			swap(A, Tmp);
+		}
+		cout << "<---\n";
+
+	}
+
+	void runTensor() {
+		benchmark(swapRef, "move semantics", 1);
+		benchmark(swapRV, "swap preallocated mem", 1);
 	}
 
 }

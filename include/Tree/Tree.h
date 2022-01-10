@@ -120,10 +120,10 @@ public:
 		return nodeArray_.rend();
 	}
 
-protected:
 	/// reinitialize from root node
 	void update();
 
+protected:
 	LeafArray leafArray_;
 	NodeArray nodeArray_;
 	EdgeArray edgeArray_;

@@ -4,8 +4,8 @@
 
 #ifndef POTENTIAL_H
 #define POTENTIAL_H
-#include "Core/Vector.h"
-#include "TreeShape/Tree.h"
+#include "Tensor/Tensor"
+#include "Tree/Tree.h"
 
 class Potential {
 public:

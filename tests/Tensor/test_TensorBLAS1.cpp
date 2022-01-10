@@ -38,7 +38,7 @@ SUITE (TensorBLAS1) {
 			CHECK_CLOSE(0, abs(norm - y), eps);
 	}
 
-	TEST_FIXTURE (TensorFactory, axpy) { /// vec qdd
+	TEST_FIXTURE (TensorFactory, axpy) { /// vec add
 		Tensorcd D(A.shape_);
 		complex<double> alpha = -0.5;
 		for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
@@ -182,6 +182,18 @@ SUITE (TensorBLAS1) {
 		}
 		A = conj(A);
 			CHECK_CLOSE(0., residual(A, D), eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, diag) {
+		Tensorcd diag = diagonal(B);
+			CHECK_EQUAL(2, diag.shape_.totalDimension());
+			CHECK_EQUAL(1, diag.shape_.order());
+			CHECK_CLOSE(0., abs(diag(0)), eps);
+			CHECK_CLOSE(0, abs(diag(1) - 1.), eps);
+	}
+
+	TEST_FIXTURE (TensorFactory, trace) {
+			CHECK_CLOSE(0., abs(trace(B) - 1.), eps);
 	}
 
 	TEST_FIXTURE (TensorFactory, transpose_1) {
@@ -364,7 +376,7 @@ SUITE (TensorBLAS1) {
 			CHECK_EQUAL(5, ncols(shape, blas::Op::ConjTrans));
 	}
 
-	TEST(vectorTensor) {
+	TEST (vectorTensor) {
 		Tensord B({3, 3, 3});
 		for (size_t i = 0; i < 3; ++i) {
 			B({i, i, i}) = i;

@@ -64,7 +64,7 @@ SUITE (TensorBLAS2) {
 		}
 	};
 
-	TEST_FIXTURE(TensorFactory, gemm) {
+	TEST_FIXTURE (TensorFactory, gemm) {
 		auto op_as = {blas::Op::NoTrans, blas::Op::ConjTrans};
 		auto op_bs = {blas::Op::NoTrans, blas::Op::ConjTrans};
 		complex<double> alpha = 1.5;
@@ -87,12 +87,12 @@ SUITE (TensorBLAS2) {
 				auto c2 = c;
 				gemm(c, a, b, alpha, beta, op_a, op_b);
 				gemmRef(c2, a, b, alpha, beta, op_a, op_b);
-				CHECK_CLOSE(0., residual(c, c2), eps);
+					CHECK_CLOSE(0., residual(c, c2), eps);
 			}
 		}
 	}
 
-	TEST_FIXTURE(TensorFactory, gemm_return) {
+	TEST_FIXTURE (TensorFactory, gemm_return) {
 		auto op_as = {blas::Op::NoTrans, blas::Op::ConjTrans};
 		auto op_bs = {blas::Op::NoTrans, blas::Op::ConjTrans};
 		complex<double> alpha = 1.5;
@@ -117,7 +117,7 @@ SUITE (TensorBLAS2) {
 		}
 	}
 
-	TEST(unitarySimilarityTransform) {
+	TEST (unitarySimilarityTransform) {
 		auto a = arangecd({3, 3});
 		auto u = arangecd({3, 3});
 		auto res = unitarySimilarityTrafo(a, u);
@@ -222,6 +222,27 @@ SUITE (TensorBLAS2) {
 				CHECK_CLOSE(0., residual(mat, matRef), eps);
 		}
 	}
+
+	TEST_FIXTURE (TensorFactory, generalContractionHole) {
+		for (size_t k = 0; k < A.shape_.order(); ++k) {
+			auto matRef = contraction(A, B, k);
+			auto mat = constructMatrix(A, k);
+			vector<size_t> hole{k};
+			contraction(mat, A, B, hole);
+				CHECK_CLOSE(0., residual(mat, matRef), eps);
+		}
+	}
+
+	TEST_FIXTURE (TensorFactory, generalContractionFull) {
+		vector<size_t> hole{};
+		Tensorcd T({1});
+		contraction(T, B, B, hole);
+
+		Tensorcd Tref({1});
+		Tref(0) = 80.;
+			CHECK_CLOSE(0., residual(T, Tref), eps);
+	}
+
 
 }
 
