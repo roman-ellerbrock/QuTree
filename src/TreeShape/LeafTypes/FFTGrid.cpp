@@ -13,8 +13,6 @@ void FFTGrid::initialize(double x0, double x1, double wfr0, double wfomega) {
 	assert(dim_ > 0);
 	// Set x_ values
 	double dx = (x1_ - x0_) / (dim_ - 1);
-	cout << "dx= " << dx << endl;
-	cout << "dim_ = " << dim_ << endl;
 	for (int i = 0; i < dim_; i++) {
 		x_(i) = x0_ + i * dx;
 	}

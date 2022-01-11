@@ -56,7 +56,7 @@ public:
 		work3_ = Tensor<T>(shape);
 	}
 
-	Tensor<T> work1_, work2_, work3_;
+	mutable Tensor<T> work1_, work2_, work3_;
 };
 
 typedef WorkMemory<complex<double>> WorkMemorycd;
