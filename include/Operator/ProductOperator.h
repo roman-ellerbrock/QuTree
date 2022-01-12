@@ -165,6 +165,8 @@ public:
 		os << size() << " operators in MLO" << endl;
 	}
 
+	[[nodiscard]] const vector<size_t>& targetLeaves() const { return targetLeaves_; }
+
 protected:
 	void applyFactor(TensorTree<T>& Psi, size_t i) const;
 	/// These are the SPOs

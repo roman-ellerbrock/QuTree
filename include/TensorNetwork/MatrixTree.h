@@ -5,13 +5,15 @@
 #ifndef MATRIXTREE_H
 #define MATRIXTREE_H
 #include "TensorTree.h"
+#include "Operator/ProductOperator.h"
 
-class MatrixTree : public TensorTree {
+template <typename T>
+class MatrixTree : public TensorTree<T> {
 public:
 	MatrixTree() = default;
 	~MatrixTree() = default;
 
-protected:
+	ProductOperator<T> p_;
 };
 
 #endif //MATRIXTREE_H

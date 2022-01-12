@@ -31,6 +31,7 @@ set(QuTree_INCLUDE_FILES
 
         # TreeNetwork
         include/TensorNetwork/TensorTree.h
+        include/TensorNetwork/MatrixTree.h
 
         # Operators
         include/Operator/LeafMatrix.h
