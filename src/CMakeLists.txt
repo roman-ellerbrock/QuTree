@@ -24,6 +24,7 @@ set(QuTree_SOURCE_FILES
         src/Tree/Node.cpp
         src/Tree/LeafArray.cpp
         src/Tree/Edge.cpp
+        src/Tree/SubTree.cpp
         src/Tree/Tree.cpp
         src/Tree/TreeFactory.cpp
 

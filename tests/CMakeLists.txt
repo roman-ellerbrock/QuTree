@@ -29,6 +29,7 @@ set(QuTree_tests
         Tree/test_PrimitiveBasis.cpp
         Tree/test_Node.cpp
         Tree/test_Edge.cpp
+        Tree/test_SubTree.cpp
         Tree/test_Tree.cpp
         Tree/test_TreeFactory.cpp
 
