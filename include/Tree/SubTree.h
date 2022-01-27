@@ -6,6 +6,29 @@
 #define SUBTREE_H
 #include "Tree.h"
 
+bool contains(const vector<const Node*>& vec, const Node* probe) {
+	for (const Node* node : vec) {
+		if (*node == *probe) { return true; }
+	}
+	return false;
+}
+
+vector<const Node*> gatherNodes(const Tree& tree, const vector<size_t>& idx) {
+	vector<const Node*> tmp;
+	for (size_t i : idx) {
+		/// for every node, collect all ancestors
+		const Leaf& leaf = tree.leafArray()[i];
+		const Node* node = leaf.parent_;
+		while(true) {
+			if (contains(tmp, node)) { break; }
+			tmp.push_back(node);
+			if (node->isToplayer()) { break; }
+			node = node->parent_;
+		}
+	}
+	return tmp;
+}
+
 class SubTree : public vector<const Node*> {
 
 public:
@@ -31,30 +54,26 @@ public:
 
 	}
 
-	bool contains(const Node* probe) {
-		for (const Node* node : *this) {
-			if (*node == *probe) { return true; }
-		}
-		return false;
-	}
-
 	SubTree(const Tree& tree, const vector<size_t>& idx) {
-		if (idx.empty()) { initialize(tree); }
-		for (size_t i : idx) {
-			cout << i << endl;
-			cout << tree.leafArray().size() << endl;
-			const Leaf& leaf = tree.leafArray()[i];
-			leaf.info();
-			const Node* node = leaf.parent_;
-			node->info();
-			while(true) {
-				node->info();
-				if (contains(node)) { break; }
-				push_back(node);
-				if (node->isToplayer()) { break; }
-				node = node->parent_;
+		if (idx.empty()) {
+			initialize(tree);
+			return;
+		}
+
+		/// gather nodes in wrong order
+		auto tmp = gatherNodes(tree, idx);
+
+		/// create bottom-up
+		for (const Node& node : tree) {
+			if (contains(tmp, &node)) {
+				push_back(&node);
 			}
 		}
+
+		/// ! idea to avoid n^2 scaling: !
+		/// don't go leaf->root but root->leaf (i.e. invert)
+		/// then whole vector is top-down.
+		/// reverse vector at the very end.
 	}
 
 	void print() const {
