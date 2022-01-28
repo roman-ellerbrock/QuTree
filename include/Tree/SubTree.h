@@ -29,7 +29,10 @@ vector<const Node*> gatherNodes(const Tree& tree, const vector<size_t>& idx) {
 	return tmp;
 }
 
-class SubTree : public vector<const Node*> {
+/**
+ * \class SubTree is a mask for nodes in a tree that allows to select a subset of nodes
+ */
+class SubTree {
 
 public:
 	SubTree() = default;
@@ -40,10 +43,12 @@ public:
 	~SubTree() = default;
 
 	void initialize(const Tree& tree) {
-		clear();
+		nodes_.clear();
 		for (Node& node : tree) {
-			push_back(&node);
+			nodes_.push_back(&node);
 		}
+
+		fillEdges(tree);
 	}
 
 	void removeTail() {
@@ -66,7 +71,7 @@ public:
 		/// create bottom-up
 		for (const Node& node : tree) {
 			if (contains(tmp, &node)) {
-				push_back(&node);
+				nodes_.push_back(&node);
 			}
 		}
 
@@ -74,14 +79,28 @@ public:
 		/// don't go leaf->root but root->leaf (i.e. invert)
 		/// then whole vector is top-down.
 		/// reverse vector at the very end.
+
+		/// fill edges
+		fillEdges(tree);
 	}
 
 	void print() const {
-		for (const Node* node : *this) {
+		for (const Node* node : nodes_) {
 			node->info();
 		}
 	}
 
+	void fillEdges(const Tree& tree) {
+		edges_.clear();
+		for (const Edge& edge : tree.edges()) {
+			if (contains(nodes_, &edge.from()) && contains(nodes_, &edge.to())) {
+				edges_.push_back(&edge);
+			}
+		}
+	}
+
+	vector<const Node*> nodes_;
+	vector<const Edge*> edges_;
 };
 
 
