@@ -81,8 +81,10 @@ SUITE (SubTree) {
 		vector<size_t> idx = {1, 3};
 		SubTree stree(tree_, idx);
 
-		for (const Edge* edge : stree.edges_) {
-			edge->info();
+		vector<size_t> edgeidx = {0, 2, 3, 5, 6, 8, 9, 11};
+		size_t counter = 0;
+		for (auto i : edgeidx) {
+			CHECK_EQUAL(tree_.edges()[i], *stree.edges_[counter++]);
 		}
 	}
 
