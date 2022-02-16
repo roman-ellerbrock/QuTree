@@ -59,7 +59,7 @@ public:
 		function<void(Q&, double, T&, T&)> ddx, function<double(Q&, T&, T&)> err, Q& container) {
 		while (xend - x > dx * 1e-6) {
 			if (x + dx > xend) { dx = xend - x + 1E-10; }
-			cout << "\t" << "t_bs=" << x << " dt=" << dx << endl;
+//			cout << "\t" << "t_bs=" << x << " dt=" << dx << endl;
 			y = bsstep(y, x, dx, eps, ddx, err, container);
 		}
 	}
