@@ -183,7 +183,7 @@ protected:
 	/// The potential operator
 //	PotentialOperator v_;
 	/// Is there a PotentialOperator?
-//	bool hasV_;
+	bool hasV_;
 };
 
 template<typename T>
