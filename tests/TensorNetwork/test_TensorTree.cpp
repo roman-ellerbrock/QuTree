@@ -19,11 +19,10 @@ SUITE (TensorTree) {
 
 	double eps = 1e-10;
 
-	TEST_FIXTURE (Trees, construct) {
+	TEST_FIXTURE (Trees, constructorSize) {
 		TensorTreecd Psi(tree_);
 			CHECK_EQUAL(7, Psi.nodes_.size());
-			CHECK_EQUAL(6, Psi.upEdges_.size());
-			CHECK_EQUAL(6, Psi.downEdges_.size());
+			CHECK_EQUAL(12, Psi.edges_.size());
 	}
 
 	TEST_FIXTURE (Trees, TensorShapes) {
@@ -37,7 +36,7 @@ SUITE (TensorTree) {
 		}
 	}
 
-	TEST_FIXTURE (Trees, gen) {
+	TEST_FIXTURE (Trees, constructorTensor) {
 		TensorTreecd Psi(tree_, deltacd);
 		for (const Node& node : tree_) {
 				CHECK_CLOSE(0., residual(deltacd(node.shape_), Psi[node]), eps);
@@ -48,6 +47,10 @@ SUITE (TensorTree) {
 			auto delta = contraction(phi, phi, edge);
 				CHECK_CLOSE(0., residual(delta, identitycd(delta.shape_)), eps);
 		}
+	}
+
+	TEST_FIXTURE(Trees, matrixTree) {
+		auto mat = matrixTreecd(tree_, {});
 	}
 }
 

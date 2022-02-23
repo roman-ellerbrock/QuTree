@@ -10,11 +10,11 @@ TensorTree<T> ProductOperator<T>::apply(TensorTree<T> Psi) const {
 template<typename T>
 void ProductOperator<T>::applyFactor(TensorTree<T>& Psi, size_t i) const {
 	size_t leafIdx = targetLeaves_[i];
-	const Leaf& leaf = Psi.leafArray()[leafIdx];
-	const Node& node = leaf.parent();
+	const Leaf* leaf = Psi.leaves_[leafIdx];
+	const Node& node = leaf->parent();
 	Tensor<T>& A = Psi[node];
 	Tensor<T> hA(A.shape_);
-	leafOperators_[i]->apply(leaf.basis_, hA, A);
+	leafOperators_[i]->apply(leaf->basis_, hA, A);
 	Psi[node] = hA;
 }
 

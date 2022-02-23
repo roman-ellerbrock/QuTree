@@ -4,27 +4,33 @@
 
 #ifndef TENSORTREE_H
 #define TENSORTREE_H
-#include "TreeAttribute.h"
+#include "SubTreeAttribute.h"
 
 template<typename T>
-class TensorTree: public TreeAttribute<Tensor<T>> {
+class TensorTree: public SubTreeAttribute<Tensor<T>> {
 public:
 	TensorTree() = default;
 	~TensorTree() = default;
 
-	explicit TensorTree(const Tree& tree)
-		: TreeAttribute<Tensor<T>>(tree) {
+	explicit TensorTree(const Tree& tree,
+		function<Tensor<T>(const TensorShape&)> generator = randomGen<T>);
+
+	explicit TensorTree(const SubTree& subTree) : SubTreeAttribute<Tensor<T>>(subTree) {
 	}
 
 	void normalize(double eps = 1e-10);
 
-	TensorTree(const Tree& tree, function<Tensor<T>(const TensorShape&)> generator);
-
-	void print() const;
+	void print() const override;
 };
 
 typedef TensorTree<complex<double>> TensorTreecd;
 
 typedef TensorTree<double> TensorTreed;
+
+template<typename T>
+TensorTree<T> matrixTree(const Tree& tree, const vector<size_t>& idx = {});
+
+constexpr auto matrixTreecd = matrixTree<complex<double>>;
+constexpr auto matrixTreed = matrixTree<double>;
 
 #endif //TENSORTREE_H

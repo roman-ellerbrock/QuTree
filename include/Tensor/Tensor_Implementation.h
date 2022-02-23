@@ -398,6 +398,11 @@ Tensor<T> random(const TensorShape& shape, mt19937& gen) {
 }
 
 template<typename T>
+Tensor<T> randomGen(const TensorShape& shape) {
+	return random<T>(shape, rng::gen);
+}
+
+template<typename T>
 [[nodiscard]] Tensor<T> arange(const TensorShape& shape) {
 	Tensor<T> A(shape, false);
 	for (size_t i = 0; i < shape.totalDimension(); ++i) {

@@ -36,8 +36,8 @@ SUITE (ProductOperator) {
 		POcd P;
 		P.push_back(x_, 1);
 		P.applyReference(Psi_);
-		const Leaf& leaf = Psi_.leafArray()[1];
-		const Tensorcd& hA_ = Psi_[leaf.parent()];
+		const Leaf* leaf = Psi_.leaves_[1];
+		const Tensorcd& hA_ = Psi_[leaf->parent()];
 			CHECK_CLOSE(0., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(1., abs(hA_(1, 0)), eps);
 			CHECK_CLOSE(1., abs(hA_(0, 1)), eps);
@@ -50,8 +50,8 @@ SUITE (ProductOperator) {
 		P.push_back(x_, 1);
 		P.push_back(x_, 1);
 		P.applyReference(Psi_);
-		const Leaf& leaf = Psi_.leafArray()[1];
-		const Tensorcd& hA_ = Psi_[leaf.parent()];
+		const Leaf* leaf = Psi_.leaves_[1];
+		const Tensorcd& hA_ = Psi_[leaf->parent()];
 			CHECK_CLOSE(1., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(1, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(0, 1)), eps);
@@ -68,8 +68,8 @@ SUITE (ProductOperator) {
 		POcd P;
 		P.push_back(x_, 0);
 		P.applyReference(Psi_);
-		const Leaf& leaf = Psi_.leafArray()[0];
-		const Tensorcd& hA_ = Psi_[leaf.parent()];
+		const Leaf* leaf = Psi_.leaves_[0];
+		const Tensorcd& hA_ = Psi_[leaf->parent()];
 			CHECK_CLOSE(0., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(1., abs(hA_(1, 0)), eps);
 			CHECK_CLOSE(1., abs(hA_(0, 1)), eps);
@@ -82,8 +82,8 @@ SUITE (ProductOperator) {
 		POcd Q = P * P;
 
 		Q.applyReference(Psi_);
-		const Leaf& leaf = Psi_.leafArray()[0];
-		const Tensorcd& hA_ = Psi_[leaf.parent()];
+		const Leaf* leaf = Psi_.leaves_[0];
+		const Tensorcd& hA_ = Psi_[leaf->parent()];
 			CHECK_CLOSE(1., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(1, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(0, 1)), eps);

@@ -200,15 +200,20 @@ template SVD<d> svd(const Tensor<d>& A, size_t k);
 
 template<typename T>
 void regularize(SVD<T>& x, size_t k, double eps, mt19937& gen) {
+	/**
+	 * \brief randomly occupy tensor slices with 0-occupancy.
+	 */
 	Tensor<T>& U = x.U();
 	Tensord& sigma = x.sigma();
 
-	for(size_t aft = 0; aft < U.shape_.after(k); ++aft) {
+	size_t count = 0;
+	for (size_t aft = 0; aft < U.shape_.after(k); ++aft) {
 		for (size_t act = 0; act < U.shape_[k]; ++act) {
 			if (sigma(act) > eps) { continue; }
 			for (size_t bef = 0; bef < U.shape_.before(k); ++bef) {
 				U(bef, act, aft, k) = rng::normal(gen);
 			}
+			if ((++count % 10) == 0) { gramSchmidt(U, k); }
 		}
 	}
 	gramSchmidt(U, k);

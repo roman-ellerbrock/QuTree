@@ -28,7 +28,7 @@ public:
 		}
 	}
 
-	void push_back(Leaf& phys);
+	void push_back(Leaf& leaf);
 
 	const Leaf& operator[](size_t mode)const;
 	Leaf& operator[](size_t mode);

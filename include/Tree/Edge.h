@@ -96,7 +96,7 @@ public:
 	}
 
 	[[nodiscard]] size_t address() const {
-		return down().address_ - 1;
+		return 2 * down().address_ - (!isUpEdge()) - 1;
 	}
 
 	[[nodiscard]] TensorShape shape() const {

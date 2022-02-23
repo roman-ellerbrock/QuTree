@@ -11,17 +11,17 @@
 template<typename T>
 class ProductOperator
 	/*!
-	 * \class MultiLeafOperator
+	 * \class ProductOperator
 	 * \ingroup Operators
-	 * \brief A MultiLeafOperator (MLO) is a product of general single-particle operators
+	 * \brief A ProductOperator (PO) is a product of general single-particle operators
 	 *
-	 * A MultiLeafOperator is one summand in a SumofProducts
+	 * A ProductOperator is one summand in a SumofProducts
 	 * operator. It can be applied to a TensorTree resulting in
-	 * a wavefunction with a different bottomlayer-Tensors. The MLO is
+	 * a wavefunction with a different bottomlayer-Tensors. The PO is
 	 * central for building hamiltonians.
 	 *
 	 * Please note:
-	 * - The recommended operator to build MLO is SPOf or SPOM (due to performance)
+	 * - The recommended operator to build PO is SPOf or SPOM (due to performance)
 	 * - SPO initialization might be removed in the future
 	 * - TensorTrees with different lower-node Tensors
 	 *   cannot (straightforwardly) be added without loss of information.
@@ -39,7 +39,7 @@ public:
 		push_back(h, leaf_id);
 	}
 
-	/// Construct a MLO from a single SPO
+	/// Construct a PO from a single SPO
 	ProductOperator(const LeafMatrix<T>& h, size_t leaf_id)
 		: ProductOperator() {
 		push_back(h, leaf_id);
@@ -50,19 +50,19 @@ public:
 		push_back(h, leaf_id, adjoint);
 	}
 
-	/// Construct a MLO from a single RefSPO
+	/// Construct a PO from a single RefSPO
 	ProductOperator(const LeafFunction<T>& h, size_t leaf_id)
 		: ProductOperator() {
 		push_back(h, leaf_id);
 	}
 
-	/// Construct a MLO from a single RefSPO
+	/// Construct a PO from a single RefSPO
 	ProductOperator(const LeafFun<T>& h, size_t leaf_id)
 		: ProductOperator() {
 		push_back(h, leaf_id);
 	}
 
-	/// Push back a SPO to the MLO
+	/// Push back a SPO to the PO
 	void push_back(shared_ptr<LeafOperator<T>> h, size_t mode_x) {
 		leafOperators_.push_back(h);
 		targetLeaves_.push_back(mode_x);
@@ -76,7 +76,7 @@ public:
 		push_back(make_shared<LeafMatrix<T>>(h, adj), mode);
 	}
 
-	/// Push back a RefSPO to the MLO
+	/// Push back a RefSPO to the PO
 	void push_back(const LeafFunction<T>& h, size_t mode) {
 		push_back(make_shared<LeafFunction<T>>(h), mode);
 	}
@@ -93,19 +93,19 @@ public:
 		}
 	}
 
-	/// The number of SPOs in the MLO
+	/// The number of SPOs in the PO
 	[[nodiscard]] size_t size() const { return targetLeaves_.size(); }
 
-	/// Access the i-th SPO in the MLO
+	/// Access the i-th SPO in the PO
 	shared_ptr<LeafOperator<T>> operator[](size_t i) const {
 		assert(i < targetLeaves_.size());
 		return leafOperators_[i];
 	}
 
-	/// apply a MLO to a wavefunction.
+	/// apply a PO to a wavefunction.
 	void applyReference(TensorTree<T>& Psi) const;
 
-	/// apply a MLO to a wavefunction. Call-by-value-version. This routine is not optimized for performance.
+	/// apply a PO to a wavefunction. Call-by-value-version. This routine is not optimized for performance.
 	TensorTree<T> apply(TensorTree<T> Psi) const;
 
 	/// On which mode does the "part"-th SPO act?
@@ -125,7 +125,7 @@ public:
 		return M;
 	}
 
-	/// This routine manages how to apply a MLO
+	/// This routine manages how to apply a PO
 	//	Tensor<T> apply(Tensor<T> A,
 	//		const Leaf& leaf) const;
 
@@ -142,7 +142,7 @@ public:
 			return (targetLeaves_[part] == mode_x);
 		}
 	*/
-/*	/// Check whether a Potential operator is included in the MLO. Important for CDVR.
+/*	/// Check whether a Potential operator is included in the PO. Important for CDVR.
 	[[nodiscard]] bool hasV() const { return hasV_; }
 
 	/// Get a reference to the PotentialOperator
@@ -162,7 +162,7 @@ public:
 //	[[nodiscard]] const vector<size_t>& targetLeaves() const { return targetLeaves_; }
 
 	void print(ostream& os = cout) const {
-		os << size() << " operators in MLO" << endl;
+		os << size() << " operators in PO" << endl;
 	}
 
 	[[nodiscard]] const vector<size_t>& targetLeaves() const { return targetLeaves_; }

@@ -6,28 +6,9 @@
 #define SUBTREE_H
 #include "Tree.h"
 
-bool contains(const vector<const Node*>& vec, const Node* probe) {
-	for (const Node* node : vec) {
-		if (*node == *probe) { return true; }
-	}
-	return false;
-}
+bool contains(const vector<const Node*>& vec, const Node* probe);
 
-vector<const Node*> gatherNodes(const Tree& tree, const vector<size_t>& idx) {
-	vector<const Node*> tmp;
-	for (size_t i : idx) {
-		/// for every node, collect all ancestors
-		const Leaf& leaf = tree.leafArray()[i];
-		const Node* node = leaf.parent_;
-		while(true) {
-			if (contains(tmp, node)) { break; }
-			tmp.push_back(node);
-			if (node->isToplayer()) { break; }
-			node = node->parent_;
-		}
-	}
-	return tmp;
-}
+vector<const Node*> gatherNodes(const Tree& tree, const vector<size_t>& idx);
 
 /**
  * \class SubTree is a mask for nodes in a tree that allows to select a subset of nodes
@@ -49,14 +30,20 @@ public:
 		}
 
 		fillEdges(tree);
+
+		for (size_t i = 0; i < tree.leafArray().size(); ++i) {
+			const Leaf& leaf = tree.leafArray()[i];
+			leaves_[leaf.par().mode_] = &leaf;
+		}
+
 	}
 
 	void removeTail() {
-
+		// @TODO: add in the future
 	}
 
 	void invert() {
-
+		// @TODO: add in the future
 	}
 
 	SubTree(const Tree& tree, const vector<size_t>& idx) {
@@ -75,6 +62,11 @@ public:
 			}
 		}
 
+		///
+		for (auto i : idx) {
+			leaves_[i] = &(tree.leafArray()[i]);
+		}
+
 		/// ! idea to avoid n^2 scaling: !
 		/// don't go leaf->root but root->leaf (i.e. invert)
 		/// then whole vector is top-down.
@@ -82,9 +74,10 @@ public:
 
 		/// fill edges
 		fillEdges(tree);
+
 	}
 
-	void print() const {
+	virtual void print() const {
 		for (const Node* node : nodes_) {
 			node->info();
 		}
@@ -101,6 +94,7 @@ public:
 
 	vector<const Node*> nodes_;
 	vector<const Edge*> edges_;
+	map<size_t, const Leaf*> leaves_;
 };
 
 

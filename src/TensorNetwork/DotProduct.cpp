@@ -15,7 +15,6 @@ Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& Ket, const Edge& edg
 template Tensor<cd> matrixTensor(const Tensor<cd>& h, const Tensor<cd>& Ket, const Edge& edge);
 template Tensor<d> matrixTensor(const Tensor<d>& h, const Tensor<d>& Ket, const Edge& edge);
 
-
 template <typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge) {
 	return contraction(bra, ket, edge.outIdx());
@@ -36,12 +35,13 @@ void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const Edge& edge) {
 template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& S, const Edge& edge);
 template void apply(TensorTree<d>& Ket, const TensorTree<d>& S, const Edge& edge);
 
-
 template <typename T>
 void dotProduct(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket) {
-	for (const Edge& edge : S.edges()) {
-		apply(Ket, S, edge);
-		S[edge] = contraction(Bra[edge], Ket[edge], edge);
+	for (const Edge* edge : S.edges_) {
+		edge->info();
+		apply(Ket, S, *edge);
+		S[edge] = contraction(Bra[edge], Ket[edge], *edge);
+		S[edge].print();
 	}
 }
 
@@ -80,8 +80,8 @@ TensorTree<T> product(const TensorTree<T>& S, TensorTree<T> Ket) {
 template <typename T>
 TensorTree<T> fullContraction(const TensorTree<T>& Bra, const TensorTree<T>& S, TensorTree<T> Ket) {
 	TensorTree<T> tr(S);
-	for (const Node& node : S.nodes()) {
-		Ket[node] = apply(Ket[node], S, node);
+	for (const Node* node : S.nodes_) {
+		Ket[node] = apply(Ket[node], S, *node);
 		tr[node] = contraction(Bra[node], Ket[node]);
 	}
 	return tr;

@@ -6,7 +6,6 @@
 #define TREEATTRIBUTE_H
 #include "Tree/Tree.h"
 
-
 template<class C>
 class TreeAttribute: public Tree {
 public:
@@ -20,7 +19,7 @@ public:
 		  downEdges_(tree.nEdges()) {
 	}
 
-	const C& operator[](const Node& node) const {
+	const C& opiierator[](const Node& node) const {
 		return nodes_[node.address_];
 	}
 

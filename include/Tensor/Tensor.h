@@ -174,7 +174,7 @@ bool operator==(const Tensor<T>& A, const Tensor<T>& B);
 
 
 template<typename T>
-[[nodiscard]] Tensor<T> random(const TensorShape& shape, mt19937& gen = rng::gen);
+[[nodiscard]] Tensor<T> random(const TensorShape& shape, mt19937& gen);
 
 auto randomcd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
 	return random<complex<double>>(shape, gen);
@@ -183,6 +183,15 @@ auto randomd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
 	return random<double>(shape, gen);
 };
 
+template<typename T>
+[[nodiscard]] Tensor<T> randomGen(const TensorShape& shape);
+
+auto randomGencd = [](const TensorShape& shape) {
+	return random<complex<double>>(shape, rng::gen);
+};
+auto randomGend = [](const TensorShape& shape) {
+	return random<double>(shape, rng::gen);
+};
 
 template<typename T>
 [[nodiscard]] Tensor<T> arange(const TensorShape& shape);
