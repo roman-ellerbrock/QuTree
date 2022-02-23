@@ -8,6 +8,10 @@
 #include "LeafMatrix.h"
 #include "PotentialOperator.h"
 
+
+template<typename T>
+using OperatorVector = vector<shared_ptr<LeafOperator<T>>>;
+
 template<typename T>
 class ProductOperator
 	/*!
@@ -173,10 +177,13 @@ protected:
 	vector<shared_ptr<LeafOperator<T>>> leafOperators_;
 	/// These are the modes the SPOs act on
 	vector<size_t> targetLeaves_;
+
+	map<size_t, OperatorVector<T>> operators_;
+
 	/// The potential operator
 //	PotentialOperator v_;
 	/// Is there a PotentialOperator?
-	bool hasV_;
+//	bool hasV_;
 };
 
 template<typename T>

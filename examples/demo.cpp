@@ -17,7 +17,7 @@ namespace Demo {
 		Tensorcd A(shape);
 		Tensorcd B = A;
 		Tensorcd C = A - B;
-		Matrixcd Overlap = A.dotProduct(B);
+		Matrixcd Overlap = A.contraction(B);
 		/// Tensor-contraction, hole in index 0
 		Matrixcd rho = contraction(A, B, 0);
 

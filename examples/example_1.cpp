@@ -60,7 +60,7 @@ Tensorcd fill_tensor(Tensorcd A){
 
 Matrixcd dot_product(Tensorcd A, Tensorcd B) {
     cout << "\ndot_product:\n" << endl;
-    Matrixcd w = A.dotProduct(B);
+    Matrixcd w = A.contraction(B);
     cout << "w=" << endl;
     w.print();
     cout << "(" << w.dim1() << "," << w.dim2() << ")\n";

@@ -3,11 +3,11 @@
 //
 
 #include "UnitTest++/UnitTest++.h"
-#include "TensorNetwork/DotProduct.h"
+#include "TensorNetwork/contractions.h"
 #include "Tree/TreeFactory.h"
 
 
-SUITE (dotProduct) {
+SUITE (contraction) {
 	class Trees {
 	public:
 		Trees() {
@@ -23,7 +23,7 @@ SUITE (dotProduct) {
 
 	TEST_FIXTURE (Trees, dotproduct) {
 		TensorTreecd S(tree_);
-		dotProduct(S, psi_, psi_);
+		contraction(S, psi_, psi_);
 		for (const Edge& edge : tree_.edges()) {
 				CHECK_CLOSE(0., residual(S[edge], identitycd({2, 2})), eps);
 		}
