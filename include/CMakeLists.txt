@@ -5,9 +5,11 @@ set(QuTree_INCLUDE_FILES
         include/Check.h
 
         # Tensor
+        include/Tensor/Tensor
         include/Tensor/Tensor.h
         include/Tensor/TensorBLAS1.h
         include/Tensor/TensorBLAS2.h
+        include/Tensor/TensorLapack.h
         include/Tensor/TensorShape.h
         include/Tensor/Tensor_Implementation.h
         include/Tensor/stdafx.h

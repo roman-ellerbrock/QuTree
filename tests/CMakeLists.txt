@@ -26,9 +26,10 @@ set(QuTree_tests
         Tensor/test_TensorLapack.cpp
 
         # Tree tests
-        Tree/test_PrimitiveBasis.cpp
-        Tree/test_Node.cpp
         Tree/test_Edge.cpp
+        Tree/test_Node.cpp
+        Tree/test_PrimitiveBasis.cpp
+        Tree/test_sparse_vector.cpp
         Tree/test_SubTree.cpp
         Tree/test_Tree.cpp
         Tree/test_TreeFactory.cpp

@@ -24,7 +24,8 @@ template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket, co
 template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket, const Edge& edge);
 
 template <typename T>
-void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const ProductOperator<T>& P, const Edge& edge) {
+void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const ProductOperator<T>& P,
+	const Edge& edge) {
 	Tensor<T> sKet(Ket[edge].shape_);
 	for (const Edge& preEdge : preEdges(edge)) {
 		sKet = matrixTensor(S[preEdge], Ket[edge], preEdge);
@@ -33,24 +34,29 @@ void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const ProductOperator<T>&
 
 	const Node& node = edge.from();
 	for (const Leaf& leaf : node.leaves_) {
-		sKet =
+		P.apply(sKet, Ket[edge], leaf);
+		std::swap(sKet, Ket[edge]);
 	}
 }
 
-template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& S, const ProductOperator<cd>& P, const Edge& edge);
-template void apply(TensorTree<d>& Ket, const TensorTree<d>& S, const ProductOperator<d>& P, const Edge& edge);
+template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& S,
+	const ProductOperator<cd>& P, const Edge& edge);
+template void apply(TensorTree<d>& Ket, const TensorTree<d>& S,
+	const ProductOperator<d>& P, const Edge& edge);
 
 template <typename T>
 void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const ProductOperator<T>& P) {
 	for (const Edge* edge : S.edges_) {
-		apply(Ket, S, *edge);
+		apply(Ket, S, P, *edge);
 		S[edge] = contraction(Bra[edge], Ket[edge], *edge);
 	}
 }
 
-template void contraction(TensorTree<cd>& S, const TensorTree<cd>& Bra, TensorTree<cd> Ket, const ProductOperator<cd>& P);
-template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra, TensorTree<d> Ket, const ProductOperator<d>& P);
+template void contraction(TensorTree<cd>& S, const TensorTree<cd>& Bra,
+	TensorTree<cd> Ket, const ProductOperator<cd>& P);
+template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
+	TensorTree<d> Ket, const ProductOperator<d>& P);
 
 template <typename T>
 TensorTree<T> dotProduct(const TensorTree<T>& Bra, TensorTree<T> Ket) {

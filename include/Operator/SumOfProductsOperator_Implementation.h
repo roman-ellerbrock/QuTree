@@ -4,10 +4,10 @@
 
 #ifndef SUMOFPRODUCTSOPERATOR_IMPLEMENTATION_H
 #define SUMOFPRODUCTSOPERATOR_IMPLEMENTATION_H
-#include "TreeOperators/SumOfProductsOperator.h"
+#include "Operator/SumOfProductsOperator.h"
 
 template<typename T>
-SumOfProductsOperator<T>::SumOfProductsOperator(const MLO<T>& M, T c) {
+SumOfProductsOperator<T>::SumOfProductsOperator(const PO<T>& M, T c) {
 	push_back(M, c);
 }
 
@@ -16,10 +16,10 @@ SumOfProductsOperator<T> multAB(const SOP<T>& A, const SOP<T>& B) {
 	SOP<T> C;
 
 	for (size_t i = 0; i < A.size(); i++) {
-		const MLO<T> Ai = A(i);
+		const PO<T> Ai = A(i);
 		auto acoeff = A.coeff(i);
 		for (size_t j = 0; j < B.size(); j++) {
-			const MLO<T> Bj = B(j);
+			const PO<T> Bj = B(j);
 			auto bcoeff = B.coeff(j);
 			auto ccoeff = acoeff * bcoeff;
 			C.push_back(Ai * Bj, ccoeff);
@@ -48,20 +48,20 @@ SumOfProductsOperator<T> operator*(const SOP<T>& A, T c) {
 }
 
 template<typename T>
-SumOfProductsOperator<T> operator*(const MLO<T>& M, const SOP<T>& A) {
+SumOfProductsOperator<T> operator*(const PO<T>& M, const SOP<T>& A) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
-		MLO<T> MA = M * A(i);
+		PO<T> MA = M * A(i);
 		C.push_back(MA, A.coeff(i));
 	}
 	return C;
 }
 
 template<typename T>
-SumOfProductsOperator<T> operator*(const SOP<T>& A, const MLO<T>& M) {
+SumOfProductsOperator<T> operator*(const SOP<T>& A, const PO<T>& M) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
-		MLO<T> MA = A(i) * M;
+		PO<T> MA = A(i) * M;
 		C.push_back(MA, A.coeff(i));
 	}
 	return C;
@@ -72,10 +72,10 @@ SumOfProductsOperator<T> operator*(const SOP<T>& A,
 	const SOP<T>& B) {
 	SOP<T> C;
 	for (size_t i = 0; i < A.size(); i++) {
-		const MLO<T> Ai = A(i);
+		const PO<T> Ai = A(i);
 		auto acoeff = A.coeff(i);
 		for (size_t j = 0; j < B.size(); j++) {
-			const MLO<T> Bj = B(j);
+			const PO<T> Bj = B(j);
 			auto bcoeff = B.coeff(j);
 			auto ccoeff = acoeff * bcoeff;
 			C.push_back(Ai * Bj, ccoeff);

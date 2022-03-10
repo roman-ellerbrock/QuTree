@@ -1,5 +1,16 @@
 #include "Operator/ProductOperator.h"
 
+template<typename T>
+void ProductOperator<T>::apply(Tensor<T>& hA, Tensor<T> A, const Leaf& leaf) const {
+	size_t mode = leaf.par().mode_;
+	for (size_t i = 0; i < targetLeaves_.size(); ++i) {
+		if (targetLeaves_[i] == mode) {
+			leafOperators_[i]->apply(leaf.basis_, hA, A);
+			std::swap(hA, A);
+		}
+	}
+	std::swap(hA, A);
+}
 
 template<typename T>
 TensorTree<T> ProductOperator<T>::apply(TensorTree<T> Psi) const {

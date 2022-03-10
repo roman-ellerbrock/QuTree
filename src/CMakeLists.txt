@@ -31,12 +31,16 @@ set(QuTree_SOURCE_FILES
         # TensorNetwork
         src/TensorNetwork/TensorTree.cpp
         src/TensorNetwork/MatrixTree.cpp
-        src/TensorNetwork/DotProduct.cpp
+        src/TensorNetwork/contractions.cpp
 
         # Operators
         src/Operator/LeafFunction.cpp
         src/Operator/LeafMatrix.cpp
         src/Operator/ProductOperator.cpp
+        src/Operator/SumOfProductsOperator.cpp
+
+        # Utilities
+        src/Util/GateOperators.cpp
 
         #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/LA_lib.f

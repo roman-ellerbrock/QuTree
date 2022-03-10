@@ -5,6 +5,7 @@
 #ifndef SUBTREE_H
 #define SUBTREE_H
 #include "Tree.h"
+//#include "sparse_vector.h"
 
 bool contains(const vector<const Node*>& vec, const Node* probe);
 
@@ -90,6 +91,10 @@ public:
 				edges_.push_back(&edge);
 			}
 		}
+	}
+
+	vector<const Edge*> preEdges() const {
+		return vector<const Edge*>();
 	}
 
 	vector<const Node*> nodes_;

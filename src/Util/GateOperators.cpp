@@ -6,8 +6,8 @@
 #include "Util/QMConstants.h"
 
 
-Matrixcd sigma_x() {
-	Matrixcd s(2, 2);
+Tensorcd sigma_x() {
+	Tensorcd s({2, 2});
 	s(0, 0) = 0.;
 	s(1, 0) = 1.;
 	s(0, 1) = 1.;
@@ -15,8 +15,8 @@ Matrixcd sigma_x() {
 	return s;
 }
 
-Matrixcd sigma_y() {
-	Matrixcd s(2, 2);
+Tensorcd sigma_y() {
+	Tensorcd s({2, 2});
 	s(0, 0) = 0.;
 	s(1, 0) = QM::im;
 	s(0, 1) = -QM::im;
@@ -24,8 +24,8 @@ Matrixcd sigma_y() {
 	return s;
 }
 
-Matrixcd sigma_z() {
-	Matrixcd s(2, 2);
+Tensorcd sigma_z() {
+	Tensorcd s({2, 2});
 	s(0, 0) = 1.;
 	s(1, 0) = 0.;
 	s(0, 1) = 0.;
@@ -33,8 +33,8 @@ Matrixcd sigma_z() {
 	return s;
 }
 
-Matrixcd hadamard() {
-	Matrixcd h(2, 2);
+Tensorcd hadamard() {
+	Tensorcd h({2, 2});
 	h(0, 0) = 1. / sqrt(2.);
 	h(1, 0) = 1. / sqrt(2.);
 	h(0, 1) = 1. / sqrt(2.);
@@ -42,8 +42,8 @@ Matrixcd hadamard() {
 	return h;
 }
 
-Matrixcd element(size_t i, size_t j, size_t dim) {
-	Matrixcd P(dim, dim);
+Tensorcd element(size_t i, size_t j, size_t dim) {
+	Tensorcd P({dim, dim});
 	if (i >= dim || j >= dim) {
 		cerr << "Error: element out of range in element-operator\n";
 		exit(1);
@@ -52,7 +52,7 @@ Matrixcd element(size_t i, size_t j, size_t dim) {
 	return P;
 }
 
-Matrixcd project(size_t i, size_t dim) {
+Tensorcd project(size_t i, size_t dim) {
 	return element(i, i, dim);
 }
 
@@ -60,7 +60,7 @@ SOPcd controlled(const SOPcd& in, size_t control) {
 	SOPcd out;
 	{
 		// Apply identity to 0 projection
-		MLOcd M;
+		POcd M;
 		M.push_back(project(0, 2), control);
 
 		out.push_back(M, 1.0);
@@ -68,7 +68,7 @@ SOPcd controlled(const SOPcd& in, size_t control) {
 
 	{
 		// Apply given gate to 1 projection
-		MLOcd M;
+		POcd M;
 		M.push_back(project(1, 2), control);
 
 		// Distribute through existing SOP
@@ -81,24 +81,24 @@ SOPcd controlled(const SOPcd& in, size_t control) {
 	return out;
 }
 
-SOPcd controlled(const MLOcd& M, size_t c) {
+SOPcd controlled(const POcd& M, size_t c) {
 	SOPcd S(M, 1.);
 	return controlled(S, c);
 }
 
-SOPcd controlled(const Matrixcd& L, size_t c, size_t t) {
-	MLOcd M(L, t);
+SOPcd controlled(const Tensorcd& L, size_t c, size_t t) {
+	POcd M(L, t);
 	return controlled(M, c);
 }
 
 SOPcd CNot(size_t c, size_t t) {
 	SOPcd cnot;
 	{
-		MLOcd M(project(0, 2), c);
+		POcd M(project(0, 2), c);
 		cnot.push_back(M, 1.);
 	}
 	{
-		MLOcd M(project(1, 2), c);
+		POcd M(project(1, 2), c);
 		M.push_back(sigma_x(), t);
 		cnot.push_back(M, 1.);
 	}
@@ -120,13 +120,13 @@ SOPcd CZ(size_t c, size_t t) {
 }
 
 /// Define complex rotation operator, denoted by Rk, where k indicates angle=1/(2^k)
-Matrixcd rk(size_t k, bool adj) {
+Tensorcd rk(size_t k, bool adj) {
 	long double pw = pow(2, k);
 	complex<long double> im(0., 1.);
 	long double two_pi = 3.14159265358979323846264338327950288419716939937510582097494459230781640 * 2.;
 	complex<long double> phase(im * two_pi / pw);
 	if (adj) { phase = -phase; }
-	Matrixcd rmat(2, 2);
+	Tensorcd rmat({2, 2});
 	rmat(0, 0) = 1.;
 	rmat(1, 1) = exp(phase);
 	return rmat;
@@ -136,13 +136,13 @@ SOPcd Uk(size_t c, size_t t, size_t k, bool adj) {
 	return controlled(rk(k, adj), c, t);
 }
 
-SOPVectorcd QFT(size_t mode_start, size_t n_bit, bool adjungate, size_t approx) {
+/*SOPVectorcd QFT(size_t mode_start, size_t n_bit, bool adjungate, size_t approx) {
 	SOPVectorcd qft;
 	size_t mode_end = mode_start + n_bit;
 	for (size_t n = 0; n < n_bit; ++n) {
 		size_t bit_a = mode_start + n;
 		{
-			MLOcd M(hadamard(), bit_a);
+			POcd M(hadamard(), bit_a);
 			SOPcd sop(M, 1.);
 			qft.push_back(sop);
 		}
@@ -157,5 +157,5 @@ SOPVectorcd QFT(size_t mode_start, size_t n_bit, bool adjungate, size_t approx) 
 		}
 	}
 	return qft;
-}
+}*/
 

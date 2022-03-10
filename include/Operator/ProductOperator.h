@@ -10,9 +10,6 @@
 
 
 template<typename T>
-using OperatorVector = vector<shared_ptr<LeafOperator<T>>>;
-
-template<typename T>
 class ProductOperator
 	/*!
 	 * \class ProductOperator
@@ -33,7 +30,8 @@ class ProductOperator
 {
 public:
 	/// Constructor without memory allocation
-	ProductOperator() : hasV_(false) {}
+	ProductOperator()
+		: hasV_(false) {}
 
 	/// Default destructor
 	~ProductOperator() = default;
@@ -101,16 +99,10 @@ public:
 	[[nodiscard]] size_t size() const { return targetLeaves_.size(); }
 
 	/// Access the i-th SPO in the PO
-	shared_ptr<LeafOperator<T>> operator[](size_t i) const {
+	auto operator[](size_t i) const {
 		assert(i < targetLeaves_.size());
 		return leafOperators_[i];
 	}
-
-	/// apply a PO to a wavefunction.
-	void applyReference(TensorTree<T>& Psi) const;
-
-	/// apply a PO to a wavefunction. Call-by-value-version. This routine is not optimized for performance.
-	TensorTree<T> apply(TensorTree<T> Psi) const;
 
 	/// On which mode does the "part"-th SPO act?
 	[[nodiscard]] size_t mode(size_t part) const {
@@ -129,14 +121,18 @@ public:
 		return M;
 	}
 
-	/// This routine manages how to apply a PO
-	//	Tensor<T> apply(Tensor<T> A,
-	//		const Leaf& leaf) const;
+	/// apply a PO to a wavefunction.
+	void applyReference(TensorTree<T>& Psi) const;
 
-	/*	/// Check whether a SPO acts on mode "mode_x"
-		bool isActive(size_t mode_x) const {
-			for (size_t i = 0; i < targetLeaves_.size(); i++) {
-				if (targetLeaves_[i] == mode_x) { return true; }
+	/// apply a PO to a wavefunction. Call-by-value-version. This routine is not optimized for performance.
+	TensorTree<T> apply(TensorTree<T> Psi) const;
+
+	void apply(Tensor<T>& hA, Tensor<T> A, const Leaf& leaf) const;
+
+	/// Check whether a SPO acts on mode "mode_x"
+		[[nodiscard]] bool isActive(size_t mode_x) const {
+			for (auto target : targetLeaves_) {
+				if (target == mode_x) { return true; }
 			}
 			return false;
 		}
@@ -145,7 +141,7 @@ public:
 		bool isActive(size_t part, size_t mode_x) const {
 			return (targetLeaves_[part] == mode_x);
 		}
-	*/
+
 /*	/// Check whether a Potential operator is included in the PO. Important for CDVR.
 	[[nodiscard]] bool hasV() const { return hasV_; }
 
@@ -178,18 +174,17 @@ protected:
 	/// These are the modes the SPOs act on
 	vector<size_t> targetLeaves_;
 
-	map<size_t, OperatorVector<T>> operators_;
-
 	/// The potential operator
 //	PotentialOperator v_;
 	/// Is there a PotentialOperator?
 	bool hasV_;
 };
 
+typedef ProductOperator<complex<double>> ProductOperatorcd;
+typedef ProductOperator<double> ProductOperatord;
+
 template<typename T>
 using PO = ProductOperator<T>;
-
-typedef PO<complex<double>> POcd;
-
 typedef PO<double> POd;
+typedef PO<complex<double>> POcd;
 

@@ -24,7 +24,7 @@ public:
 		initialize(tree);
 	}
 
-	explicit SumOfProductsOperator(const MLO<T>& M, T c = 1.);
+	explicit SumOfProductsOperator(const PO<T>& M, T c = 1.);
 
 	void initialize(const Tree& tree) {
 		coeff_.clear();
@@ -36,24 +36,24 @@ public:
 	virtual int size() const { return mpos_.size(); }
 
 	// Get a product-operator from the Hamiltonian
-	virtual const MLO<T>& operator()(size_t part) const {
+	virtual const PO<T>& operator()(size_t part) const {
 		assert(part < mpos_.size());
 		return mpos_[part];
 	}
 
 	// Get a product-operator from the Hamiltonian
-	virtual const MLO<T>& operator[](size_t part) const {
+	virtual const PO<T>& operator[](size_t part) const {
 		assert(part < mpos_.size());
 		return mpos_[part];
 	}
 
-	virtual MLO<T>& operator()(size_t part) {
+	virtual PO<T>& operator()(size_t part) {
 		assert(part < mpos_.size());
 		return mpos_[part];
 	}
 
 	// append a new summand
-	void push_back(const MLO<T>& M, T coeff) {
+	void push_back(const PO<T>& M, T coeff) {
 		mpos_.push_back(M);
 		coeff_.push_back(coeff);
 	}
@@ -103,12 +103,12 @@ public:
 		U c);
 
 	template<typename U>
-	friend SumOfProductsOperator<U> operator*(const MLO<U>& M,
+	friend SumOfProductsOperator<U> operator*(const PO<U>& M,
 		const SumOfProductsOperator<U>& A);
 
 	template<typename U>
 	friend SumOfProductsOperator<U> operator*(const SumOfProductsOperator<U>& A,
-		const MLO<U>& M);
+		const PO<U>& M);
 
 	template<typename U>
 	friend SumOfProductsOperator<U> operator*(const SumOfProductsOperator<U>& A,
@@ -119,7 +119,7 @@ public:
 		const SumOfProductsOperator<U>& B);
 
 protected:
-	vector<MLO<T>> mpos_;
+	vector<PO<T>> mpos_;
 	vector<T> coeff_;
 
 private:
