@@ -41,6 +41,8 @@ set(QuTree_SOURCE_FILES
 
         # Utilities
         src/Util/GateOperators.cpp
+        src/Util/JacobiRotationFramework.cpp
+        src/Util/SimultaneousDiagonalization.cpp
 
         #    src/Core/JacobiRotationFramework.cpp
         #    src/Core/LA_lib.f

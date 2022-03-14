@@ -309,3 +309,21 @@ SpectralDecomposition<T> heev(const Tensor<T>& A) {
 
 template SpectralDecomposition<cd> heev(const Tensor<cd>& A);
 template SpectralDecomposition<d> heev(const Tensor<d>& A);
+
+template <typename T>
+void gesv(Tensor<T>& A, Tensor<T>& B) {
+	/// A * X = B
+	/// A: n * n
+	/// x: n * m
+	/// B: n * m
+	size_t n = A.shape_.lastDimension();
+	size_t m = B.shape_.lastDimension();
+	size_t lda = n;
+	size_t ldb = n;
+	Tensor<int64_t> ipiv({n});
+	CHECK(lapack::gesv(n, m, A.coeffs_, lda, ipiv.coeffs_, B.coeffs_, ldb));
+
+}
+
+template void gesv(Tensor<d>& A, Tensor<d>& B);
+template void gesv(Tensor<cd>& A, Tensor<cd>& B);

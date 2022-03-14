@@ -68,5 +68,8 @@ void heev(SpectralDecomposition<T>& x);
 template <typename T>
 SpectralDecomposition<T> heev(const Tensor<T>& A);
 
+/// ====================== Solve SLE ==========================
+template <typename T>
+void gesv(Tensor<T>& A, Tensor<T>& BinXout);
 
 #endif //TENSORLAPACK_H

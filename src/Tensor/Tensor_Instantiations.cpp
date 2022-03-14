@@ -8,6 +8,7 @@ typedef complex<double> cd;
 
 template class Tensor<d>;
 template class Tensor<cd>;
+template class Tensor<int64_t>;
 
 template Tensor<cd> random(const TensorShape& shape, mt19937& gen);
 template Tensor<d> random(const TensorShape& shape, mt19937& gen);

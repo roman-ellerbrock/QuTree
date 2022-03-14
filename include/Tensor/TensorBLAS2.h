@@ -30,6 +30,10 @@ template<typename T>
 Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b, T alpha = 1.,
 	blas::Op op_a = blas::Op::NoTrans, blas::Op op_b = blas::Op::NoTrans);
 
+template<typename T>
+Tensor<T> operator*(const Tensor<T>& a, const Tensor<T>& b);
+
+
 /// perform u^cT a u
 template<typename T>
 [[nodiscard]] Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u);
@@ -122,7 +126,7 @@ Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
 	const vector<size_t>& holes = {}, T alpha = 1.);
 
 template<typename T>
-Tensor<T> dotProduct(const Tensor<T>& bra, const Tensor<T>& ket);
+T dotProduct(const Tensor<T>& bra, const Tensor<T>& ket);
 
 
 #endif //TENSORBLAS2_H

@@ -55,6 +55,14 @@ template Tensor<d> gemm(const Tensor<d>& a, const Tensor<d>& b,
 	d alpha, blas::Op op_a, blas::Op op_b);
 
 template<typename T>
+Tensor<T> operator*(const Tensor<T>& a, const Tensor<T>& b) {
+	return gemm(a, b);
+}
+
+template Tensor<cd> operator*(const Tensor<cd>& a, const Tensor<cd>& b);
+template Tensor<d> operator*(const Tensor<d>& a, const Tensor<d>& b);
+
+template<typename T>
 Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u) {
 	a = gemm(a, u);
 	return gemm(adjoint(u), a);
@@ -205,9 +213,8 @@ template<typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
 	const vector<size_t>& holes, T alpha) {
 	if (holes.empty()){
-		Tensor<T> h({1});
-		contraction(h, bra, ket, holes, alpha);
-		return h;
+		vector<size_t> lastHole = {bra.shape_.lastIdx()};
+		return contraction(bra, ket, lastHole, alpha);
 	} else if (holes.size() == 1){
 		return contraction(bra, ket, holes.front(), alpha);
 	} else {
@@ -222,9 +229,9 @@ template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket,
 	const vector<size_t>& holes, d alpha);
 
 template<typename T>
-Tensor<T> dotProduct(const Tensor<T>& bra, const Tensor<T>& ket) {
-	return contraction(bra, ket, bra.shape_.lastIdx());
+T dotProduct(const Tensor<T>& bra, const Tensor<T>& ket) {
+	return trace(contraction(bra, ket, bra.shape_.lastIdx()));
 }
 
-template Tensor<cd> dotProduct(const Tensor<cd>& bra, const Tensor<cd>& ket);
-template Tensor<d> dotProduct(const Tensor<d>& bra, const Tensor<d>& ket);
+template cd dotProduct(const Tensor<cd>& bra, const Tensor<cd>& ket);
+template d dotProduct(const Tensor<d>& bra, const Tensor<d>& ket);

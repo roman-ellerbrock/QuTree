@@ -61,7 +61,7 @@ template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
 template <typename T>
 TensorTree<T> dotProduct(const TensorTree<T>& Bra, TensorTree<T> Ket) {
 	TensorTree<T> S;
-	dotProduct(S, Bra, Ket);
+	contraction(S, Bra, Ket, Bra.shape_.lastIdx());
 	return S;
 }
 

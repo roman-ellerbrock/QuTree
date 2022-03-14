@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Matrix.h"
+#include "Tensor/Tensor.h"
 
 namespace JacobiRotationFramework
 /**

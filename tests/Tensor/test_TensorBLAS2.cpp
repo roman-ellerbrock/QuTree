@@ -117,6 +117,19 @@ SUITE (TensorBLAS2) {
 		}
 	}
 
+	TEST_FIXTURE(TensorFactory, OperatorProduct) {
+		Tensorcd a({5, 7});
+		fill(a);
+		Tensorcd b({7, 9});
+		fill(b);
+
+		Tensorcd c_ref = gemm(a, b);
+		Tensorcd c = a * b;
+
+		CHECK_CLOSE(0., residual(c_ref, c), eps);
+		CHECK_EQUAL(c_ref.shape_, c.shape_);
+	}
+
 	TEST (unitarySimilarityTransform) {
 		auto a = arangecd({3, 3});
 		auto u = arangecd({3, 3});

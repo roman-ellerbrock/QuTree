@@ -16,7 +16,7 @@ Tensorcd toMatrix(const LeafOperatorcd& h, const Leaf& leaf) {
 		v(i, i) = 1.;
 	}
 	h.apply(leaf.basis_, hv, v);
-	return dotProduct(v, hv);
+	return contraction(v, hv);
 }
 
 Tensord toMatrix(const LeafOperator<double>& h, const Leaf& leaf) {
@@ -29,7 +29,7 @@ Tensord toMatrix(const LeafOperator<double>& h, const Leaf& leaf) {
 		v(i, i) = 1.;
 	}
 	h.apply(leaf.basis_, hv, v);
-	return dotProduct(v, hv);
+	return contraction(v, hv);
 }
 
 template<typename T>
