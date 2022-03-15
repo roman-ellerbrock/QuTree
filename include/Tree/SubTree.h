@@ -5,7 +5,7 @@
 #ifndef SUBTREE_H
 #define SUBTREE_H
 #include "Tree.h"
-//#include "sparse_vector.h"
+#include "sparse_vector.h"
 
 bool contains(const vector<const Node*>& vec, const Node* probe);
 
@@ -27,7 +27,8 @@ public:
 	void initialize(const Tree& tree) {
 		nodes_.clear();
 		for (Node& node : tree) {
-			nodes_.push_back(&node);
+//			nodes_.push_back(&node);
+			nodes_.push_back(node.address_, &node);
 		}
 
 		fillEdges(tree);
@@ -59,7 +60,8 @@ public:
 		/// create bottom-up
 		for (const Node& node : tree) {
 			if (contains(tmp, &node)) {
-				nodes_.push_back(&node);
+				nodes_.push_back(node.address_, &node);
+//				nodes_.push_back(&node);
 			}
 		}
 
@@ -87,18 +89,24 @@ public:
 	void fillEdges(const Tree& tree) {
 		edges_.clear();
 		for (const Edge& edge : tree.edges()) {
-			if (contains(nodes_, &edge.from()) && contains(nodes_, &edge.to())) {
-				edges_.push_back(&edge);
+//			if (contains(nodes_, &edge.from()) && contains(nodes_, &edge.to())) {
+			if (nodes_.contains(edge.from().address_) && nodes_.contains(edge.to().address_)) {
+				edges_.push_back(edge.address(), &edge);
 			}
 		}
 	}
 
-	vector<const Edge*> preEdges() const {
-		return vector<const Edge*>();
+	[[nodiscard]] vector<const Edge*> preEdges(const Edge* edge) const {
+		using ::preEdges;
+		vector<Edge> preEd = preEdges(*edge);
+		vector<const Edge*> pres;
+		for (const Edge& e : preEd) {
+		}
+		return pres;
 	}
 
-	vector<const Node*> nodes_;
-	vector<const Edge*> edges_;
+	sparse_vector<const Node*> nodes_;
+	sparse_vector<const Edge*> edges_;
 	map<size_t, const Leaf*> leaves_;
 };
 

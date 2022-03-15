@@ -31,11 +31,11 @@ SUITE (contraction) {
 	}
 
 	TEST_FIXTURE(Trees, CNotMatrices) {
-/*		ProductOperatorcd P(sigma_x(), 0);
+		ProductOperatorcd P(sigma_x(), 0);
 		auto S = matrixTreecd(tree_, P.targetLeaves());
 		contraction(S, psi_, psi_, P);
 		cout << "S:\n";
-		S.print();*/
+		S.print();
 	}
 
 /*	TEST_FIXTURE(Trees, fullContraction) {

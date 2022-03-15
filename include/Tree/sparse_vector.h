@@ -46,6 +46,8 @@ public:
 		objects_.clear();
 	}
 
+	[[nodiscard]] size_t size() const { return objects_.size(); }
+
 	/// pointers to objects
 	std::vector<A> objects_;
 	/// dense address -> sparse address
