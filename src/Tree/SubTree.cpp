@@ -27,3 +27,15 @@ vector<const Node*> gatherNodes(const Tree& tree, const vector<size_t>& idx) {
 	return tmp;
 }
 
+ostream& operator<<(ostream& os, const SubTreeParameters& par) {
+	os << "Leaves: ";
+	for (auto x : par.leaves_) {
+		os << x << ", ";
+	}
+	os << endl;
+
+	cout << "Nodes active: " << par.activeNodes_ << endl;
+	cout << "Edges active: " << par.activeEdges_ << endl;
+
+	return os;
+}

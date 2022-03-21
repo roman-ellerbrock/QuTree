@@ -30,7 +30,6 @@ set(QuTree_SOURCE_FILES
 
         # TensorNetwork
         src/TensorNetwork/TensorTree.cpp
-        src/TensorNetwork/MatrixTree.cpp
         src/TensorNetwork/contractions.cpp
 
         # Operators

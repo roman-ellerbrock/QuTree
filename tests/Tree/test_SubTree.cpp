@@ -37,8 +37,7 @@ SUITE (SubTree) {
 	};
 
 	TEST_FIXTURE (SomeTree, init) {
-		SubTree subtree;
-		subtree.initialize(tree_);
+		SubTree subtree(tree_);
 
 		size_t i = 0;
 		for (const Node* node : subtree.nodes_) {
@@ -90,8 +89,21 @@ SUITE (SubTree) {
 		for (auto i : edgeidx) {
 			const Edge& edge = tree_.edges()[i];
 			CHECK_EQUAL(true, stree.edges_.contains(edge.address()));
-//			CHECK_EQUAL(tree_.edges()[i], *stree.edges_[counter++]);
 		}
+	}
+
+	TEST_FIXTURE(SomeTree, testPreEdges) {
+		vector<size_t> idx = {1, 3};
+		SubTree stree(tree_, idx);
+
+		for (const Edge* edge : stree.edges_) {
+			CHECK_EQUAL(true, stree.edges_.contains(edge->address()));
+			const vector<Edge> preEdges = stree.preEdges(edge);
+			for (const Edge& e : preEdges) {
+				CHECK_EQUAL(true, stree.edges_.contains(e.address()));
+			}
+		}
+
 	}
 
 }

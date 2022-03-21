@@ -25,7 +25,7 @@ public:
 		map_[dense_address] = objects_.size() - 1;
 	}
 
-	bool contains(size_t dense_address) {
+	[[nodiscard]] bool contains(size_t dense_address) const {
 		if (map_.find(dense_address) == map_.end()) return false;
 		return true;
 	}

@@ -49,9 +49,13 @@ class TensorTree<complex<double>>;
 
 
 template<typename T>
-TensorTree<T> matrixTree(const Tree& tree, const vector<size_t>& idx) {
-	SubTree subTree(tree, idx);
+TensorTree<T> matrixTree(const Tree& tree, const SubTreeParameters& par) {
+	SubTree subTree(tree, par);
 	TensorTree<T> Psi(subTree);
+	for (const Node* node : Psi.nodes_) {
+		Psi[node] = Tensor<T>({1});
+	}
+
 	for (const Edge* edge : Psi.edges_) {
 		Psi[edge] = Tensor<T>(edge->shape());
 	}
@@ -61,5 +65,5 @@ TensorTree<T> matrixTree(const Tree& tree, const vector<size_t>& idx) {
 typedef complex<double> cd;
 typedef double d;
 
-template TensorTree<cd> matrixTree<cd>(const Tree& tree, const vector<size_t>&);
-template TensorTree<d> matrixTree<d>(const Tree& tree, const vector<size_t>&);
+template TensorTree<cd> matrixTree<cd>(const Tree& tree, const SubTreeParameters&);
+template TensorTree<d> matrixTree<d>(const Tree& tree, const SubTreeParameters&);

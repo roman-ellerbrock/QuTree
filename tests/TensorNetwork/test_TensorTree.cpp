@@ -49,8 +49,66 @@ SUITE (TensorTree) {
 		}
 	}
 
-	TEST_FIXTURE(Trees, matrixTree) {
+	TEST_FIXTURE (Trees, matrixTree) {
 		auto mat = matrixTreecd(tree_, {});
+		for (const Node& node : tree_) {
+				CHECK_EQUAL(true, mat.nodes_.contains(node.address_));
+			/// @TODO: define how node tensor should look like. Until now there it isn't defined
+		}
+
+		for (const Edge& edge : tree_.edges()) {
+				CHECK_EQUAL(true, mat.edges_.contains(edge.address()));
+				CHECK_EQUAL(edge.shape(), mat[edge].shape_);
+		}
+	}
+
+	TEST_FIXTURE (Trees, matrixTreeEdges) {
+		auto mat = matrixTreecd(tree_, SubTreeParameters({}, false));
+		for (const Node& node : tree_) {
+				CHECK_EQUAL(false, mat.nodes_.contains(node.address_));
+		}
+
+		for (const Edge& edge : tree_.edges()) {
+				CHECK_EQUAL(true, mat.edges_.contains(edge.address()));
+		}
+	}
+
+	TEST_FIXTURE (Trees, matrixTreeNodes) {
+		auto mat = matrixTreecd(tree_, SubTreeParameters({}, true, false));
+		for (const Node& node : tree_) {
+				CHECK_EQUAL(true, mat.nodes_.contains(node.address_));
+		}
+
+		for (const Edge& edge : tree_.edges()) {
+				CHECK_EQUAL(false, mat.edges_.contains(edge.address()));
+		}
+	}
+
+	TEST_FIXTURE (Trees, matrixTreePreEdges) {
+		auto mat = matrixTreecd(tree_, {});
+		for (const Edge *edge : mat.edges_) {
+				CHECK_EQUAL(edge->shape(), mat[edge].shape_);
+		}
+
+		for (const Edge *e : mat.edges_) {
+			vector<Edge> pre = mat.preEdges(e);
+			for (const Edge pe : pre) {
+				CHECK_EQUAL(true, mat.edges_.contains(pe.address()));
+				CHECK_EQUAL(e->shape(), mat[e].shape_);
+			}
+		}
+	}
+
+	TEST_FIXTURE (Trees, matrixTreePreEdgesSparse) {
+		vector<size_t> idx = {1, 3};
+		auto mat = matrixTreecd(tree_, idx);
+		for (const Edge *e : mat.edges_) {
+			auto pre = mat.preEdges(e);
+			for (const Edge &edge : pre) {
+					CHECK_EQUAL(true, mat.edges_.contains(edge.address()));
+					CHECK_EQUAL(edge.shape(), mat[edge].shape_);
+			}
+		}
 	}
 }
 
