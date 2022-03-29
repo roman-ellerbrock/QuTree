@@ -68,6 +68,17 @@ void heev(SpectralDecomposition<T>& x);
 template <typename T>
 SpectralDecomposition<T> heev(const Tensor<T>& A);
 
+
+template <typename T>
+void geev(FactorizedGe<T>& x, const Tensor<T>& A);
+
+template <typename T>
+FactorizedGe<T> geev(const Tensor<T>& A);
+
+template <typename T>
+FactorizedGe<T> geev(const Tensor<T>& A);
+
+
 /// ====================== Solve SLE ==========================
 template <typename T>
 void gesv(Tensor<T>& A, Tensor<T>& BinXout);

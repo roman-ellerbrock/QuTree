@@ -73,5 +73,41 @@ typedef SpectralDecomposition<complex<double>> SpectralDecompositioncd;
 
 typedef SpectralDecomposition<double> SpectralDecompositiond;
 
+template<typename T>
+class FactorizedGe: public tuple<Tensor<T>, Tensor<T>, Tensor<T>> {
+public:
+	FactorizedGe() = default;
+	~FactorizedGe() = default;
+
+	explicit FactorizedGe(const TensorShape& shape) {
+		assert(shape.order() == 2);
+		size_t m = shape[0];
+		size_t n = shape[1];
+		assert(n == m);
+		VR() = Tensor<T>({m, n});
+		VL() = Tensor<T>({m, n});
+		ev() = Tensor<T>({n});
+
+	}
+
+	explicit FactorizedGe(const tuple<Tensor<T>, Tensor<T>, Tensor<T>>& tp) {
+		VR() = get<0>(tp);
+		VL() = get<1>(tp);
+		ev() = get<2>(tp);
+	}
+
+	Tensor<T>& VL() { return get<0>(*this); }
+
+	[[nodiscard]] const Tensor<T>& VL() const { return get<0>(*this); }
+
+	Tensor<T>& ev() { return get<1>(*this); }
+
+	[[nodiscard]] const Tensor<T>& ev() const { return get<1>(*this); }
+
+	Tensor<T>& VR() { return get<2>(*this); }
+
+	[[nodiscard]] const Tensor<T>& VR() const { return get<2>(*this); }
+
+};
 
 #endif //SVD_H

@@ -139,9 +139,9 @@ template void gramSchmidt(Tensor<d>& A, size_t k);
 /// SVD
 template<typename T>
 Tensor<T> toTensor(const SVD<T>& x, size_t k) {
-	Tensor<T> A = x.U();
-	vectorTensor(A, x.sigma(), k);
-	return matrixTensor(adjoint(x.VT()), A, k);
+	Tensor<T> U = x.U();
+	vectorTensor(U, x.sigma(), k);
+	return matrixTensor(transpose(x.VT()), U, k);
 }
 
 template Tensor<cd> toTensor(const SVD<cd>& x, size_t k);
@@ -327,3 +327,27 @@ void gesv(Tensor<T>& A, Tensor<T>& B) {
 
 template void gesv(Tensor<d>& A, Tensor<d>& B);
 template void gesv(Tensor<cd>& A, Tensor<cd>& B);
+
+template <typename T>
+void geev(FactorizedGe<T>& x, const Tensor<T>& A) {
+	size_t n = A.shape_.lastDimension();
+	size_t m = A.shape_.lastBefore();
+	size_t lda = n;
+	size_t ldvl = n;
+	size_t ldvr = n;
+
+	CHECK(lapack::geev(lapack::Job::Vec, lapack::Job::Vec, n, A.coeffs_, lda, x.ev().coeffs_,
+		x.VL().coeffs_, ldvl, x.VR().coeffs_, ldvr));
+
+}
+
+template void geev(FactorizedGe<cd>& x, const Tensor<cd>& A);
+
+template <typename T>
+FactorizedGe<T> geev(const Tensor<T>& A) {
+	FactorizedGe<T> f(A.shape_);
+	geev(f, A);
+	return f;
+}
+
+template FactorizedGe<cd> geev(const Tensor<cd>& A);
