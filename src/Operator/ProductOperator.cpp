@@ -23,10 +23,19 @@ void ProductOperator<T>::applyFactor(TensorTree<T>& Psi, size_t i) const {
 	size_t leafIdx = targetLeaves_[i];
 	const Leaf* leaf = Psi.leaves_[leafIdx];
 	const Node& node = leaf->parent();
+	/// Node
 	Tensor<T>& A = Psi[node];
 	Tensor<T> hA(A.shape_);
 	leafOperators_[i]->apply(leaf->basis_, hA, A);
 	Psi[node] = hA;
+
+	/// Edges
+	vector<Edge> edges = outgoingEdges(node);
+	for (Edge& e : edges) {
+		Tensor<T>& A = Psi[e];
+		leafOperators_[i]->apply(leaf->basis_, hA, A);
+		Psi[e] = hA;
+	}
 }
 
 template<typename T>

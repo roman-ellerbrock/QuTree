@@ -1,0 +1,14 @@
+//
+// Created by Roman Ellerbrock on 4/2/22.
+//
+
+#ifndef TENSORNETWORK_H
+#define TENSORNETWORK_H
+
+#include "contractions.h"
+#include "SubTreeAttribute.h"
+#include "TensorTree.h"
+#include "TensorTreeFactory.h"
+#include "TreeAttribute.h"
+
+#endif //TENSORNETWORK_H

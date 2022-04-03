@@ -6,9 +6,11 @@
 #define CORE_H
 
 #include "rng.h"
+#include "SVD.h"
 #include "Tensor.h"
 #include "TensorBLAS1.h"
 #include "TensorBLAS2.h"
 #include "TensorLapack.h"
+#include "TensorShape.h"
 
 #endif //CORE_H

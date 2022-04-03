@@ -60,6 +60,20 @@ template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
 	TensorTree<d> Ket, const ProductOperator<d>& P);
 
 template <typename T>
+void contraction(vector<TensorTree<T>>& Svec, const TensorTree<T>& Bra, TensorTree<T> Ket,
+	const SumOfProductsOperator<T>& H) {
+	assert(Svec.size() == sop.size());
+	for (size_t l = 0; l < Svec.size(); ++l) {
+		contraction(Svec[l], Bra, Ket, H[l]);
+	}
+}
+
+template void contraction(vector<TensorTree<cd>>& Svec, const TensorTree<cd>& Bra, TensorTree<cd> Ket,
+	const SumOfProductsOperator<cd>& H);
+template void contraction(vector<TensorTree<d>>& Svec, const TensorTree<d>& Bra, TensorTree<d> Ket,
+	const SumOfProductsOperator<d>& H);
+
+template <typename T>
 TensorTree<T> dotProduct(const TensorTree<T>& Bra, TensorTree<T> Ket) {
 	TensorTree<T> S;
 	contraction(S, Bra, Ket, Bra.shape_.lastIdx());

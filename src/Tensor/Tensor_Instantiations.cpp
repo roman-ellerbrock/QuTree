@@ -1,7 +1,7 @@
 //
 // Created by Roman Ellerbrock on 2020-01-17.
 //
-#include "Tensor/Tensor_Implementation.h"
+#include "Tensor/Tensor.hpp"
 
 typedef double d;
 typedef complex<double> cd;

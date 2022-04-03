@@ -1,0 +1,20 @@
+//
+// Created by Roman Ellerbrock on 4/2/22.
+//
+
+#ifndef TREEINC_H
+#define TREEINC_H
+
+#include "Edge.h"
+#include "EdgeArray.h"
+#include "Leaf.h"
+#include "LeafArray.h"
+#include "NodeArray.h"
+#include "Node.h"
+#include "NodePosition.h"
+#include "sparse_vector.h"
+#include "SubTree.h"
+#include "Tree.h"
+#include "TreeFactory.h"
+
+#endif //TREEINC_H

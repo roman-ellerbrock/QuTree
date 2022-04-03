@@ -2,8 +2,8 @@
 // Created by Roman Ellerbrock on 2/19/20.
 //
 
-#ifndef SUMOFPRODUCTSOPERATOR_IMPLEMENTATION_H
-#define SUMOFPRODUCTSOPERATOR_IMPLEMENTATION_H
+#ifndef SUMOFPRODUCTSOPERATOR_HPP
+#define SUMOFPRODUCTSOPERATOR_HPP
 #include "Operator/SumOfProductsOperator.h"
 
 template<typename T>
@@ -97,4 +97,4 @@ SumOfProductsOperator<T> operator+(const SumOfProductsOperator<T>& A,
 	return C;
 }
 
-#endif //SUMOFPRODUCTSOPERATOR_IMPLEMENTATION_H
+#endif //SUMOFPRODUCTSOPERATOR_HPP

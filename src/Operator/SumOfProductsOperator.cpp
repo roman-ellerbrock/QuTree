@@ -1,4 +1,4 @@
-#include "Operator/SumOfProductsOperator_Implementation.h"
+#include "Operator/SumOfProductsOperator.hpp"
 //#include "Operators/SOPVector.h"
 
 

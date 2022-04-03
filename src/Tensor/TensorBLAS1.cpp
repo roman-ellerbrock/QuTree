@@ -3,7 +3,7 @@
 //
 
 #include "Tensor/TensorBLAS1.h"
-#include "Tensor/Tensor_Implementation.h"
+#include "Tensor/Tensor.hpp"
 #include "stdafx.h"
 #include <math.h>
 

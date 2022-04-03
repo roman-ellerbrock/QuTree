@@ -27,10 +27,4 @@ typedef TensorTree<complex<double>> TensorTreecd;
 
 typedef TensorTree<double> TensorTreed;
 
-template<typename T>
-TensorTree<T> matrixTree(const Tree& tree, const SubTreeParameters& par = {});
-
-constexpr auto matrixTreecd = matrixTree<complex<double>>;
-constexpr auto matrixTreed = matrixTree<double>;
-
 #endif //TENSORTREE_H

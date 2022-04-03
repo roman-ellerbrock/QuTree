@@ -50,7 +50,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST_FIXTURE (Trees, matrixTree) {
-		auto mat = matrixTreecd(tree_, {});
+		auto mat = matrixTreecd(tree_);
 		for (const Node& node : tree_) {
 				CHECK_EQUAL(true, mat.nodes_.contains(node.address_));
 			/// @TODO: define how node tensor should look like. Until now there it isn't defined
@@ -85,7 +85,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST_FIXTURE (Trees, matrixTreePreEdges) {
-		auto mat = matrixTreecd(tree_, {});
+		auto mat = matrixTreecd(tree_);
 		for (const Edge *edge : mat.edges_) {
 				CHECK_EQUAL(edge->shape(), mat[edge].shape_);
 		}
