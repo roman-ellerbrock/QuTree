@@ -21,6 +21,9 @@ void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const ProductOperator<T>& P = ProductOperator<T>());
 
 template <typename T>
+double residual(const TensorTree<T>& Psi1, const TensorTree<T>& Psi2, const Tree& tree);
+
+template <typename T>
 void contraction(vector<TensorTree<T>>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const SumOfProductsOperator<T>& H = SumOfProductsOperator<T>());
 

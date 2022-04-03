@@ -30,6 +30,10 @@ SUITE (contraction) {
 		}
 	}
 
+	TEST_FIXTURE(Trees, residual) {
+		CHECK_CLOSE(0., residual(psi_, psi_, tree_), eps);
+	}
+
 	TEST_FIXTURE (Trees, ProductOperator) {
 		ProductOperatorcd P(sigma_x(), 0);
 		TensorTreecd S = matrixTreecd(tree_, P);
@@ -76,15 +80,24 @@ SUITE (contraction) {
 	}
 
 	TEST_FIXTURE(Trees, SOPcontraction) {
+		/// Calculate matrixTree for SOP and compare to manually calculated version
 		SOPcd cnot = CNot(1, 3);
 		auto Svec = matrixTreecd(tree_, cnot);
 		contraction(Svec, psi_, psi_, cnot);
 
 		auto S0 = matrixTreecd(tree_, cnot[0]);
-		auto S1 = matrixTreecd(tree_, cnot[1]);
 		contraction(S0, psi_, psi_, cnot[0]);
-		contraction(S1, psi_, psi_, cnot[1]);
+		for (const Node* node : S0.nodes_) {
+			CHECK_CLOSE(0., residual(S0[node], Svec[0][node]), eps);
+		}
 
+		auto S1 = matrixTreecd(tree_, cnot[1]);
+		contraction(S1, psi_, psi_, cnot[1]);
+		for (const Node* node : S1.nodes_) {
+				CHECK_CLOSE(0., residual(S1[node], Svec[1][node]), eps);
+		}
 	}
+
+
 
 }
