@@ -5,6 +5,13 @@
 #ifndef TREEINC_H
 #define TREEINC_H
 
+#include "PrimitiveBasis/BasisAPI.h"
+#include "PrimitiveBasis/BasisParameters.h"
+#include "PrimitiveBasis/DVR.h"
+#include "PrimitiveBasis/FFTGrid.h"
+#include "PrimitiveBasis/HarmonicOscillator.h"
+#include "PrimitiveBasis/LegendrePolynomials.h"
+#include "PrimitiveBasis/SpinGroup.h"
 #include "Edge.h"
 #include "EdgeArray.h"
 #include "Leaf.h"

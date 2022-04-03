@@ -16,13 +16,14 @@ TensorTree<T> matrixTree(const Tree& tree, const ProductOperator<T>& P);
 template <typename T>
 vector<TensorTree<T>> matrixTree(const Tree& tree, const SumOfProductsOperator<T>& H);
 
-//constexpr auto matrixTreecd = matrixTree<complex<double>>;
-//constexpr auto matrixTreed = matrixTree<double>;
-
 /**
- * This allows to use matrixTreecd(...) for overloaded template functions
+ * The following code allows to use matrixTreecd(...) for overloaded template functions
  * using perfect forwarding.
  * See this: https://stackoverflow.com/a/9864472/1407466
+ *
+ * This (simpler code) does not work:
+ * constexpr auto matrixTreecd = matrixTree<complex<double>>;
+ * constexpr auto matrixTreed = matrixTree<double>;
  */
 
 /// matrixTree

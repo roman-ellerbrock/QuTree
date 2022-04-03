@@ -58,8 +58,33 @@ SUITE (contraction) {
 	}
 
 	TEST_FIXTURE (Trees, SumOfProductOperators) {
+		/// Check whether matrixTree(tree_, SOP) provides correct matrix-Trees.
 		SOPcd cnot = CNot(1, 3);
+		auto Svec = matrixTreecd(tree_, cnot);
 
+		auto S0 = matrixTreecd(tree_, cnot[0]);
+		auto S1 = matrixTreecd(tree_, cnot[1]);
+		vector<TensorTreecd> SvecRef = {S0, S1};
+
+		CHECK_EQUAL(2, Svec.size());
+		for (size_t l = 0; l < Svec.size(); ++l) {
+			const auto& s = Svec[l];
+			const auto& sRef = SvecRef[l];
+				CHECK_EQUAL(sRef.nodes_.size(), s.nodes_.size());
+				CHECK_EQUAL(sRef.edges_.size(), s.edges_.size());
+		}
+	}
+
+	TEST_FIXTURE(Trees, SOPcontraction) {
+		SOPcd cnot = CNot(1, 3);
+		auto Svec = matrixTreecd(tree_, cnot);
+		contraction(Svec, psi_, psi_, cnot);
+
+		auto S0 = matrixTreecd(tree_, cnot[0]);
+		auto S1 = matrixTreecd(tree_, cnot[1]);
+		contraction(S0, psi_, psi_, cnot[0]);
+		contraction(S1, psi_, psi_, cnot[1]);
 
 	}
+
 }
