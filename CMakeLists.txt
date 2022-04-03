@@ -28,8 +28,8 @@ set(QuTree_INSTALL_INC_DIR ${CMAKE_INSTALL_PREFIX}/include/QuTree)
 set(QuTree_INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 set(QuTree_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QuTree)
 
+#include(src/CMakeLists.txt)
 include(src/CMakeLists.txt)
-include(include/CMakeLists.txt)
 
 add_library(QuTree SHARED ${QuTree_SOURCE_FILES})
 add_library(QuTree::QuTree ALIAS QuTree)
@@ -88,10 +88,10 @@ endif()
 target_include_directories(QuTree
     PUBLIC
         $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         ${BLAS_INCLUDE}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/deprecated
     )
 
 # Install rules
@@ -101,7 +101,7 @@ install(TARGETS QuTree
     ARCHIVE DESTINATION ${QuTree_INSTALL_LIB_DIR}
     )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/
     DESTINATION ${QuTree_INSTALL_INC_DIR}
     FILES_MATCHING PATTERN "*.h*")
 

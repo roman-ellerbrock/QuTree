@@ -1,4 +1,46 @@
-# Easily regenerate with find src -name '*.cpp' | sort
+# Easily regenerated with find include -name '*.h' | sort
+set(QuTree_INCLUDE_FILES
+        src/QuTree.h
+        src/Check.h
+        src/stdafx.h
+
+        # Tensor
+        src/Tensor/Tensor
+        src/Tensor/Tensor.h
+        src/Tensor/TensorBLAS1.h
+        src/Tensor/TensorBLAS2.h
+        src/Tensor/TensorLapack.h
+        src/Tensor/TensorShape.h
+        src/Tensor/Tensor_Implementation.h
+
+        # Tree
+        src/Tree/PrimitiveBasis/BasisAPI.h
+        src/Tree/PrimitiveBasis/BasisParameters.h
+        src/Tree/PrimitiveBasis/DVR.h
+        src/Tree/PrimitiveBasis/FFTGrid.h
+        src/Tree/PrimitiveBasis/LegendrePolynomials.h
+        src/Tree/PrimitiveBasis/PrimitiveBasis.h
+        src/Tree/PrimitiveBasis/SpinGroup.h
+        src/Tree/Leaf.h
+        src/Tree/NodePosition.h
+        src/Tree/Node.h
+        src/Tree/NodeArray.h
+        src/Tree/Edge.h
+        src/Tree/EdgeArray.h
+        src/Tree/Tree.h
+        src/Tree/Factory.h
+
+        # TreeNetwork
+        src/TensorNetwork/TensorTree.h
+        src/TensorNetwork/MatrixTree.h
+
+        # Operators
+        src/Operator/LeafMatrix.h
+        src/Operator/LeafFunction.h
+        src/Operator/LeafOperator.h
+        src/Operator/ProductOperator.h
+        )
+
 set(QuTree_SOURCE_FILES
 
         # Tensor/
@@ -8,7 +50,7 @@ set(QuTree_SOURCE_FILES
         src/Tensor/TensorBLAS2.cpp
         src/Tensor/TensorLapack.cpp
         src/Tensor/TensorSlow.cpp
-        include/Tensor/Tensor_Instantiations.cpp
+        src/Tensor/Tensor_Instantiations.cpp
         src/Tensor/stdafx.cpp
 
         # Primitve Basis
@@ -44,4 +86,3 @@ set(QuTree_SOURCE_FILES
         src/Util/JacobiRotationFramework.cpp
         src/Util/SimultaneousDiagonalization.cpp
         )
-
