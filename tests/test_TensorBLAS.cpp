@@ -173,5 +173,347 @@ SUITE (Tensor) {
 			CHECK_CLOSE(0., residual(h, hSol), eps);
 	}
 
+
+    TEST(onlyLegalContractions){
+
+        // prepare tensors to be contracted
+        const Tensorcd A{1,2,3,4};
+        const Tensorcd B{1,4,5,2};
+        const Tensorcd C{1,4,3,2,5};
+        const Tensorcd D{1,2};
+
+        // prepare index contracations
+        std::vector<size_t> A_indices{0,1,3}; // legal
+        std::vector<size_t> B_indices{0,3,1}; // also legal
+        std::vector<size_t> C_indices{0,3,3}; // illegal
+        std::vector<size_t> D_indices{0,1,3,4}; // illegal
+        std::vector<size_t> E_indices{0,1}; // illegal
+        std::vector<size_t> F_indices{2}; // illegal
+
+        CHECK_EQUAL(true,is_contraction_legal(A,B,A_indices,B_indices));
+        CHECK_EQUAL(true,is_contraction_legal(A,C,A_indices,B_indices));
+        CHECK_EQUAL(true,is_contraction_legal(C,A,A_indices,B_indices));
+
+        CHECK_EQUAL(false,is_contraction_legal(A,B,A_indices,C_indices));
+        CHECK_EQUAL(false,is_contraction_legal(A,B,A_indices,E_indices));
+        CHECK_EQUAL(false,is_contraction_legal(A,D,A_indices,C_indices));
+        CHECK_EQUAL(false,is_contraction_legal(A,B,F_indices,F_indices));
+    }
+
+    TEST(generalTransposeOfFiveIndices){
+        // prepare tensor
+        const Tensor<double> A({2,3,4,5});
+        for(int i = 0; i < A.shape().totalDimension(); ++i){
+            A.coeffs_[i] = i;
+        }
+
+        Tensor<double> test({2,3,4,5});
+
+        // check some transpose
+        general_transpose_bd(test.coeffs_,A.coeffs_,2,3,4,5,1);
+
+        // before: {1,0,2,3} is at position 85, now {1,3,2,0} is at position 27
+        CHECK_EQUAL(85,A.coeffs_[85]);
+        CHECK_EQUAL(85,test.coeffs_[27]);
+    }
+
+    TEST(generalTransposeOfGeneralTensor){
+        // prepare tensor
+        const Tensor<double> A({2,3,4,5,6,7,8});
+        Tensor<double> res{A};
+
+        general_transpose(res,A,6,3);
+
+        CHECK_EQUAL(2, res.shape().dimensions()[0]);
+        CHECK_EQUAL(3, res.shape().dimensions()[1]);
+        CHECK_EQUAL(4, res.shape().dimensions()[2]);
+        CHECK_EQUAL(8, res.shape().dimensions()[3]);
+        CHECK_EQUAL(6, res.shape().dimensions()[4]);
+        CHECK_EQUAL(7, res.shape().dimensions()[5]);
+        CHECK_EQUAL(5, res.shape().dimensions()[6]);
+    }
+
+    TEST(generalTrasposeAndCorrectReorderingIsWorking){
+        // prepare tensor
+        const Tensor<double> A({2,3,4,5,6,7,8});
+        Tensor<double> res{A};
+
+        std::vector<size_t> new_form{6,0,3,2};
+
+        general_transpose_to_order(res,A,new_form);
+
+        CHECK_EQUAL(8, res.shape().dimensions()[0]);
+        CHECK_EQUAL(2, res.shape().dimensions()[1]);
+        CHECK_EQUAL(5, res.shape().dimensions()[2]);
+        CHECK_EQUAL(4, res.shape().dimensions()[3]);
+        CHECK_EQUAL(3, res.shape().dimensions()[4]);
+        CHECK_EQUAL(6, res.shape().dimensions()[5]);
+        CHECK_EQUAL(7, res.shape().dimensions()[6]);
+    }
+
+    TEST(MatrixMultiplicationAsGeneralTensorContraction){
+        // first test: general matrix-matrix-multiplication
+        Tensor<double> A{2,3};
+        Tensor<double> B{3,4};
+        Tensor<double> res{0};
+        vector<size_t> contractionA{1};
+        vector<size_t> contractionB{0};
+        for(int i = 0; i < A.shape().totalDimension(); ++i){
+            A.coeffs_[i] = i;
+        }
+        for(int i = 0; i < B.shape().totalDimension(); ++i){
+            B.coeffs_[i] = i;
+        }
+        general_contraction(A,B,res,contractionA,contractionB);
+
+        // test the result shape
+        CHECK_EQUAL(2,res.shape().order());
+        CHECK_EQUAL(2,res.shape().dimensions()[0]);
+        CHECK_EQUAL(4,res.shape().dimensions()[1]);
+
+        // test some of the result values
+        CHECK_CLOSE(10.,res.coeffs_[0],1e-12); // (0,0)
+        CHECK_CLOSE(13.,res.coeffs_[1],1e-12); // (1,0)
+        CHECK_CLOSE(28.,res.coeffs_[2],1e-12); // (0,1)
+        CHECK_CLOSE(40.,res.coeffs_[3],1e-12); // (1,1)
+        CHECK_CLOSE(46.,res.coeffs_[4],1e-12); // (0,2)
+        CHECK_CLOSE(67.,res.coeffs_[5],1e-12); // (1,2)
+        CHECK_CLOSE(64.,res.coeffs_[6],1e-12); // (0,3)
+        CHECK_CLOSE(94.,res.coeffs_[7],1e-12); // (1,3)
+
+    }
+
+    TEST(generalComplexTensorContraction){
+        const Tensorcd A{1,2,3,4};
+        const Tensorcd B{1,5,4,2};
+        Tensorcd C{1,2,5,4};
+        std::vector<size_t> A_indices{0,1,3};
+        std::vector<size_t> B_indices{0,3,2};
+
+        // prepare some demo data
+        for(int i = 0; i < A.shape().totalDimension(); ++i){
+            A.coeffs_[i] = std::complex<double>(i-1.,i+1.);
+        }
+
+        for(int i = 0; i < B.shape().totalDimension(); ++i){
+            B.coeffs_[i] = std::complex<double>(i-1.,i+1.);
+        }
+
+        general_contraction(A,B,C,A_indices,B_indices);
+
+        // result should be 2x3
+        CHECK_EQUAL(3,C.shape().dimensions()[0]);
+        CHECK_EQUAL(5,C.shape().dimensions()[1]);
+
+        // check result values
+                CHECK_CLOSE(   3356.0000000000000      ,C.coeffs_[           0 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[           0 ].imag(),1e-12);
+                CHECK_CLOSE(   3916.0000000000000      ,C.coeffs_[           1 ].real(),1e-12);
+                CHECK_CLOSE(  -96.000000000000000      ,C.coeffs_[           1 ].imag(),1e-12);
+                CHECK_CLOSE(   4476.0000000000000      ,C.coeffs_[           2 ].real(),1e-12);
+                CHECK_CLOSE(  -64.000000000000000      ,C.coeffs_[           2 ].imag(),1e-12);
+                CHECK_CLOSE(   3508.0000000000000      ,C.coeffs_[           3 ].real(),1e-12);
+                CHECK_CLOSE(  -144.00000000000000      ,C.coeffs_[           3 ].imag(),1e-12);
+                CHECK_CLOSE(   4100.0000000000000      ,C.coeffs_[           4 ].real(),1e-12);
+                CHECK_CLOSE(  -112.00000000000000      ,C.coeffs_[           4 ].imag(),1e-12);
+                CHECK_CLOSE(   4692.0000000000000      ,C.coeffs_[           5 ].real(),1e-12);
+                CHECK_CLOSE(  -80.000000000000000      ,C.coeffs_[           5 ].imag(),1e-12);
+                CHECK_CLOSE(   3660.0000000000000      ,C.coeffs_[           6 ].real(),1e-12);
+                CHECK_CLOSE(  -160.00000000000000      ,C.coeffs_[           6 ].imag(),1e-12);
+                CHECK_CLOSE(   4284.0000000000000      ,C.coeffs_[           7 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[           7 ].imag(),1e-12);
+                CHECK_CLOSE(   4908.0000000000000      ,C.coeffs_[           8 ].real(),1e-12);
+                CHECK_CLOSE(  -96.000000000000000      ,C.coeffs_[           8 ].imag(),1e-12);
+                CHECK_CLOSE(   3812.0000000000000      ,C.coeffs_[           9 ].real(),1e-12);
+                CHECK_CLOSE(  -176.00000000000000      ,C.coeffs_[           9 ].imag(),1e-12);
+                CHECK_CLOSE(   4468.0000000000000      ,C.coeffs_[          10 ].real(),1e-12);
+                CHECK_CLOSE(  -144.00000000000000      ,C.coeffs_[          10 ].imag(),1e-12);
+                CHECK_CLOSE(   5124.0000000000000      ,C.coeffs_[          11 ].real(),1e-12);
+                CHECK_CLOSE(  -112.00000000000000      ,C.coeffs_[          11 ].imag(),1e-12);
+                CHECK_CLOSE(   3964.0000000000000      ,C.coeffs_[          12 ].real(),1e-12);
+                CHECK_CLOSE(  -192.00000000000000      ,C.coeffs_[          12 ].imag(),1e-12);
+                CHECK_CLOSE(   4652.0000000000000      ,C.coeffs_[          13 ].real(),1e-12);
+                CHECK_CLOSE(  -160.00000000000000      ,C.coeffs_[          13 ].imag(),1e-12);
+                CHECK_CLOSE(   5340.0000000000000      ,C.coeffs_[          14 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[          14 ].imag(),1e-12);
+
+
+    }
+
+    TEST(generalComplexTensorContractionViaPairsWorks){
+        const Tensorcd A{1,2,3,4};
+        const Tensorcd B{1,5,4,2};
+        Tensorcd C{1,2,5,4};
+
+        const std::vector<std::pair<int,int>> contraction_pairs{{0,0},{1,3},{3,2}};
+
+        // prepare some demo data
+        for(int i = 0; i < A.shape().totalDimension(); ++i){
+            A.coeffs_[i] = std::complex<double>(i-1.,i+1.);
+        }
+
+        for(int i = 0; i < B.shape().totalDimension(); ++i){
+            B.coeffs_[i] = std::complex<double>(i-1.,i+1.);
+        }
+
+        general_contraction(A,B,C,contraction_pairs);
+
+        // result should be 3x5
+        CHECK_EQUAL(3,C.shape().dimensions()[0]);
+        CHECK_EQUAL(5,C.shape().dimensions()[1]);
+
+        // check result values
+                CHECK_CLOSE(   3356.0000000000000      ,C.coeffs_[           0 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[           0 ].imag(),1e-12);
+                CHECK_CLOSE(   3916.0000000000000      ,C.coeffs_[           1 ].real(),1e-12);
+                CHECK_CLOSE(  -96.000000000000000      ,C.coeffs_[           1 ].imag(),1e-12);
+                CHECK_CLOSE(   4476.0000000000000      ,C.coeffs_[           2 ].real(),1e-12);
+                CHECK_CLOSE(  -64.000000000000000      ,C.coeffs_[           2 ].imag(),1e-12);
+                CHECK_CLOSE(   3508.0000000000000      ,C.coeffs_[           3 ].real(),1e-12);
+                CHECK_CLOSE(  -144.00000000000000      ,C.coeffs_[           3 ].imag(),1e-12);
+                CHECK_CLOSE(   4100.0000000000000      ,C.coeffs_[           4 ].real(),1e-12);
+                CHECK_CLOSE(  -112.00000000000000      ,C.coeffs_[           4 ].imag(),1e-12);
+                CHECK_CLOSE(   4692.0000000000000      ,C.coeffs_[           5 ].real(),1e-12);
+                CHECK_CLOSE(  -80.000000000000000      ,C.coeffs_[           5 ].imag(),1e-12);
+                CHECK_CLOSE(   3660.0000000000000      ,C.coeffs_[           6 ].real(),1e-12);
+                CHECK_CLOSE(  -160.00000000000000      ,C.coeffs_[           6 ].imag(),1e-12);
+                CHECK_CLOSE(   4284.0000000000000      ,C.coeffs_[           7 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[           7 ].imag(),1e-12);
+                CHECK_CLOSE(   4908.0000000000000      ,C.coeffs_[           8 ].real(),1e-12);
+                CHECK_CLOSE(  -96.000000000000000      ,C.coeffs_[           8 ].imag(),1e-12);
+                CHECK_CLOSE(   3812.0000000000000      ,C.coeffs_[           9 ].real(),1e-12);
+                CHECK_CLOSE(  -176.00000000000000      ,C.coeffs_[           9 ].imag(),1e-12);
+                CHECK_CLOSE(   4468.0000000000000      ,C.coeffs_[          10 ].real(),1e-12);
+                CHECK_CLOSE(  -144.00000000000000      ,C.coeffs_[          10 ].imag(),1e-12);
+                CHECK_CLOSE(   5124.0000000000000      ,C.coeffs_[          11 ].real(),1e-12);
+                CHECK_CLOSE(  -112.00000000000000      ,C.coeffs_[          11 ].imag(),1e-12);
+                CHECK_CLOSE(   3964.0000000000000      ,C.coeffs_[          12 ].real(),1e-12);
+                CHECK_CLOSE(  -192.00000000000000      ,C.coeffs_[          12 ].imag(),1e-12);
+                CHECK_CLOSE(   4652.0000000000000      ,C.coeffs_[          13 ].real(),1e-12);
+                CHECK_CLOSE(  -160.00000000000000      ,C.coeffs_[          13 ].imag(),1e-12);
+                CHECK_CLOSE(   5340.0000000000000      ,C.coeffs_[          14 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[          14 ].imag(),1e-12);
+
+
+    }
+
+    TEST(threeResultingIndexContraction){
+        const Tensorcd A{1,2,3,4};
+        const Tensorcd B{1,5,4,2,3};
+        Tensorcd C{1,2,5,4};
+
+        const std::vector<std::pair<int,int>> contraction_pairs{{0,0},{1,3},{3,2}};
+
+        // prepare some demo data
+        for(int i = 0; i < A.shape().totalDimension(); ++i){
+            A.coeffs_[i] = std::complex<double>(i-1.,i+1.);
+        }
+
+        for(int i = 0; i < B.shape().totalDimension(); ++i){
+            B.coeffs_[i] = std::complex<double>(i-1.,i+1.);
+        }
+
+        general_contraction(A,B,C,contraction_pairs);
+
+        // result should be 3x5x3
+                CHECK_EQUAL(3,C.shape().dimensions()[0]);
+                CHECK_EQUAL(5,C.shape().dimensions()[1]);
+                CHECK_EQUAL(3,C.shape().dimensions()[2]);
+
+                CHECK_CLOSE(   3356.0000000000000      ,C.coeffs_[           0 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[           0 ].imag(),1e-12);
+                CHECK_CLOSE(   9436.0000000000000      ,C.coeffs_[          15 ].real(),1e-12);
+                CHECK_CLOSE(  -768.00000000000000      ,C.coeffs_[          15 ].imag(),1e-12);
+                CHECK_CLOSE(   15516.000000000000      ,C.coeffs_[          30 ].real(),1e-12);
+                CHECK_CLOSE(  -1408.0000000000000      ,C.coeffs_[          30 ].imag(),1e-12);
+                CHECK_CLOSE(   3916.0000000000000      ,C.coeffs_[           1 ].real(),1e-12);
+                CHECK_CLOSE(  -96.000000000000000      ,C.coeffs_[           1 ].imag(),1e-12);
+                CHECK_CLOSE(   11276.000000000000      ,C.coeffs_[          16 ].real(),1e-12);
+                CHECK_CLOSE(  -736.00000000000000      ,C.coeffs_[          16 ].imag(),1e-12);
+                CHECK_CLOSE(   18636.000000000000      ,C.coeffs_[          31 ].real(),1e-12);
+                CHECK_CLOSE(  -1376.0000000000000      ,C.coeffs_[          31 ].imag(),1e-12);
+                CHECK_CLOSE(   4476.0000000000000      ,C.coeffs_[           2 ].real(),1e-12);
+                CHECK_CLOSE(  -64.000000000000000      ,C.coeffs_[           2 ].imag(),1e-12);
+                CHECK_CLOSE(   13116.000000000000      ,C.coeffs_[          17 ].real(),1e-12);
+                CHECK_CLOSE(  -704.00000000000000      ,C.coeffs_[          17 ].imag(),1e-12);
+                CHECK_CLOSE(   21756.000000000000      ,C.coeffs_[          32 ].real(),1e-12);
+                CHECK_CLOSE(  -1344.0000000000000      ,C.coeffs_[          32 ].imag(),1e-12);
+                CHECK_CLOSE(   3508.0000000000000      ,C.coeffs_[           3 ].real(),1e-12);
+                CHECK_CLOSE(  -144.00000000000000      ,C.coeffs_[           3 ].imag(),1e-12);
+                CHECK_CLOSE(   9588.0000000000000      ,C.coeffs_[          18 ].real(),1e-12);
+                CHECK_CLOSE(  -784.00000000000000      ,C.coeffs_[          18 ].imag(),1e-12);
+                CHECK_CLOSE(   15668.000000000000      ,C.coeffs_[          33 ].real(),1e-12);
+                CHECK_CLOSE(  -1424.0000000000000      ,C.coeffs_[          33 ].imag(),1e-12);
+                CHECK_CLOSE(   4100.0000000000000      ,C.coeffs_[           4 ].real(),1e-12);
+                CHECK_CLOSE(  -112.00000000000000      ,C.coeffs_[           4 ].imag(),1e-12);
+                CHECK_CLOSE(   11460.000000000000      ,C.coeffs_[          19 ].real(),1e-12);
+                CHECK_CLOSE(  -752.00000000000000      ,C.coeffs_[          19 ].imag(),1e-12);
+                CHECK_CLOSE(   18820.000000000000      ,C.coeffs_[          34 ].real(),1e-12);
+                CHECK_CLOSE(  -1392.0000000000000      ,C.coeffs_[          34 ].imag(),1e-12);
+                CHECK_CLOSE(   4692.0000000000000      ,C.coeffs_[           5 ].real(),1e-12);
+                CHECK_CLOSE(  -80.000000000000000      ,C.coeffs_[           5 ].imag(),1e-12);
+                CHECK_CLOSE(   13332.000000000000      ,C.coeffs_[          20 ].real(),1e-12);
+                CHECK_CLOSE(  -720.00000000000000      ,C.coeffs_[          20 ].imag(),1e-12);
+                CHECK_CLOSE(   21972.000000000000      ,C.coeffs_[          35 ].real(),1e-12);
+                CHECK_CLOSE(  -1360.0000000000000      ,C.coeffs_[          35 ].imag(),1e-12);
+                CHECK_CLOSE(   3660.0000000000000      ,C.coeffs_[           6 ].real(),1e-12);
+                CHECK_CLOSE(  -160.00000000000000      ,C.coeffs_[           6 ].imag(),1e-12);
+                CHECK_CLOSE(   9740.0000000000000      ,C.coeffs_[          21 ].real(),1e-12);
+                CHECK_CLOSE(  -800.00000000000000      ,C.coeffs_[          21 ].imag(),1e-12);
+                CHECK_CLOSE(   15820.000000000000      ,C.coeffs_[          36 ].real(),1e-12);
+                CHECK_CLOSE(  -1440.0000000000000      ,C.coeffs_[          36 ].imag(),1e-12);
+                CHECK_CLOSE(   4284.0000000000000      ,C.coeffs_[           7 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[           7 ].imag(),1e-12);
+                CHECK_CLOSE(   11644.000000000000      ,C.coeffs_[          22 ].real(),1e-12);
+                CHECK_CLOSE(  -768.00000000000000      ,C.coeffs_[          22 ].imag(),1e-12);
+                CHECK_CLOSE(   19004.000000000000      ,C.coeffs_[          37 ].real(),1e-12);
+                CHECK_CLOSE(  -1408.0000000000000      ,C.coeffs_[          37 ].imag(),1e-12);
+                CHECK_CLOSE(   4908.0000000000000      ,C.coeffs_[           8 ].real(),1e-12);
+                CHECK_CLOSE(  -96.000000000000000      ,C.coeffs_[           8 ].imag(),1e-12);
+                CHECK_CLOSE(   13548.000000000000      ,C.coeffs_[          23 ].real(),1e-12);
+                CHECK_CLOSE(  -736.00000000000000      ,C.coeffs_[          23 ].imag(),1e-12);
+                CHECK_CLOSE(   22188.000000000000      ,C.coeffs_[          38 ].real(),1e-12);
+                CHECK_CLOSE(  -1376.0000000000000      ,C.coeffs_[          38 ].imag(),1e-12);
+                CHECK_CLOSE(   3812.0000000000000      ,C.coeffs_[           9 ].real(),1e-12);
+                CHECK_CLOSE(  -176.00000000000000      ,C.coeffs_[           9 ].imag(),1e-12);
+                CHECK_CLOSE(   9892.0000000000000      ,C.coeffs_[          24 ].real(),1e-12);
+                CHECK_CLOSE(  -816.00000000000000      ,C.coeffs_[          24 ].imag(),1e-12);
+                CHECK_CLOSE(   15972.000000000000      ,C.coeffs_[          39 ].real(),1e-12);
+                CHECK_CLOSE(  -1456.0000000000000      ,C.coeffs_[          39 ].imag(),1e-12);
+                CHECK_CLOSE(   4468.0000000000000      ,C.coeffs_[          10 ].real(),1e-12);
+                CHECK_CLOSE(  -144.00000000000000      ,C.coeffs_[          10 ].imag(),1e-12);
+                CHECK_CLOSE(   11828.000000000000      ,C.coeffs_[          25 ].real(),1e-12);
+                CHECK_CLOSE(  -784.00000000000000      ,C.coeffs_[          25 ].imag(),1e-12);
+                CHECK_CLOSE(   19188.000000000000      ,C.coeffs_[          40 ].real(),1e-12);
+                CHECK_CLOSE(  -1424.0000000000000      ,C.coeffs_[          40 ].imag(),1e-12);
+                CHECK_CLOSE(   5124.0000000000000      ,C.coeffs_[          11 ].real(),1e-12);
+                CHECK_CLOSE(  -112.00000000000000      ,C.coeffs_[          11 ].imag(),1e-12);
+                CHECK_CLOSE(   13764.000000000000      ,C.coeffs_[          26 ].real(),1e-12);
+                CHECK_CLOSE(  -752.00000000000000      ,C.coeffs_[          26 ].imag(),1e-12);
+                CHECK_CLOSE(   22404.000000000000      ,C.coeffs_[          41 ].real(),1e-12);
+                CHECK_CLOSE(  -1392.0000000000000      ,C.coeffs_[          41 ].imag(),1e-12);
+                CHECK_CLOSE(   3964.0000000000000      ,C.coeffs_[          12 ].real(),1e-12);
+                CHECK_CLOSE(  -192.00000000000000      ,C.coeffs_[          12 ].imag(),1e-12);
+                CHECK_CLOSE(   10044.000000000000      ,C.coeffs_[          27 ].real(),1e-12);
+                CHECK_CLOSE(  -832.00000000000000      ,C.coeffs_[          27 ].imag(),1e-12);
+                CHECK_CLOSE(   16124.000000000000      ,C.coeffs_[          42 ].real(),1e-12);
+                CHECK_CLOSE(  -1472.0000000000000      ,C.coeffs_[          42 ].imag(),1e-12);
+                CHECK_CLOSE(   4652.0000000000000      ,C.coeffs_[          13 ].real(),1e-12);
+                CHECK_CLOSE(  -160.00000000000000      ,C.coeffs_[          13 ].imag(),1e-12);
+                CHECK_CLOSE(   12012.000000000000      ,C.coeffs_[          28 ].real(),1e-12);
+                CHECK_CLOSE(  -800.00000000000000      ,C.coeffs_[          28 ].imag(),1e-12);
+                CHECK_CLOSE(   19372.000000000000      ,C.coeffs_[          43 ].real(),1e-12);
+                CHECK_CLOSE(  -1440.0000000000000      ,C.coeffs_[          43 ].imag(),1e-12);
+                CHECK_CLOSE(   5340.0000000000000      ,C.coeffs_[          14 ].real(),1e-12);
+                CHECK_CLOSE(  -128.00000000000000      ,C.coeffs_[          14 ].imag(),1e-12);
+                CHECK_CLOSE(   13980.000000000000      ,C.coeffs_[          29 ].real(),1e-12);
+                CHECK_CLOSE(  -768.00000000000000      ,C.coeffs_[          29 ].imag(),1e-12);
+                CHECK_CLOSE(   22620.000000000000      ,C.coeffs_[          44 ].real(),1e-12);
+                CHECK_CLOSE(  -1408.0000000000000      ,C.coeffs_[          44 ].imag(),1e-12);
+
+
+
+    }
+
 }
 
