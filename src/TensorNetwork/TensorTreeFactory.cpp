@@ -43,3 +43,4 @@ vector<TensorTree<T>> matrixTree(const Tree& tree, const SumOfProductsOperator<T
 
 template vector<TensorTree<cd>> matrixTree(const Tree& tree, const SumOfProductsOperator<cd>& H);
 template vector<TensorTree<d>> matrixTree(const Tree& tree, const SumOfProductsOperator<d>& H);
+

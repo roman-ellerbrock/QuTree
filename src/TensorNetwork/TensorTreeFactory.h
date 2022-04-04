@@ -16,6 +16,9 @@ TensorTree<T> matrixTree(const Tree& tree, const ProductOperator<T>& P);
 template <typename T>
 vector<TensorTree<T>> matrixTree(const Tree& tree, const SumOfProductsOperator<T>& H);
 
+template <typename T>
+TensorTree<T> matrixTree(const TensorTree<T>& Psi, const ProductOperator<T>& P = {});
+
 /**
  * The following code allows to use matrixTreecd(...) for overloaded template functions
  * using perfect forwarding.

@@ -5,7 +5,6 @@
 #include "TensorNetwork/contractions.h"
 
 typedef complex<double> cd;
-
 typedef double d;
 
 template<typename T>
@@ -23,24 +22,6 @@ Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& ed
 
 template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket, const Edge& edge);
 template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket, const Edge& edge);
-
-template<typename T>
-double residual(const TensorTree<T>& Psi1, const TensorTree<T>& Psi2, const Tree& tree) {
-	TensorTree<T> S11 = matrixTree<T>(tree);
-	TensorTree<T> S22 = matrixTree<T>(tree);
-	TensorTree<T> S12 = matrixTree<T>(tree);
-	contraction(S11, Psi1, Psi1);
-	contraction(S22, Psi2, Psi2);
-	contraction(S12, Psi1, Psi2);
-	const Tensor<T>& s11 = S11[tree.root()];
-	const Tensor<T>& s22 = S22[tree.root()];
-	const Tensor<T>& s12 = S12[tree.root()];
-	auto diff = s11 + s22 - s12 - adjoint(s12);
-	return sqrt(abs(nrm2(diff)));
-}
-
-template double residual(const TensorTree<cd>& Psi1, const TensorTree<cd>& Psi2, const Tree& );
-template double residual(const TensorTree<d>& Psi1, const TensorTree<d>& Psi2, const Tree&);
 
 template<typename T>
 void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const ProductOperator<T>& P,
@@ -93,21 +74,72 @@ template void contraction(vector<TensorTree<d>>& Svec, const TensorTree<d>& Bra,
 	const SumOfProductsOperator<d>& H);
 
 template<typename T>
-TensorTree<T> dotProduct(const TensorTree<T>& Bra, TensorTree<T> Ket) {
-	TensorTree<T> S;
-	contraction(S, Bra, Ket, Bra.shape_.lastIdx());
-	return S;
-}
+void apply(Tensor<T>& Ket, const TensorTree<T>& pmat,
+	const ProductOperator<T>& P, const Node* node) {
 
-template<typename T>
-Tensor<T> apply(Tensor<T> Ket, const TensorTree<T>& S, const Node& node) {
 	Tensor<T> tmp(Ket.shape_);
-	for (const Edge& edge : incomingEdges(node)) {
-		tmp = matrixTensor(S[edge], Ket, edge);
+	for (const Edge& edge : incomingEdges(*node)) {
+		tmp = matrixTensor(pmat[edge], Ket, edge);
 		swap(tmp, Ket);
 	}
-	return Ket;
+
+	for (const Leaf& leaf : node->leaves_) {
+		P.apply(tmp, Ket, leaf);
+		std::swap(tmp, Ket);
+	}
 }
 
-template Tensor<cd> apply(Tensor<cd> Ket, const TensorTree<cd>& S, const Node&);
-template Tensor<d> apply(Tensor<d> Ket, const TensorTree<d>& S, const Node&);
+void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
+	const ProductOperator<cd>& P, const Node* node);
+void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
+	const ProductOperator<d>& P, const Node* node);
+
+template<typename T>
+void apply(TensorTree<T>& Ket, const TensorTree<T>& pmat,
+	const ProductOperator<T>& P) {
+	for (const Node* node : pmat.nodes_) {
+		apply(Ket[node], pmat, P, node);
+	}
+}
+
+template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
+	const ProductOperator<cd>& P);
+template void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
+	const ProductOperator<d>& P);
+
+template<typename T>
+void apply(TensorTree<T>& Psi, const vector<TensorTree<T>>& Hmat,
+	const SOP<T>& H) {
+
+	TensorTree<T> HPsi(Psi);
+	for (size_t l = 0; l < Hmat.size(); ++l) {
+		TensorTree<T> sPsi(Psi);
+		apply(sPsi, Hmat[l], H[l]);
+//		HPsi += H.coeff(l) * sPsi;
+	}
+	Psi = HPsi;
+}
+
+template void apply(TensorTree<cd>& Psi, const vector<TensorTree<cd>>& Hmat,
+	const SOP<cd>& H);
+template void apply(TensorTree<d>& Psi, const vector<TensorTree<d>>& Hmat,
+	const SOP<d>& H);
+
+template<typename T>
+double residual(const TensorTree<T>& Psi1, const TensorTree<T>& Psi2, const Tree& tree) {
+	TensorTree<T> S11 = matrixTree<T>(tree);
+	TensorTree<T> S22 = matrixTree<T>(tree);
+	TensorTree<T> S12 = matrixTree<T>(tree);
+	contraction(S11, Psi1, Psi1);
+	contraction(S22, Psi2, Psi2);
+	contraction(S12, Psi1, Psi2);
+	const Tensor<T>& s11 = S11[tree.root()];
+	const Tensor<T>& s22 = S22[tree.root()];
+	const Tensor<T>& s12 = S12[tree.root()];
+	auto diff = s11 + s22 - s12 - adjoint(s12);
+	return sqrt(abs(nrm2(diff)));
+}
+
+template double residual(const TensorTree<cd>& Psi1, const TensorTree<cd>& Psi2, const Tree& );
+template double residual(const TensorTree<d>& Psi1, const TensorTree<d>& Psi2, const Tree&);
+

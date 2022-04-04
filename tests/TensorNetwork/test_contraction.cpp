@@ -98,6 +98,9 @@ SUITE (contraction) {
 		}
 	}
 
+	TEST_FIXTURE(Trees, applyPO) {
+
+	}
 
 
 }

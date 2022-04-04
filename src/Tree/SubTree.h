@@ -11,6 +11,10 @@ bool contains(const vector<const Node *>& vec, const Node *probe);
 
 vector<const Node *> gatherNodes(const Tree& tree, const vector<size_t>& idx);
 
+
+class SubTree;
+vector<const Node *> gatherNodes(const SubTree& tree, const vector<size_t>& idx);
+
 struct SubTreeParameters {
 	SubTreeParameters(const vector<size_t>& leaves = {},
 		bool activeNodes = true, bool activeEdges = true)
@@ -76,6 +80,42 @@ public:
 
 		if (!par.activeNodes_) { nodes_.clear(); }
 	}
+
+/*	SubTree(const SubTree& tree, SubTreeParameters par = SubTreeParameters()) {
+		if (par.leaves_.empty()) {
+			for (size_t i = 0; i < tree.leaves_.size(); ++i) {
+				par.leaves_.push_back(i);
+			}
+		}
+
+		/// gather nodes in wrong order
+		auto tmp = gatherNodes(tree, par.leaves_);
+
+		/// create bottom-up
+		for (const Node* node : tree.nodes_) {
+			if (contains(tmp, node)) {
+				nodes_.push_back(node->address_, node);
+			}
+		}
+
+		///
+//		for (pair<size_t, const Leaf*> iPair : par.leaves_) {
+		for (size_t i : par.leaves_) {
+//			size_t i = iPair.first;
+			leaves_[i] = tree.leaves_.at(i);
+		}
+
+		/// ! idea to avoid n^2 scaling: !
+		/// don't go leaf->root but root->leaf (i.e. invert)
+		/// then whole vector is top-down.
+		/// reverse vector at the very end.
+
+		/// fill edges
+		if (par.activeEdges_) { fillEdges(tree); }
+
+		if (!par.activeNodes_) { nodes_.clear(); }
+
+	}*/
 
 	virtual void print() const {
 		for (const Node *node : nodes_) {
