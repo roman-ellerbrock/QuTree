@@ -7,6 +7,7 @@
 #include <numeric>
 #include "Core/MatrixBLAS.h"
 
+
 #define swap(type, x, y) { type _tmp; _tmp = x; x = y; y = _tmp; }
 
 template<typename T>
@@ -613,19 +614,18 @@ void general_transpose(Tensor<T>& dst, const Tensor<T>& src, size_t index_one, s
     if(index_one > index_two) {
         swap(size_t, index_one, index_two); // std::swap would be nicer, but macro on top of this file...
     }
-    size_t a,b,c,d,e;
-    a = 1; // ugh
-    b = src.shape().dimensions()[index_one];
-    d = src.shape().dimensions()[index_two];
+    size_t b = src.shape().dimensions()[index_one];
+    size_t d = src.shape().dimensions()[index_two];
 
+    size_t a = 1;
     for(size_t i = 0; i < index_one; ++i){
         a *= src.shape().dimensions()[i];
     }
-    c = 1;
+    size_t c = 1;
     for(size_t i = index_one + 1; i < index_two; ++i){
         c *= src.shape().dimensions()[i];
     }
-    e = 1;
+    size_t e = 1;
     for(size_t i = index_two + 1; i < src.shape().order(); ++i){
         e *= src.shape().dimensions()[i];
     }
@@ -645,52 +645,67 @@ void general_transpose(Tensor<T>& dst, const Tensor<T>& src, size_t index_one, s
 #pragma ide diagnostic ignored "openmp-use-default-none"
 // this is a helper-function doing a 5-index-transpose
 template<typename T>
-void general_transpose_bd(T* dst, const T* src, size_t a, size_t b, size_t c, size_t d, size_t e){
+void general_transpose_bd(T* dst, const T* src, size_t a, size_t b, size_t c, size_t d, size_t e) {
     // src(a,b,c,d,e) -> dst(a,d,c,b,e)
     // primitive algorithm, smarter is definitely possible
 
-    // strides of src
-    const size_t s_a = 1;
-    const size_t s_b = a;
-    const size_t s_c = a * b;
-    const size_t s_d = a * b * c;
-    const size_t s_e = a * b * c * d;
+    // todo more(?) or better specializations
 
-    // strides of dst
-    const size_t d_a = 1;
-    const size_t d_b = a;
-    const size_t d_c = a * d;
-    const size_t d_d = a * d * c;
-    const size_t d_e = a * d * c * b;
+    // first special case: c == 1, then it becomes multiple applications of the 3-index-transpose
+    if (c == 1 and a != 1) { // this is an okay implementation, even for e != 1
+        const size_t d_e = a * d * b;
+        const size_t s_e = a * b * d;
+        for (size_t i_e = 0; i_e < e; ++i_e) {
+            transposeBC(&dst[i_e * d_e], &src[i_e * s_e], a, b, d);
+        }
+    } else if(c == 1 and a == 1) { // second special case: if c = a = 1, then it is just another 3-index transpose
+        const size_t d_e = d * b;
+        const size_t s_e = b * d;
+        transposeAB(dst, src, b, d, e);
+    } else { // general case: slow but honest work
 
-    // slow but honest work
-    // todo change loop order for better access, maybe use faster transpsoe functions, specialize for e.g. c = 1 etc.
+        // strides of src
+        const size_t s_a = 1;
+        const size_t s_b = a;
+        const size_t s_c = a * b;
+        const size_t s_d = a * b * c;
+        const size_t s_e = a * b * c * d;
+
+        // strides of dst
+        const size_t d_a = 1;
+        const size_t d_b = a;
+        const size_t d_c = a * d;
+        const size_t d_d = a * d * c;
+        const size_t d_e = a * d * c * b;
+
+        // slow but honest work
 //#pragma omp parallel for collapse(5)
-    for(size_t i_e = 0; i_e < e; ++i_e){
-        for(size_t i_d = 0; i_d < d; ++i_d){
-            for(size_t i_c = 0; i_c < c; ++i_c){
-                for(size_t i_b = 0; i_b < b; ++i_b){
-                    for(size_t i_a = 0; i_a < a; ++i_a){
+        for(size_t i_e = 0; i_e < e; ++i_e){
+            for(size_t i_d = 0; i_d < d; ++i_d){
+                for(size_t i_c = 0; i_c < c; ++i_c){
+                    for(size_t i_b = 0; i_b < b; ++i_b){
+                        for(size_t i_a = 0; i_a < a; ++i_a){
 
-                        const size_t src_idx = i_a * s_a
-                                               + i_b * s_b
-                                               + i_c * s_c
-                                               + i_d * s_d
-                                               + i_e * s_e;
+                            const size_t src_idx = i_a * s_a
+                                                   + i_b * s_b
+                                                   + i_c * s_c
+                                                   + i_d * s_d
+                                                   + i_e * s_e;
 
-                        const size_t dst_idx = i_a * d_a
-                                               + i_d * d_b
-                                               + i_c * d_c
-                                               + i_b * d_d
-                                               + i_e * d_e;
+                            const size_t dst_idx = i_a * d_a
+                                                   + i_d * d_b
+                                                   + i_c * d_c
+                                                   + i_b * d_d
+                                                   + i_e * d_e;
 
-                        dst[dst_idx] = src[src_idx];
+                            dst[dst_idx] = src[src_idx];
+                        }
                     }
                 }
             }
         }
-    }
 
+    }
 }
 #pragma clang diagnostic pop
 
