@@ -46,6 +46,26 @@ template void apply(TensorTree<d>& Ket, const TensorTree<d>& S,
 	const ProductOperator<d>& P, const Edge *edge);
 
 template<typename T>
+void apply(TensorTree<T>& Ket, TensorTree<T>& sKet,
+	const vector<TensorTree<T>>& S, const SOP<T>& H,
+	const Edge *edge) {
+	Tensor<T> HKet(Ket[edge].shape_);
+	for (size_t l = 0; l < H.size(); ++l) {
+		sKet[edge] = Ket[edge];
+		apply(sKet, S[l], H[l], edge);
+		HKet += H.coeff(l) * sKet[edge];
+	}
+	Ket[edge] = HKet;
+}
+
+template void apply(TensorTree<cd>& Ket, TensorTree<cd>& sKet,
+	const vector<TensorTree<cd>>& S, const SOP<cd>& H,
+	const Edge *edge);
+template void apply(TensorTree<d>& Ket, TensorTree<d>& sKet,
+	const vector<TensorTree<d>>& S, const SOP<d>& H,
+	const Edge *edge);
+
+template<typename T>
 void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const ProductOperator<T>& P) {
 	for (const Edge *edge : S.edges_) {
@@ -60,8 +80,9 @@ template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
 	TensorTree<d> Ket, const ProductOperator<d>& P);
 
 template<typename T>
-void contraction(vector<TensorTree<T>>& Svec, const TensorTree<T>& Bra, TensorTree<T> Ket,
-	const SumOfProductsOperator<T>& H) {
+void contraction(vector<TensorTree<T>>& Svec, const TensorTree<T>& Bra,
+	TensorTree<T> Ket, const SumOfProductsOperator<T>& H) {
+
 	assert(Svec.size() == sop.size());
 	for (size_t l = 0; l < Svec.size(); ++l) {
 		contraction(Svec[l], Bra, Ket, H[l]);
@@ -78,7 +99,7 @@ void apply(Tensor<T>& Ket, const TensorTree<T>& pmat,
 	const ProductOperator<T>& P, const Node* node) {
 
 	Tensor<T> tmp(Ket.shape_);
-	for (const Edge& edge : incomingEdges(*node)) {
+	for (const Edge& edge : pmat.incomingEdges(node)) {
 		tmp = matrixTensor(pmat[edge], Ket, edge);
 		swap(tmp, Ket);
 	}
@@ -107,6 +128,7 @@ template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
 template void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
 	const ProductOperator<d>& P);
 
+/*
 template<typename T>
 void apply(TensorTree<T>& Psi, const vector<TensorTree<T>>& Hmat,
 	const SOP<T>& H) {
@@ -115,7 +137,9 @@ void apply(TensorTree<T>& Psi, const vector<TensorTree<T>>& Hmat,
 	for (size_t l = 0; l < Hmat.size(); ++l) {
 		TensorTree<T> sPsi(Psi);
 		apply(sPsi, Hmat[l], H[l]);
-//		HPsi += H.coeff(l) * sPsi;
+		for (const Node* node : HPsi.nodes_) {
+			HPsi[node] += H.coeff(l) * sPsi[node];
+		}
 	}
 	Psi = HPsi;
 }
@@ -124,6 +148,7 @@ template void apply(TensorTree<cd>& Psi, const vector<TensorTree<cd>>& Hmat,
 	const SOP<cd>& H);
 template void apply(TensorTree<d>& Psi, const vector<TensorTree<d>>& Hmat,
 	const SOP<d>& H);
+*/
 
 template<typename T>
 double residual(const TensorTree<T>& Psi1, const TensorTree<T>& Psi2, const Tree& tree) {

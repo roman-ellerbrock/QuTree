@@ -17,6 +17,11 @@ template <typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge);
 
 template <typename T>
+void apply(TensorTree<T>& Ket, TensorTree<T>& sKet,
+	const vector<TensorTree<T>>& Hmat, const SOP<T>& H,
+	const Edge *edge);
+
+template <typename T>
 void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const ProductOperator<T>& P = ProductOperator<T>());
 
@@ -27,10 +32,8 @@ template <typename T>
 void contraction(vector<TensorTree<T>>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const SumOfProductsOperator<T>& H = SumOfProductsOperator<T>());
 
-template <typename T>
-TensorTree<T> product(const TensorTree<T>& S, TensorTree<T> Ket);
-
-template <typename T>
-TensorTree<T> fullContraction(const TensorTree<T>& Bra, const TensorTree<T>& S, TensorTree<T> Ket);
+template<typename T>
+void apply(TensorTree<T>& Ket, const TensorTree<T>& pmat,
+	const ProductOperator<T>& P);
 
 #endif //CONTRACTIONS_H

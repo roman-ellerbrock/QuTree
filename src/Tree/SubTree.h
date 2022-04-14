@@ -81,42 +81,6 @@ public:
 		if (!par.activeNodes_) { nodes_.clear(); }
 	}
 
-/*	SubTree(const SubTree& tree, SubTreeParameters par = SubTreeParameters()) {
-		if (par.leaves_.empty()) {
-			for (size_t i = 0; i < tree.leaves_.size(); ++i) {
-				par.leaves_.push_back(i);
-			}
-		}
-
-		/// gather nodes in wrong order
-		auto tmp = gatherNodes(tree, par.leaves_);
-
-		/// create bottom-up
-		for (const Node* node : tree.nodes_) {
-			if (contains(tmp, node)) {
-				nodes_.push_back(node->address_, node);
-			}
-		}
-
-		///
-//		for (pair<size_t, const Leaf*> iPair : par.leaves_) {
-		for (size_t i : par.leaves_) {
-//			size_t i = iPair.first;
-			leaves_[i] = tree.leaves_.at(i);
-		}
-
-		/// ! idea to avoid n^2 scaling: !
-		/// don't go leaf->root but root->leaf (i.e. invert)
-		/// then whole vector is top-down.
-		/// reverse vector at the very end.
-
-		/// fill edges
-		if (par.activeEdges_) { fillEdges(tree); }
-
-		if (!par.activeNodes_) { nodes_.clear(); }
-
-	}*/
-
 	virtual void print() const {
 		for (const Node *node : nodes_) {
 			node->info();
@@ -142,6 +106,17 @@ public:
 			}
 		}
 		return pres;
+	}
+
+	[[nodiscard]] vector<Edge> incomingEdges(const Node *node) const {
+		vector<Edge> inEd = ::incomingEdges(*node);
+		vector<Edge> ins;
+		for (const Edge& e : inEd) {
+			if (edges_.contains(e.address())) {
+				ins.push_back(e);
+			}
+		}
+		return ins;
 	}
 
 	sparse_vector<const Node *> nodes_;

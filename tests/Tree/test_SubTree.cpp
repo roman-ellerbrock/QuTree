@@ -103,7 +103,17 @@ SUITE (SubTree) {
 				CHECK_EQUAL(true, stree.edges_.contains(e.address()));
 			}
 		}
+	}
 
+	TEST_FIXTURE(SomeTree, testInEdges) {
+		vector<size_t> idx = {1, 3};
+		SubTree stree(tree_, idx);
+		for (const Node* node : stree.nodes_) {
+			const vector<Edge> inEdges = stree.incomingEdges(node);
+			for (const Edge& e : inEdges) {
+				CHECK_EQUAL(true, stree.edges_.contains(e.address()));
+			}
+		}
 	}
 
 }

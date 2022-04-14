@@ -35,6 +35,7 @@ set(QuTree_tests
         Tree/test_TreeFactory.cpp
 
         # Tensor Network classes
+        TensorNetwork/test_ApplySCF.cpp
         TensorNetwork/test_TensorTree.cpp
         TensorNetwork/test_contraction.cpp
 

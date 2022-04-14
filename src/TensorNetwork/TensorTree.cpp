@@ -47,4 +47,10 @@ class TensorTree<double>;
 template
 class TensorTree<complex<double>>;
 
+template<typename T>
+TensorTree<T>& operator+=(TensorTree<T>& A, const TensorTree<T>& add) {
+}
+
+template<typename T>
+TensorTree<T>& operator*=(TensorTree<T>& A, T factor);
 
