@@ -37,9 +37,12 @@ SUITE (ApplySCF) {
 
 	TEST_FIXTURE (Trees, applyCNot) {
 		SOPcd cnot = CNot(1, 3);
-		auto Svec = matrixTreecd(tree_, cnot);
-		contraction(Svec, chi_, chi_, cnot);
+		auto mat = matrixTreecd(tree_, cnot);
+		contraction(mat, chi_, chi_, cnot);
+		TensorTreecd hchi(chi_);
+		applyIteration(hchi, mat, chi_, cnot);
 
+		hchi.print();
 
 	}
 }

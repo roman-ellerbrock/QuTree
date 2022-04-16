@@ -7,92 +7,9 @@
 typedef complex<double> cd;
 typedef double d;
 
-template<typename T>
-Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& Ket, const Edge& edge) {
-	return matrixTensor(h, Ket, edge.inIdx());
-}
-
-template Tensor<cd> matrixTensor(const Tensor<cd>& h, const Tensor<cd>& Ket, const Edge& edge);
-template Tensor<d> matrixTensor(const Tensor<d>& h, const Tensor<d>& Ket, const Edge& edge);
-
-template<typename T>
-Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge) {
-	return contraction(bra, ket, edge.outIdx());
-}
-
-template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket, const Edge& edge);
-template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket, const Edge& edge);
-
-template<typename T>
-void apply(TensorTree<T>& Ket, const TensorTree<T>& S, const ProductOperator<T>& P,
-	const Edge *edge) {
-
-	Tensor<T> sKet(Ket[edge].shape_);
-	for (const Edge& preEdge : S.preEdges(edge)) {
-		sKet = matrixTensor(S[preEdge], Ket[edge], preEdge);
-		std::swap(sKet, Ket[edge]);
-	}
-
-	const Node& node = edge->from();
-	for (const Leaf& leaf : node.leaves_) {
-		P.apply(sKet, Ket[edge], leaf);
-		std::swap(sKet, Ket[edge]);
-	}
-}
-
-template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& S,
-	const ProductOperator<cd>& P, const Edge *edge);
-template void apply(TensorTree<d>& Ket, const TensorTree<d>& S,
-	const ProductOperator<d>& P, const Edge *edge);
-
-template<typename T>
-void apply(TensorTree<T>& Ket, TensorTree<T>& sKet,
-	const vector<TensorTree<T>>& S, const SOP<T>& H,
-	const Edge *edge) {
-	Tensor<T> HKet(Ket[edge].shape_);
-	for (size_t l = 0; l < H.size(); ++l) {
-		sKet[edge] = Ket[edge];
-		apply(sKet, S[l], H[l], edge);
-		HKet += H.coeff(l) * sKet[edge];
-	}
-	Ket[edge] = HKet;
-}
-
-template void apply(TensorTree<cd>& Ket, TensorTree<cd>& sKet,
-	const vector<TensorTree<cd>>& S, const SOP<cd>& H,
-	const Edge *edge);
-template void apply(TensorTree<d>& Ket, TensorTree<d>& sKet,
-	const vector<TensorTree<d>>& S, const SOP<d>& H,
-	const Edge *edge);
-
-template<typename T>
-void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
-	const ProductOperator<T>& P) {
-	for (const Edge *edge : S.edges_) {
-		apply(Ket, S, P, edge);
-		S[edge] = contraction(Bra[edge], Ket[edge], *edge);
-	}
-}
-
-template void contraction(TensorTree<cd>& S, const TensorTree<cd>& Bra,
-	TensorTree<cd> Ket, const ProductOperator<cd>& P);
-template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
-	TensorTree<d> Ket, const ProductOperator<d>& P);
-
-template<typename T>
-void contraction(vector<TensorTree<T>>& Svec, const TensorTree<T>& Bra,
-	TensorTree<T> Ket, const SumOfProductsOperator<T>& H) {
-
-	assert(Svec.size() == sop.size());
-	for (size_t l = 0; l < Svec.size(); ++l) {
-		contraction(Svec[l], Bra, Ket, H[l]);
-	}
-}
-
-template void contraction(vector<TensorTree<cd>>& Svec, const TensorTree<cd>& Bra, TensorTree<cd> Ket,
-	const SumOfProductsOperator<cd>& H);
-template void contraction(vector<TensorTree<d>>& Svec, const TensorTree<d>& Bra, TensorTree<d> Ket,
-	const SumOfProductsOperator<d>& H);
+/**
+ * Node targeting routines
+ */
 
 template<typename T>
 void apply(Tensor<T>& Ket, const TensorTree<T>& pmat,
@@ -115,6 +32,118 @@ void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
 void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
 	const ProductOperator<d>& P, const Node* node);
 
+
+/**
+ * Edge targeting routines
+ */
+
+template<typename T>
+Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& Ket, const Edge& edge) {
+	return matrixTensor(h, Ket, edge.inIdx());
+}
+
+template Tensor<cd> matrixTensor(const Tensor<cd>& h, const Tensor<cd>& Ket, const Edge& edge);
+template Tensor<d> matrixTensor(const Tensor<d>& h, const Tensor<d>& Ket, const Edge& edge);
+
+
+template<typename T>
+Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge) {
+	return contraction(bra, ket, edge.outIdx());
+}
+
+template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket, const Edge& edge);
+template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket, const Edge& edge);
+
+
+
+template<typename T>
+void contraction(TensorTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket,
+	const ProductOperator<T>& P, const Edge* edge) {
+	apply(Ket, S, P, edge);
+	S[edge] = contraction(Bra, Ket, *edge);
+}
+
+template void contraction(TensorTree<cd>& S, const Tensor<cd>& Bra, Tensor<cd> Ket,
+	const ProductOperator<cd>& P, const Edge* edge);
+template void contraction(TensorTree<d>& S, const Tensor<d>& Bra, Tensor<d> Ket,
+	const ProductOperator<d>& P, const Edge* edge);
+
+
+template<typename T>
+void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
+	const ProductOperator<T>& P) {
+	for (const Edge *edge : S.edges_) {
+		contraction(S, Bra[edge], Ket[edge], P, edge);
+	}
+}
+
+template void contraction(TensorTree<cd>& S, const TensorTree<cd>& Bra,
+	TensorTree<cd> Ket, const ProductOperator<cd>& P);
+template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
+	TensorTree<d> Ket, const ProductOperator<d>& P);
+
+
+template<typename T>
+void contraction(vector<TensorTree<T>>& Svec, const Tensor<T>& Bra,
+	Tensor<T> Ket, const SumOfProductsOperator<T>& H, const Edge* edge) {
+	for (size_t l = 0; l < Svec.size(); ++l) {
+		contraction(Svec[l], Bra, Ket, H[l], edge);
+	}
+}
+
+template void contraction(vector<TensorTree<cd>>& Svec, const Tensor<cd>& Bra,
+	Tensor<cd> Ket, const SumOfProductsOperator<cd>& H, const Edge* edge);
+template void contraction(vector<TensorTree<d>>& Svec, const Tensor<d>& Bra,
+	Tensor<d> Ket, const SumOfProductsOperator<d>& H, const Edge* edge);
+
+
+
+template<typename T>
+void apply(Tensor<T>& Ket, const TensorTree<T>& S,
+	const ProductOperator<T>& P, const Edge *edge) {
+
+	Tensor<T> sKet(Ket.shape_);
+	for (const Edge& preEdge : S.preEdges(edge)) {
+		sKet = matrixTensor(S[preEdge], Ket, preEdge);
+		std::swap(sKet, Ket);
+	}
+
+	const Node& node = edge->from();
+	for (const Leaf& leaf : node.leaves_) {
+		P.apply(sKet, Ket, leaf);
+		std::swap(sKet, Ket);
+	}
+}
+
+template void apply(Tensor<cd>& Ket, const TensorTree<cd>& S,
+	const ProductOperator<cd>& P, const Edge *edge);
+template void apply(Tensor<d>& Ket, const TensorTree<d>& S,
+	const ProductOperator<d>& P, const Edge *edge);
+
+
+template<typename T>
+void apply(Tensor<T>& Ket, const vector<TensorTree<T>>& S,
+	const SOP<T>& H, const Edge *edge) {
+	Tensor<T> HKet(Ket.shape_);
+	for (size_t l = 0; l < H.size(); ++l) {
+		Tensor<T> sKet = Ket;
+		apply(sKet, S[l], H[l], edge);
+		HKet += H.coeff(l) * sKet;
+	}
+	Ket = HKet;
+}
+
+template void apply(Tensor<cd>& Ket,
+	const vector<TensorTree<cd>>& S, const SOP<cd>& H,
+	const Edge *edge);
+template void apply(Tensor<d>& Ket,
+	const vector<TensorTree<d>>& S, const SOP<d>& H,
+	const Edge *edge);
+
+/**
+ * TensorTree targeting routines
+ */
+
 template<typename T>
 void apply(TensorTree<T>& Ket, const TensorTree<T>& pmat,
 	const ProductOperator<T>& P) {
@@ -127,6 +156,23 @@ template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
 	const ProductOperator<cd>& P);
 template void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
 	const ProductOperator<d>& P);
+
+
+template<typename T>
+void contraction(vector<TensorTree<T>>& Svec, const TensorTree<T>& Bra,
+	TensorTree<T> Ket, const SumOfProductsOperator<T>& H) {
+
+	assert(Svec.size() == sop.size());
+	for (size_t l = 0; l < Svec.size(); ++l) {
+		contraction(Svec[l], Bra, Ket, H[l]);
+	}
+}
+
+template void contraction(vector<TensorTree<cd>>& Svec, const TensorTree<cd>& Bra, TensorTree<cd> Ket,
+	const SumOfProductsOperator<cd>& H);
+template void contraction(vector<TensorTree<d>>& Svec, const TensorTree<d>& Bra, TensorTree<d> Ket,
+	const SumOfProductsOperator<d>& H);
+
 
 /*
 template<typename T>

@@ -5,6 +5,9 @@
 #include "TensorNetwork/TensorTree.h"
 #include "Tensor/TensorLapack.h"
 
+typedef complex<double> cd;
+typedef double d;
+
 template<typename T>
 TensorTree<T>::TensorTree(const Tree& tree,
 	function<Tensor<T>(const TensorShape&)> gen)
@@ -16,6 +19,15 @@ TensorTree<T>::TensorTree(const Tree& tree,
 
 	normalize();
 }
+
+template<typename T>
+Tensor<T> normalize(const Tensor<T>& phi, const Edge* edge, double eps) {
+	size_t k = edge->outIdx();
+	return ::normalize(phi, k, eps);
+}
+
+template Tensor<cd> normalize(const Tensor<cd>& phi, const Edge* edge, double eps);
+template Tensor<d> normalize(const Tensor<d>& phi, const Edge* edge, double eps);
 
 template<typename T>
 void TensorTree<T>::normalize(double eps) {

@@ -126,9 +126,8 @@ SUITE (contraction) {
 		contraction(Svec, chi_, chi_, cnot);
 
 		TensorTreecd chi0(chi_);
-		TensorTreecd spsi(chi_);
 		for (const Edge *edge : Svec[0].edges_) {
-			apply(chi_, spsi, Svec, cnot, edge);
+			apply(chi_[edge], Svec, cnot, edge);
 		}
 
 			CHECK_CLOSE(0., residual(chi0, chi_, tree_), eps);
