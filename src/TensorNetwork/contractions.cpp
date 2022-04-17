@@ -33,6 +33,26 @@ void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
 	const ProductOperator<d>& P, const Node* node);
 
 
+template<typename T>
+void apply(Tensor<T>& Ket, const vector<TensorTree<T>>& S,
+	const SOP<T>& H, const Node *node) {
+	Tensor<T> HKet(Ket.shape_);
+	for (size_t l = 0; l < H.size(); ++l) {
+		Tensor<T> sKet = Ket;
+		apply(sKet, S[l], H[l], node);
+		HKet += H.coeff(l) * sKet;
+	}
+	Ket = HKet;
+}
+
+template void apply(Tensor<cd>& Ket,
+	const vector<TensorTree<cd>>& S, const SOP<cd>& H,
+	const Node *node);
+template void apply(Tensor<d>& Ket,
+	const vector<TensorTree<d>>& S, const SOP<d>& H,
+	const Node *node);
+
+
 /**
  * Edge targeting routines
  */
@@ -55,7 +75,6 @@ template Tensor<cd> contraction(const Tensor<cd>& bra, const Tensor<cd>& ket, co
 template Tensor<d> contraction(const Tensor<d>& bra, const Tensor<d>& ket, const Edge& edge);
 
 
-
 template<typename T>
 void contraction(TensorTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket,
 	const ProductOperator<T>& P, const Edge* edge) {
@@ -70,20 +89,6 @@ template void contraction(TensorTree<d>& S, const Tensor<d>& Bra, Tensor<d> Ket,
 
 
 template<typename T>
-void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
-	const ProductOperator<T>& P) {
-	for (const Edge *edge : S.edges_) {
-		contraction(S, Bra[edge], Ket[edge], P, edge);
-	}
-}
-
-template void contraction(TensorTree<cd>& S, const TensorTree<cd>& Bra,
-	TensorTree<cd> Ket, const ProductOperator<cd>& P);
-template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
-	TensorTree<d> Ket, const ProductOperator<d>& P);
-
-
-template<typename T>
 void contraction(vector<TensorTree<T>>& Svec, const Tensor<T>& Bra,
 	Tensor<T> Ket, const SumOfProductsOperator<T>& H, const Edge* edge) {
 	for (size_t l = 0; l < Svec.size(); ++l) {
@@ -95,7 +100,6 @@ template void contraction(vector<TensorTree<cd>>& Svec, const Tensor<cd>& Bra,
 	Tensor<cd> Ket, const SumOfProductsOperator<cd>& H, const Edge* edge);
 template void contraction(vector<TensorTree<d>>& Svec, const Tensor<d>& Bra,
 	Tensor<d> Ket, const SumOfProductsOperator<d>& H, const Edge* edge);
-
 
 
 template<typename T>
@@ -156,6 +160,20 @@ template void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
 	const ProductOperator<cd>& P);
 template void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
 	const ProductOperator<d>& P);
+
+
+template<typename T>
+void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
+	const ProductOperator<T>& P) {
+	for (const Edge *edge : S.edges_) {
+		contraction(S, Bra[edge], Ket[edge], P, edge);
+	}
+}
+
+template void contraction(TensorTree<cd>& S, const TensorTree<cd>& Bra,
+	TensorTree<cd> Ket, const ProductOperator<cd>& P);
+template void contraction(TensorTree<d>& S, const TensorTree<d>& Bra,
+	TensorTree<d> Ket, const ProductOperator<d>& P);
 
 
 template<typename T>

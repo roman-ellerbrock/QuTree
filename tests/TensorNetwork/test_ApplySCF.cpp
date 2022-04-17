@@ -14,7 +14,7 @@ SUITE (ApplySCF) {
 	public:
 		Trees() {
 			tree_ = balancedTree(4, 2, 2);
-			psi_ = TensorTreecd(tree_, identitycd);
+			psi_ = TensorTreecd(tree_, deltacd);
 
 			chi_ = TensorTreecd(tree_, deltacd);
 			/// Manually set basis
@@ -38,11 +38,13 @@ SUITE (ApplySCF) {
 	TEST_FIXTURE (Trees, applyCNot) {
 		SOPcd cnot = CNot(1, 3);
 		auto mat = matrixTreecd(tree_, cnot);
-		contraction(mat, chi_, chi_, cnot);
-		TensorTreecd hchi(chi_);
-		applyIteration(hchi, mat, chi_, cnot);
+		contraction(mat, psi_, psi_, cnot);
+		TensorTreecd hchi(tree_, randomcd);
 
-		hchi.print();
+//		apply(hchi, mat, psi_, cnot, 10);
+		applyIteration(hchi, mat, psi_, cnot);
+
+//		hchi.print();
 
 	}
 }

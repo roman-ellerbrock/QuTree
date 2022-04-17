@@ -17,6 +17,7 @@
 Matrixcd sigma_x();
 Matrixcd sigma_y();
 Matrixcd sigma_z();
+Matrixcd hadamard();
 
 /// Turn an operation into a controlled operation
 SOPcd controlled(const SOPcd& in, size_t control);
