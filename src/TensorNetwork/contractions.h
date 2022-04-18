@@ -51,7 +51,6 @@ void apply(Tensor<T>& Ket, const vector<TensorTree<T>>& S,
  * TensorTree targeting routines
  */
 
-
 template <typename T>
 void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const ProductOperator<T>& P = ProductOperator<T>());

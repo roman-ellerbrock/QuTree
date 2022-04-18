@@ -36,15 +36,19 @@ SUITE (ApplySCF) {
 	double eps = 1e-10;
 
 	TEST_FIXTURE (Trees, applyCNot) {
-		SOPcd cnot = CNot(1, 3);
+		SOPcd cnot = CNot(0, 2);
 		auto mat = matrixTreecd(tree_, cnot);
-		contraction(mat, psi_, psi_, cnot);
+
+		ProductOperatorcd P(hadamard(), 1);
+		chi_ = P.apply(chi_);
+
 		TensorTreecd hchi(tree_, randomcd);
 
-//		apply(hchi, mat, psi_, cnot, 10);
-		applyIteration(hchi, mat, psi_, cnot);
+		contraction(mat, hchi, chi_, cnot);
 
-//		hchi.print();
+		apply(hchi, mat, chi_, cnot, 10);
+
+		hchi.print();
 
 	}
 }

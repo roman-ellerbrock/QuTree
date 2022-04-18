@@ -95,6 +95,7 @@ SOPcd CNot(size_t c, size_t t) {
 	SOPcd cnot;
 	{
 		POcd M(project(0, 2), c);
+		M.push_back(identitycd({2, 2}), t);
 		cnot.push_back(M, 1.);
 	}
 	{

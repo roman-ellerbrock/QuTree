@@ -31,9 +31,6 @@ template<typename T>
 Tensor<T> normalize(const Tensor<T>& phi, const Edge* edge, double eps = 1e-10);
 
 template<typename T>
-TensorTree<T>& operator+=(TensorTree<T>& A, const TensorTree<T>& add);
-
-template<typename T>
-TensorTree<T>& operator*=(TensorTree<T>& A, T factor);
+ostream& operator<<(ostream& os, const TensorTree<T>& A);
 
 #endif //TENSORTREE_H

@@ -7,12 +7,16 @@
 #include "contractions.h"
 
 template <typename T>
-void applyIteration(TensorTree<T>& HPsi, vector<TensorTree<T>>& Hmat,
+double applyIteration(TensorTree<T>& HPsi, vector<TensorTree<T>>& Hmat,
 	const TensorTree<T>& Psi, const SOP<T>& H);
 
 template <typename T>
 void apply(TensorTree<T>& HPsi, vector<TensorTree<T>>& mat,
 	const TensorTree<T>& Psi, const SOP<T>& H, size_t n_iter);
+
+template <typename T>
+double error(TensorTree<T> HPsi, vector<TensorTree<T>> mat,
+	const TensorTree<T>& Psi, const SOP<T>& H, const Tree& tree);
 
 
 #endif //APPLYSCF_H
