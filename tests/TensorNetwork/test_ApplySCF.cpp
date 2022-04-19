@@ -13,7 +13,7 @@ SUITE (ApplySCF) {
 	class Trees {
 	public:
 		Trees() {
-			tree_ = balancedTree(4, 2, 2);
+			tree_ = balancedTree(2, 2, 2);
 			psi_ = TensorTreecd(tree_, deltacd);
 
 			chi_ = TensorTreecd(tree_, deltacd);
@@ -36,19 +36,25 @@ SUITE (ApplySCF) {
 	double eps = 1e-10;
 
 	TEST_FIXTURE (Trees, applyCNot) {
-		SOPcd cnot = CNot(0, 2);
+		size_t c = 0;
+		size_t t = 1;
+		SOPcd cnot = CNot(c, t);
 		auto mat = matrixTreecd(tree_, cnot);
 
-		ProductOperatorcd P(hadamard(), 1);
+		ProductOperatorcd P(hadamard(), c);
 		chi_ = P.apply(chi_);
 
-		TensorTreecd hchi(tree_, randomcd);
+		TensorTreecd hchi = tensorTreecd(chi_, mat[0], randomcd);
+
+		hchi.print();
+		getchar();
 
 		contraction(mat, hchi, chi_, cnot);
 
 		apply(hchi, mat, chi_, cnot, 10);
 
 		hchi.print();
+		output(cout, hchi);
 
 	}
 }

@@ -20,6 +20,13 @@ template <typename T>
 TensorTree<T> matrixTree(const TensorTree<T>& Psi, const ProductOperator<T>& P = {});
 
 /**
+ * Initialize TensorTree
+ */
+template <typename T>
+TensorTree<T> tensorTree(TensorTree<T> Psi, const TensorTree<T>& mat,
+	function<Tensor<T>(const TensorShape&)> f);
+
+/**
  * The following code allows to use matrixTreecd(...) for overloaded template functions
  * using perfect forwarding.
  * See this: https://stackoverflow.com/a/9864472/1407466
@@ -40,6 +47,18 @@ template <typename... Args>
 auto matrixTreed(Args&&... args)
 -> decltype(matrixTree<double>(std::forward<Args>(args)...)) {
 	return matrixTree<double>(std::forward<Args>(args)...);
+}
+
+template <typename... Args>
+auto tensorTreecd(Args&&... args)
+-> decltype(tensorTree<complex<double>>(std::forward<Args>(args)...)) {
+	return tensorTree<complex<double>>(std::forward<Args>(args)...);
+}
+
+template <typename... Args>
+auto tensorTreed(Args&&... args)
+-> decltype(tensorTree<double>(std::forward<Args>(args)...)) {
+	return tensorTree<double>(std::forward<Args>(args)...);
 }
 
 #endif //TENSORTREEFACTORY_H

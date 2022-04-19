@@ -24,6 +24,7 @@ typedef double d;
 template TensorTree<cd> matrixTree<cd>(const Tree& tree, const SubTreeParameters&);
 template TensorTree<d> matrixTree<d>(const Tree& tree, const SubTreeParameters&);
 
+
 template <typename T>
 TensorTree<T> matrixTree(const Tree& tree, const ProductOperator<T>& P) {
 	return matrixTree<T>(tree, P.targetLeaves());
@@ -31,6 +32,7 @@ TensorTree<T> matrixTree(const Tree& tree, const ProductOperator<T>& P) {
 
 template TensorTree<cd> matrixTree(const Tree& tree, const ProductOperator<cd>& P);
 template TensorTree<d> matrixTree(const Tree& tree, const ProductOperator<d>& P);
+
 
 template <typename T>
 vector<TensorTree<T>> matrixTree(const Tree& tree, const SumOfProductsOperator<T>& H) {
@@ -44,3 +46,20 @@ vector<TensorTree<T>> matrixTree(const Tree& tree, const SumOfProductsOperator<T
 template vector<TensorTree<cd>> matrixTree(const Tree& tree, const SumOfProductsOperator<cd>& H);
 template vector<TensorTree<d>> matrixTree(const Tree& tree, const SumOfProductsOperator<d>& H);
 
+
+template <typename T>
+TensorTree<T> tensorTree(TensorTree<T> Psi, const TensorTree<T>& mat,
+	function<Tensor<T>(const TensorShape&)> f) {
+
+	for (const Edge* edge : mat.edges_) {
+		const Node& node = edge->from();
+		Psi[node] = f(node.shape_);
+	}
+	Psi.normalize();
+	return Psi;
+}
+
+template TensorTree<cd> tensorTree(TensorTree<cd> Psi, const TensorTree<cd>& mat,
+	function<Tensor<cd>(const TensorShape&)> f);
+template TensorTree<d> tensorTree(TensorTree<d> Psi, const TensorTree<d>& mat,
+	function<Tensor<d>(const TensorShape&)> f);

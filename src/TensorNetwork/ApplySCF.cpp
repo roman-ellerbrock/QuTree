@@ -21,13 +21,13 @@ double applyIteration(TensorTree<T>& HPsi, vector<TensorTree<T>>& mat,
 
 		apply(HPsi[node], mat, H, &node);
 
-		/// normalize
-		HPsi[edge] = normalize(HPsi[node], edge, 1e-8);
-
 		/// check error
 		auto x = contraction(HPsi_old, HPsi[node], edge->outIdx());
 		double overlap = abs(nrm2(x));
 		err += pow(abs(1. - overlap), 2);
+
+		/// normalize
+		HPsi[edge] = normalize(HPsi[node], edge, 1e-10);
 
 		/// represent operator at node
 		contraction(mat, HPsi[edge], Psi[edge], H, edge);
