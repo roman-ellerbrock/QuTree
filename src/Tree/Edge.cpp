@@ -86,6 +86,28 @@ vector<Edge> preEdges(const Edge& edge) {
 	}
 }
 
+vector<Edge> postEdges(const Edge& e) {
+	const Node& center = e.to();
+	size_t hole = e.inIdx();
+
+	vector<Edge> edges;
+	for (size_t k = 0; k < center.nChildren(); ++k) {
+		if (k == hole) { continue; }
+		const Node& to = center.child_[k];
+		edges.emplace_back(Edge(center, to));
+	}
+
+	if (center.parent_ && e.isUpEdge()) {
+		const Node& to = center.parent();
+		edges.emplace_back(Edge(center, to));
+	}
+	return edges;
+}
+
+vector<Edge> postEdges(const Edge* e) {
+	return postEdges(*e);
+}
+
 ostream& operator<<(ostream& os, const Edge& edge) {
 	os << "Edge(" << edge.from().address_ <<", " << edge.to().address_ << ")";
 	return os;

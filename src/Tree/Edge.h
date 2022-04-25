@@ -126,6 +126,9 @@ vector<Edge> preEdges(const Edge& edge);
 vector<Edge> preUpEdges(const Edge& e);
 vector<Edge> preDownEdges(const Edge& e);
 
+vector<Edge> postEdges(const Edge& edge);
+vector<Edge> postEdges(const Edge* edge);
+
 ostream& operator<<(ostream& os, const Edge& edge);
 
 bool operator==(const vector<Edge>& a, const vector<Edge>& b);

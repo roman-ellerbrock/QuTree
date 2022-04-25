@@ -46,40 +46,59 @@ SUITE (contraction) {
 			CHECK_CLOSE(0., residual(psi_, psi_, tree_), eps);
 	}
 
-	TEST_FIXTURE (Trees, normalizePsi) {
+	TEST(consistency) {
+		Tree tree_ = balancedTree(2, 2, 2);
 		TensorTreecd Psi(tree_);
-		for (const Node& node : tree_) {
-			Psi[node] = randomcd(node.shape_);
+		for (const Node* node : Psi.nodes_) {
+			Psi[node] = randomcd(node->shape_);
 		}
-		for (const Edge& edge : tree_.edges()) {
-			Psi[edge] = Psi[edge.from()];
+		for (const Edge* edge : Psi.edges_) {
+			Psi[edge] = Psi[edge->from()];
 		}
-		for (const Edge* edge: Psi.edges_) {
-			Tensorcd A = Psi[edge];
-			Psi[edge] = ::normalize(A, edge, eps);
-
-			auto r = contraction(A, Psi[edge], edge->outIdx());
-			Psi[edge->to()] = matrixTensor(r, Psi[edge->to()], edge->inIdx());
-		}
-
-		cout << "Psi:\n";
-		Psi.print();
 
 		TensorTreecd Chi(Psi);
 		Chi.normalize();
-		cout << "Chi:\n";
-		Chi.print();
-		getchar();
 
 		TensorTreecd S = matrixTreecd(tree_);
-		contraction(S, Psi, Psi);
-		cout << "S:\n";
-		S.print();
-		TensorTreecd S2 = matrixTreecd(tree_);
-		contraction(S2, Chi, Psi);
-		cout << "S2:\n";
-		S2.print();
+		contraction(S, Psi, Chi);
+		TensorTreecd psipsi = matrixTreecd(tree_);
+		contraction(psipsi, Psi, Psi);
 
+		ProductOperatorcd P;
+		for (const Node* node : Chi.nodes_) {
+			auto sChi = Chi[node];
+			apply(sChi, S, P, node);
+			auto sPsi = Psi[node];
+			apply(sPsi, psipsi, P, node);
+				CHECK_CLOSE(0., residual(sChi, sPsi), eps);
+		}
+	}
+
+	TEST_FIXTURE(Trees, consistency2) {
+		TensorTreecd Psi(tree_);
+		for (const Node* node : Psi.nodes_) {
+			Psi[node] = randomcd(node->shape_);
+		}
+		for (const Edge* edge : Psi.edges_) {
+			Psi[edge] = Psi[edge->from()];
+		}
+
+		TensorTreecd Chi(Psi);
+		Chi.normalize();
+
+		TensorTreecd S = matrixTreecd(tree_);
+		contraction(S, Psi, Chi);
+		TensorTreecd psipsi = matrixTreecd(tree_);
+		contraction(psipsi, Psi, Psi);
+
+		ProductOperatorcd P;
+		for (const Node* node : Chi.nodes_) {
+			auto sChi = Chi[node];
+			apply(sChi, S, P, node);
+			auto sPsi = Psi[node];
+			apply(sPsi, psipsi, P, node);
+				CHECK_CLOSE(0., residual(sChi, sPsi), eps);
+		}
 	}
 
 	TEST_FIXTURE (Trees, ProductOperator) {

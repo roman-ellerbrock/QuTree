@@ -27,9 +27,9 @@ void apply(Tensor<T>& Ket, const TensorTree<T>& pmat,
 	}
 }
 
-void apply(TensorTree<cd>& Ket, const TensorTree<cd>& pmat,
+template void apply(Tensor<cd>& Ket, const TensorTree<cd>& pmat,
 	const ProductOperator<cd>& P, const Node* node);
-void apply(TensorTree<d>& Ket, const TensorTree<d>& pmat,
+template void apply(Tensor<d>& Ket, const TensorTree<d>& pmat,
 	const ProductOperator<d>& P, const Node* node);
 
 

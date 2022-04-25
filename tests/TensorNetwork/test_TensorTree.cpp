@@ -11,7 +11,7 @@ SUITE (TensorTree) {
 	class Trees {
 	public:
 		Trees() {
-			tree_ = balancedTree(4, 3, 2);
+			tree_ = balancedTree(4, 2, 2);
 		}
 
 		Tree tree_;
@@ -47,6 +47,22 @@ SUITE (TensorTree) {
 			auto delta = contraction(phi, phi, edge);
 				CHECK_CLOSE(0., residual(delta, identitycd(delta.shape_)), eps);
 		}
+	}
+
+	TEST_FIXTURE(Trees, consistency) {
+		TensorTreecd Psi(tree_);
+		for (const Node* node : Psi.nodes_) {
+			Psi[node] = randomcd(node->shape_);
+		}
+		for (const Edge* edge : Psi.edges_) {
+			Psi[edge] = Psi[edge->from()];
+		}
+
+		TensorTreecd Chi(tree_);
+		for (const Node* node : Psi.nodes_) {
+			Chi[node] = Psi[node];
+		}
+		Chi.normalize();
 	}
 
 	TEST_FIXTURE (Trees, matrixTree) {

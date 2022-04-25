@@ -18,7 +18,7 @@ SUITE (ProductOperator) {
 			  x_({2, 2}) {
 			x_(1, 0) = 1.;
 			x_(0, 1) = 1.;
-			Psi_ = TensorTreecd(tree_, identitycd);
+			Psi_ = TensorTreecd(tree_, deltacd);
 		}
 
 		~Operators() = default;
@@ -30,6 +30,7 @@ SUITE (ProductOperator) {
 		Matrixcd x_;
 		TensorTreecd Psi_;
 	};
+
 	double eps = 1e-10;
 
 	TEST_FIXTURE (Operators, ProductOperator) {
@@ -40,9 +41,8 @@ SUITE (ProductOperator) {
 		const Tensorcd& hA_ = Psi_[leaf->parent()];
 			CHECK_CLOSE(0., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(1., abs(hA_(1, 0)), eps);
-			CHECK_CLOSE(1., abs(hA_(0, 1)), eps);
+			CHECK_CLOSE(0., abs(hA_(0, 1)), eps);
 			CHECK_CLOSE(0., abs(hA_(1, 1)), eps);
-
 	}
 
 	TEST_FIXTURE (Operators, doubleOperator) {
@@ -55,7 +55,7 @@ SUITE (ProductOperator) {
 			CHECK_CLOSE(1., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(1, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(0, 1)), eps);
-			CHECK_CLOSE(1., abs(hA_(1, 1)), eps);
+			CHECK_CLOSE(0., abs(hA_(1, 1)), eps);
 	}
 
 	TEST_FIXTURE (Operators, reindexed) {
@@ -72,7 +72,7 @@ SUITE (ProductOperator) {
 		const Tensorcd& hA_ = Psi_[leaf->parent()];
 			CHECK_CLOSE(0., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(1., abs(hA_(1, 0)), eps);
-			CHECK_CLOSE(1., abs(hA_(0, 1)), eps);
+			CHECK_CLOSE(0., abs(hA_(0, 1)), eps);
 			CHECK_CLOSE(0., abs(hA_(1, 1)), eps);
 	}
 
@@ -87,7 +87,7 @@ SUITE (ProductOperator) {
 			CHECK_CLOSE(1., abs(hA_(0, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(1, 0)), eps);
 			CHECK_CLOSE(0., abs(hA_(0, 1)), eps);
-			CHECK_CLOSE(1., abs(hA_(1, 1)), eps);
+			CHECK_CLOSE(0., abs(hA_(1, 1)), eps);
 	}
 
 }

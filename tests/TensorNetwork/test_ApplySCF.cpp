@@ -44,7 +44,7 @@ SUITE (ApplySCF) {
 		ProductOperatorcd P(hadamard(), c);
 		chi_ = P.apply(chi_);
 
-		TensorTreecd hchi = tensorTreecd(chi_, mat[0], randomcd);
+/*		TensorTreecd hchi = tensorTreecd(chi_, mat[0], randomcd);
 
 		hchi.print();
 		getchar();
@@ -54,7 +54,7 @@ SUITE (ApplySCF) {
 		apply(hchi, mat, chi_, cnot, 10);
 
 		hchi.print();
-		output(cout, hchi);
+		output(cout, hchi);*/
 
 	}
 }

@@ -153,5 +153,25 @@ SUITE (Edges) {
 		Edge edge(child_, child_.child_[1]);
 			CHECK_EQUAL(expected, preEdges(edge));
 	}
+
+	TEST_FIXTURE (tree4, postEdges) {
+		vector<Edge> expected = {
+			Edge(child_, child_.child_[1]),
+			Edge(child_, root_)
+		};
+		Edge edge(child_.child_[0], child_);
+			CHECK_EQUAL(expected, postEdges(edge));
+	}
+
+	TEST_FIXTURE (tree4, postEdges2) {
+		vector<Edge> expected = {
+			Edge(root_.child_[1], root_.child_[1].child_[0]),
+			Edge(root_.child_[1], root_.child_[1].child_[1]),
+		};
+		Edge edge(root_, root_.child_[1]);
+			CHECK_EQUAL(expected, postEdges(edge));
+	}
+
+
 }
 
