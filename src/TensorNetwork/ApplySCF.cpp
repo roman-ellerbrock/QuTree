@@ -24,10 +24,23 @@ double applyIteration(TensorTree<T>& HPsi, vector<TensorTree<T>>& mat,
 		/// check error
 		auto x = contraction(HPsi_old, HPsi[node], edge->outIdx());
 		double overlap = abs(nrm2(x));
-		err += pow(abs(1. - overlap), 2);
+		double delta = pow(abs(1. - overlap), 2);
+		edge->info();
+		cout << "delta = " << delta << endl;
+		err += delta;
 
 		/// normalize
+		auto Q_old = HPsi[edge];
 		HPsi[edge] = normalize(HPsi[node], edge, 1e-10);
+
+		/// calculate r and rotate everything
+		auto r = contraction(HPsi[edge], Q_old, edge->outIdx());
+		HPsi[edge->to()] = matrixTensor(r, HPsi[edge->to()], edge->inIdx());
+		auto edges = postEdges(edge);
+		for (const Edge& e : edges) {
+			HPsi[e] = matrixTensor(r, HPsi[e], edge->inIdx());
+		}
+
 
 		/// represent operator at node
 		contraction(mat, HPsi[edge], Psi[edge], H, edge);
@@ -60,13 +73,44 @@ template double error(TensorTree<cd> HPsi, vector<TensorTree<cd>> mat,
 template double error(TensorTree<d> HPsi, vector<TensorTree<d>> mat,
 	const TensorTree<d>& Psi, const SOP<d>& H, const Tree& tree);
 
+
+template<typename T>
+double applyIterationConcerted(TensorTree<T>& HPsi, vector<TensorTree<T>>& mat,
+	const TensorTree<T>& Psi, const SOP<T>& H) {
+
+	double err = 0.;
+	for (const Node* node : mat.front().nodes_) {
+		Tensor<T> HPsi_old = HPsi[node];
+		HPsi[node] = Psi[node];
+
+		apply(HPsi[node], mat, H, node);
+
+		/// check error
+		auto x = contraction(HPsi_old, HPsi[node]);
+		double overlap = abs(nrm2(x));
+		double delta = pow(abs(1. - overlap), 2);
+		node->info();
+		cout << "delta = " << delta << endl;
+		err += delta;
+	}
+
+	return err;
+
+}
+
+template double applyIterationConcerted(TensorTree<cd>& HPsi, vector<TensorTree<cd>>& Hmat,
+	const TensorTree<cd>& Psi, const SOP<cd>& H);
+template double applyIterationConcerted(TensorTree<d>& HPsi, vector<TensorTree<d>>& Hmat,
+	const TensorTree<d>& Psi, const SOP<d>& H);
+
 template<typename T>
 void apply(TensorTree<T>& HPsi, vector<TensorTree<T>>& mat,
 	const TensorTree<T>& Psi, const SOP<T>& H, size_t n_iter) {
 	double eps = 1e-12;
 	for (size_t i = 0; i < n_iter; ++i) {
 		cout << "iteration = " << i + 1 << endl;
-		double err = applyIteration(HPsi, mat, Psi, H);
+//		double err = applyIteration(HPsi, mat, Psi, H);
+		double err = applyIterationConcerted(HPsi, mat, Psi, H);
 		cout << "Avg. Error: " << err << endl;
 		cout << endl;
 		if (err < eps) { break; }
