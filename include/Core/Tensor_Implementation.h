@@ -428,10 +428,22 @@ T singleDotProd(const Tensor<T>& A, const Tensor<T>& B, size_t n, size_t m) {
 	assert(m < mmax);
 
 	T result = 0;
-#pragma omp parallel for reduction(+:result)
-	for (size_t i = 0; i < npart; i++) {
-		result += conj(A(i, n)) * B(i, m);
+
+#pragma omp parallel
+	{
+	  T sr = 0;
+#pragma omp for
+	  for (size_t i = 0; i < npart; i++) {
+	    sr += conj(A(i, n)) * B(i, m);
+	  }
+
+#pragma omp critical
+	  {
+	    result += sr;
+	  }
 	}
+
+	
 	return result;
 }
 
