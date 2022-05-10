@@ -21,9 +21,11 @@ namespace WeightedSimultaneousDiagonalization {
 		// Initialize the Diagonalization by rotating to the diagonal
 		// representation of one of the matrices in Xs. This
 		// avoids stationary points during the optimization process.
+//		if (residual(trafo * trafo.adjoint(), identityMatrixcd(trafo.dim1())) > eps) {
 		trafo.zero();
 		for (size_t i = 0; i < trafo.dim1(); i++)
 			trafo(i, i) = 1.;
+//		}
 
 		// Initial transformation of the matrices
 		vector<Matrixcd> Xs_plain(Xs);

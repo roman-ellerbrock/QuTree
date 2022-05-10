@@ -40,6 +40,7 @@ public:
 	}
 
 	shared_ptr<Potential>& v() { return V_; }
+	[[nodiscard]] const shared_ptr<Potential>& v() const { return V_; }
 
 	double evaluate(const Vectord& Xv, size_t part) const {
 		Vectord q = Q_->transform(Xv);

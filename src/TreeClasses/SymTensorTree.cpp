@@ -32,12 +32,67 @@ SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
 	normalizeDown(tree);
 }
 
+void SymTensorTree::orthogonalUp(const Tree& tree) {
+	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			const Tensorcd& A = weighted_[node];
+			size_t k = node.parentIdx();
+
+			Tensorcd& Q = up_[node];
+			Q = qr(A, k);
+
+			/// rotate parent
+			auto R = contraction(A, Q, k);
+			const Node& parent = node.parent();
+			Tensorcd& Apar = weighted_[parent];
+			Apar = matrixTensor(R, Apar, node.childIdx());
+		}
+	}
+}
+
+void SymTensorTree::orthogonalDown(const Tree& tree) {
+	for (auto it = tree.rbegin(); it != tree.rend(); ++it) {
+		const Node& node = *it;
+		if (node.isToplayer()) { continue; }
+		const Node& parent = node.parent();
+		Tensorcd& A = weighted_[parent];
+		size_t k = node.childIdx();
+
+		Tensorcd& Q = down_[node];
+		Q = qr(A, k);
+
+		auto R = contraction(A, Q, k);
+		Tensorcd& Apar = weighted_[node];
+		Apar = matrixTensor(R, Apar, node.parentIdx());
+	}
+}
+
+void SymTensorTree::orthogonal(const Tree& tree) {
+	orthogonalUp(tree);
+	orthogonalDown(tree);
+}
+
+SymTensorTree::SymTensorTree(TensorTreecd Psi, const Tree& tree) {
+	initialize(tree);
+	for (const Node& node : tree) {
+		weighted_[node] = Psi[node];
+		if (!node.isToplayer()) {
+			up_[node] = Psi[node];
+			down_[node] = Psi[node.parent()];
+		}
+	}
+
+	orthogonal(tree);
+
+}
+
 void SymTensorTree::normalizeUp(const Tree& tree) {
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
 			up_[node] = Tensor_Extension::normalize(weighted_[node], node.parentIdx(), eps_);
 		}
 	}
+
 }
 
 void SymTensorTree::normalizeDown(const Tree& tree) {

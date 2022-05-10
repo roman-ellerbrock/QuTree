@@ -12,10 +12,16 @@ typedef SparseMatrixTreePairscd SymMatrixTrees;
 class SymTensorTree {
 public:
 	explicit SymTensorTree(double eps = 1e-6) : eps_(eps) {}
+	SymTensorTree(TensorTreecd Psi, const Tree& tree);
 	~SymTensorTree() = default;
+
 
 	void initialize(const Tree& tree);
 	SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest = true);
+
+	void orthogonal(const Tree& tree);
+	void orthogonalUp(const Tree& tree);
+	void orthogonalDown(const Tree& tree);
 
 	void normalizeUp(const Tree& tree);
 	void normalizeDown(const Tree& tree);
