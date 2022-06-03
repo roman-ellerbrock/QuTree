@@ -39,6 +39,34 @@ void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	Tensor<T>& bra_work, Tensor<T>& ket_work,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
+template<typename T>
+void general_contraction(const Tensor<T>& A,
+                         const Tensor<T>& B,
+                         Tensor<T>& result,
+                         const vector<size_t> &A_indices,
+                         const vector<size_t> &B_indices);
+
+template<typename T, typename Q>
+void general_contraction(const Tensor<T>& A,
+                         const Tensor<T>& B,
+                         Tensor<T>& result,
+                         const std::vector<std::pair<Q,Q>>& contraction_pairs);
+
+template<typename T>
+void general_transpose_bd(T* dst, const T* src, size_t a, size_t b, size_t c, size_t d, size_t e);
+
+template<typename T>
+bool is_contraction_legal(const Tensor<T> &TensorA,
+                          const Tensor<T> &TensorB,
+                          vector<size_t> Acontraction,
+                          vector<size_t> Bcontraction);
+
+template<typename T>
+void general_transpose(Tensor<T>& dst, const Tensor<T>& src, size_t index_one, size_t index_two);
+
+template<typename T>
+void general_transpose_to_order(Tensor<T>& dst, const Tensor<T>& src, const vector<size_t> &form);
+
 /// ==== Wrappers ====
 template<typename T, typename U>
 void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero = true);

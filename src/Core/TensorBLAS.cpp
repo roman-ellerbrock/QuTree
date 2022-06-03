@@ -4,7 +4,9 @@
 
 #include "Core/TensorBLAS.h"
 #include <cblas.h>
+#include <numeric>
 #include "Core/MatrixBLAS.h"
+
 
 #define swap(type, x, y) { type _tmp; _tmp = x; x = y; y = _tmp; }
 
@@ -366,6 +368,370 @@ void dgeem(Matrixd& h, const Matrixd& bra, const Matrixd& ket) {
 		*/
 }
 
+// Tensor Contraction along arbitrary indices
+// C_{a,c,b,d,e} = Sum_{f,g,h} A_{f,g,a,h,c}^{*} x B_{g,f,h,b,d,e}
+// the general order of indices is conserved
+//
+// the input arguments are the starting tensors A,B
+// the result tensor result
+// and the indices along which the contraction will be done
+// for the example above, the call would look like:
+// general_contraction(A, B, C, {0,1,3},{1,0,4}),
+// meaning index 0 of A will be contracted with index 1 of B etc.
+
+
+template<typename T>
+void general_contraction(const Tensor<T>& A,
+                         const Tensor<T>& B,
+                         Tensor<T>& result,
+                         const vector<size_t> &A_indices,
+                         const vector<size_t> &B_indices){
+
+    // is contraction legal?
+    is_contraction_legal(A,B,A_indices,B_indices);
+
+    // now the contractions can be started
+    // to become efficient, the tensors will be transposed until they are ordered correctly
+    // e.g.: A_indices = {3,1,2}, B_indices = {3,6,1},
+    // then the indices will be ordered such that the indices {3,1,2} are the first ones of A,
+    // and the indices {3,6,1} are the first ones of B
+
+
+    // now transpose A first
+    // for this, first transpose the relevant (to-be-contracted) indices to the front,
+    // then transpose the irrelevant indices into the correct order for the result
+    auto A_correct_form{A};
+    auto B_correct_form{B};
+    general_transpose_to_order(A_correct_form,A,A_indices);
+    general_transpose_to_order(B_correct_form,B,B_indices);
+
+    // these two tensors are working objects now, calculate correct and intermediate forms
+    // for the tensor contraction and the result form
+    std::vector<size_t> result_form;
+
+    // calculate size of first (super)-index along which the contraction will be done
+    size_t A_contraction_length = 1;
+    for(size_t i = 0; i < A_indices.size(); ++i){
+        A_contraction_length *= A_correct_form.shape().dimensions()[i];
+    }
+
+    size_t B_contraction_length = 1;
+    for(size_t i = 0; i < B_indices.size(); ++i){
+        B_contraction_length *= B_correct_form.shape().dimensions()[i];
+    }
+
+
+    // set other sizes for the result tensor and the intermediate tensors
+    size_t A_second_index = 1;
+    for(size_t i = A_indices.size(); i < A.shape().order(); ++i){
+        result_form.push_back(A_correct_form.shape().dimensions()[i]);
+        A_second_index *= A_correct_form.shape().dimensions()[i];
+
+    }
+    size_t B_second_index = 1;
+    for(size_t i = B_indices.size(); i < B.shape().order(); ++i){
+        result_form.push_back(B_correct_form.shape().dimensions()[i]);
+        B_second_index *= B_correct_form.shape().dimensions()[i];
+    }
+
+    TensorShape new_A_shape({A_contraction_length,A_second_index});
+    TensorShape new_B_shape({B_contraction_length,B_second_index});
+    TensorShape result_shape(result_form);
+
+    A_correct_form.shape() = new_A_shape;
+    B_correct_form.shape() = new_B_shape;
+
+    // now the contraction can be performed
+    Tensor<T> result_tensor{result_shape};
+
+    // do the contraction itself
+
+    if constexpr(is_same<T, std::complex<double>>::value) {
+        const std::complex<double> one{1.,0.};
+        cblas_zgemm(CblasColMajor, CblasConjTrans, CblasNoTrans,
+                    A_second_index, // rows of A
+                    B_second_index, // cols of B
+                    B_contraction_length, // cols of A = rows of B
+                    (void*)&one,
+                    (void*)&(A_correct_form.coeffs_[0]),
+                    B_contraction_length,
+                    (void*)&(B_correct_form.coeffs_[0]),
+                    B_contraction_length,
+                    (void*)&one,
+                    (void*)&(result_tensor.coeffs_[0]),
+                    A_second_index);
+
+    } else if constexpr(is_same<T, double>::value) {
+        const double one = 1.;
+        cblas_dgemm(CblasColMajor, CblasTrans, CblasNoTrans,
+                    A_second_index, // rows of A
+                    B_second_index, // cols of B
+                    B_contraction_length, // cols of A = rows of B
+                    one,
+                    &(A_correct_form.coeffs_[0]),
+                    B_contraction_length,
+                    &(B_correct_form.coeffs_[0]),
+                    B_contraction_length,
+                    one,
+                    &(result_tensor.coeffs_[0]),
+                    A_second_index);
+    }
+
+    result = std::move(result_tensor);
+}
+
+// helper function determining if a tensor requested contraction is legal
+// a contraction is valid iff (i)   every index is only contracted once (present once in each vector)
+//                            (ii)  the smallest index is 0
+//                            (iii) the biggest index is <= rank of tensor
+//                            (iv)  both contractions do have the same size
+//                            (v)   do contraction dimensions match up
+// all of this can be determined by sorting the indices and checking the values
+template<typename T>
+bool is_contraction_legal(const Tensor<T> &TensorA,
+                          const Tensor<T> &TensorB,
+                          vector<size_t> Acontraction,
+                          vector<size_t> Bcontraction) {
+
+
+    // check if the contraction index numbers match
+    if(Acontraction.size() != Bcontraction.size()){
+        return false;
+    }
+
+    // check if contraction dimensions match up
+    for(size_t i = 0; i < Acontraction.size(); ++i){
+        if(TensorA.shape().dimensions()[Acontraction[i]] != TensorB.shape().dimensions()[Bcontraction[i]]){
+            return false;
+        }
+    }
+
+    // sort index data
+    std::sort(Acontraction.begin(), Acontraction.end());
+    std::sort(Bcontraction.begin(), Bcontraction.end());
+
+
+    // check whether the left and right contractions are legal on their own
+    const bool A_shape_is_ok = !Acontraction.empty()
+            and (Acontraction[0] >= 0)
+            and (Acontraction.back() <= TensorA.shape().order());
+
+    const bool B_shape_is_ok = !Acontraction.empty()
+                         and (Acontraction[0] >= 0)
+                         and (Acontraction.back() <= TensorA.shape().order());
+
+
+    // check if any index is doubly present
+    const bool A_doubly_present = (std::unique(Acontraction.begin(), Acontraction.end()) == Acontraction.end());
+    const bool B_doubly_present = (std::unique(Bcontraction.begin(), Bcontraction.end()) == Bcontraction.end());
+
+    // if everything is true, then the contraction is legal
+    return A_shape_is_ok and B_shape_is_ok and A_doubly_present and B_doubly_present;
+}
+
+// this function transforms the src tensor to a new form specified by the input argument form
+// e.g. src is a {1,2,3,4,5} tensor, when form contains {2,1,3} then the resulting tensor is
+// has the shape: {3,2,4,1,5}, so the order of all other indices is preserved
+// DANGER: this function does _not_ check whether form is a correct form!!
+template<typename T>
+void general_transpose_to_order(Tensor<T>& dst, const Tensor<T>& src, const vector<size_t> &form){
+
+    // working tensors
+    Tensor<T> tmp1{src};
+    dst = src;
+
+    // save old index order
+    std::vector<int> current_order(src.shape().order());
+    std::iota(current_order.begin(), current_order.end(), 0);
+
+    // transpose the relevant indices to the correct spots (from left to right)
+    int current_index = 0;
+    for(const auto& i : form){
+
+        // save last result to tmp1 again such that dst will be the result after this iteration
+        if(current_index != 0){
+            swap(Tensor<T>, tmp1, dst);
+        }
+
+        // first: find where this index is currently
+        int current_place = -1;
+        for(int j = 0; j < current_order.size(); ++j){
+            if(i == current_order[j]){
+                current_place = j;
+                break;
+            }
+        }
+
+        // now transpose properly
+        general_transpose(dst,tmp1,current_index,current_place);
+        swap(int, current_order[current_index], current_order[current_place]);
+
+        current_index++;
+    }
+
+    // now reorder all other indices so they are in the correct order (ascending)
+    while(current_index < src.shape().order()){
+        // save last result to tmp1 again such that dst will be the result after this iteration
+        swap(Tensor<T>, tmp1, dst);
+
+        // find current smallest index and position
+        int smallest = std::numeric_limits<int>::max();
+        int position = 0;
+        for(int i = current_index; i < src.shape().order(); ++i){
+            if(current_order[i] < smallest){
+                smallest = current_order[i];
+                position = i;
+            }
+        }
+
+        // transpose accordingly
+        general_transpose(dst,tmp1,current_index,position);
+        swap(int, current_order[current_index], current_order[position]);
+
+        current_index++;
+    }
+}
+
+// this is a helper function which transposes two given indices of a tensor
+template<typename T>
+void general_transpose(Tensor<T>& dst, const Tensor<T>& src, size_t index_one, size_t index_two){
+    // prepare transpose
+    dst = src;
+
+    // check for trivial cases
+    if(index_one == index_two){
+        return;
+    }
+
+    // check if transpose is allowed
+    assert(index_one>=0);
+    assert(index_two>=0);
+    assert(index_one<=src.shape().order());
+    assert(index_two<=src.shape().order());
+
+    // determine a,b,c,d,e for 5-index-transpose
+    // make index_one < index_two
+    if(index_one > index_two) {
+        swap(size_t, index_one, index_two); // std::swap would be nicer, but macro on top of this file...
+    }
+    size_t b = src.shape().dimensions()[index_one];
+    size_t d = src.shape().dimensions()[index_two];
+
+    size_t a = 1;
+    for(size_t i = 0; i < index_one; ++i){
+        a *= src.shape().dimensions()[i];
+    }
+    size_t c = 1;
+    for(size_t i = index_one + 1; i < index_two; ++i){
+        c *= src.shape().dimensions()[i];
+    }
+    size_t e = 1;
+    for(size_t i = index_two + 1; i < src.shape().order(); ++i){
+        e *= src.shape().dimensions()[i];
+    }
+
+    general_transpose_bd(dst.coeffs_,src.coeffs_,a,b,c,d,e);
+
+    // determine and set new shape
+    auto old_dimensions = dst.shape().dimensions();
+    swap(int, old_dimensions[index_one], old_dimensions[index_two]);
+    TensorShape new_shape(old_dimensions);
+    dst.shape() = new_shape;
+
+}
+
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "openmp-use-default-none"
+// this is a helper-function doing a 5-index-transpose
+template<typename T>
+void general_transpose_bd(T* dst, const T* src, size_t a, size_t b, size_t c, size_t d, size_t e) {
+    // src(a,b,c,d,e) -> dst(a,d,c,b,e)
+    // primitive algorithm, smarter is definitely possible
+
+    // todo more(?) or better specializations
+
+    // first special case: c == 1, then it becomes multiple applications of the 3-index-transpose
+    if (c == 1 and a != 1) { // this is an okay implementation, even for e != 1
+        const size_t d_e = a * d * b;
+        const size_t s_e = a * b * d;
+        for (size_t i_e = 0; i_e < e; ++i_e) {
+            transposeBC(&dst[i_e * d_e], &src[i_e * s_e], a, b, d);
+        }
+    } else if(c == 1 and a == 1) { // second special case: if c = a = 1, then it is just another 3-index transpose
+        const size_t d_e = d * b;
+        const size_t s_e = b * d;
+        transposeAB(dst, src, b, d, e);
+    } else { // general case: slow but honest work
+
+        // strides of src
+        const size_t s_a = 1;
+        const size_t s_b = a;
+        const size_t s_c = a * b;
+        const size_t s_d = a * b * c;
+        const size_t s_e = a * b * c * d;
+
+        // strides of dst
+        const size_t d_a = 1;
+        const size_t d_b = a;
+        const size_t d_c = a * d;
+        const size_t d_d = a * d * c;
+        const size_t d_e = a * d * c * b;
+
+        // slow but honest work
+//#pragma omp parallel for collapse(5)
+        for(size_t i_e = 0; i_e < e; ++i_e){
+            for(size_t i_d = 0; i_d < d; ++i_d){
+                for(size_t i_c = 0; i_c < c; ++i_c){
+                    for(size_t i_b = 0; i_b < b; ++i_b){
+                        for(size_t i_a = 0; i_a < a; ++i_a){
+
+                            const size_t src_idx = i_a * s_a
+                                                   + i_b * s_b
+                                                   + i_c * s_c
+                                                   + i_d * s_d
+                                                   + i_e * s_e;
+
+                            const size_t dst_idx = i_a * d_a
+                                                   + i_d * d_b
+                                                   + i_c * d_c
+                                                   + i_b * d_d
+                                                   + i_e * d_e;
+
+                            dst[dst_idx] = src[src_idx];
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+#pragma clang diagnostic pop
+
+// see documentation of other general contraction
+// this function takes instead of A_indices and B_indices
+// pairs of indices to be contracted
+// it is just a wrapper
+template<typename T, typename Q>
+void general_contraction(const Tensor<T>& A,
+                         const Tensor<T>& B,
+                         Tensor<T>& result,
+                         const std::vector<std::pair<Q,Q>>& contraction_pairs){
+
+    std::vector<size_t> A_indices;
+    std::vector<size_t> B_indices;
+
+    for(const auto i : contraction_pairs){
+        A_indices.push_back(i.first);
+        B_indices.push_back(i.second);
+    }
+    general_contraction(A,B,result,A_indices,B_indices);
+}
+
+
+
+
 /// ========================================================================
 /// Template Instantiations
 /// ========================================================================
@@ -397,6 +763,49 @@ template void transposeAB(cd *dest, const cd *src, size_t A, size_t B, size_t C)
 template void contraction2(Matrix<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
 	Tensor<d>& bra_work, Tensor<d>& ket_work,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);
+
+template void general_contraction(const Tensor<cd>& A, const Tensor<cd>& B, Tensor<cd>& result,
+                                  const vector<size_t> &A_indices, const vector<size_t> &B_indices);
+
+template void general_contraction(const Tensor<d>& A, const Tensor<d>& B, Tensor<d>& result,
+                                  const vector<size_t> &A_indices, const vector<size_t> &B_indices);
+
+template void general_transpose_bd(cd* dst, const cd* src, size_t a, size_t b, size_t c, size_t d, size_t e);
+
+template void general_transpose_bd(d* dst, const d* src, size_t a, size_t b, size_t c, size_t d, size_t e);
+
+template bool is_contraction_legal(const Tensor<cd> &TensorA,
+                                   const Tensor<cd> &TensorB,
+                                   vector<size_t> Acontraction,
+                                   vector<size_t> Bcontraction);
+
+template bool is_contraction_legal(const Tensor<d> &TensorA,
+                                   const Tensor<d> &TensorB,
+                                   vector<size_t> Acontraction,
+                                   vector<size_t> Bcontraction);
+
+template void general_transpose(Tensor<cd >& dst, const Tensor<cd>& src, size_t index_one, size_t index_two);
+template void general_transpose(Tensor<d>& dst, const Tensor<d>& src, size_t index_one, size_t index_two);
+
+template void general_contraction(const Tensor<cd>& A,
+                         const Tensor<cd>& B,
+                         Tensor<cd>& result,
+                         const std::vector<std::pair<int,int>>& contraction_pairs);
+
+template void general_contraction(const Tensor<cd>& A,
+                                  const Tensor<cd>& B,
+                                  Tensor<cd>& result,
+                                  const std::vector<std::pair<size_t,size_t>>& contraction_pairs);
+
+template void general_contraction(const Tensor<d>& A,
+                                  const Tensor<d>& B,
+                                  Tensor<d>& result,
+                                  const std::vector<std::pair<int,int>>& contraction_pairs);
+
+template void general_contraction(const Tensor<d>& A,
+                                  const Tensor<d>& B,
+                                  Tensor<d>& result,
+                                  const std::vector<std::pair<size_t,size_t>>& contraction_pairs);
 
 /// ==== Wrappers ====
 // complex double
