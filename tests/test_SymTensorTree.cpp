@@ -101,7 +101,29 @@ SUITE (SymTensorTree) {
 		}
 	}*/
 
-	TEST_FIXTURE (TTFactory, Convert) {
+	TEST_FIXTURE (TTFactory, Orthogonal) {
+		mt19937 gen(1239);
+		SymTensorTree psi(gen, tree_, false);
+		SymTensorTree opsi = psi;
+		opsi.orthogonal(tree_);
+		auto s = TreeFunctions::dotProduct(psi, psi, tree_);
+		for (auto x : s) {
+			CHECK_CLOSE(0., abs(x - 1.), eps);
+		}
+	}
+
+	TEST_FIXTURE (TTFactory, Convert_checkUp) {
+		mt19937 gen(1239);
+		TensorTreecd Psi(gen, tree_, false);
+
+		SymTensorTree spsi(Psi, tree_);
+		TensorTreecd Psi2 = spsi.up_;
+		const Node& top = tree_.topNode();
+		Psi2[top] = spsi.weighted_[top];
+		CHECK_CLOSE(0., TreeFunctions::residual(Psi, Psi2, tree_), eps);
+	}
+
+	TEST_FIXTURE (TTFactory, Convert_checkDown) {
 		mt19937 gen(1239);
 		TensorTreecd Psi(gen, tree_, false);
 

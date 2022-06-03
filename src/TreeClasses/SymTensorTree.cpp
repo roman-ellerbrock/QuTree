@@ -17,19 +17,23 @@ SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
 	initialize(tree);
 
 	for (const Node& node : tree) {
-		Tensor_Extension::generate(weighted_[node], gen);
+		if (node.isToplayer()) {
 
-		Tensorcd& A = weighted_[node];
-		if (delta_lowest) {
-			for (size_t i = 0; i < node.shape().lastBefore(); ++i) {
-				A(i) = 0;
+		} else {
+			Tensorcd& A = up_[node];
+			Tensor_Extension::generate(A, gen);
+
+			if (delta_lowest) {
+				for (size_t i = 0; i < node.shape().lastBefore(); ++i) {
+					A(i) = 0;
+				}
+				A(0) = 1.;
 			}
-			A(0) = 1.;
+			gramSchmidt(A);
 		}
-		gramSchmidt(A);
 	}
-	normalizeUp(tree);
-	normalizeDown(tree);
+	orthogonal(tree);
+	normalizeWeighted(tree);
 }
 
 void SymTensorTree::orthogonalUp(const Tree& tree) {
@@ -81,18 +85,15 @@ SymTensorTree::SymTensorTree(TensorTreecd Psi, const Tree& tree) {
 			down_[node] = Psi[node.parent()];
 		}
 	}
-
-	orthogonal(tree);
-
 }
 
+/*
 void SymTensorTree::normalizeUp(const Tree& tree) {
 	for (const Node& node : tree) {
 		if (!node.isToplayer()) {
 			up_[node] = Tensor_Extension::normalize(weighted_[node], node.parentIdx(), eps_);
 		}
 	}
-
 }
 
 void SymTensorTree::normalizeDown(const Tree& tree) {
@@ -103,10 +104,21 @@ void SymTensorTree::normalizeDown(const Tree& tree) {
 		}
 	}
 }
+*/
+
+void SymTensorTree::normalizeWeighted(const Tree& tree) {
+	for (const Node& node : tree) {
+		auto w = contraction(weighted_[node], weighted_[node], node.parentIdx());
+		double norm = abs(w.trace());
+		weighted_[node] /= sqrt(norm);
+	}
+}
 
 void SymTensorTree::normalize(const Tree& tree) {
-	normalizeUp(tree);
-	normalizeDown(tree);
+//	normalizeUp(tree);
+//	normalizeDown(tree);
+	orthogonal(tree);
+	normalizeWeighted(tree);
 }
 
 namespace TreeFunctions {
@@ -144,9 +156,9 @@ namespace TreeFunctions {
 				Ket = matrixTensor(S[ochild], Ket, k);
 			}
 		}
+
 		if (!node.isToplayer()) {
-			const Node& parent = node.parent();
-			Ket = matrixTensor(Sdown[parent], Ket, node.parentIdx());
+			Ket = matrixTensor(Sdown[node], Ket, child.parentIdx());
 		}
 		Sdown[child] = contraction(Bra, Ket, hole);
 	}
@@ -157,7 +169,7 @@ namespace TreeFunctions {
 			const Node& node = tree.getNode(i);
 			if (!node.isToplayer()) {
 				const Node& parent = node.parent();
-				contractionDownLocal(Sdown, Bra.down_[parent], Ket.down_[parent], S, node);
+				contractionDownLocal(Sdown, Bra.down_[node], Ket.down_[node], S, node);
 			}
 		}
 	}
@@ -171,12 +183,12 @@ namespace TreeFunctions {
 			}
 		}
 		if (!node.isToplayer()) {
-			Ket = matrixTensor(Sdown[node.parent()], Ket, node.parentIdx());
+			Ket = matrixTensor(Sdown[node], Ket, node.parentIdx());
 		}
 		return Ket;
 	}
 
-	 vector<double> dotProduct(const SymTensorTree& Bra, SymTensorTree Ket,
+	vector<double> dotProduct(const SymTensorTree& Bra, SymTensorTree Ket,
 		const Tree& tree) {
 		MatrixTreecd Sup(tree); // wazzzz suuuuuuuup???!!!
 		MatrixTreecd Sdown(tree);
@@ -184,10 +196,14 @@ namespace TreeFunctions {
 		contractionDown(Sdown, Bra, Ket, Sup, tree);
 
 		vector<double> eps;
+		cout << "Overlap:" << endl;
 		for (const Node& node : tree) {
 			Tensorcd SKet = symApply(Ket.weighted_[node], Sup, Sdown, node);
 			Matrixcd s = Bra.weighted_[node].dotProduct(SKet);
-			eps.push_back(abs(s.trace()));
+			double e = abs(s.trace());
+			node.info();
+			cout << "e = " << e << endl;
+			eps.push_back(e);
 		}
 		return eps;
 	}
@@ -271,11 +287,10 @@ namespace TreeFunctions {
 		symApply(HPsi, Psi, mats, H, tree);
 		HPsi.normalize(tree);
 		symRepresent(mats, HPsi, Psi, H, tree);
-
 	}
 
 	void ApplySCF(SymTensorTree& HPsi, SymMatrixTrees& mats, const SymTensorTree& Psi,
-		const SOPcd& H, const Tree& tree, double eps, size_t max_iter, ostream* os) {
+		const SOPcd& H, const Tree& tree, double eps, size_t max_iter, ostream *os) {
 
 		auto HPsi_last = HPsi;
 		for (size_t i = 0; i < max_iter; ++i) {
@@ -324,7 +339,6 @@ namespace TreeFunctions {
 			symApply(HPsi.weighted_[node], Psi.weighted_[node], hmats, H, node);
 		}
 	}
-
 }
 
 double epsUpNormalization(const SymTensorTree& Psi, const Tree& tree) {

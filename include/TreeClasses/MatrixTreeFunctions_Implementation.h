@@ -41,6 +41,16 @@ namespace TreeFunctions {
 		return S;
 	}
 
+	template<typename T>
+	double residual(const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree) {
+		MatrixTree<T> S12 = dotProduct(Bra, Ket, tree);
+		MatrixTree<T> S11 = dotProduct(Bra, Bra, tree);
+		MatrixTree<T> S22 = dotProduct(Ket, Ket, tree);
+		const Node& top = tree.topNode();
+		Matrix<T> r = S11[top] + S22[top] - S12[top] - S12[top].adjoint();
+		return r.frobeniusNorm();
+	}
+
 ////////////////////////////////////////////////////////////////////////
 /// General Contraction for Tensor Trees
 ////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@ namespace TreeFunctions {
 	template void dotProduct(MatrixTree<cd>& S, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
 		const Tree& tree);
 	template MatrixTree<cd> dotProduct(const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
+	template double residual(const TensorTree<cd>& Bra, const TensorTree<cd>& Ket, const Tree& tree);
 
 	template void contractionLocal(MatrixTree<cd>& Rho, const Tensor<cd>& Bra, Tensor<cd> Ket, const Node& node,
 		const MatrixTree<cd> *S);
@@ -30,6 +31,7 @@ namespace TreeFunctions {
 	template void dotProduct<d>(MatrixTree<d>& S, const TensorTree<d>& Bra, const TensorTree<d>& Ket,
 		const Tree& tree);
 	template MatrixTree<d> dotProduct(const TensorTree<d>& Bra, const TensorTree<d>& Ket, const Tree& tree);
+	template double residual(const TensorTree<d>& Bra, const TensorTree<d>& Ket, const Tree& tree);
 
 	template void contractionLocal(MatrixTree<d>& Rho, const Tensor<d>& Bra, Tensor<d> Ket, const Node& node,
 		const MatrixTree<d> *S);

@@ -23,8 +23,9 @@ public:
 	void orthogonalUp(const Tree& tree);
 	void orthogonalDown(const Tree& tree);
 
-	void normalizeUp(const Tree& tree);
-	void normalizeDown(const Tree& tree);
+//	void normalizeUp(const Tree& tree);
+//	void normalizeDown(const Tree& tree);
+	void normalizeWeighted(const Tree& tree);
 	void normalize(const Tree& tree);
 
 	TensorTreecd weighted_;
@@ -82,6 +83,7 @@ namespace TreeFunctions {
 
 	MatrixTreecd symDotProduct(const SymTensorTree& Bra, const SymTensorTree& Ket,
 		const Tree& tree);
+
 }
 
 #endif //SYMTENSORTREE_H

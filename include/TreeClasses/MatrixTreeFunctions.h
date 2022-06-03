@@ -19,6 +19,9 @@ namespace TreeFunctions {
 	MatrixTree<T> dotProduct(const TensorTree<T>& Psi, const TensorTree<T>& Chi, const Tree& tree);
 
 	template<typename T>
+	double residual(const TensorTree<T>& Bra, const TensorTree<T>& Ket, const Tree& tree);
+
+	template<typename T>
 //	void ContractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
 //		const MatrixTree<T>& S, const Node& node);
 	void contractionLocal(MatrixTree<T>& Rho, const Tensor<T>& Bra, Tensor<T> Ket,
