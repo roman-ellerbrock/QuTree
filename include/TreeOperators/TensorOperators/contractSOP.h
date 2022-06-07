@@ -16,6 +16,6 @@ template <typename T>
 void iterate(TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree);
 
 template <typename T>
-double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree);
+double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree, ostream* os = nullptr);
 
 #endif //CONTRACTSOP_H

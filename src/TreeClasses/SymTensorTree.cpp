@@ -6,10 +6,28 @@
 #include "TreeClasses/SpectralDecompositionTree.h"
 #include "Core/Tensor_Extension.h"
 
+/**
+ * Goal: create a symmetric TTN that has a weighted Tensor ONLY at the root node
+ * Add weighted tensor at other nodes in future implementation.
+ *
+ */
+
 void SymTensorTree::initialize(const Tree& tree) {
 	weighted_.initialize(tree);
 	up_.initialize(tree);
 	down_.initialize(tree);
+}
+
+void occupy(Tensorcd& A, mt19937& gen, const Tree& tree, bool delta_lowest) {
+	Tensor_Extension::generate(A, gen);
+
+	if (delta_lowest) {
+		for (size_t i = 0; i < A.shape().lastBefore(); ++i) {
+			A(i) = 0;
+		}
+		A(0) = 1.;
+	}
+	gramSchmidt(A);
 }
 
 SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
@@ -17,23 +35,10 @@ SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
 	initialize(tree);
 
 	for (const Node& node : tree) {
-		if (node.isToplayer()) {
-
-		} else {
-			Tensorcd& A = up_[node];
-			Tensor_Extension::generate(A, gen);
-
-			if (delta_lowest) {
-				for (size_t i = 0; i < node.shape().lastBefore(); ++i) {
-					A(i) = 0;
-				}
-				A(0) = 1.;
-			}
-			gramSchmidt(A);
-		}
+		occupy(weighted_[node], gen, tree, delta_lowest);
 	}
 	orthogonal(tree);
-	normalizeWeighted(tree);
+//	normalizeWeighted(tree);
 }
 
 void SymTensorTree::orthogonalUp(const Tree& tree) {
@@ -52,6 +57,23 @@ void SymTensorTree::orthogonalUp(const Tree& tree) {
 			Apar = matrixTensor(R, Apar, node.childIdx());
 		}
 	}
+
+/*	for (const Node& node : tree) {
+		if (!node.isToplayer()) {
+			const Tensorcd& A = weighted_[node];
+			size_t k = node.parentIdx();
+
+			Tensorcd& Q = up_[node];
+			Q = qr(A, k);
+
+			/// rotate parent
+			auto R = contraction(A, Q, k);
+			const Node& parent = node.parent();
+			Tensorcd& Apar = weighted_[parent];
+			Apar = matrixTensor(R, Apar, node.childIdx());
+		}
+	}
+*/
 }
 
 void SymTensorTree::orthogonalDown(const Tree& tree) {
@@ -196,13 +218,10 @@ namespace TreeFunctions {
 		contractionDown(Sdown, Bra, Ket, Sup, tree);
 
 		vector<double> eps;
-		cout << "Overlap:" << endl;
 		for (const Node& node : tree) {
 			Tensorcd SKet = symApply(Ket.weighted_[node], Sup, Sdown, node);
 			Matrixcd s = Bra.weighted_[node].dotProduct(SKet);
 			double e = abs(s.trace());
-			node.info();
-			cout << "e = " << e << endl;
 			eps.push_back(e);
 		}
 		return eps;

@@ -787,6 +787,9 @@ template bool is_contraction_legal(const Tensor<d> &TensorA,
 template void general_transpose(Tensor<cd >& dst, const Tensor<cd>& src, size_t index_one, size_t index_two);
 template void general_transpose(Tensor<d>& dst, const Tensor<d>& src, size_t index_one, size_t index_two);
 
+template void general_transpose_to_order(Tensor<d>& dst, const Tensor<d>& src, const vector<size_t> &form);
+template void general_transpose_to_order(Tensor<cd>& dst, const Tensor<cd>& src, const vector<size_t> &form);
+
 template void general_contraction(const Tensor<cd>& A,
                          const Tensor<cd>& B,
                          Tensor<cd>& result,

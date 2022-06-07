@@ -151,7 +151,7 @@ double norm(const SOP<T>& S, const Tree& tree) {
 }
 
 template<typename T>
-double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree) {
+double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree, ostream *os) {
 	/// @TODO: doesn't work for electronic structure anymore - fix this!
 
 	auto AA = TreeFunctions::dotProduct(A, A, optree);
@@ -188,7 +188,7 @@ double error(const TensorTreeOperator<T>& A, const SOP<T>& S, const Tree& optree
 //	double err = normA + 1 - overlap/sqrt(normS);
 //	os << "normS: " << normS << endl;
 	err /= normS;
-	cout << err << " = " << normA / normS << " - " << overlap / normS << " + " << normS / normS << endl;
+	if (os) { (*os) << err << " = " << normA / normS << " - " << overlap / normS << " + " << normS / normS << endl; }
 //	cout << err << " = " << normA << " - " << overlap << " + " << normS << endl;
 
 	return err;
@@ -203,5 +203,5 @@ template void contractSOP(TensorTreeOperator<d>& A, const SOP<d>& S,
 template void contractSOP<cd>(TensorTreeOperator<cd>& A, const SOP<cd>& S,
 	size_t maxIter, const Tree& optree, ostream *os);
 
-template double error(const TensorTreeOperator<d>& A, const SOP<d>& S, const Tree& optree);
-template double error(const TensorTreeOperator<cd>& A, const SOP<cd>& S, const Tree& optree);
+template double error(const TensorTreeOperator<d>& A, const SOP<d>& S, const Tree& optree, ostream *os);
+template double error(const TensorTreeOperator<cd>& A, const SOP<cd>& S, const Tree& optree, ostream *os);
