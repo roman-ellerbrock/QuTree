@@ -76,6 +76,9 @@ elseif(UNIX)
     set(BLA_VENDOR OpenBLAS)
     find_package(BLAS REQUIRED)
     find_package(LAPACK REQUIRED)
+
+#   empirically found blas locations    
+    set(BLAS_INCLUDE "/usr/local/opt/openblas/include" "/usr/include/x86_64-linux-gnu")
 endif()
 
 # Set up headers in include/ for install & build and src/ for just building
