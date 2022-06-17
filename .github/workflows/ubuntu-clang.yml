@@ -1,0 +1,49 @@
+name: Ubuntu Clang Deployment
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: Install OpenBLAS and Lapack
+        run: |
+             sudo apt-get update
+             sudo apt-get install -y libopenblas-dev liblapack-dev liblapacke-dev
+  
+      - name: Install LLVM-DEV
+        run: |
+             sudo apt-get update
+             sudo apt-get install -y llvm-dev
+  
+      - name: Configure CMAKE
+        run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}             
+        shell: bash
+        env:
+          CC: clang-12
+          CXX: clang++-12
+  
+      - name: Build
+        run: |
+             cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+             cd ${{github.workspace}}/build
+             make TestQuTree
+  
+      - name: Unit Tests
+        working-directory: ${{github.workspace}}/build
+        run: ./tests/TestQuTree
+      

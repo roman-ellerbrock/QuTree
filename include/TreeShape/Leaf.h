@@ -100,6 +100,7 @@ public:
 	size_t nLeaves() const override { return 1; }
 
 	AbstractNode *nextNode() override { return this; }
+    AbstractNode *nextSCFNode(AbstractNode* in) override { return in; }
 
 	AbstractNode *nextNodeManthe() override { return this; }
 

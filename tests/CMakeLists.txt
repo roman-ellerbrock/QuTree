@@ -1,22 +1,11 @@
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/heads/main.zip
+)
+FetchContent_MakeAvailable(googletest)
 
-
-
-find_package(UnitTest++ QUIET)
-
-if (NOT UnitTest++_FOUND)
-  message ( STATUS "UnitTest++ not found, falling back to PkgConfig" )
-  include(FindPkgConfig)
-  pkg_check_modules(UnitTest++ QUIET UnitTest++)
-endif()
-
-if (NOT UnitTest++_FOUND)
-  message ( STATUS "UnitTest++ not found, switching to internal submodule" )
-  execute_process(COMMAND git submodule update --init -- tests/external/unittest-cpp
-	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../)
-  add_subdirectory("external/unittest-cpp")
-  include_directories("external/unittest-cpp")
-endif()
-include_directories(${UTPP_INCLUDE_DIRS})
+enable_testing()
 
 set(QuTree_tests
         test_GradientDescent.cpp
@@ -35,18 +24,13 @@ set(QuTree_tests
         test_TensorTreeOperator.cpp
         test_MatrixTree.cpp
         test_SparseMatrixTree.cpp
-        test_RandomMatrices.cpp)
-
+        test_RandomMatrices.cpp
+#        test_Node.cpp
+        )
 add_executable(TestQuTree ${QuTree_tests})
 target_link_libraries(TestQuTree QuTree)
-target_link_libraries(TestQuTree UnitTest++)
+target_link_libraries(TestQuTree gtest_main)
 target_compile_features(TestQuTree PRIVATE cxx_std_14)
-
-# run unit tests as post build step
-add_custom_command(TARGET TestQuTree
-    POST_BUILD COMMAND TestQuTree
-    COMMENT "Running unit tests")
-
 
 set(QuTree_benchmarks
         benchmarks/benchmark_tensor.cpp
