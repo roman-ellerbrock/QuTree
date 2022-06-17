@@ -107,6 +107,9 @@ public:
 	// pointer to the next node in sweep
 	AbstractNode *nextNode() override;
 
+    // pointer to ne next node in an SCF-sense
+    AbstractNode *nextSCFNode(AbstractNode* in) override;
+
 	// sween for pointer to the next node in sweep. Same sweep like
 	// in Uwe Manthe's fortran code
 	AbstractNode *nextNodeManthe() override;
@@ -147,8 +150,8 @@ protected:
 	vector<unique_ptr<AbstractNode>> child_;
 
 	// reference to the last_ node that was pointed at at a sweep through the layer_
-	int nextNodeNum_;
-	size_t nextNodeNumFortran_;
+	int nextNodeNum_{0};
+	size_t nextNodeNumFortran_{0};
 
 	// position object
 	NodePosition position_;

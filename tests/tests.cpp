@@ -1,13 +1,9 @@
 //
 // Created by Roman Ellerbrock on 2020-01-16.
 //
-#include <UnitTest++/UnitTest++.h>
+#include <gtest/gtest.h>
 
-TEST (Sanity) {
-		CHECK_EQUAL(1, 1);
-}
-
-int main(int, const char *[]) {
-	return UnitTest::RunAllTests();
+TEST (Sanity, Sanity) {
+		ASSERT_EQ(1, 1);
 }
 

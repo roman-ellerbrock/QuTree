@@ -2,8 +2,7 @@
 
 Node::Node()
 	: nTotalNodes_(1), nLeaves_(0),
-	  nNodes_(1), nodeType_(1), bottomLayer_(false),
-	  nextNodeNum_(0), nextNodeNumFortran_(0), address_(-100), parent_(nullptr) {
+	  nNodes_(1), nodeType_(1), bottomLayer_(false), address_(-100), parent_(nullptr) {
 }
 
 // Copy constructor
@@ -160,8 +159,7 @@ Node::Node(istream& file, Node *up,
 	const NodePosition& position)
 	: parent_(up), nTotalNodes_(1),
 	  nLeaves_(0), nNodes_(1), position_(position),
-	  nodeType_(1), bottomLayer_(false), nextNodeNum_(0),
-	  nextNodeNumFortran_(0), address_(-100) {
+	  nodeType_(1), bottomLayer_(false), address_(-100) {
 	// Call Initialize
 	initialize(file, up, position_);
 }
@@ -238,6 +236,28 @@ AbstractNode *Node::nextNode() {
 	}
 
 	return result;
+}
+
+AbstractNode *Node::nextSCFNode(AbstractNode* in) {
+
+    if(nextNodeNum_ == 0){
+        // first touch will always return itself
+        nextNodeNum_++;
+        return this;
+    } else {
+        // other touches have to check if next node
+        // points to *this
+        // if nextSCFNode points to *this,
+        // then the next node connected to *this has to
+        // be returned
+        if(child_[nextNodeNum_]->nextSCFNode(this) == this) {
+            nextNodeNum_++;
+        }
+        return child_[nextNodeNum_]->nextSCFNode(this);
+    }
+
+    // this should never happen
+    assert(false);
 }
 
 AbstractNode *Node::nextNodeManthe() {
