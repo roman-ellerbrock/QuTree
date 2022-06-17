@@ -1,0 +1,48 @@
+name: Ubuntu GCC Deployment
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: Install OpenBLAS and Lapack
+        run: |
+             sudo apt-get update
+             sudo apt-get install -y libopenblas-dev liblapack-dev liblapacke-dev
+      
+      - name: Install GCC
+        run: |
+             sudo apt-get update
+             sudo apt-get install -y g++-10 gcc-10
+      
+      - name: Configure CMAKE
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        shell: bash
+        env:
+          CC: gcc-10
+          CXX: g++-10
+      
+      - name: Build
+        run: |
+             cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+             cd ${{github.workspace}}/build
+             make TestQuTree
+
+      
+      - name: Unit Tests
+        run: ./tests/TestQuTree
