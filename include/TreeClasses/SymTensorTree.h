@@ -15,7 +15,6 @@ public:
 	SymTensorTree(TensorTreecd Psi, const Tree& tree);
 	~SymTensorTree() = default;
 
-
 	void initialize(const Tree& tree);
 	SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest = true);
 
@@ -83,6 +82,8 @@ namespace TreeFunctions {
 
 	MatrixTreecd symDotProduct(const SymTensorTree& Bra, const SymTensorTree& Ket,
 		const Tree& tree);
+
+	MatrixTreecd mixedRho(const TensorTreecd& Psi, const SymTensorTree& spsi, const Tree& tree);
 
 }
 

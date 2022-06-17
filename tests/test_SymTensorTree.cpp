@@ -24,9 +24,9 @@ SUITE (SymTensorTree) {
 	public:
 		TTFactory() {
 			tree_ = TreeFactory::balancedTree(10, 4, 3);
-			mt19937 gen(34676949);
-			psi_ = SymTensorTree(gen, tree_, false);
-			chi_ = SymTensorTree(gen, tree_, true);
+			gen_ = mt19937(34676949);
+			psi_ = SymTensorTree(gen_, tree_, false);
+			chi_ = SymTensorTree(gen_, tree_, true);
 
 			/// Operator initialization
 			auto I = &LeafInterface::identity;
@@ -41,6 +41,7 @@ SUITE (SymTensorTree) {
 		Tree tree_;
 		SymTensorTree psi_;
 		SymTensorTree chi_;
+		mt19937 gen_;
 
 		MLOcd I_;
 		shared_ptr<SparseTree> stree_;
@@ -107,8 +108,48 @@ SUITE (SymTensorTree) {
 		SymTensorTree psi(gen, tree_, false);
 		auto s = TreeFunctions::dotProduct(psi, psi, tree_);
 		for (auto x : s) {
-				CHECK_CLOSE(0., abs(x - 1.), eps);
+			CHECK_CLOSE(0., abs(x - 1.), eps);
 		}
+	}
+
+	TEST_FIXTURE (TTFactory, mixedRho) {
+		TensorTreecd Psi(tree_);
+		Psi.fillRandom(gen_, tree_, true);
+		SymTensorTree spsi(Psi, tree_);
+
+		auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
+		auto rho = TreeFunctions::contraction(Psi, tree_, true);
+
+		for (const Node& node : tree_) {
+			if (node.isToplayer()) { continue; }
+			auto r2 = r[node] * r[node].adjoint();
+				CHECK_CLOSE(0., residual(rho[node], r2), eps);
+		}
+	}
+
+	TEST_FIXTURE (TTFactory, TT_to_SymTT) {
+		TensorTreecd Psi(tree_);
+		Psi.fillRandom(gen_, tree_, true);
+		SymTensorTree psi(Psi, tree_);
+
+		/// operator for testing matrix representations
+		Matrixcd X(2, 2);
+		X(0, 0) = 0.5;
+		X(1, 0) = 0.5;
+		X(0, 1) = -0.5;
+		X(1, 1) = 0.5;
+		MLOcd M;
+		for (size_t i = 0; i < tree_.nLeaves(); ++i) {
+			LeafMatrixcd x(X);
+			M.push_back(x, i);
+		}
+
+		SparseMatrixTreecd xmat(M, tree_);
+		SparseMatrixTreecd xhole(M, tree_);
+		SymMatrixTree smat(xmat, xhole);
+
+		TreeFunctions::symRepresent(smat, psi, psi, M, tree_);
+
 	}
 
 }

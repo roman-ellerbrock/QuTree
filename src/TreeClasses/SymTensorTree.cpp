@@ -98,7 +98,7 @@ void SymTensorTree::orthogonal(const Tree& tree) {
 	orthogonalDown(tree);
 }
 
-SymTensorTree::SymTensorTree(TensorTreecd Psi, const Tree& tree) {
+SymTensorTree::SymTensorTree(TensorTreecd Psi, const Tree& tree) : SymTensorTree() {
 	initialize(tree);
 	for (const Node& node : tree) {
 		weighted_[node] = Psi[node];
@@ -107,6 +107,7 @@ SymTensorTree::SymTensorTree(TensorTreecd Psi, const Tree& tree) {
 			down_[node] = Psi[node.parent()];
 		}
 	}
+	orthogonal(tree);
 }
 
 /*
@@ -137,8 +138,6 @@ void SymTensorTree::normalizeWeighted(const Tree& tree) {
 }
 
 void SymTensorTree::normalize(const Tree& tree) {
-//	normalizeUp(tree);
-//	normalizeDown(tree);
 	orthogonal(tree);
 	normalizeWeighted(tree);
 }
@@ -357,6 +356,25 @@ namespace TreeFunctions {
 			const Node& node = *node_ptr;
 			symApply(HPsi.weighted_[node], Psi.weighted_[node], hmats, H, node);
 		}
+	}
+
+	MatrixTreecd mixedRho(const TensorTreecd& Psi, const SymTensorTree& spsi,
+		const Tree& tree) {
+		/// assumes orthogonal SPF basis in Psi and matching basis between Psi & spsi
+
+		MatrixTreecd rho(tree);
+		for (int i = tree.nNodes() - 2; i >= 0; --i) {
+			const Node& node = tree.getNode(i);
+			const Node& parent = node.parent();
+
+			const Tensorcd& A = Psi[parent];
+			Tensorcd B = spsi.down_[node];
+			if (!parent.isToplayer()) {
+				B = matrixTensor(rho[parent], B, node.parentIdx());
+			}
+			rho[node] = contraction(A, B, node.childIdx());
+		}
+		return rho;
 	}
 }
 
