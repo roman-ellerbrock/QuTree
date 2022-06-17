@@ -19,67 +19,67 @@
  */
 double feps = 1e-7;
 
-class TTFactory : public ::testing::Test {
+class TTFactory: public ::testing::Test {
 protected:
-    TTFactory() {
-        tree_ = TreeFactory::balancedTree(10, 4, 3);
-        gen_ = mt19937(34676949);
-        psi_ = SymTensorTree(gen_, tree_, false);
-        chi_ = SymTensorTree(gen_, tree_, true);
+	TTFactory() {
+		tree_ = TreeFactory::balancedTree(10, 4, 3);
+		gen_ = mt19937(34676949);
+		psi_ = SymTensorTree(gen_, tree_, false);
+		chi_ = SymTensorTree(gen_, tree_, true);
 
-        /// Operator initialization
-        auto I = &LeafInterface::identity;
-        for (size_t l = 0; l < tree_.nLeaves(); ++l) { I_.push_back(I, l); }
-        stree_ = make_shared<SparseTree>(SparseTree(I_, tree_, false));
-        SparseMatrixTreecd x1(stree_, tree_);
-        SparseMatrixTreecd x2(stree_, tree_);
-    }
+		/// Operator initialization
+		auto I = &LeafInterface::identity;
+		for (size_t l = 0; l < tree_.nLeaves(); ++l) { I_.push_back(I, l); }
+		stree_ = make_shared<SparseTree>(SparseTree(I_, tree_, false));
+		SparseMatrixTreecd x1(stree_, tree_);
+		SparseMatrixTreecd x2(stree_, tree_);
+	}
 
-    ~TTFactory() = default;
+	~TTFactory() = default;
 
-		Tree tree_;
-		SymTensorTree psi_;
-		SymTensorTree chi_;
-		mt19937 gen_;
+	Tree tree_;
+	SymTensorTree psi_;
+	SymTensorTree chi_;
+	mt19937 gen_;
 
-    MLOcd I_;
-    shared_ptr<SparseTree> stree_;
+	MLOcd I_;
+	shared_ptr<SparseTree> stree_;
 };
 
 TEST (SymTensorTree, Generate) {
-    mt19937 gen(34676949);
-    Tree tree = TreeFactory::balancedTree(10, 2, 3);
-    SymTensorTree psi(gen, tree, true);
+	mt19937 gen(34676949);
+	Tree tree = TreeFactory::balancedTree(10, 2, 3);
+	SymTensorTree psi(gen, tree, true);
 }
 
 TEST (SymTensorTree, RegularizeTensor) {
-    double delta = 1E-6;
-    mt19937 gen(1283);
-    TensorShape shape({2, 3, 4});
-    Tensorcd A(shape);
-    Tensor_Extension::generate(A, gen);
-    for (size_t k = 0; k < shape.lastBefore(); ++k) {
-        A(k) = 0.;
-    }
-    auto s = contraction(A, A, shape.lastIdx());
-    ASSERT_NEAR(0, abs(s(0, 0)), delta);
+	double delta = 1E-6;
+	mt19937 gen(1283);
+	TensorShape shape({2, 3, 4});
+	Tensorcd A(shape);
+	Tensor_Extension::generate(A, gen);
+	for (size_t k = 0; k < shape.lastBefore(); ++k) {
+		A(k) = 0.;
+	}
+	auto s = contraction(A, A, shape.lastIdx());
+	ASSERT_NEAR(0, abs(s(0, 0)), delta);
 
-    A = Tensor_Extension::regularize(A, shape.lastIdx(), delta);
-    s = contraction(A, A, A.shape().lastIdx());
-    ASSERT_EQ(true, (sqrt(abs(s(0, 0))) > delta / 2.));
+	A = Tensor_Extension::regularize(A, shape.lastIdx(), delta);
+	s = contraction(A, A, A.shape().lastIdx());
+	ASSERT_EQ(true, (sqrt(abs(s(0, 0))) > delta / 2.));
 }
 
 TEST (SymTensorTree, DISABLED_NormalizeTensor) {
-    mt19937 gen(1283);
-    TensorShape shape({2, 3, 4});
-    Tensorcd A(shape);
-    Tensor_Extension::generate(A, gen);
+	mt19937 gen(1283);
+	TensorShape shape({2, 3, 4});
+	Tensorcd A(shape);
+	Tensor_Extension::generate(A, gen);
 
-    for (size_t k = 0; k < shape.order(); ++k) {
-        auto Anorm = Tensor_Extension::normalize(A, k, feps);
-        auto s = contraction(Anorm, Anorm, k);
-        ASSERT_NEAR(0., residual(s, identityMatrixcd(s.dim1())), feps);
-    }
+	for (size_t k = 0; k < shape.order(); ++k) {
+		auto Anorm = Tensor_Extension::normalize(A, k, feps);
+		auto s = contraction(Anorm, Anorm, k);
+		ASSERT_NEAR(0., residual(s, identityMatrixcd(s.dim1())), feps);
+	}
 }
 
 /*	TEST_F (TTFactory, Normalization) {
@@ -101,53 +101,50 @@ TEST (SymTensorTree, DISABLED_NormalizeTensor) {
 		}
 	}*/
 
-	TEST_FIXTURE (TTFactory, Orthogonal) {
-		mt19937 gen(1239);
-		SymTensorTree psi(gen, tree_, false);
-		auto s = TreeFunctions::dotProduct(psi, psi, tree_);
-		for (auto x : s) {
-			CHECK_CLOSE(0., abs(x - 1.), eps);
-		}
+TEST_F (TTFactory, Orthogonal) {
+	mt19937 gen(1239);
+	SymTensorTree psi(gen, tree_, false);
+	auto s = TreeFunctions::dotProduct(psi, psi, tree_);
+	for (auto x: s) {
+		ASSERT_NEAR(0., abs(x - 1.), feps);
+	}
+}
+
+TEST_F (TTFactory, mixedRho) {
+	TensorTreecd Psi(tree_);
+	Psi.fillRandom(gen_, tree_, true);
+	SymTensorTree spsi(Psi, tree_);
+
+	auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
+	auto rho = TreeFunctions::contraction(Psi, tree_, true);
+
+	for (const Node& node: tree_) {
+		if (node.isToplayer()) { continue; }
+		auto r2 = r[node] * r[node].adjoint();
+		ASSERT_NEAR(0., residual(rho[node], r2), feps);
+	}
+}
+
+TEST_F (TTFactory, TT_to_SymTT) {
+	TensorTreecd Psi(tree_);
+	Psi.fillRandom(gen_, tree_, true);
+	SymTensorTree psi(Psi, tree_);
+
+	/// operator for testing matrix representations
+	Matrixcd X(2, 2);
+	X(0, 0) = 0.5;
+	X(1, 0) = 0.5;
+	X(0, 1) = -0.5;
+	X(1, 1) = 0.5;
+	MLOcd M;
+	for (size_t i = 0; i < tree_.nLeaves(); ++i) {
+		LeafMatrixcd x(X);
+		M.push_back(x, i);
 	}
 
-	TEST_FIXTURE (TTFactory, mixedRho) {
-		TensorTreecd Psi(tree_);
-		Psi.fillRandom(gen_, tree_, true);
-		SymTensorTree spsi(Psi, tree_);
+	SparseMatrixTreecd xmat(M, tree_);
+	SparseMatrixTreecd xhole(M, tree_);
+	SymMatrixTree smat(xmat, xhole);
 
-		auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
-		auto rho = TreeFunctions::contraction(Psi, tree_, true);
-
-		for (const Node& node : tree_) {
-			if (node.isToplayer()) { continue; }
-			auto r2 = r[node] * r[node].adjoint();
-				CHECK_CLOSE(0., residual(rho[node], r2), eps);
-		}
-	}
-
-	TEST_FIXTURE (TTFactory, TT_to_SymTT) {
-		TensorTreecd Psi(tree_);
-		Psi.fillRandom(gen_, tree_, true);
-		SymTensorTree psi(Psi, tree_);
-
-		/// operator for testing matrix representations
-		Matrixcd X(2, 2);
-		X(0, 0) = 0.5;
-		X(1, 0) = 0.5;
-		X(0, 1) = -0.5;
-		X(1, 1) = 0.5;
-		MLOcd M;
-		for (size_t i = 0; i < tree_.nLeaves(); ++i) {
-			LeafMatrixcd x(X);
-			M.push_back(x, i);
-		}
-
-		SparseMatrixTreecd xmat(M, tree_);
-		SparseMatrixTreecd xhole(M, tree_);
-		SymMatrixTree smat(xmat, xhole);
-
-		TreeFunctions::symRepresent(smat, psi, psi, M, tree_);
-
-	}
-
+	TreeFunctions::symRepresent(smat, psi, psi, M, tree_);
 }
