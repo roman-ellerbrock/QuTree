@@ -32,12 +32,6 @@ target_link_libraries(TestQuTree QuTree)
 target_link_libraries(TestQuTree gtest_main)
 target_compile_features(TestQuTree PRIVATE cxx_std_14)
 
-# run unit tests as post build step
-add_custom_command(TARGET TestQuTree
-    POST_BUILD COMMAND TestQuTree
-    COMMENT "Running unit tests")
-
-
 set(QuTree_benchmarks
         benchmarks/benchmark_tensor.cpp
         benchmarks/benchmark_tensor.h

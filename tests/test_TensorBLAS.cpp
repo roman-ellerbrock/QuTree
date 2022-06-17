@@ -13,9 +13,9 @@ double teps = 1e-7;
 
 typedef complex<double> cd;
 
-class Factory : public ::testing::Test {
+class TensorBLASFactory : public ::testing::Test {
 protected:
-    Factory()
+    TensorBLASFactory()
             : gen_(129123), dim_(16) {
         S_ = Create(dim_);
         TensorShape shape3({dim_, dim_, dim_});
@@ -38,7 +38,7 @@ protected:
     mt19937 gen_;
 };
 
-TEST_F (Factory, Transpose) {
+TEST_F (TensorBLASFactory, Transpose) {
     Matrixcd ST1(dim_, dim_);
     Matrixcd ST2(dim_, dim_);
     transpose(&ST1[0], &S_[0], dim_, dim_);
@@ -57,7 +57,7 @@ TEST_F (Factory, Transpose) {
 
 /// ===== matrixTensor ================================
 
-TEST_F (Factory, matrixTensorT1) {
+TEST_F (TensorBLASFactory, matrixTensorT1) {
     /// Test matrixTensor routine for square matrices
     /// First, the correct solution
     A2sol_ = matrixTensor(S_, A_, 1);
@@ -78,7 +78,7 @@ TEST_F (Factory, matrixTensorT1) {
     ASSERT_NEAR(0., residual(A2_, A2sol_), teps);
 }
 
-TEST_F (Factory, matrixTensorRectMode0) {
+TEST_F (TensorBLASFactory, matrixTensorRectMode0) {
     Matrixcd Srec(2 * dim_, dim_);
     TensorShape shape({2 * dim_, dim_, dim_});
     Tensorcd A2(shape);
@@ -91,7 +91,7 @@ TEST_F (Factory, matrixTensorRectMode0) {
     ASSERT_NEAR(0., residual(A2, A2sol), teps);
 }
 
-TEST_F (Factory, matrixTensorRectMode1) {
+TEST_F (TensorBLASFactory, matrixTensorRectMode1) {
     Matrixcd Srec(2 * dim_, dim_);
     TensorShape shape({dim_, 2 * dim_, dim_});
     Tensorcd A2(shape);
@@ -105,7 +105,7 @@ TEST_F (Factory, matrixTensorRectMode1) {
     ASSERT_NEAR(0., residual(A2, A2sol), teps);
 }
 
-TEST_F (Factory, matrixTensorRectMode2) {
+TEST_F (TensorBLASFactory, matrixTensorRectMode2) {
     Matrixcd Srec(2 * dim_, dim_);
     TensorShape shape({dim_, dim_, 2 * dim_});
     Tensorcd A2(shape);
@@ -119,8 +119,8 @@ TEST_F (Factory, matrixTensorRectMode2) {
 }
 
 /// ===== Contraction ================================
-
-TEST_F (Factory, contractionT1) {
+/*
+TEST_F (TensorBLASFactory, contractionT1) {
     Matrixcd h(dim_, dim_);
 
     auto hSol = contraction(A_, B_, 0);
@@ -136,7 +136,7 @@ TEST_F (Factory, contractionT1) {
     ASSERT_NEAR(0., residual(hSol, h), teps);
 }
 
-TEST_F (Factory, contractionT2mode0) {
+TEST_F (TensorBLASFactory, contractionT2mode0) {
     TensorShape shapeB({2 * dim_, dim_, dim_});
     Matrixcd h(dim_, 2 * dim_);
     Matrixcd hSol(dim_, 2 * dim_);
@@ -148,7 +148,7 @@ TEST_F (Factory, contractionT2mode0) {
     ASSERT_NEAR(0., residual(h, hSol), teps);
 }
 
-TEST_F (Factory, contractionT2mode1) {
+TEST_F (TensorBLASFactory, contractionT2mode1) {
     TensorShape shapeB({2 * dim_, dim_, dim_});
     Matrixcd h(dim_, 2 * dim_);
     Matrixcd hSol(dim_, 2 * dim_);
@@ -160,7 +160,7 @@ TEST_F (Factory, contractionT2mode1) {
     ASSERT_NEAR(0., residual(h, hSol), teps);
 }
 
-TEST_F (Factory, DISABLED_contractionT2mode2) {
+TEST_F (TensorBLASFactory, DISABLED_contractionT2mode2) {
     TensorShape shapeB({2 * dim_, dim_, dim_});
     Matrixcd h(dim_, 2 * dim_);
     Matrixcd hSol(dim_, 2 * dim_);
@@ -171,6 +171,7 @@ TEST_F (Factory, DISABLED_contractionT2mode2) {
     contraction2(h, A_, Brec, workA, workB, dim_ * dim_, dim_, 2 * dim_, 1, 0);
     ASSERT_NEAR(0., residual(h, hSol), teps);
 }
+*/
 
 
 TEST(TensorBLAS, onlyLegalContractions){

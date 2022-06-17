@@ -69,16 +69,26 @@ endif()
 # Target Installation setup
 #####################################################################
 # Set up BLAS / LAPACK
+find_package(BLAS REQUIRED)
+find_package(LAPACK REQUIRED)
 if (APPLE)
+    message(STATUS "USING MAC OS!")
     set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
-    set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
+    target_include_directories(QuTree PUBLIC "/usr/local/opt/openblas/include")
+    include_directories("/usr/local/opt/openblas/include")
 elseif(UNIX)
-    set(BLA_VENDOR OpenBLAS)
-    find_package(BLAS REQUIRED)
-    find_package(LAPACK REQUIRED)
+#    set(BLA_VENDOR OpenBLAS)
+    message(STATUS "USING UNIX!")
 
-#   empirically found blas locations    
-    set(BLAS_INCLUDE "/usr/local/opt/openblas/include" "/usr/include/x86_64-linux-gnu")
+#   empirically found blas locations
+    target_include_directories(QuTree PUBLIC "/usr/include/x86_64-linux-gnu")
+    include_directories("/usr/include/x86_64-linux-gnu")
+endif()
+
+if(GITHUB_ACTIONS)
+    message(STATUS "Compiling for Github Actions!")
+    set(LAPACKE_PATH "/usr/lib/x86_64-linux-gnu")
+    target_link_libraries(QuTree PUBLIC -L${LAPACKE_PATH} lapacke blas lapack)
 endif()
 
 # Set up headers in include/ for install & build and src/ for just building
@@ -86,7 +96,6 @@ target_include_directories(QuTree
     PUBLIC
         $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        ${BLAS_INCLUDE}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
