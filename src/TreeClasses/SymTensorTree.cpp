@@ -358,9 +358,20 @@ namespace TreeFunctions {
 		}
 	}
 
+	MatrixTreecd mixedDotProduct(const TensorTreecd& Psi, const SymTensorTree& spsi,
+		const Tree& tree) {
+
+		MatrixTreecd S(tree);
+		TensorTreecd tmp = spsi.up_;
+		tmp[tree.topNode()] = spsi.weighted_[tree.topNode()];
+		return TreeFunctions::dotProduct(Psi, tmp, tree);
+	}
+
 	MatrixTreecd mixedRho(const TensorTreecd& Psi, const SymTensorTree& spsi,
 		const Tree& tree) {
 		/// assumes orthogonal SPF basis in Psi and matching basis between Psi & spsi
+
+		auto S = mixedDotProduct(Psi, spsi, tree);
 
 		MatrixTreecd rho(tree);
 		for (int i = tree.nNodes() - 2; i >= 0; --i) {
@@ -369,6 +380,7 @@ namespace TreeFunctions {
 
 			const Tensorcd& A = Psi[parent];
 			Tensorcd B = spsi.down_[node];
+
 			if (!parent.isToplayer()) {
 				B = matrixTensor(rho[parent], B, node.parentIdx());
 			}

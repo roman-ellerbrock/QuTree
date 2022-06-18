@@ -83,6 +83,11 @@ namespace TreeFunctions {
 	MatrixTreecd symDotProduct(const SymTensorTree& Bra, const SymTensorTree& Ket,
 		const Tree& tree);
 
+	/// dot product between tensor tree and sym. tensor tree
+	MatrixTreecd mixedDotProduct(const TensorTreecd& Psi, const SymTensorTree& spsi,
+		const Tree& tree);
+
+	/// density matrices between tensor tree and sym. tensor tree
 	MatrixTreecd mixedRho(const TensorTreecd& Psi, const SymTensorTree& spsi, const Tree& tree);
 
 }

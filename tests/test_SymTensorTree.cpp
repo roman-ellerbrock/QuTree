@@ -33,6 +33,18 @@ protected:
 		stree_ = make_shared<SparseTree>(SparseTree(I_, tree_, false));
 		SparseMatrixTreecd x1(stree_, tree_);
 		SparseMatrixTreecd x2(stree_, tree_);
+
+		/// operator for testing matrix representations
+		Matrixcd X(2, 2);
+		X(0, 0) = 0.5;
+		X(1, 0) = 0.5;
+		X(0, 1) = -0.5;
+		X(1, 1) = 0.5;
+		for (size_t i = 0; i < tree_.nLeaves(); ++i) {
+			LeafMatrixcd x(X);
+			M_.push_back(x, i);
+		}
+
 	}
 
 	~TTFactory() = default;
@@ -42,7 +54,7 @@ protected:
 	SymTensorTree chi_;
 	mt19937 gen_;
 
-	MLOcd I_;
+	MLOcd I_, M_;
 	shared_ptr<SparseTree> stree_;
 };
 
@@ -99,7 +111,7 @@ TEST (SymTensorTree, DISABLED_NormalizeTensor) {
 #					ASSERT_NEAR(0., residual(Sdown[node], identityMatrixcd(Sdown[node].dim1())), feps);
 			}
 		}
-	}*/
+}*/
 
 TEST_F (TTFactory, Orthogonal) {
 	mt19937 gen(1239);
@@ -110,9 +122,28 @@ TEST_F (TTFactory, Orthogonal) {
 	}
 }
 
+TEST_F (TTFactory, mixedDotProductLocal) {
+	TensorTreecd Psi(gen_, tree_);
+	SymTensorTree psi(Psi, tree_);
+	psi.up_ = Psi;
+	psi.weighted_[tree_.topNode()] = Psi[tree_.topNode()];
+
+	auto ssym = TreeFunctions::mixedDotProduct(Psi, psi, tree_);
+	auto s = TreeFunctions::dotProduct(Psi, Psi, tree_);
+	for (const Node& node : tree_) {
+		ASSERT_NEAR(0., residual(ssym[node], s[node]), feps);
+	}
+}
+
+TEST_F (TTFactory, mixedDotProduct) {
+	TensorTreecd Psi(gen_, tree_);
+	SymTensorTree psi(Psi, tree_);
+	auto ssym = TreeFunctions::mixedDotProduct(Psi, psi, tree_);
+		ASSERT_NEAR(0., residual(ssym[tree_.topNode()], identityMatrixcd(1)), feps);
+}
+
 TEST_F (TTFactory, mixedRho) {
-	TensorTreecd Psi(tree_);
-	Psi.fillRandom(gen_, tree_, true);
+	TensorTreecd Psi(gen_, tree_);
 	SymTensorTree spsi(Psi, tree_);
 
 	auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
@@ -125,26 +156,48 @@ TEST_F (TTFactory, mixedRho) {
 	}
 }
 
-TEST_F (TTFactory, TT_to_SymTT) {
-	TensorTreecd Psi(tree_);
-	Psi.fillRandom(gen_, tree_, true);
-	SymTensorTree psi(Psi, tree_);
+TEST_F (TTFactory, symMatrices) {
+	TensorTreecd Psi(gen_, tree_);
+	SymTensorTree spsi(Psi, tree_);
 
-	/// operator for testing matrix representations
-	Matrixcd X(2, 2);
-	X(0, 0) = 0.5;
-	X(1, 0) = 0.5;
-	X(0, 1) = -0.5;
-	X(1, 1) = 0.5;
-	MLOcd M;
-	for (size_t i = 0; i < tree_.nLeaves(); ++i) {
-		LeafMatrixcd x(X);
-		M.push_back(x, i);
+	SparseMatrixTreecd xmat(M_, tree_);
+	SparseMatrixTreecd xhole(M_, tree_);
+	SymMatrixTree sMatPair(xmat, xhole);
+
+	auto s = TreeFunctions::mixedDotProduct(Psi, spsi, tree_);
+
+	TreeFunctions::represent(xmat, M_, Psi, Psi, tree_);
+	SparseMatrixTreecd smat = sMatPair.first;
+
+	TreeFunctions::symRepresent(sMatPair, spsi, spsi, M_, tree_);
+
+	for (const Node& node : tree_) {
+		if (node.isToplayer()) { continue; }
+		smat[node] = s[node] * smat[node] * s[node].adjoint();
+		ASSERT_NEAR(0., residual(xmat[node], smat[node]), feps);
 	}
 
-	SparseMatrixTreecd xmat(M, tree_);
-	SparseMatrixTreecd xhole(M, tree_);
-	SymMatrixTree smat(xmat, xhole);
+}
 
-	TreeFunctions::symRepresent(smat, psi, psi, M, tree_);
+TEST_F (TTFactory, symHoles) {
+	TensorTreecd Psi(gen_, tree_);
+	SymTensorTree spsi(Psi, tree_);
+
+	SparseMatrixTreecd xmat(M_, tree_);
+	SparseMatrixTreecd xhole(M_, tree_);
+	SymMatrixTree smatpair(xmat, xhole);
+
+	TreeFunctions::represent(xmat, M_, Psi, Psi, tree_);
+	TreeFunctions::contraction(xhole, Psi, Psi, xmat, tree_);
+
+	SparseMatrixTreecd shole = smatpair.second;
+	TreeFunctions::symRepresent(smatpair, spsi, spsi, M_, tree_);
+	auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
+
+	for (const Node& node : tree_) {
+		if (node.isToplayer()) { continue; }
+		shole[node] = r[node] * shole[node] * r[node].adjoint();
+		ASSERT_NEAR(0., residual(shole[node], xhole[node]), feps);
+	}
+
 }

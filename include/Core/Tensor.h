@@ -189,6 +189,8 @@ public:
 	TensorShape shape_;
 	T* coeffs_;
 	bool ownership_;
+
+	using value_type = T;
 protected:
 	double conjugate(const double d) const {
 		return d;
