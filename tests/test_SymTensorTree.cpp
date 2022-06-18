@@ -81,38 +81,6 @@ TEST (SymTensorTree, RegularizeTensor) {
 	ASSERT_EQ(true, (sqrt(abs(s(0, 0))) > delta / 2.));
 }
 
-TEST (SymTensorTree, DISABLED_NormalizeTensor) {
-	mt19937 gen(1283);
-	TensorShape shape({2, 3, 4});
-	Tensorcd A(shape);
-	Tensor_Extension::generate(A, gen);
-
-	for (size_t k = 0; k < shape.order(); ++k) {
-		auto Anorm = Tensor_Extension::normalize(A, k, feps);
-		auto s = contraction(Anorm, Anorm, k);
-		ASSERT_NEAR(0., residual(s, identityMatrixcd(s.dim1())), feps);
-	}
-}
-
-/*	TEST_F (TTFactory, Normalization) {
-		MatrixTreecd Sup(tree_); // wazzzz suuuuuuuup???!!!
-
-		TreeFunctions::contractionUp(Sup, psi_, psi_, tree_);
-		for (const Node& node : tree_) {
-			if (!node.isToplayer()) {
-				ASSERT_NEAR(0., residual(Sup[node], identityMatrixcd(Sup[node].dim1())), feps);
-			}
-		}
-
-		MatrixTreecd Sdown(tree_); // wazzzz suuuuuuuup???!!!
-		TreeFunctions::contractionDown(Sdown, psi_, psi_, Sup, tree_);
-		for (const Node& node : tree_) {
-			if (!node.isToplayer() && !node.isBottomlayer()) {
-#					ASSERT_NEAR(0., residual(Sdown[node], identityMatrixcd(Sdown[node].dim1())), feps);
-			}
-		}
-}*/
-
 TEST_F (TTFactory, Orthogonal) {
 	mt19937 gen(1239);
 	SymTensorTree psi(gen, tree_, false);
@@ -159,17 +127,17 @@ TEST_F (TTFactory, mixedRho) {
 TEST_F (TTFactory, symMatrices) {
 	TensorTreecd Psi(gen_, tree_);
 	SymTensorTree spsi(Psi, tree_);
+	auto s = TreeFunctions::mixedDotProduct(Psi, spsi, tree_);
 
 	SparseMatrixTreecd xmat(M_, tree_);
 	SparseMatrixTreecd xhole(M_, tree_);
 	SymMatrixTree sMatPair(xmat, xhole);
 
-	auto s = TreeFunctions::mixedDotProduct(Psi, spsi, tree_);
 
 	TreeFunctions::represent(xmat, M_, Psi, Psi, tree_);
-	SparseMatrixTreecd smat = sMatPair.first;
 
 	TreeFunctions::symRepresent(sMatPair, spsi, spsi, M_, tree_);
+	SparseMatrixTreecd smat = sMatPair.first;
 
 	for (const Node& node : tree_) {
 		if (node.isToplayer()) { continue; }
@@ -182,6 +150,7 @@ TEST_F (TTFactory, symMatrices) {
 TEST_F (TTFactory, symHoles) {
 	TensorTreecd Psi(gen_, tree_);
 	SymTensorTree spsi(Psi, tree_);
+	auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
 
 	SparseMatrixTreecd xmat(M_, tree_);
 	SparseMatrixTreecd xhole(M_, tree_);
@@ -190,9 +159,8 @@ TEST_F (TTFactory, symHoles) {
 	TreeFunctions::represent(xmat, M_, Psi, Psi, tree_);
 	TreeFunctions::contraction(xhole, Psi, Psi, xmat, tree_);
 
-	SparseMatrixTreecd shole = smatpair.second;
 	TreeFunctions::symRepresent(smatpair, spsi, spsi, M_, tree_);
-	auto r = TreeFunctions::mixedRho(Psi, spsi, tree_);
+	SparseMatrixTreecd shole = smatpair.second;
 
 	for (const Node& node : tree_) {
 		if (node.isToplayer()) { continue; }

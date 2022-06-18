@@ -45,7 +45,7 @@ TEST (SparseMatrixTree, TreeMarker) {
     ASSERT_EQ(7, active.size());
 }
 
-TEST_F (SparseMatrixFactory, DISABLED_TreeMarker_NoTail) {
+TEST_F (SparseMatrixFactory, TreeMarker_NoTail) {
     /// Create TreeMarker omitting higher nodes in the tree after last branch
     SparseTree active(M_.targetLeaves(), tree_, false);
     ASSERT_EQ(5, active.size());
