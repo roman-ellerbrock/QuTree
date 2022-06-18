@@ -119,7 +119,7 @@ TEST_F (TensorBLASFactory, matrixTensorRectMode2) {
 }
 
 /// ===== Contraction ================================
-/*
+
 TEST_F (TensorBLASFactory, contractionT1) {
     Matrixcd h(dim_, dim_);
 
@@ -136,6 +136,7 @@ TEST_F (TensorBLASFactory, contractionT1) {
     ASSERT_NEAR(0., residual(hSol, h), teps);
 }
 
+/*
 TEST_F (TensorBLASFactory, contractionT2mode0) {
     TensorShape shapeB({2 * dim_, dim_, dim_});
     Matrixcd h(dim_, 2 * dim_);
