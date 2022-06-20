@@ -1,4 +1,4 @@
-name: MacOS Deployment
+name: MacOS GCC Deployment
 
 on:
   push:
@@ -24,9 +24,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-  
+
+      - name: Install gfortran and GCC
+        run: brew install gfortran gcc@12
+        
       - name: Configure CMAKE
-        run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}             
+        run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        env:
+          CC: gcc-12
+          CXX: g++-12
+          FC: gfortran-12
   
       - name: Build
         run: |
