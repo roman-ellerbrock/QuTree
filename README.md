@@ -2,6 +2,10 @@
 
 [![Ubuntu GCC Deployment](https://github.com/roman-ellerbrock/QuTree/actions/workflows/ubuntu-gcc.yml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/ubuntu-gcc.yml)
 
+[![MacOS GCC Deployment](https://github.com/roman-ellerbrock/QuTree/actions/workflows/macos-gcc.yaml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/macos-gcc.yaml)
+
+[![MacOS Clang Deployment](https://github.com/roman-ellerbrock/QuTree/actions/workflows/macos-clang.yaml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/macos-clang.yaml)
+
 # QuTree
 
 A tensor tree linear algebra package in C++ designed for quantum dynamics and machine learning applications.

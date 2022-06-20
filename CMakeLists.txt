@@ -87,8 +87,15 @@ endif()
 
 if(GITHUB_ACTIONS)
     message(STATUS "Compiling for Github Actions!")
-    set(LAPACKE_PATH "/usr/lib/x86_64-linux-gnu")
-    target_link_libraries(QuTree PUBLIC -L${LAPACKE_PATH} lapacke blas lapack)
+    # apple has to be tested before UNIX, since Apple implies unix
+    if (APPLE)
+        include_directories("/usr/local/opt/openblas/include" "/usr/include/openblas")
+        set(LAPACKE_PATH "/usr/local/Cellar/lapack/3.10.1/lib")
+        target_include_directories(QuTree PUBLIC "/usr/local/opt/openblas/include" "/usr/include/openblas")
+    elseif (UNIX)
+	set(LAPACKE_PATH "/usr/lib/x86_64-linux-gnu")
+    endif()    
+    target_link_libraries(QuTree PUBLIC -L${LAPACKE_PATH} lapacke blas lapack)    
 endif()
 
 # Set up headers in include/ for install & build and src/ for just building

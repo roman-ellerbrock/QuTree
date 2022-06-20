@@ -27,6 +27,9 @@ jobs:
 
       - name: Install gfortran and GCC
         run: brew install gfortran gcc@12
+
+      - name: Install OpenBLAS and Lapack
+        run: brew install openblas lapack
         
       - name: Configure CMAKE
         run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
