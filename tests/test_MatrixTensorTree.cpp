@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "TreeClasses//MatrixTensorTree.h"
+#include "TreeClasses/MatrixTensorTree.h"
 #include "TreeShape/TreeFactory.h"
 
 double eps = 1e-7;

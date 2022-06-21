@@ -107,12 +107,17 @@ public:
 	// pointer to the next node in sweep
 	AbstractNode *nextNode() override;
 
-    // pointer to ne next node in an SCF-sense
-    AbstractNode *nextSCFNode(AbstractNode* in) override;
-
 	// sween for pointer to the next node in sweep. Same sweep like
 	// in Uwe Manthe's fortran code
 	AbstractNode *nextNodeManthe() override;
+
+    // returns the next relevant node in the SCF process
+    AbstractNode *nextSCFNode(AbstractNode* lastNode) override;
+
+    // returns whether the SCF procedure on this and its subnodes was successfully finished
+    bool wasSCFfinished() const override {return wasSCFfinished_;}
+    void resetSCFstatus() override;
+
 	// Move getter for unique_ptr to children
 	unique_ptr<AbstractNode> downUnique(size_t i);
 
@@ -135,6 +140,7 @@ public:
 	// Get a reference to the top-node
 	Node& topNode();
 
+
 protected:
 	// number of nodes under the current node plus this node (n_children+1)
 	size_t nTotalNodes_;
@@ -151,6 +157,7 @@ protected:
 
 	// reference to the last_ node that was pointed at at a sweep through the layer_
 	int nextNodeNum_{0};
+    bool wasSCFfinished_{false};
 	size_t nextNodeNumFortran_{0};
 
 	// position object

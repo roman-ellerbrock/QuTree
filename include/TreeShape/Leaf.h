@@ -100,10 +100,16 @@ public:
 	size_t nLeaves() const override { return 1; }
 
 	AbstractNode *nextNode() override { return this; }
-    AbstractNode *nextSCFNode(AbstractNode* in) override { return in; }
+
+    // this is a leaf, so it is not relevant in the SCF
+    // step. thus, if asked for the nextSCFNode, it just gives
+    // back its parent Node (which is relevant or determine
+    // the next relevant node)
+    AbstractNode *nextSCFNode(AbstractNode* last_node) override { return nullptr; }
+    bool wasSCFfinished() const override {return true;}
+    void resetSCFstatus() override {} // does nothing, is wanted that way
 
 	AbstractNode *nextNodeManthe() override { return this; }
-
 	// Getter & Setter
 	size_t mode() const { return mode_; }
 

@@ -238,26 +238,37 @@ AbstractNode *Node::nextNode() {
 	return result;
 }
 
-AbstractNode *Node::nextSCFNode(AbstractNode* in) {
+AbstractNode *Node::nextSCFNode(AbstractNode* last_node) {
 
-    if(nextNodeNum_ == 0){
-        // first touch will always return itself
-        nextNodeNum_++;
+    if(last_node == parent_){
         return this;
-    } else {
-        // other touches have to check if next node
-        // points to *this
-        // if nextSCFNode points to *this,
-        // then the next node connected to *this has to
-        // be returned
-        if(child_[nextNodeNum_]->nextSCFNode(this) == this) {
-            nextNodeNum_++;
-        }
-        return child_[nextNodeNum_]->nextSCFNode(this);
     }
 
-    // this should never happen
-    assert(false);
+    // check if leaf or subtree was already done
+    const bool subtree_finished = child_[nextNodeNum_]->wasSCFfinished();
+
+    // shift tree to next subtree if current one is finished
+    if(subtree_finished){
+        if(nextNodeNum_ != 0){
+            nextNodeNum_--;
+            return (*this).nextSCFNode(last_node);
+        } else {
+            nextNodeNum_ = child_.size() - 1;
+            wasSCFfinished_ = true;
+
+            // top node check:
+            // if nullptr is returned, the algorithm has visited every node
+            // then, the SCF status is to be resetted.
+            if(parent_ == nullptr){
+                resetSCFstatus();
+            }
+            return parent_;
+        }
+    } else {
+        return child_[nextNodeNum_]->nextSCFNode(last_node);
+    }
+
+    exit(EXIT_FAILURE);
 }
 
 AbstractNode *Node::nextNodeManthe() {
@@ -434,6 +445,13 @@ Node& Node::topNode() {
 void Node::replace(Node& new_child, size_t idx) {
 	assert(idx < child_.size());
 	child_[idx] = unique_ptr<Node>(new Node(new_child));
+}
+
+void Node::resetSCFstatus() {
+    for(auto& i : child_){
+        i->resetSCFstatus();
+    }
+    wasSCFfinished_ = false;
 }
 
 

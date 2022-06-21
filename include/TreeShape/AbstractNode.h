@@ -34,6 +34,10 @@ public:
 	virtual void setParent(AbstractNode* Up) = 0;
 	virtual void update(const NodePosition& p) = 0;
 
+    virtual bool wasSCFfinished() const = 0;
+    virtual void resetSCFstatus() = 0;
+
+
 protected:
 };
 
