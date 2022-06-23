@@ -29,7 +29,12 @@ jobs:
         run: |
              sudo apt-get update
              sudo apt-get install -y llvm-dev
-  
+
+      - name: Install Valgrind
+        run: |
+             sudo apt-get update
+             sudo apt-get install -y valgrind
+
       - name: Configure CMAKE
         run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}             
         shell: bash
@@ -46,4 +51,9 @@ jobs:
       - name: Unit Tests
         working-directory: ${{github.workspace}}/build
         run: ./tests/TestQuTree
-      
+
+      - name: Valgrind-Check Unit Tests
+        continue-on-error: true
+        if: always()
+        working-directory: ${{github.workspace}}/build
+        run: valgrind --leak-check=full --show-reachable=yes --track-origins=yes --error-exitcode=1 ./tests/TestQuTree
