@@ -24,7 +24,7 @@ public:
 
 	virtual AbstractNode *nextNode() = 0;
     // returns the next SCF node given the parent node (given via in)
-    virtual AbstractNode *nextSCFNode(AbstractNode* in) = 0;
+    virtual AbstractNode *nextSCFNode(AbstractNode* last_node) = 0;
 	virtual AbstractNode *nextNodeManthe() = 0;
 
 	virtual void info(ostream& os) const = 0;

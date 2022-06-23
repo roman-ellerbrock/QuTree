@@ -45,6 +45,7 @@ set(QuTree_SOURCE_FILES
     src/TreeShape/LeafTypes/LegendrePolynomials.cpp
     src/TreeShape/LeafTypes/SpinGroup.cpp
     src/TreeShape/LinearizedLeaves.cpp
+    src/TreeShape/LinearizedSCFNodes.cpp
     src/TreeShape/Node.cpp
     src/TreeShape/NodePosition.cpp
     src/TreeShape/Tree.cpp

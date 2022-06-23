@@ -63,6 +63,7 @@ set(QuTree_INCLUDE_FILES
     include/TreeShape/LeafTypes/LegendrePolynomials.h
     include/TreeShape/LeafTypes/SpinGroup.h
     include/TreeShape/LinearizedLeaves.h
+    include/TreeShape/LinearizedSCFNodes.h
     include/TreeShape/Node.h
     include/TreeShape/NodePosition.h
     include/TreeShape/Tree.h

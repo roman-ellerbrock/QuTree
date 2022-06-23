@@ -26,7 +26,7 @@ set(QuTree_tests
         test_SparseMatrixTree.cpp
         test_RandomMatrices.cpp
         test_Node.cpp
-        )
+        test_LinearizedSCFNodes.cpp)
 add_executable(TestQuTree ${QuTree_tests})
 target_link_libraries(TestQuTree QuTree)
 target_link_libraries(TestQuTree gtest_main)
