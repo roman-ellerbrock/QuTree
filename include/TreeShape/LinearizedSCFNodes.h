@@ -21,6 +21,7 @@ public:
 
     const std::vector<int>& getAddresses() const;
     const std::vector<Node*>& getNodes() const;
+    const Node* operator[](size_t i) const;
 
     void clear();
 
