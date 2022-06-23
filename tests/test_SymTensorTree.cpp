@@ -64,7 +64,7 @@ TEST (SymTensorTree, DISABLED_Generate) {
 	SymTensorTree psi(gen, tree, true);
 }
 
-TEST (SymTensorTree, RegularizeTensor) {
+TEST (SymTensorTree, DISABLED_RegularizeTensor) {
 	double delta = 1E-6;
 	mt19937 gen(1283);
 	TensorShape shape({2, 3, 4});
