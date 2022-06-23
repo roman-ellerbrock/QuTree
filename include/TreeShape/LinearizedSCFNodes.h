@@ -19,8 +19,10 @@ public:
 
     void linearize(Tree& tree);
 
-    std::vector<int> getAddresses() const;
-    std::vector<Node*> getNodes() const;
+    const std::vector<int>& getAddresses() const;
+    const std::vector<Node*>& getNodes() const;
+
+    void clear();
 
 private:
 	std::vector<int> addresses_;

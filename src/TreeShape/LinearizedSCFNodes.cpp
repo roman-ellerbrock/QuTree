@@ -8,14 +8,18 @@ void LinearizedSCFNodes::linearize(Tree& tree) {
         next_node = tree.topNode().nextSCFNode(next_node);
     }
 
-    // call to "reset" tree structure into previous state
     tree.topNode().resetSCFstatus();
 }
 
-std::vector<int> LinearizedSCFNodes::getAddresses() const {
+const std::vector<int>& LinearizedSCFNodes::getAddresses() const {
     return addresses_;
 }
 
-std::vector<Node *> LinearizedSCFNodes::getNodes() const {
+const std::vector<Node *>& LinearizedSCFNodes::getNodes() const {
     return pointers_;
+}
+
+void LinearizedSCFNodes::clear() {
+    addresses_.clear();
+    pointers_.clear();
 }

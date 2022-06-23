@@ -8,7 +8,7 @@
 
 TEST(LinearizedSCFNode, correct_order){
 
-    Tree tree = TreeFactory::balancedTree(5432, 4, 11);
+    Tree tree = TreeFactory::balancedTree(543, 4, 11);
     LinearizedSCFNodes test;
     test.linearize(tree);
 
@@ -34,4 +34,18 @@ TEST(LinearizedSCFNode, correct_order){
         ASSERT_EQ(test_node_list[i], node_list[i]);
         ASSERT_EQ(test_address_list[i], address_list[i]);
     }
+}
+
+TEST(LinearizedSCFNode, clear){
+    Tree tree = TreeFactory::balancedTree(543, 4, 11);
+    LinearizedSCFNodes test;
+    test.linearize(tree);
+
+    ASSERT_EQ(test.getAddresses().size(), 2 * tree.nodes().size() - 1);
+    ASSERT_EQ(test.getNodes().size(), 2 * tree.nodes().size() - 1);
+
+    test.clear();
+    ASSERT_EQ(test.getAddresses().size(), 0);
+    ASSERT_EQ(test.getNodes().size(), 0);
+
 }
