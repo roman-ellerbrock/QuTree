@@ -24,6 +24,10 @@ void LinearizedSCFNodes::clear() {
     pointers_.clear();
 }
 
-const Node *LinearizedSCFNodes::operator[](size_t i) const {
+Node *LinearizedSCFNodes::operator[](size_t i) const {
     return pointers_[i];
+}
+
+size_t LinearizedSCFNodes::size() const {
+    return addresses_.size();
 }

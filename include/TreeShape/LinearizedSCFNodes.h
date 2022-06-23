@@ -21,9 +21,10 @@ public:
 
     const std::vector<int>& getAddresses() const;
     const std::vector<Node*>& getNodes() const;
-    const Node* operator[](size_t i) const;
+    Node* operator[](size_t i) const;
 
     void clear();
+    size_t size() const;
 
 private:
 	std::vector<int> addresses_;
