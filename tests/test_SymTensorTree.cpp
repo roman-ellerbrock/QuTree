@@ -58,7 +58,7 @@ protected:
 	shared_ptr<SparseTree> stree_;
 };
 
-TEST (SymTensorTree, Generate) {
+TEST (SymTensorTree, DISABLED_Generate) {
 	mt19937 gen(34676949);
 	Tree tree = TreeFactory::balancedTree(10, 2, 3);
 	SymTensorTree psi(gen, tree, true);
