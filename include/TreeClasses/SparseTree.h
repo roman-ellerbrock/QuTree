@@ -36,6 +36,9 @@ public:
 
 	SparseTree(const SOPcd& sop, const Tree& tree, bool tail = true);
 
+	explicit SparseTree(const Tree& tree)
+	: SparseTree(tree.rangeLeaves(), tree) {}
+
 	void SparseInitialize(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true);
 

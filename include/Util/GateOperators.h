@@ -8,7 +8,6 @@
 #include "TreeOperators/SumOfProductsOperator.h"
 #include "TreeOperators/SOPVector.h"
 
-
 /**
  * Rationale:
  * - Small library for Quantum Circuits

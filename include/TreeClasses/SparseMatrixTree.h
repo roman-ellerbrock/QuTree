@@ -32,6 +32,9 @@ public:
 		initialize(tree);
 	}
 
+//	SparseMatrixTree(const Tree& tree)
+//		: SparseMatrixTree(make_shared<SparseTree>(tree), tree) {}
+
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseMatrixTree(const MLO<T>& M, const Tree& tree, bool tail = true, bool inverse_tree = false)
 		: SparseNodeAttribute<Matrix<T>>(M.targetLeaves(), tree, tail, inverse_tree) {

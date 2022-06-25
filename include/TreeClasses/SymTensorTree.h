@@ -5,9 +5,7 @@
 #ifndef SYMTENSORTREE_H
 #define SYMTENSORTREE_H
 #include "MatrixTensorTreeFunctions.h"
-
-typedef SparseMatrixTreePaircd SymMatrixTree;
-typedef SparseMatrixTreePairscd SymMatrixTrees;
+#include "SymMatrixTree.h"
 
 class SymTensorTree {
 public:
@@ -79,6 +77,9 @@ namespace TreeFunctions {
 	void symApply(Tensorcd& HPhi, const Tensorcd& Phi,
 		const SymMatrixTrees& hmats,
 		const SOPcd& H, const Node& node);
+
+	SymMatrixTree weightedContraction(const SymTensorTree& Bra, const SymTensorTree& Ket,
+		const Tree& tree);
 
 	MatrixTreecd symDotProduct(const SymTensorTree& Bra, const SymTensorTree& Ket,
 		const Tree& tree);

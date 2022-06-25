@@ -30,6 +30,7 @@ void occupy(Tensorcd& A, mt19937& gen, const Tree& tree, bool delta_lowest) {
 	gramSchmidt(A);
 }
 
+
 SymTensorTree::SymTensorTree(mt19937& gen, const Tree& tree, bool delta_lowest)
 	: SymTensorTree() {
 	initialize(tree);
@@ -356,6 +357,12 @@ namespace TreeFunctions {
 			const Node& node = *node_ptr;
 			symApply(HPsi.weighted_[node], Psi.weighted_[node], hmats, H, node);
 		}
+	}
+
+	SymMatrixTree weightedContraction(const SymTensorTree& Bra, const SymTensorTree& Ket,
+		const Tree& tree) {
+//		SymMatrixTree rho(tree);
+
 	}
 
 	MatrixTreecd mixedDotProduct(const TensorTreecd& Psi, const SymTensorTree& spsi,

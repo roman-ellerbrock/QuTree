@@ -8,6 +8,7 @@
 #include "Edge.h"
 #include "LinearizedLeaves.h"
 #include <map>
+#include <numeric>
 
 typedef vector<reference_wrapper<Node>> LinearizedNodes;
 
@@ -100,16 +101,16 @@ public:
 
 	/// get reference to Physical Coordinate i/nPhysNodes
 	Leaf& getLeaf(size_t i);
-	const Leaf& getLeaf(size_t i) const;
+	[[nodiscard]] const Leaf& getLeaf(size_t i) const;
 
 	/// get reference to mctdh-node i/nmctdhNodes
 	Node& getNode(size_t i);
-	const Node& getNode(size_t i) const;
+	[[nodiscard]] const Node& getNode(size_t i) const;
 
 	/// get reference to the mctdh topnode
 	Node& topNode() { return linearizedNodes_.back(); }
 
-	const Node& topNode() const { return linearizedNodes_.back(); }
+	[[nodiscard]] const Node& topNode() const { return linearizedNodes_.back(); }
 
 	/// Assign new indices to leaves
 	void reindexLeafModes(map<size_t, size_t> Map);
@@ -161,6 +162,13 @@ public:
 	const vector<Edge>& edges() const { return edges_; }
 
 	const LinearizedNodes& nodes() const { return linearizedNodes_; }
+
+	/// return range of 1 to n_leaves
+	[[nodiscard]] vector<size_t> rangeLeaves() const {
+		vector<size_t> vec(nLeaves());
+		std::iota(vec.begin(), vec.end(), 0);
+		return vec;
+	}
 
 protected:
 	void linearizeNodes();
