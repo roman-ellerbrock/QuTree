@@ -13,13 +13,24 @@
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {
 	// A[dim1, dim2] --> A[dim2, dim1]
-	/// simple in-place transpose
-	for (size_t j = 0; j < dim2; ++j) {
-		for (size_t i = 0; i < dim1; ++i) {
-//			dest[j + dim2 * i] = src[i + dim1 * j];
-			dest[j + dim2 * i] = beta * dest[j + dim2 * i] + src[i + dim1 * j];
-		}
-	}
+
+    // empirical number determining the blocking size
+    constexpr size_t stride = 12;
+
+    // pre-allocate running indices
+    size_t jj,ii,j,i;
+
+    for(jj = 0; jj < dim1; jj += stride){
+        const size_t jend = std::min(dim1, jj + stride);
+        for(ii = 0; ii < dim2; ii += stride){
+            const size_t iend = std::min(dim2, ii + stride);
+            for(i = ii; i < iend; ++i){
+                for(j = jj; j < jend; ++j){
+                    dest[i + dim2 * j] = src[j + dim1 * i] + beta * dest[i + dim2 * j];
+                }
+            }
+        }
+    }
 }
 
 template<typename T, int blocksize>
@@ -754,6 +765,7 @@ template void contraction2(Matrix<cd>& h, const Tensor<cd>& bra, const Tensor<cd
 	Tensor<cd>& bra_work, Tensor<cd>& ket_work,
 	size_t A, size_t B, size_t B2, size_t C, bool zero);
 
+template void transpose(double *dest, const double *src, size_t dim1, size_t dim2, double beta);
 template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2, cd beta);
 
 template void transpose2<complex<double>, 4>(cd *dest, const cd *src, size_t lda, size_t ldb);

@@ -518,3 +518,30 @@ TEST(TensorBLAS, threeResultingIndexContraction){
 }
 
 
+TEST(TensorBLAS, blockingTranspose) {
+
+    const size_t cols = 19;
+    const size_t rows = 31;
+
+    Tensor<double> test({rows, cols});
+    // fill in test data;
+    std::iota(test.coeffs_, test.coeffs_ + test.shape().totalDimension(), 1);
+    Tensor<double> reference_result({cols, rows});
+    Tensor<double> routine_result({cols, rows});
+
+    double beta = 0.;
+    transpose(routine_result.coeffs_, test.coeffs_, rows, cols, beta);
+
+    // do manual transpose as reference result
+    for(size_t i = 0; i < rows; ++i){
+        for(size_t j = 0; j < cols; ++j){
+            reference_result(j,i) = test(i,j);
+        }
+    }
+
+    for(size_t i = 0; i < test.shape().totalDimension(); ++i){
+        ASSERT_DOUBLE_EQ(reference_result.coeffs_[i], routine_result.coeffs_[i]);
+    }
+}
+
+
