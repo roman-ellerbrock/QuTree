@@ -13,13 +13,26 @@
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {
 	// A[dim1, dim2] --> A[dim2, dim1]
-	/// simple in-place transpose
-	for (size_t j = 0; j < dim2; ++j) {
-		for (size_t i = 0; i < dim1; ++i) {
-//			dest[j + dim2 * i] = src[i + dim1 * j];
-			dest[j + dim2 * i] = beta * dest[j + dim2 * i] + src[i + dim1 * j];
-		}
-	}
+    // using simple blocking algorithm
+
+    // empirical number determining the blocking size
+    constexpr size_t stride = 6;
+
+    // pre-allocate running indices
+    size_t jj,ii,j,i;
+
+    for(jj = 0; jj < dim1; jj += stride){
+        const size_t jend = std::min(dim1, jj + stride);
+        for(ii = 0; ii < dim2; ii += stride){
+            const size_t iend = std::min(dim2, ii + stride);
+            for(j = jj; j < jend; ++j){
+                for(i = ii; i < iend; ++i){
+                    dest[i + dim2 * j] = src[j + dim1 * i];
+                }
+            }
+        }
+    }
+
 }
 
 template<typename T, int blocksize>
