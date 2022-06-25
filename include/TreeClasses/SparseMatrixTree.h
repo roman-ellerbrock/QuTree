@@ -27,13 +27,13 @@ public:
 	using SparseNodeAttribute<Matrix<T>>::size;
 
 	/// Create HoleMatrixTree for a given tree-marker
-	SparseMatrixTree(shared_ptr<SparseTree>& active_, const Tree& tree)
+	SparseMatrixTree(shared_ptr<SparseTree> active_, const Tree& tree)
 	: SparseNodeAttribute<Matrix<T>>(active_, tree) {
 		initialize(tree);
 	}
 
-//	SparseMatrixTree(const Tree& tree)
-//		: SparseMatrixTree(make_shared<SparseTree>(tree), tree) {}
+	explicit SparseMatrixTree(const Tree& tree)
+		: SparseMatrixTree(make_shared<SparseTree>(tree), tree) {}
 
 	/// Create HoleMatrixTree only for relevant nodes for a given Operator
 	SparseMatrixTree(const MLO<T>& M, const Tree& tree, bool tail = true, bool inverse_tree = false)

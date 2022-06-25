@@ -27,16 +27,22 @@ public:
 		SparseNodeAttribute::initialize(tree);
 	}
 
-	/// Construct obejct for previously marked active_ nodes
-	SparseNodeAttribute(shared_ptr<SparseTree>& active_,
+	/// Construct object for previously marked active_ nodes
+	SparseNodeAttribute(shared_ptr<SparseTree> active_,
 		const Tree& tree)
-		: active_(active_) {
+		: active_(move(active_)) {
 		SparseNodeAttribute::initialize(tree);
 	}
 
-	/// Construct obejct for previously marked active_ nodes
+	/// Construct object for previously marked active_ nodes
 	SparseNodeAttribute(const SparseTree& stree, const Tree& tree)
 		: active_(make_shared<SparseTree>(stree)) {
+		SparseNodeAttribute::initialize(tree);
+	}
+
+	/// Construct object for previously marked active_ nodes
+	explicit SparseNodeAttribute(const Tree& tree)
+		: active_(make_shared<SparseTree>(tree)) {
 		SparseNodeAttribute::initialize(tree);
 	}
 
@@ -72,13 +78,13 @@ public:
 	}
 
 	/// Number of active_ nodes
-	size_t size() const { return attributes_.size(); }
+	[[nodiscard]] size_t size() const { return attributes_.size(); }
 
 	/// Getter to TreeMarker
-	const SparseTree& sparseTree() const { return *active_.get(); }
+	[[nodiscard]] const SparseTree& sparseTree() const { return *active_; }
 
 	/// Check whether node is active_
-	size_t isActive(const Node& node) const {
+	[[nodiscard]] size_t isActive(const Node& node) const {
 		return active_->isActive(node);
 	}
 

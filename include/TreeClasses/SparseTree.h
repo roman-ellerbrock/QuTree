@@ -36,8 +36,8 @@ public:
 
 	SparseTree(const SOPcd& sop, const Tree& tree, bool tail = true);
 
-	explicit SparseTree(const Tree& tree)
-	: SparseTree(tree.rangeLeaves(), tree) {}
+	SparseTree(const Tree& tree)
+	: SparseTree(tree.rangeLeaves(), tree, true, false) {}
 
 	void SparseInitialize(const vector<size_t>& modes,
 		const Tree& tree, bool tail = true);
@@ -45,34 +45,34 @@ public:
 	void initializeInverse(const SparseTree& stree,
 		const Tree& tree);
 
-	size_t isActive(const Node& node) const {
+	[[nodiscard]] size_t isActive(const Node& node) const {
 		size_t count = co_address_.count(node.address());
 		return (count != 0);
 	}
 
-	size_t size() const { return nodes_.size(); }
+	[[nodiscard]] size_t size() const { return nodes_.size(); }
 
-	vector<const Node *>::const_iterator begin() const {
+	[[nodiscard]] vector<const Node *>::const_iterator begin() const {
 		return nodes_.begin();
 	}
 
-	vector<const Node *>::const_iterator end() const {
+	[[nodiscard]] vector<const Node *>::const_iterator end() const {
 		return nodes_.end();
 	}
 
-	const Node* back() const { return nodes_.back(); }
+	[[nodiscard]] const Node* back() const { return nodes_.back(); }
 
-	const Node& node(size_t n) const {
+	[[nodiscard]] const Node& node(size_t n) const {
 		assert(n < nodes_.size());
 		return *nodes_[n];
 	}
 
-	size_t sparseAddress(const Node& node) const {
+	[[nodiscard]] size_t sparseAddress(const Node& node) const {
 		size_t addr = node.address();
 		return co_address_.at(addr);
 	}
 
-	vector<size_t> leafIndices() const {
+	[[nodiscard]] vector<size_t> leafIndices() const {
 		vector<size_t> idxs;
 		for (const Node* node_ptr : nodes_) {
 			const Node& node = *node_ptr;

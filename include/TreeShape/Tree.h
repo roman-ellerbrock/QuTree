@@ -83,16 +83,16 @@ public:
 	void info(ostream& os = cout) const;
 
 	/// number of Nodes
-	size_t nTotalNodes() const { return root_.nTotalNodes(); }
+	[[nodiscard]] size_t nTotalNodes() const { return root_.nTotalNodes(); }
 
 	/// number of logical nodes
-	size_t nNodes() const { return root_.nNodes(); }
+	[[nodiscard]] size_t nNodes() const { return root_.nNodes(); }
 
 	/// number of physical nodes
-	size_t nLeaves() const { return root_.nLeaves(); }
+	[[nodiscard]] size_t nLeaves() const { return root_.nLeaves(); }
 
 	/// Number of states
-	size_t nStates() const { return topNode().shape().lastDimension(); }
+	[[nodiscard]] size_t nStates() const { return topNode().shape().lastDimension(); }
 
 	/// Return the reference to the next node.
 	/// This routine is only used for initialization once.
@@ -133,23 +133,23 @@ public:
 
 	/// Bottom-up iterator over all nodes in the mctdh-tree
 	/// For top-up iteration examples refer to e.g. the density-matrix class.
-	vector<reference_wrapper<Node>>::const_iterator begin() const {
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_iterator begin() const {
 		return linearizedNodes_.begin();
 	}
 
 	/// Bottom-up const iterator over all nodes in the mctdh-tree
 	/// For top-up iteration examples refer to e.g. the density-matrix class.
-	vector<reference_wrapper<Node>>::const_iterator end() const {
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_iterator end() const {
 		return linearizedNodes_.end();
 	}
 
 	/// Top-down iterator over all nodes in the mctdh-tree
-	vector<reference_wrapper<Node>>::const_reverse_iterator rbegin() const {
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_reverse_iterator rbegin() const {
 		return linearizedNodes_.rbegin();
 	}
 
 	/// Bottom-up const iterator over all nodes in the mctdh-tree
-	vector<reference_wrapper<Node>>::const_reverse_iterator rend() const {
+	[[nodiscard]] vector<reference_wrapper<Node>>::const_reverse_iterator rend() const {
 		return linearizedNodes_.rend();
 	}
 
@@ -159,9 +159,9 @@ public:
 	/// Human readable output of the tree shape
 	void print(ostream& os = cout) const;
 
-	const vector<Edge>& edges() const { return edges_; }
+	[[nodiscard]] const vector<Edge>& edges() const { return edges_; }
 
-	const LinearizedNodes& nodes() const { return linearizedNodes_; }
+	[[nodiscard]] const LinearizedNodes& nodes() const { return linearizedNodes_; }
 
 	/// return range of 1 to n_leaves
 	[[nodiscard]] vector<size_t> rangeLeaves() const {
