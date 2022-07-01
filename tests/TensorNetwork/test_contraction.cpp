@@ -73,7 +73,6 @@ SUITE (contraction) {
 				CHECK_CLOSE(0., residual(sChi, sPsi), eps);
 		}
 	}
-
 	TEST_FIXTURE(Trees, consistency2) {
 		TensorTreecd Psi(tree_);
 		for (const Node* node : Psi.nodes_) {

@@ -7,6 +7,7 @@ set(QuTree_INCLUDE_FILES
         # Tensor
         src/Tensor/Tensor
         src/Tensor/Tensor.h
+        src/Tensor/TensorAllocator.h
         src/Tensor/TensorBLAS1.h
         src/Tensor/TensorBLAS2.h
         src/Tensor/TensorLapack.h
@@ -45,6 +46,7 @@ set(QuTree_SOURCE_FILES
 
         # Tensor/
         src/Tensor/SVD.cpp
+        src/Tensor/TensorAllocator.cpp
         src/Tensor/TensorShape.cpp
         src/Tensor/TensorBLAS1.cpp
         src/Tensor/TensorBLAS2.cpp

@@ -52,13 +52,11 @@ TensorTree<T> tensorTree(TensorTree<T> Psi, const TensorTree<T>& mat,
 	function<Tensor<T>(const TensorShape&)> f) {
 
 	for (const Node* node : mat.nodes_) {
-		node->info();
 		Psi[node] = f(node->shape_);
 	}
 
 	for (const Edge* edge : mat.edges_) {
 		const Node& node = edge->from();
-		edge->info();
 		Psi[edge] = Psi[node];
 	}
 	Psi.normalize();

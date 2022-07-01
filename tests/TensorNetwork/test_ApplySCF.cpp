@@ -47,13 +47,12 @@ SUITE (ApplySCF) {
 		/// @TODO: make sure this is correctly initialized (Psi everywhere but at nodes that are changed), check edges, etc.
 		TensorTreecd hchi = tensorTreecd(chi_, mat[0], randomcd);
 
-		contraction(mat, hchi, chi_, cnot);
+//		contraction(mat, hchi, chi_, cnot);
 
 		/// @TODO: check whether this works the same sweep way that normalize does.
-		apply(hchi, mat, chi_, cnot, 10);
+//		apply(hchi, mat, chi_, cnot, 10);
 
-		hchi.print();
-		output(cout, hchi);
+//		output(cout, hchi);
 
 	}
 }
