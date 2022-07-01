@@ -21,6 +21,7 @@ include_directories(${UTPP_INCLUDE_DIRS})
 set(QuTree_tests
         # Tensor tests
         Tensor/test_Tensor.cpp
+        Tensor/test_TensorAllocator.cpp
         Tensor/test_TensorBLAS1.cpp
         Tensor/test_TensorBLAS2.cpp
         Tensor/test_TensorLapack.cpp
