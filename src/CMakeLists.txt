@@ -46,7 +46,7 @@ set(QuTree_SOURCE_FILES
 
         # Tensor/
         src/Tensor/SVD.cpp
-        src/Tensor/TensorAllocator.cpp
+        src/Tensor/PolymorphicMemory.cpp
         src/Tensor/TensorShape.cpp
         src/Tensor/TensorBLAS1.cpp
         src/Tensor/TensorBLAS2.cpp
