@@ -140,8 +140,8 @@ endif()
 if (openmp)
     find_package(OpenMP REQUIRED)
     target_link_libraries(QuTree PRIVATE OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran)
-    set(QuTree_RELEASE_FLAGS "-openmp ${QuTree_RELEASE_FLAGS}")
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
+    set(QuTree_RELEASE_FLAGS "-fopenmp ${QuTree_RELEASE_FLAGS}")
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fopenmp")
 endif()
 
 target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
@@ -155,7 +155,7 @@ target_compile_features(QuTree PUBLIC cxx_std_17)
 
 set(FLAGS_VECTORIZE "-fopenmp-simd -march=native")
 set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp -Ofast -ffast-math")
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Ofast -ffast-math")
 
 #include(vectorization.cmake)
 
