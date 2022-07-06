@@ -43,6 +43,7 @@ set(QuTree_INCLUDE_FILES
         )
 
 set(QuTree_SOURCE_FILES
+	src/testcuda.cu
 
         # Tensor/
         src/Tensor/SVD.cpp

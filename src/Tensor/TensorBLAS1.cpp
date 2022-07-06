@@ -2,6 +2,7 @@
 // Created by Roman Ellerbrock on 11/7/21.
 //
 
+#include <cuda_runtime.h>
 #include "Tensor/TensorBLAS1.h"
 #include "Tensor/Tensor.hpp"
 #include "stdafx.h"

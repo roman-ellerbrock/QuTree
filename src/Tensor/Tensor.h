@@ -1,6 +1,7 @@
 #pragma once
 #include "TensorShape.h"
 #include "rng.h"
+#include <functional>
 
 /**
  * \defgroup Core
@@ -158,10 +159,10 @@ typedef Tensor<double> Tensord;
 //////////////////////////////////////////////////////////
 
 template<typename T>
-void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f);
+void elementwise(Tensor<T>& res, const Tensor<T>& A, const std::function<T(T)>& f);
 
 template<typename T>
-Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f);
+Tensor<T> elementwise(const Tensor<T>& A, const std::function<T(T)>& f);
 
 template<typename T>
 ostream& operator<<(ostream& os, const Tensor<T>& A);

@@ -66,6 +66,25 @@ if (USE_INTERNAL_EIGEN OR NOT TARGET Eigen3::Eigen)
 endif()
 
 #####################################################################
+# CUDA support via LAPACK++/BLAS++
+#####################################################################
+find_package(CUDA REQUIRED)
+enable_language(CUDA)
+#find_package(BLAS REQUIRED)
+#find_package(LAPACK REQUIRED)
+#if (BLAS_FOUND)
+#	target_compile_options(QuTree PRIVATE ${BLAS_LINKER_FLAGS})
+#	target_link_libraries(QuTree ${BLAS_LIBRARIES})
+#endif()
+
+#target_link_libraries(QuTree  ${CUDA_LIBRARIES} -lcublas -lcurand)
+#target_include_directories(cmakeCUDA ${PROJECT_DIRECTORY})
+#set_target_properties(cmakeCUDA PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(QuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+
+
+#####################################################################
 # Target Installation setup
 #####################################################################
 # Set up BLAS / LAPACK
@@ -90,6 +109,7 @@ target_include_directories(QuTree
         $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         ${BLAS_INCLUDE}
+	${CUDA_INCLUDE_DIRS}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/deprecated
     )
@@ -138,7 +158,7 @@ if (openmp)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
 endif()
 
-target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${CUDA_LIBRARIES} -lcublas -lcurand)
 
 #####################################################################
 # Set Compiler Flags

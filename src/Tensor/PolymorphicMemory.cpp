@@ -3,6 +3,7 @@
 //
 
 #include "PolymorphicMemory.h"
+#include <string.h>
 
 namespace polymorphic {
 	template<typename T, class D>

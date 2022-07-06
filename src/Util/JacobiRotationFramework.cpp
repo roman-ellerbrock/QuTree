@@ -160,7 +160,6 @@ Matrixcd JacobiRotationFramework::rotate(const Matrixcd& A,
 
 complex<double> JacobiRotationFramework::interpretComplex(const Vectord& vec) {
 	// Cast a Vectord(2) to complex<double>
-	assert(vec.dim() == 2);
 	complex<double> a(vec(0), vec(1));
 	return a;
 }

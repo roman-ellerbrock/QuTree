@@ -180,7 +180,7 @@ template<typename T>
 void contraction(vector<TensorTree<T>>& Svec, const TensorTree<T>& Bra,
 	TensorTree<T> Ket, const SumOfProductsOperator<T>& H) {
 
-	assert(Svec.size() == sop.size());
+	assert(Svec.size() == H.size());
 	for (size_t l = 0; l < Svec.size(); ++l) {
 		contraction(Svec[l], Bra, Ket, H[l]);
 	}

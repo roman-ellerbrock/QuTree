@@ -70,9 +70,8 @@ void SpinGroup::occupy(Tensorcd& A) const {
 	}
 
 	if (A.shape_.lastDimension() > 2 ) {
-		using namespace std::chrono;
 		uniform_real_distribution<double> dist;
-		auto seed = system_clock::now().time_since_epoch().count();
+		auto seed = 123;
 		mt19937 gen(seed);
 		size_t ntensor = A.shape_.lastDimension();
 		size_t dimpart = A.shape_.lastBefore();

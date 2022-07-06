@@ -5,6 +5,7 @@
 #ifndef SVD_H
 #define SVD_H
 #include "Tensor.h"
+#include <functional>
 
 template<typename T>
 class SVD: public tuple<Tensor<T>, Tensor<T>, Tensord> {

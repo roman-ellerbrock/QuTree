@@ -1,6 +1,7 @@
 #pragma once
 #include "Tensor.h"
 #include "stdafx.h"
+#include <cstring>
 
 template<typename T>
 Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
@@ -111,13 +112,11 @@ Tensor<T>::~Tensor() {
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) const {
-	assert(i < dimtot);
 	return coeffs_[i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) {
-	assert(i < dimtot);
 	return coeffs_[i];
 }
 
@@ -127,25 +126,17 @@ inline T& Tensor<T>::operator()(const size_t i) {
 template<typename T>
 inline const T& Tensor<T>::operator()(const size_t i, const size_t n) const {
 	size_t dimpart = shape_.lastBefore();
-	assert(i < dimpart);
-	assert(n < shape_.lastDimension());
 	return coeffs_[n * dimpart + i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
 	size_t dimpart = shape_.lastBefore();
-	assert(i < dimpart);
-	assert(n < shape_.lastDimension());
 	return coeffs_[n * dimpart + i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
-	assert(leaf < shape_.order());
-	assert(bef < shape_.before(leaf));
-	assert(i < shape_[leaf]);
-	assert(aft < shape_.after(leaf));
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
@@ -154,10 +145,6 @@ inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
 
 template<typename T>
 inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) const {
-	assert(leaf < shape_.order());
-	assert(bef < shape_.before(leaf));
-	assert(i < shape_[leaf]);
-	assert(aft < shape_.after(leaf));
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
