@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SUITE (TensorAllocator) {
+SUITE (polymorphicMemoryCPU) {
 
 	TEST (CPU_allocate) {
 		size_t n = 20;
@@ -16,6 +16,7 @@ SUITE (TensorAllocator) {
 			A.data()[i] = 1.;
 		}
 			CHECK_EQUAL(n, A.size());
+			CHECK_EQUAL(false, (A.data() == nullptr));
 	}
 
 	TEST (CPU_copyConstructor) {

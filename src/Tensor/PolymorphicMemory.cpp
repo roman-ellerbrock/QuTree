@@ -75,8 +75,8 @@ namespace polymorphic {
 	}
 
 	template
-	class memory<complex<double>, None>;
+	class memory<complex<double>, CPU>;
 
 	template
-	class memory<double, None>;
+	class memory<double, CPU>;
 }

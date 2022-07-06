@@ -17,9 +17,9 @@ namespace polymorphic {
 	template<typename T, class D>
 	void free(T *data);
 
-	struct None;
+	struct CPU;
 
-	template<typename T, class Queue = None>
+	template<typename T, class Queue = CPU>
 	class memory {
 		using size_type = size_t;
 	public:
@@ -35,6 +35,8 @@ namespace polymorphic {
 		void resize(size_type);
 
 		[[nodiscard]] size_type size() const { return size_; }
+		[[nodiscard]] size_type nBatches() const { return 1; }
+		[[nodiscard]] size_type batchSize() const { return size() / nBatches(); }
 
 		T *data() { return data_; }
 
