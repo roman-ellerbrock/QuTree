@@ -3,6 +3,7 @@
 //
 
 #include "Tensor/TensorBLAS2.h"
+#include <lapack.hh>
 
 typedef complex<double> cd;
 

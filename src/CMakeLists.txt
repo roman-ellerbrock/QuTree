@@ -43,8 +43,6 @@ set(QuTree_INCLUDE_FILES
         )
 
 set(QuTree_SOURCE_FILES
-	src/testcuda.cu
-
         # Tensor/
         src/Tensor/SVD.cpp
         src/Tensor/PolymorphicMemory.cpp
@@ -90,3 +88,14 @@ set(QuTree_SOURCE_FILES
         src/Util/JacobiRotationFramework.cpp
         src/Util/SimultaneousDiagonalization.cpp
         )
+
+if (CUDA_FEATS)
+	set (QuTree_INCLUDE_FILES_CUDA 
+	src/Tensor/PolymorphicMemory.cuh
+	)
+
+	set (QuTree_SOURCE_FILES_CUDA 
+	src/Tensor/PolymorphicMemory_CUDA.cpp
+	src/Tensor/PolymorphicMemory.cu
+	)
+endif()

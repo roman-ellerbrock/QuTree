@@ -5,7 +5,6 @@
 #ifndef TENSORBLAS2_H
 #define TENSORBLAS2_H
 #include "Tensor/TensorBLAS1.h"
-#include <lapack.hh>
 
 
 /// ===================== Matrix/Tensor Products ====================
@@ -27,7 +26,7 @@ void gemm(Tensor<T>& c, const Tensor<T>& a, const Tensor<T>& b,
 	T alpha = 1., T beta = 0., blas::Op op_a = blas::Op::NoTrans, blas::Op op_b = blas::Op::NoTrans);
 
 template<typename T>
-Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b, T alpha = 1.,
+Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b, T alpha = (T) 1.,
 	blas::Op op_a = blas::Op::NoTrans, blas::Op op_b = blas::Op::NoTrans);
 
 template<typename T>

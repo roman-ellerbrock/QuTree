@@ -17,6 +17,12 @@ namespace polymorphic {
 	template<typename T, class D>
 	void free(T *data);
 
+	template<typename T, class deviceA, class deviceB>
+	void transfer(T *d_dest, const T* h_src, const size_t n, const size_t m);
+
+	template<typename T, class deviceA, class deviceB>
+	void transferFromDevice(T *d_dest, const T* h_src, const size_t n, const size_t m);
+
 	struct CPU;
 
 	template<typename T, class Queue = CPU>

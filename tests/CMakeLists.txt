@@ -22,6 +22,8 @@ set(QuTree_tests
         # Tensor tests
         Tensor/test_Tensor.cpp
         Tensor/test_PolymorphicMemory.cpp
+	Tensor/test_PolymorphicMemory.cu
+	#	Tensor/test_PolymorphicMemory_CUDA.cpp
         Tensor/test_TensorBLAS1.cpp
         Tensor/test_TensorBLAS2.cpp
         Tensor/test_TensorLapack.cpp
@@ -63,9 +65,29 @@ set(QuTree_tests
         )
 
 add_executable(TestQuTree ${QuTree_tests})
-target_link_libraries(TestQuTree QuTree)
-target_link_libraries(TestQuTree UnitTest++)
-target_compile_features(TestQuTree PRIVATE cxx_std_14)
+
+#target_link_libraries(TestQuTree QuTree)
+#target_link_libraries(TestQuTree UnitTest++)
+
+target_include_directories(TestQuTree 
+	PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_PROJECT_DIR}/src>
+        ${BLAS_INCLUDE}
+	${CUDA_INCLUDE_DIRS}
+	)
+
+target_compile_features(TestQuTree INTERFACE cxx_std_17)
+
+if (CUDA_FEATS)
+	set_target_properties(TestQuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+	target_link_options(TestQuTree INTERFACE ${CUDA_FLAGS})
+endif()
+target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++ ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+#target_link_libraries(TestQuTree UnitTest++)
+
+#target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++)
+##target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++ ${CUDA_FLAGS})
+
 
 # run unit tests as post build step
 add_custom_command(TARGET TestQuTree

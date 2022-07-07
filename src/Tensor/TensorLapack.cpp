@@ -3,6 +3,7 @@
 //
 #include "Tensor/TensorLapack.h"
 #include "Check.h"
+#include <lapack.hh>
 
 typedef complex<double> cd;
 

@@ -19,7 +19,7 @@ enable_language(CXX)
 enable_language(Fortran)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_policy(SET "CMP0042" NEW)
-# set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
+#set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
 
 #####################################################################
 # Target setup
@@ -31,7 +31,7 @@ set(QuTree_INSTALL_CMAKE_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/QuTree)
 #include(src/CMakeLists.txt)
 include(src/CMakeLists.txt)
 
-add_library(QuTree SHARED ${QuTree_SOURCE_FILES})
+add_library(QuTree SHARED ${QuTree_SOURCE_FILES} ${QuTree_SOURCE_FILES_CUDA})
 add_library(QuTree::QuTree ALIAS QuTree)
 
 #####################################################################
@@ -68,19 +68,25 @@ endif()
 #####################################################################
 # CUDA support via LAPACK++/BLAS++
 #####################################################################
-find_package(CUDA REQUIRED)
-enable_language(CUDA)
-#find_package(BLAS REQUIRED)
-#find_package(LAPACK REQUIRED)
-#if (BLAS_FOUND)
-#	target_compile_options(QuTree PRIVATE ${BLAS_LINKER_FLAGS})
-#	target_link_libraries(QuTree ${BLAS_LIBRARIES})
-#endif()
-
-#target_link_libraries(QuTree  ${CUDA_LIBRARIES} -lcublas -lcurand)
-#target_include_directories(cmakeCUDA ${PROJECT_DIRECTORY})
-#set_target_properties(cmakeCUDA PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(QuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+option (CUDA_FEATS "Set to On to use CUDA features" ON)
+if (CUDA_FEATS)
+	message("CUDA compilation enabled.")
+	enable_language(CUDA)
+	find_package(CUDA REQUIRED)
+	set_target_properties(QuTree PROPERTIES 
+		CUDA_SEPARABLE_COMPILATION ON
+		)
+	set_target_properties(QuTree PROPERTIES 
+		IMPORTED_LOCATION "/usr/local/cuda/lib64/"
+		INTERFACE_INCLUDE_DIRECTORIES "/usr/local/cuda/include"
+	)
+	set(CUDA_FLAGS "-lcublas -lcurand")
+	#	set(CUDA_FLAGS "${CUDA_LIBRARIES} -lcublas -lcurand")
+	separate_arguments(CUDA_FLAGS UNIX_COMMAND "${CUDA_FLAGS}")
+	target_link_options(QuTree PUBLIC ${CUDA_FLAGS})
+	message("CUDA Flags: ${CUDA_FLAGS}")
+	message("CUDA Include directories: ${CUDA_INCLUDE_DIRS}")
+endif()
 
 
 
@@ -88,20 +94,18 @@ set_target_properties(QuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 # Target Installation setup
 #####################################################################
 # Set up BLAS / LAPACK
-if (APPLE)
-#    set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
-#    set(BLAS_INCLUDE "/usr/local/opt/openblas/include")
-
-    # BETA: try using blas++/lapack++
-    set(BLAS_LIBRARIES "/opt/slate/lib/libblaspp.so")
-    set(BLAS_INCLUDE "/opt/slate/include/")
-    set(LAPACK_LIBRARIES "/opt/slate/lib/liblapackpp.so")
-    set(LAPACK_INCLUDE "/opt/slate/include/")
-elseif(UNIX)
-    set(BLA_VENDER OpenBLAS)
-    find_package(BLAS REQUIRED)
-    find_package(LAPACK REQUIRED)
-endif()
+find_library(BLAS_LIBRARIES
+	NAMES blaspp
+	HINTS /opt/slate/lib 
+	REQUIRED)
+find_library(LAPACK_LIBRARIES
+	NAMES lapackpp
+	HINTS /opt/slate/lib 
+	REQUIRED)
+message("BLAS++ libraries: ${BLAS_LIBRARIES}")
+message("LAPACK++ libraries: ${LAPACK_LIBRARIES}")
+#find_library(${BLAS_LIBRARIES} NAMES blaspp PATHS /opt/slate/lib)
+#find_library(${LAPACK_LIBRARIES} NAMES lapackpp PATHS /opt/slate/lib)
 
 # Set up headers in include/ for install & build and src/ for just building
 target_include_directories(QuTree
@@ -158,7 +162,7 @@ if (openmp)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -openmp")
 endif()
 
-target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} ${CUDA_LIBRARIES} -lcublas -lcurand)
+target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
 #####################################################################
 # Set Compiler Flags
