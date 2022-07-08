@@ -37,15 +37,13 @@ include(cmake/cuda.cmake)
 # find BLAS++/LAPACK++ backends
 include(cmake/FindBLASPP.cmake)
 
-# Find Eigen or download/build locally
-include(cmake/FindEigen.cmake)
-
 include(cmake/VectorizationSimple.cmake)
 
 include(cmake/OpenMP.cmake)
 
 # perform the linking
-target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(QuTree PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+#target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
 # Install instructions
 include(cmake/Install.cmake)
