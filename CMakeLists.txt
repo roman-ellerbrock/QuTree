@@ -34,6 +34,9 @@ include(src/CMakeLists.txt)
 add_library(QuTree SHARED ${QuTree_SOURCE_FILES} ${QuTree_SOURCE_FILES_CUDA})
 add_library(QuTree::QuTree ALIAS QuTree)
 
+
+include(cmake/cuda.cmake)
+
 #####################################################################
 # Find Required packages
 #####################################################################
@@ -64,31 +67,6 @@ if (USE_INTERNAL_EIGEN OR NOT TARGET Eigen3::Eigen)
         EXPORT QuTree-export
         DESTINATION ${QuTree_INSTALL_INC_DIR})
 endif()
-
-#####################################################################
-# CUDA support via LAPACK++/BLAS++
-#####################################################################
-option (CUDA_FEATS "Set to On to use CUDA features" ON)
-if (CUDA_FEATS)
-	message("CUDA compilation enabled.")
-	enable_language(CUDA)
-	find_package(CUDA REQUIRED)
-	set_target_properties(QuTree PROPERTIES 
-		CUDA_SEPARABLE_COMPILATION ON
-		)
-	set_target_properties(QuTree PROPERTIES 
-		IMPORTED_LOCATION "/usr/local/cuda/lib64/"
-		INTERFACE_INCLUDE_DIRECTORIES "/usr/local/cuda/include"
-	)
-	set(CUDA_FLAGS "-lcublas -lcurand")
-	#	set(CUDA_FLAGS "${CUDA_LIBRARIES} -lcublas -lcurand")
-	separate_arguments(CUDA_FLAGS UNIX_COMMAND "${CUDA_FLAGS}")
-	target_link_options(QuTree PUBLIC ${CUDA_FLAGS})
-	message("CUDA Flags: ${CUDA_FLAGS}")
-	message("CUDA Include directories: ${CUDA_INCLUDE_DIRS}")
-endif()
-
-
 
 #####################################################################
 # Target Installation setup
