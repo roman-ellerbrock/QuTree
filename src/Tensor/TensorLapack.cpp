@@ -22,10 +22,10 @@ void qr(Tensor<T>& Q, const Tensor<T>& A) {
 	size_t len = (m > n) ? m : n;
 	tau.resize({len});
 
-	CHECK(lapack::geqrf(m, n, Q.coeffs_, lda, tau.coeffs_));
+	CHECK(lapack::geqrf(m, n, Q.data(), lda, tau.data()));
 
 	/// generate Q matrix from reflectors
-	CHECK(lapack::ungqr(m, n, n, Q.coeffs_, m, tau.coeffs_));
+	CHECK(lapack::ungqr(m, n, n, Q.data(), m, tau.data()));
 }
 
 template void qr(Tensor<cd>& Q, const Tensor<cd>& A);
@@ -172,7 +172,7 @@ void svd(SVD<T>& x, Tensor<T> A) {
 	lapack::Job jobu = lapack::Job::SomeVec;
 	lapack::Job jobvt = lapack::Job::SomeVec;
 
-	lapack::gesvd(jobu, jobvt, m, n, A.coeffs_, lda, sigma.coeffs_, U.coeffs_, ldu, VT.coeffs_, ldvt);
+	lapack::gesvd(jobu, jobvt, m, n, A.data(), lda, sigma.data(), U.data(), ldu, VT.data(), ldvt);
 }
 
 template void svd(SVDcd&, Tensorcd);
@@ -292,7 +292,7 @@ void heev(SpectralDecomposition<T>& x) {
 	auto jobz = lapack::Job::Vec;
 	auto uplo = lapack::Uplo::Upper;
 
-	CHECK(lapack::heev(jobz, uplo, n, A.coeffs_, n, ev.coeffs_));
+	CHECK(lapack::heev(jobz, uplo, n, A.data(), n, ev.data()));
 
 	phaseConvention(A);
 }
@@ -322,7 +322,7 @@ void gesv(Tensor<T>& A, Tensor<T>& B) {
 	size_t lda = n;
 	size_t ldb = n;
 	Tensor<int64_t> ipiv({n});
-	CHECK(lapack::gesv(n, m, A.coeffs_, lda, ipiv.coeffs_, B.coeffs_, ldb));
+	CHECK(lapack::gesv(n, m, A.data(), lda, ipiv.data(), B.data(), ldb));
 
 }
 
@@ -330,19 +330,19 @@ template void gesv(Tensor<d>& A, Tensor<d>& B);
 template void gesv(Tensor<cd>& A, Tensor<cd>& B);
 
 template <typename T>
-void geev(FactorizedGe<T>& x, const Tensor<T>& A) {
+void geev(FactorizedGe<T>& x, Tensor<T> A) {
 	size_t n = A.shape_.lastDimension();
 	size_t m = A.shape_.lastBefore();
 	size_t lda = n;
 	size_t ldvl = n;
 	size_t ldvr = n;
 
-	CHECK(lapack::geev(lapack::Job::Vec, lapack::Job::Vec, n, A.coeffs_, lda, x.ev().coeffs_,
-		x.VL().coeffs_, ldvl, x.VR().coeffs_, ldvr));
+	CHECK(lapack::geev(lapack::Job::Vec, lapack::Job::Vec, n, A.data(), lda, x.ev().data(),
+		x.VL().data(), ldvl, x.VR().data(), ldvr));
 
 }
 
-template void geev(FactorizedGe<cd>& x, const Tensor<cd>& A);
+template void geev(FactorizedGe<cd>& x, Tensor<cd> A);
 
 template <typename T>
 FactorizedGe<T> geev(const Tensor<T>& A) {

@@ -41,12 +41,15 @@ include(cmake/VectorizationSimple.cmake)
 
 include(cmake/OpenMP.cmake)
 
+include(cmake/PolymorphicMemory.cmake)
+
 # perform the linking
 target_link_libraries(QuTree PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 #target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 target_include_directories(QuTree 
 	PUBLIC 
 	${BLAS_DIRECTORIES}
+	${PolymorphicMemory_DIR}
 )
 
 # Install instructions

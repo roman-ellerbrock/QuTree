@@ -25,7 +25,7 @@ template d nrm2(const Tensor<d>&, size_t);
 template<typename T>
 void axpy(const Tensor<T>& A, Tensor<T>& B, T alpha, size_t inc_a, size_t inc_b) {
 	size_t n = A.shape_.totalDimension() / inc_a;
-	blas::axpy(n, alpha, A.coeffs_, inc_a, B.coeffs_, inc_b);
+	blas::axpy(n, alpha, A.data(), inc_a, B.data(), inc_b);
 }
 
 template void axpy(const Tensor<cd>&, Tensor<cd>&, cd, size_t, size_t);
@@ -85,7 +85,7 @@ template Tensor<cd> operator-(Tensor<cd> A, const Tensor<cd>& B);
 template<typename T, typename U>
 Tensor<T>& operator*=(Tensor<T>& A, const U alpha) {
 	size_t n = A.shape_.totalDimension();
-	blas::scal(n, (T) alpha, A.coeffs_, 1);
+	blas::scal(n, (T) alpha, A.data(), 1);
 	return A;
 }
 
@@ -217,7 +217,7 @@ template<typename T>
 void transpose(Tensor<T>& dest, const Tensor<T>& src) {
 	size_t dim1 = src.shape_.lastBefore();
 	size_t dim2 = src.shape_.lastDimension();
-	transpose(dest.coeffs_, src.coeffs_, dim1, dim2);
+	transpose(dest.data(), src.data(), dim1, dim2);
 	dest.shape_ = transposeToFront(src.shape_, src.shape_.lastIdx());
 }
 
@@ -292,7 +292,7 @@ void transpose(Tensor<T>& dest, const Tensor<T>& src, size_t k, bool back) {
 		b = src.shape_.lastBefore() / src.shape_.before(k);
 		c = src.shape_.lastDimension();
 	}
-	transposeBC(dest.coeffs_, src.coeffs_, a, b, c);
+	transposeBC(dest.data(), src.data(), a, b, c);
 
 	/// transpose shape
 	dest.shape_ = transpose(src.shape_, k, back);

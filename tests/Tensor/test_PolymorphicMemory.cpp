@@ -4,6 +4,7 @@
 
 #include <UnitTest++/UnitTest++.h>
 #include "Tensor/PolymorphicMemory.h"
+#include "hostMemory.h"
 
 using namespace std;
 
@@ -103,5 +104,10 @@ SUITE (polymorphicMemoryCPU) {
 			CHECK_EQUAL(m, A.size());
 	}
 
+
+	TEST (hostMemory_integration) {
+//		using namespace polymorphic;
+		polymorphic::hostMemory<double> host(2020);
+	}
 }
 

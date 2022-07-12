@@ -70,7 +70,7 @@ SpectralDecomposition<T> heev(const Tensor<T>& A);
 
 
 template <typename T>
-void geev(FactorizedGe<T>& x, const Tensor<T>& A);
+void geev(FactorizedGe<T>& x,  Tensor<T> A);
 
 template <typename T>
 FactorizedGe<T> geev(const Tensor<T>& A);

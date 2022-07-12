@@ -200,7 +200,7 @@ SUITE (TensorBLAS1) {
 		Tensorcd B(A.shape_);
 		size_t dim1 = A.shape_.lastBefore();
 		size_t dim2 = A.shape_.lastDimension();
-		transpose(B.coeffs_, A.coeffs_, dim1, dim2, (complex<double>) 0.);
+		transpose(B.data(), A.data(), dim1, dim2, (complex<double>) 0.);
 
 		Tensorcd C({dim2, dim1});
 		for (size_t i = 0; i < C.shape_.lastDimension(); ++i) {
@@ -217,7 +217,7 @@ SUITE (TensorBLAS1) {
 		size_t a = A.shape_.before(k);
 		size_t b = A.shape_[k];
 		size_t c = A.shape_.after(k);
-		transposeAB(B.coeffs_, A.coeffs_, a, b, c);
+		transposeAB(B.data(), A.data(), a, b, c);
 
 		Tensorcd C({b, a, c});
 		for (size_t aft = 0; aft < c; ++aft) {
@@ -237,7 +237,7 @@ SUITE (TensorBLAS1) {
 		size_t a = A.shape_.before(k);
 		size_t b = A.shape_[k];
 		size_t c = A.shape_.after(k);
-		transposeBC(B.coeffs_, A.coeffs_, a, b, c);
+		transposeBC(B.data(), A.data(), a, b, c);
 
 		Tensorcd C({a, c, b});
 		for (size_t aft = 0; aft < c; ++aft) {
@@ -285,7 +285,7 @@ SUITE (TensorBLAS1) {
 		size_t a = A.shape_.before(k);
 		size_t b = A.shape_[k];
 		size_t c = A.shape_.after(k);
-		transposeBC(C.coeffs_, A.coeffs_, a, b, c);
+		transposeBC(C.data(), A.data(), a, b, c);
 			CHECK_CLOSE(0., residual(B, C), eps);
 	}
 
@@ -314,7 +314,7 @@ SUITE (TensorBLAS1) {
 		size_t last = A.shape_.lastDimension();
 		size_t befo = A.shape_.lastBefore();
 		Tensorcd R(A.shape_);
-		transpose(R.coeffs_, A.coeffs_, befo, last);
+		transpose(R.data(), A.data(), befo, last);
 
 		Tensorcd C(A.shape_);
 		transpose(C, A);
@@ -333,7 +333,7 @@ SUITE (TensorBLAS1) {
 		size_t befo = A.shape_.lastBefore();
 		A *= QM::im;
 		Tensorcd R(A.shape_);
-		transpose(R.coeffs_, A.coeffs_, befo, last);
+		transpose(R.data(), A.data(), befo, last);
 		R *= -1.;
 
 		Tensorcd C(A.shape_);

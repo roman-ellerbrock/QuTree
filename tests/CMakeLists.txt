@@ -22,7 +22,7 @@ set(QuTree_tests
         # Tensor tests
         Tensor/test_Tensor.cpp
         Tensor/test_PolymorphicMemory.cpp
-	Tensor/test_PolymorphicMemory.cu
+	#	Tensor/test_PolymorphicMemory.cu
 	#	Tensor/test_PolymorphicMemory_CUDA.cpp
         Tensor/test_TensorBLAS1.cpp
         Tensor/test_TensorBLAS2.cpp
@@ -92,9 +92,12 @@ target_link_libraries(TestQuTree
 )
 #target_link_libraries(TestQuTree UnitTest++)
 
+
+message("Added dir: ${PolymorphicMemory_DIR}")
 target_include_directories(TestQuTree
 	PUBLIC 
 	${BLAS_DIRECTORIES}
+	${PolymorphicMemory_DIR}
 )
 
 #target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++)

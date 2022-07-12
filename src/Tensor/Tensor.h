@@ -2,6 +2,7 @@
 #include "TensorShape.h"
 #include "rng.h"
 #include <functional>
+#include "hostMemory.h"
 
 /**
  * \defgroup Core
@@ -146,8 +147,12 @@ public:
 	void zero();
 
 	TensorShape shape_;
-	T *coeffs_;
+	T *data() { return coeffs_; }
+	const T *data()const { return coeffs_; }
+	polymorphic::hostMemory<T> host_{};
 	bool ownership_;
+private:
+	T *coeffs_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;

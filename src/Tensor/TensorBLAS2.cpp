@@ -30,7 +30,7 @@ void gemm(Tensor<T>& c, const Tensor<T>& a, const Tensor<T>& b,
 	size_t ldc = m;
 
 	blas::gemm(blas::Layout::ColMajor, op_a, op_b, m, n, k,
-		alpha, a.coeffs_, lda, b.coeffs_, ldb, beta, c.coeffs_, ldc);
+		alpha, a.data(), lda, b.data(), ldb, beta, c.data(), ldc);
 }
 
 template void gemm(Tensor<cd>& c, const Tensor<cd>& a, const Tensor<cd>& b,
@@ -90,8 +90,8 @@ void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
 		size_t n = after;
 
 		blas::Op op_B = blas::Op::NoTrans;
-		blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.coeffs_, m, B.coeffs_, k,
-			beta, C.coeffs_, m);
+		blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.data(), m, B.data(), k,
+			beta, C.data(), m);
 
 		return;
 	}
@@ -113,7 +113,7 @@ void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
 	mem.resize(C.shape_);
 
 	for (size_t aft = 0; aft < after; ++aft) {
-		blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.coeffs_, m, &B[aft * pref], n,
+		blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.data(), m, &B[aft * pref], n,
 			zero, &mem[aft * prefC], m);
 		transpose(&C[aft * prefC], &mem[aft * prefC], activeC, before, beta);
 	}
@@ -158,15 +158,15 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t B2 = bra.shape_[k];
 	size_t C = ket.shape_.after(k);
 
-	transposeBC(bra_mem.coeffs_, bra.coeffs_, A, B, C);
-	transposeBC(ket_mem.coeffs_, ket.coeffs_, A, B2, C);
+	transposeBC(bra_mem.data(), bra.data(), A, B, C);
+	transposeBC(ket_mem.data(), ket.data(), A, B2, C);
 
 	size_t AC = A * C;
 	blas::Layout layout = blas::Layout::ColMajor;
 	blas::Op ct = blas::Op::ConjTrans;
 	blas::Op notrans = blas::Op::NoTrans;
-	blas::gemm(layout, ct, notrans, B, B2, AC, alpha, bra_mem.coeffs_, AC, ket_mem.coeffs_, AC, beta,
-		h.coeffs_, B);
+	blas::gemm(layout, ct, notrans, B, B2, AC, alpha, bra_mem.data(), AC, ket_mem.data(), AC, beta,
+		h.data(), B);
 }
 
 template void contraction(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,

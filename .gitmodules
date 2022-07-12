@@ -4,3 +4,6 @@
 [submodule "external/unittest-cpp"]
 	path = tests/external/unittest-cpp
 	url = https://github.com/unittest-cpp/unittest-cpp.git
+[submodule "external/PolymorphicMemory"]
+	path = external/PolymorphicMemory
+	url = https://github.com/roman-ellerbrock/PolymorphicMemory
