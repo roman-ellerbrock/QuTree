@@ -32,10 +32,10 @@ add_library(QuTree::QuTree ALIAS QuTree)
 include(cmake/CompilerFlags.cmake)
 
 # optional cuda support
-include(cmake/cuda.cmake)
+#include(cmake/cuda.cmake)
 
 # find BLAS++/LAPACK++ backends
-include(cmake/FindBLASPP.cmake)
+#include(cmake/FindBLASPP.cmake)
 
 include(cmake/VectorizationSimple.cmake)
 
@@ -44,6 +44,10 @@ include(cmake/OpenMP.cmake)
 # perform the linking
 target_link_libraries(QuTree PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 #target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_include_directories(QuTree 
+	PUBLIC 
+	${BLAS_DIRECTORIES}
+)
 
 # Install instructions
 include(cmake/Install.cmake)

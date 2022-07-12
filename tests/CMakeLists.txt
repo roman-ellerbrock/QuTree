@@ -82,12 +82,23 @@ if (CUDA_FEATS)
 	set_target_properties(TestQuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 	target_link_options(TestQuTree INTERFACE ${CUDA_FLAGS})
 endif()
-target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++ ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+
+target_link_libraries(TestQuTree 
+	PUBLIC 
+	QuTree 
+	UnitTest++ 
+	${BLAS_LIBRARIES} -lblaspp
+	${LAPACK_LIBRARIES} -llapackpp
+)
 #target_link_libraries(TestQuTree UnitTest++)
+
+target_include_directories(TestQuTree
+	PUBLIC 
+	${BLAS_DIRECTORIES}
+)
 
 #target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++)
 ##target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++ ${CUDA_FLAGS})
-
 
 # run unit tests as post build step
 add_custom_command(TARGET TestQuTree
