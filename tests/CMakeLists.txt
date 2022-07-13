@@ -21,12 +21,11 @@ include_directories(${UTPP_INCLUDE_DIRS})
 set(QuTree_tests
         # Tensor tests
         Tensor/test_Tensor.cpp
-        Tensor/test_PolymorphicMemory.cpp
-	#	Tensor/test_PolymorphicMemory.cu
-	#	Tensor/test_PolymorphicMemory_CUDA.cpp
         Tensor/test_TensorBLAS1.cpp
         Tensor/test_TensorBLAS2.cpp
         Tensor/test_TensorLapack.cpp
+
+        Tensor/test_cuTensor.cpp
 
         # Tree tests
         Tree/test_Edge.cpp
@@ -83,12 +82,18 @@ if (CUDA_FEATS)
 	target_link_options(TestQuTree INTERFACE ${CUDA_FLAGS})
 endif()
 
+target_link_directories(TestQuTree
+	PUBLIC	
+	${PolymorphicMemory_LINK}
+)
+
 target_link_libraries(TestQuTree 
 	PUBLIC 
 	QuTree 
 	UnitTest++ 
 	${BLAS_LIBRARIES} -lblaspp
 	${LAPACK_LIBRARIES} -llapackpp
+	polymorphicMemory
 )
 #target_link_libraries(TestQuTree UnitTest++)
 

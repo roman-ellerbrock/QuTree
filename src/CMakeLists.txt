@@ -7,6 +7,7 @@ set(QuTree_INCLUDE_FILES
         # Tensor
         src/Tensor/Tensor
         src/Tensor/Tensor.h
+        src/Tensor/cuTensor.h
         src/Tensor/TensorAllocator.h
         src/Tensor/TensorBLAS1.h
         src/Tensor/TensorBLAS2.h
@@ -52,6 +53,7 @@ set(QuTree_SOURCE_FILES
         src/Tensor/TensorLapack.cpp
         src/Tensor/TensorSlow.cpp
         src/Tensor/Tensor_Instantiations.cpp
+        src/Tensor/cuTensor_Instantiations.cpp
         src/Tensor/stdafx.cpp
 
         # Primitve Basis
