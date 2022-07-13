@@ -48,7 +48,7 @@ SUITE (contraction) {
 
 	TEST(consistency) {
 		Tree tree_ = balancedTree(2, 2, 2);
-		TensorTreecd Psi(tree_);
+		TensorTreecd Psi(tree_, randomcd);
 		for (const Node* node : Psi.nodes_) {
 			Psi[node] = randomcd(node->shape_);
 		}
@@ -74,7 +74,7 @@ SUITE (contraction) {
 		}
 	}
 	TEST_FIXTURE(Trees, consistency2) {
-		TensorTreecd Psi(tree_);
+		TensorTreecd Psi(tree_, randomcd);
 		for (const Node* node : Psi.nodes_) {
 			Psi[node] = randomcd(node->shape_);
 		}

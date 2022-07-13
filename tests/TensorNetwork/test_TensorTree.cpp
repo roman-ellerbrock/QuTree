@@ -20,7 +20,7 @@ SUITE (TensorTree) {
 	double eps = 1e-10;
 
 	TEST_FIXTURE (Trees, constructorSize) {
-		TensorTreecd Psi(tree_);
+		TensorTreecd Psi(tree_, randomcd);
 			CHECK_EQUAL(7, Psi.nodes_.size());
 			CHECK_EQUAL(12, Psi.edges_.size());
 	}
@@ -50,7 +50,7 @@ SUITE (TensorTree) {
 	}
 
 	TEST_FIXTURE(Trees, consistency) {
-		TensorTreecd Psi(tree_);
+		TensorTreecd Psi(tree_, randomcd);
 		for (const Node* node : Psi.nodes_) {
 			Psi[node] = randomcd(node->shape_);
 		}
@@ -58,7 +58,7 @@ SUITE (TensorTree) {
 			Psi[edge] = Psi[edge->from()];
 		}
 
-		TensorTreecd Chi(tree_);
+		TensorTreecd Chi(tree_, randomcd);
 		for (const Node* node : Psi.nodes_) {
 			Chi[node] = Psi[node];
 		}
