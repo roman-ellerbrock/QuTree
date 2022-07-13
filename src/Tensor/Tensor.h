@@ -11,7 +11,7 @@
  * These datastructures include the Vector, Matrix, and Tensor classes.
  */
 
-template<typename T>
+template<typename T, template <typename> class Memory = polymorphic::hostMemory>
 class Tensor
 /**
  * \class Tensor
@@ -101,13 +101,13 @@ public:
 	// Adjust Dimensions
 	//////////////////////////////////////////////////////////
 	// Adjust Dimensions to a new TensorDim
-	[[nodiscard]] Tensor<T> adjustDimensions(const TensorShape& newTDim) const;
+	[[nodiscard]] Tensor<T, Memory> adjustDimensions(const TensorShape& newTDim) const;
 
 	// Adjust the number of the active_ mode
-	[[nodiscard]] Tensor<T> adjustActiveDim(size_t active, size_t mode) const;
+	[[nodiscard]] Tensor<T, Memory> adjustActiveDim(size_t active, size_t mode) const;
 
 	// Adjust the number of Tensors
-	[[nodiscard]] Tensor<T> adjustStateDim(size_t n) const;
+	[[nodiscard]] Tensor<T, Memory> adjustStateDim(size_t n) const;
 
 	// Reshape the tensor but keep the total size
 	void reshape(const TensorShape& newShape);
@@ -126,7 +126,7 @@ public:
 	auto *data() { return mem_.data(); }
 	const auto*data()const { return mem_.data(); }
 private:
-	polymorphic::hostMemory<T> mem_{};
+	Memory<T> mem_{};
 //	T *coeffs_;
 };
 
@@ -138,24 +138,24 @@ typedef Tensor<double> Tensord;
 // Non-member functions
 //////////////////////////////////////////////////////////
 
-template<typename T>
-void elementwise(Tensor<T>& res, const Tensor<T>& A, const std::function<T(T)>& f);
+template<typename T, template <typename> class Mem>
+void elementwise(Tensor<T,Mem>& res, const Tensor<T,Mem>& A, const std::function<T(T)>& f);
 
-template<typename T>
-Tensor<T> elementwise(const Tensor<T>& A, const std::function<T(T)>& f);
+template<typename T, template <typename> class Mem>
+Tensor<T,Mem> elementwise(const Tensor<T,Mem>& A, const std::function<T(T)>& f);
 
-template<typename T>
-ostream& operator<<(ostream& os, const Tensor<T>& A);
+template<typename T, template <typename> class Mem>
+ostream& operator<<(ostream& os, const Tensor<T,Mem>& A);
 
-template<typename T>
-istream& operator>>(istream& is, Tensor<T>& A);
+template<typename T, template <typename> class Mem>
+istream& operator>>(istream& is, Tensor<T,Mem>& A);
 
-template<typename T>
-bool operator==(const Tensor<T>& A, const Tensor<T>& B);
+template<typename T, template <typename> class Mem>
+bool operator==(const Tensor<T,Mem>& A, const Tensor<T,Mem>& B);
 
 
-template<typename T>
-[[nodiscard]] Tensor<T> random(const TensorShape& shape, mt19937& gen);
+template<typename T, template <typename> class Mem = polymorphic::hostMemory>
+[[nodiscard]] Tensor<T,Mem> random(const TensorShape& shape, mt19937& gen);
 
 auto randomcd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
 	return random<complex<double>>(shape, gen);
@@ -164,8 +164,8 @@ auto randomd = [](const TensorShape& shape, mt19937& gen = rng::gen) {
 	return random<double>(shape, gen);
 };
 
-template<typename T>
-[[nodiscard]] Tensor<T> randomGen(const TensorShape& shape);
+template<typename T, template <typename> class Mem>
+[[nodiscard]] Tensor<T,Mem> randomGen(const TensorShape& shape);
 
 auto randomGencd = [](const TensorShape& shape) {
 	return random<complex<double>>(shape, rng::gen);
@@ -174,22 +174,22 @@ auto randomGend = [](const TensorShape& shape) {
 	return random<double>(shape, rng::gen);
 };
 
-template<typename T>
-[[nodiscard]] Tensor<T> arange(const TensorShape& shape);
+template<typename T, template <typename> class Mem = polymorphic::hostMemory>
+[[nodiscard]] Tensor<T, Mem> arange(const TensorShape& shape);
 
 constexpr auto arangecd = arange<complex<double>>;
 constexpr auto aranged = arange<double>;
 
 
-template<typename T>
-[[nodiscard]] Tensor<T> identity(const TensorShape& shape);
+template<typename T, template <typename> class Mem = polymorphic::hostMemory>
+[[nodiscard]] Tensor<T,Mem> identity(const TensorShape& shape);
 
 constexpr auto identitycd = identity<complex<double>>;
 constexpr auto identityd = identity<double>;
 
 
-template<typename T>
-[[nodiscard]] Tensor<T> delta(const TensorShape& shape);
+template<typename T, template <typename> class Mem = polymorphic::hostMemory>
+[[nodiscard]] Tensor<T,Mem> delta(const TensorShape& shape);
 
 constexpr auto deltacd = delta<complex<double>>;
 constexpr auto deltad = delta<double>;

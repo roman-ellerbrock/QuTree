@@ -4,7 +4,7 @@
 
 #include "Tensor/SVD.h"
 
-template <typename T>
+template<typename T>
 SVD<T>::SVD(const TensorShape& shape, size_t k) {
 	size_t a = shape[k];
 	size_t b = shape.before(k) * shape.after(k);
