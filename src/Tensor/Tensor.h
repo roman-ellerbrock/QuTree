@@ -49,7 +49,7 @@ public:
 	explicit Tensor(istream& is);
 
 	explicit Tensor(const string& filename);
-
+	
 	//////////////////////////////////////////////////////////
 	// File handling
 	//////////////////////////////////////////////////////////
@@ -125,6 +125,8 @@ public:
 	TensorShape shape_;
 	auto *data() { return mem_.data(); }
 	const auto*data()const { return mem_.data(); }
+	Memory<T>& mem() { return mem_; }
+	const Memory<T>& mem() const { return mem_; }
 private:
 	Memory<T> mem_{};
 //	T *coeffs_;

@@ -54,6 +54,7 @@ set(QuTree_SOURCE_FILES
         src/Tensor/TensorSlow.cpp
         src/Tensor/Tensor_Instantiations.cpp
         src/Tensor/cuTensor_Instantiations.cpp
+        src/Tensor/cuTensor.cpp
         src/Tensor/stdafx.cpp
 
         # Primitve Basis

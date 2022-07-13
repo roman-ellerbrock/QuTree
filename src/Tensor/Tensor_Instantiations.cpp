@@ -6,6 +6,7 @@
 typedef double d;
 typedef complex<double> cd;
 
+template class Tensor<float>;
 template class Tensor<d>;
 template class Tensor<cd>;
 template class Tensor<int64_t>;

@@ -28,7 +28,8 @@ Tensor<T,Mem>::Tensor(const string& filename)
 
 template<typename T, template <typename> class Mem>
 void Tensor<T,Mem>::zero() {
-	memset(data(), 0, shape_.totalDimension() * sizeof(T));
+	mem_.memset(0);
+//	memset(data(), 0, shape_.totalDimension() * sizeof(T));
 }
 
 //////////////////////////////////////////////////////////

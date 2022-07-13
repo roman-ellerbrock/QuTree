@@ -182,7 +182,7 @@ SUITE (TensorBLAS2) {
 		complex<double> beta = 0.;
 		for (size_t k = 0; k < A.shape_.order(); ++k) {
 			hA = A;
-			auto mat = createMatrix(A, k);
+			Matrixcd mat = createMatrix(A, k);
 			matrixTensor(hA, mat, A, k, alpha, beta, blas::Op::Trans);
 			Tensorcd hA2 = A;
 			matrixTensorRef(hA2, transpose(mat), A, k);

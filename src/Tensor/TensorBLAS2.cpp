@@ -6,8 +6,9 @@
 #include <lapack.hh>
 
 typedef complex<double> cd;
-
 typedef double d;
+typedef float f;
+
 
 template<typename T>
 void gemm(Tensor<T>& c, const Tensor<T>& a, const Tensor<T>& b,
@@ -37,6 +38,8 @@ template void gemm(Tensor<cd>& c, const Tensor<cd>& a, const Tensor<cd>& b,
 	cd alpha, cd beta, blas::Op op_a, blas::Op op_b);
 template void gemm(Tensor<d>& c, const Tensor<d>& a, const Tensor<d>& b,
 	d alpha, d beta, blas::Op op_a, blas::Op op_b);
+template void gemm(Tensor<f>& c, const Tensor<f>& a, const Tensor<f>& b,
+	f alpha, f beta, blas::Op op_a, blas::Op op_b);
 
 template<typename T>
 Tensor<T> gemm(const Tensor<T>& a, const Tensor<T>& b,
