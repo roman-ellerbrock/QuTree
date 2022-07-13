@@ -196,7 +196,7 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 		T val = 0.;
 		val = trace(h);
 		h = Tensor<T>({1});
-		h(0) = val;
+		h[0] = (T) val;
 	} else if (holes.size() == 1) {
 		contraction(h, bra, ket, holes.front(), alpha);
 	} else {

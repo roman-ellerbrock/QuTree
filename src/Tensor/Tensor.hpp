@@ -8,34 +8,8 @@ Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
 	:Tensor(TensorShape(dims), InitZero) {}
 
 template<typename T>
-Tensor<T>::Tensor(const TensorShape& dim, T *ptr, bool ownership, bool InitZero)
-	:shape_(dim), coeffs_(ptr), ownership_(ownership) {
-	if (InitZero) { zero(); }
-}
-
-// Construct from external tensor that holds the memory
-template<typename T>
-Tensor<T>::Tensor(const TensorShape& dim, Tensor<T>& A, bool ownership, bool InitZero)
-	: Tensor<T>(dim, &A[0], ownership, false) {
-	if (dim.totalDimension() > A.shape_.totalDimension()) {
-		cerr << "Error: memory too small for tensor.\n";
-		ownership_ = false;
-		exit(1);
-	}
-	if (ownership & !A.ownership_) {
-		cerr << "Error: cannot transfer ownership, since original tensor was not owning memory.\n";
-		ownership_ = false;
-		exit(1);
-	}
-	if (ownership) {
-		A.ownership_ = false;
-	}
-	if (InitZero) { zero(); }
-}
-
-template<typename T>
 Tensor<T>::Tensor(const TensorShape& shape, const bool InitZero)
-	:shape_(shape), coeffs_((T *) malloc(shape.totalDimension() * sizeof(T))), ownership_(true) {
+	:shape_(shape), mem_(shape.totalDimension()) {
 	if (InitZero) { zero(); }
 }
 
@@ -52,58 +26,9 @@ Tensor<T>::Tensor(const string& filename)
 	read(is);
 }
 
-// Copy constructor
 template<typename T>
-Tensor<T>::Tensor(const Tensor& old)
-	:Tensor(old.shape_, false) {
-	memcpy(coeffs_, old.coeffs_, shape_.totalDimension() * sizeof(T));
-}
-
-// Copy-Multyply constructor
-template<typename T>
-Tensor<T>::Tensor(const Tensor& old, T factor)
-	:Tensor(old.shape_, false) {
-	for (size_t i = 0; i < shape_.totalDimension(); i++) {
-		coeffs_[i] = old.coeffs_[i] * factor;
-	}
-}
-
-// Move constructor
-template<typename T>
-Tensor<T>::Tensor(Tensor&& old) noexcept
-	: shape_(move(old.shape_)),
-	  coeffs_(exchange(old.coeffs_, nullptr)),
-	  ownership_(exchange(old.ownership_, false)) {
-}
-
-// Copy Assignment Operator
-template<typename T>
-Tensor<T>& Tensor<T>::operator=(const Tensor& old) {
-	if (this == &old) {
-		return *this;
-	} else if (old.shape_ == this->shape_) {
-		memcpy(coeffs_, old.coeffs_, shape_.totalDimension() * sizeof(T));
-	} else {
-		Tensor tmp(old);
-		*this = move(tmp);
-	}
-	return *this;
-}
-
-template<typename T>
-Tensor<T>& Tensor<T>::operator=(Tensor&& old) noexcept {
-	std::swap(coeffs_, old.coeffs_);
-	std::swap(ownership_, old.ownership_);
-	std::swap(shape_, old.shape_);
-	return *this;
-}
-
-template<typename T>
-Tensor<T>::~Tensor() {
-	if (ownership_) {
-		delete[] coeffs_;
-		coeffs_ = nullptr;
-	}
+void Tensor<T>::zero() {
+	memset(data(), 0, shape_.totalDimension() * sizeof(T));
 }
 
 //////////////////////////////////////////////////////////
@@ -111,13 +36,13 @@ Tensor<T>::~Tensor() {
 //////////////////////////////////////////////////////////
 
 template<typename T>
-inline T& Tensor<T>::operator()(const size_t i) const {
-	return coeffs_[i];
+inline const T& Tensor<T>::operator()(const size_t i) const {
+	return data()[i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i) {
-	return coeffs_[i];
+	return data()[i];
 }
 
 //////////////////////////////////////////////////////////
@@ -126,13 +51,13 @@ inline T& Tensor<T>::operator()(const size_t i) {
 template<typename T>
 inline const T& Tensor<T>::operator()(const size_t i, const size_t n) const {
 	size_t dimpart = shape_.lastBefore();
-	return coeffs_[n * dimpart + i];
+	return data()[n * dimpart + i];
 }
 
 template<typename T>
 inline T& Tensor<T>::operator()(const size_t i, const size_t n) {
 	size_t dimpart = shape_.lastBefore();
-	return coeffs_[n * dimpart + i];
+	return data()[n * dimpart + i];
 }
 
 template<typename T>
@@ -140,7 +65,7 @@ inline T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t leaf) {
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
-	return coeffs_[idx];
+	return data()[idx];
 }
 
 template<typename T>
@@ -148,7 +73,7 @@ inline const T& Tensor<T>::operator()(size_t bef, size_t i, size_t aft, size_t l
 	size_t before = shape_.before(leaf);
 	size_t dim = shape_[leaf];
 	size_t idx = aft * before * dim + i * before + bef;
-	return coeffs_[idx];
+	return data()[idx];
 }
 
 template<typename T>
@@ -312,14 +237,8 @@ void Tensor<T>::reshape(const TensorShape& newShape) {
 template<typename T>
 void Tensor<T>::resize(const TensorShape& newShape) {
 	/// resize if required
-	if (shape_.totalDimension() < newShape.totalDimension()) {
-		/// allocate larger memory
-		T *new_coeffs = ((T *) malloc(newShape.totalDimension() * sizeof(T)));
-		/// copy old memory to new ptr
-		memcpy(new_coeffs, coeffs_, shape_.totalDimension() * sizeof(T));
-		/// swap & delete unused memory
-		std::swap(coeffs_, new_coeffs);
-		delete[] new_coeffs;
+	if (shape_.totalDimension() != newShape.totalDimension()) {
+		mem_ = polymorphic::hostMemory<T>(newShape.totalDimension());
 	}
 	shape_ = newShape;
 }
@@ -327,11 +246,6 @@ void Tensor<T>::resize(const TensorShape& newShape) {
 //////////////////////////////////////////////////////////
 // Operations on Tensors
 //////////////////////////////////////////////////////////
-template<typename T>
-void Tensor<T>::zero() {
-	memset(coeffs_, 0, shape_.totalDimension() * sizeof(T));
-}
-
 ///  f(A(i))
 template<typename T>
 void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f) {

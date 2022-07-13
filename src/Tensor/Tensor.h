@@ -39,40 +39,16 @@ public:
 	//////////////////////////////////////////////////////////
 
 	// Standard Constructor
-	Tensor()
-		: coeffs_(new T[1]), ownership_(true) {}
+	Tensor() = default;
 
 	Tensor(const initializer_list<size_t>& dim, bool InitZero = true);
 
 	// Constructor with TensorDim
 	explicit Tensor(const TensorShape& dim, bool InitZero = true);
 
-	// Construct from external memory
-	explicit Tensor(const TensorShape& dim, T *ptr, bool ownership = true, bool InitZero = true);
-
-	explicit Tensor(const TensorShape& dim, Tensor<T>& ptr, bool ownership = true, bool InitZero = true);
-
 	explicit Tensor(istream& is);
 
 	explicit Tensor(const string& filename);
-
-	// Copy constructor
-	Tensor(const Tensor& old);
-
-	// Copy-Multiply constructor
-	Tensor(const Tensor& old, T factor);
-
-	// Move constructor
-	Tensor(Tensor&& old) noexcept;
-
-	// Copy Assignment Operator
-	Tensor& operator=(const Tensor& old);
-
-	// Move Assignment Operator
-	Tensor& operator=(Tensor&& old) noexcept;
-
-	// Destructor
-	~Tensor();
 
 	//////////////////////////////////////////////////////////
 	// File handling
@@ -90,7 +66,7 @@ public:
 	//////////////////////////////////////////////////////////
 	// Bracket Operators
 	//////////////////////////////////////////////////////////
-	T& operator()(size_t i) const;
+	const T& operator()(size_t i) const;
 
 	T& operator()(size_t i);
 
@@ -108,12 +84,12 @@ public:
 
 	inline const T& operator[](const size_t idx) const {
 		// Fast bracket operator
-		return coeffs_[idx];
+		return data()[idx];
 	}
 
 	inline T& operator[](const size_t idx) {
 		// Fast bracket operator
-		return coeffs_[idx];
+		return data()[idx];
 	}
 
 	inline T& operator[](const vector<size_t>& idxs) {
@@ -147,12 +123,11 @@ public:
 	void zero();
 
 	TensorShape shape_;
-	T *data() { return coeffs_; }
-	const T *data()const { return coeffs_; }
-	polymorphic::hostMemory<T> host_{};
-	bool ownership_;
+	auto *data() { return mem_.data(); }
+	const auto*data()const { return mem_.data(); }
 private:
-	T *coeffs_;
+	polymorphic::hostMemory<T> mem_{};
+//	T *coeffs_;
 };
 
 typedef Tensor<complex<double>> Tensorcd;
