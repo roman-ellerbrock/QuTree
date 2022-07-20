@@ -17,7 +17,6 @@ enable_testing()
 
 add_executable(
   TestQuTree
-
   tests.cc
 
   Tensor/cuTensor_test.cpp
