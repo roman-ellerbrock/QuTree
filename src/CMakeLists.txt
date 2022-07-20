@@ -77,6 +77,7 @@ set(QuTree_SOURCE_FILES
         # TensorNetwork
         src/TensorNetwork/ApplySCF.cpp
         src/TensorNetwork/contractions.cpp
+#        src/TensorNetwork/cuTensorTree.cpp
         src/TensorNetwork/TensorTree.cpp
         src/TensorNetwork/TensorTreeFactory.cpp
 

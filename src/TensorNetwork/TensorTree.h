@@ -27,6 +27,12 @@ typedef TensorTree<complex<double>> TensorTreecd;
 
 typedef TensorTree<double> TensorTreed;
 
+template <typename T>
+using cuTensorTree = TensorTree<T, polymorphic::cuMemory>;
+
+//using cuTensorTreed = cuTensorTree<double>;
+//using cuTensorTreecd = cuTensorTree<complex<double>>;
+
 template<typename T, template <typename> class Mem = polymorphic::hostMemory>
 Tensor<T,Mem> normalize(const Tensor<T,Mem>& phi, const Edge* edge, double eps = 1e-10);
 

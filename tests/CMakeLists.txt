@@ -1,24 +1,75 @@
 
+# GoogleTest requires at least C++14
+#set(CMAKE_CXX_STANDARD 14)
 
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.12.1
+)
 
-find_package(UnitTest++ QUIET)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-if (NOT UnitTest++_FOUND)
-  message ( STATUS "UnitTest++ not found, falling back to PkgConfig" )
-  include(FindPkgConfig)
-  pkg_check_modules(UnitTest++ QUIET UnitTest++)
+enable_testing()
+
+add_executable(
+  TestQuTree
+
+  tests.cc
+
+  Tensor/cuTensor_test.cpp
+  Tensor/Tensor_test.cpp
+  Tensor/TensorBLAS1_test.cpp
+  Tensor/TensorBLAS2_test.cpp
+  Tensor/TensorLapack_test.cpp
+
+  Tree/PrimitiveBasis_test.cpp
+  Tree/Node_test.cpp
+  Tree/Edge_test.cpp
+  Tree/Tree_test.cpp
+  Tree/sparse_vector_test.cpp
+  Tree/SubTree_test.cpp
+)
+
+target_include_directories(TestQuTree 
+	PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_PROJECT_DIR}/src>
+	${BLAS_DIRECTORIES}
+	${PolymorphicMemory_DIR}
+        ${BLAS_INCLUDE}
+	${CUDA_INCLUDE_DIRS}
+	)
+
+target_compile_features(TestQuTree INTERFACE cxx_std_17)
+
+if (CUDA_FEATS)
+	set_target_properties(TestQuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+	target_link_options(TestQuTree INTERFACE ${CUDA_FLAGS})
 endif()
 
-if (NOT UnitTest++_FOUND)
-  message ( STATUS "UnitTest++ not found, switching to internal submodule" )
-  execute_process(COMMAND git submodule update --init -- tests/external/unittest-cpp
-	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../)
-  add_subdirectory("external/unittest-cpp")
-  include_directories("external/unittest-cpp")
-endif()
-include_directories(${UTPP_INCLUDE_DIRS})
+target_link_directories(TestQuTree
+	PUBLIC	
+	${PolymorphicMemory_LINK}
+)
 
-set(QuTree_tests
+target_link_libraries(
+        TestQuTree 
+	PUBLIC 
+        gtest_main
+	QuTree 
+	${BLAS_LIBRARIES} -lblaspp
+	${LAPACK_LIBRARIES} -llapackpp
+	polymorphicMemory
+)
+
+include(GoogleTest)
+gtest_discover_tests(TestQuTree)
+
+
+set(QuTree_tests2
         # Tensor tests
         Tensor/test_Tensor.cpp
         Tensor/test_TensorBLAS1.cpp
@@ -63,55 +114,13 @@ set(QuTree_tests
 #        test_RandomMatrices.cpp
         )
 
-add_executable(TestQuTree ${QuTree_tests})
-
-#target_link_libraries(TestQuTree QuTree)
 #target_link_libraries(TestQuTree UnitTest++)
 
-target_include_directories(TestQuTree 
-	PUBLIC
-	$<BUILD_INTERFACE:${CMAKE_PROJECT_DIR}/src>
-        ${BLAS_INCLUDE}
-	${CUDA_INCLUDE_DIRS}
-	)
-
-target_compile_features(TestQuTree INTERFACE cxx_std_17)
-
-if (CUDA_FEATS)
-	set_target_properties(TestQuTree PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-	target_link_options(TestQuTree INTERFACE ${CUDA_FLAGS})
-endif()
-
-target_link_directories(TestQuTree
-	PUBLIC	
-	${PolymorphicMemory_LINK}
-)
-
-target_link_libraries(TestQuTree 
-	PUBLIC 
-	QuTree 
-	UnitTest++ 
-	${BLAS_LIBRARIES} -lblaspp
-	${LAPACK_LIBRARIES} -llapackpp
-	polymorphicMemory
-)
-#target_link_libraries(TestQuTree UnitTest++)
-
-
-message("Added dir: ${PolymorphicMemory_DIR}")
-target_include_directories(TestQuTree
-	PUBLIC 
-	${BLAS_DIRECTORIES}
-	${PolymorphicMemory_DIR}
-)
-
-#target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++)
-##target_link_libraries(TestQuTree PUBLIC QuTree UnitTest++ ${CUDA_FLAGS})
 
 # run unit tests as post build step
-add_custom_command(TARGET TestQuTree
-    POST_BUILD COMMAND TestQuTree
-    COMMENT "Running unit tests")
+#add_custom_command(TARGET TestQuTree
+#    POST_BUILD COMMAND TestQuTree
+#    COMMENT "Running unit tests")
 
 
 #set(QuTree_benchmarks
