@@ -21,7 +21,7 @@ add_executable(
 
   Tensor/cuTensor_test.cpp
   Tensor/Tensor_test.cpp
-  Tensor/mxpTensor_test.cpp
+#  Tensor/mxpTensor_test.cpp
   Tensor/TensorBLAS1_test.cpp
   Tensor/TensorBLAS2_test.cpp
   Tensor/TensorLapack_test.cpp
