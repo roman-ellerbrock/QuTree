@@ -21,6 +21,7 @@ add_executable(
 
   Tensor/cuTensor_test.cpp
   Tensor/Tensor_test.cpp
+  Tensor/mxpTensor_test.cpp
   Tensor/TensorBLAS1_test.cpp
   Tensor/TensorBLAS2_test.cpp
   Tensor/TensorLapack_test.cpp
@@ -31,6 +32,12 @@ add_executable(
   Tree/Tree_test.cpp
   Tree/sparse_vector_test.cpp
   Tree/SubTree_test.cpp
+
+  TensorNetwork/TensorTree_test.cpp
+  TensorNetwork/ApplySCF_test.cpp
+
+  Operators/LeafOperator_test.cpp
+  Operators/ProductOperator_test.cpp
 )
 
 target_include_directories(TestQuTree 
@@ -66,72 +73,3 @@ target_link_libraries(
 
 include(GoogleTest)
 gtest_discover_tests(TestQuTree)
-
-
-set(QuTree_tests2
-        # Tensor tests
-        Tensor/test_Tensor.cpp
-        Tensor/test_TensorBLAS1.cpp
-        Tensor/test_TensorBLAS2.cpp
-        Tensor/test_TensorLapack.cpp
-
-        Tensor/test_cuTensor.cpp
-
-        # Tree tests
-        Tree/test_Edge.cpp
-        Tree/test_Node.cpp
-        Tree/test_PrimitiveBasis.cpp
-        Tree/test_sparse_vector.cpp
-        Tree/test_SubTree.cpp
-        Tree/test_Tree.cpp
-        Tree/test_TreeFactory.cpp
-
-        # Tensor Network classes
-        TensorNetwork/test_ApplySCF.cpp
-        TensorNetwork/test_TensorTree.cpp
-        TensorNetwork/test_contraction.cpp
-
-        # Tensor Network classes
-        Operators/test_LeafOperator.cpp
-        Operators/test_ProductOperator.cpp
-
-        # all tests
-        tests.cpp
-
-#        test_GradientDescent.cpp
-#        test_Integrator.cpp
-#        test_MatrixTensorTree.cpp
-#        test_TensorTree.cpp
-#        test_TensorBLAS.cpp
-#        test_Operators.cpp
-#        test_SparseTree.cpp
-#        test_SymTensorTree.cpp
-#        test_TensorTreeBasis.cpp
-#        test_TensorTreeOperator.cpp
-#        test_MatrixTree.cpp
-#        test_SparseMatrixTree.cpp
-#        test_RandomMatrices.cpp
-        )
-
-#target_link_libraries(TestQuTree UnitTest++)
-
-
-# run unit tests as post build step
-#add_custom_command(TARGET TestQuTree
-#    POST_BUILD COMMAND TestQuTree
-#    COMMENT "Running unit tests")
-
-
-#set(QuTree_benchmarks
-#        benchmarks/benchmark_tensor.cpp
-#        benchmarks/benchmark_tensor.h
-#        benchmarks/benchmark_tree.cpp benchmarks/benchmark_tree.h
-#        benchmarks/benchmark_helper.cpp benchmarks/benchmark_helper.h
-#        benchmarks/optimize_matrixtensor.cpp benchmarks/optimize_matrixtensor.h
-#        )
-#
-#add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QuTree_benchmarks})
-#target_link_libraries(benchmarks QuTree /usr/local/opt/openblas/lib/libblas.dylib)
-#target_compile_features(benchmarks PRIVATE cxx_std_14)
-#
-#
