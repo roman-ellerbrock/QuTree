@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 #include "Tensor/mxpTensor.h"
+#include <chrono>
+#include "Tensor/cuTensor.h"
+#include "Tensor/TensorBLAS2.h"
 
 
 TEST (mxpTensor, Constructor) {
@@ -58,18 +61,76 @@ TEST (mxpTensor, diagmm) {
 
 TEST (mxpTensor, gemm) {
     /// perform A^2 in hp and mxp
-    Tensord A = aranged({3, 3});
+    Tensord A = aranged({10, 10});
     Tensord A2r = A * A;
 
     mxpTensord B(A);
-    mxpTensord C(A);
-    mxpTensord B2 = gemm(B, C);
+    mxpTensord B2 = B * B;
 
     Tensord A2 = B2.convert();
-    cout << "ref:\n";
-    A2r.print();
-    cout << "A2:\n";
-    A2.print();
+
     EXPECT_NEAR(0., residual(A2, A2r), 1e-12);
+}
+
+/*
+TEST (mxpTensor, mxpgemmBenchmark) {
+    /// perform A^2 in hp and mxp
+	using namespace chrono;
+    time_point<steady_clock> start, end;
+
+    size_t n = 1;
+
+    for (size_t dim = 1000; dim <= 15000; dim+=3000) {
+    {
+        Tensord A = aranged({dim, dim});
+        Tensord B(A.shape_);
+        start = steady_clock::now();
+        for (size_t i = 0; i < n; ++i) {
+            gemm(B, A, A);
+        }
+        end = steady_clock::now();
+    }
+    double ms_hp = duration_cast<nanoseconds>(end - start).count() / ((double) n * 1000000);
+
+    {
+        mxpTensord mA(aranged({dim, dim}));
+        mxpTensord mB(aranged({dim, dim}));
+        start = steady_clock::now();
+        for (size_t i = 0; i < n; ++i) {
+            gemm(mB, mA, mA);
+        }
+        end = steady_clock::now();
+    }
+    double ms_mxp = duration_cast<nanoseconds>(end - start).count() / ((double) n * 1000000);
+    cout << dim << " " << ms_hp << " " << ms_mxp << " \n";
+    }
     getchar();
+
+}*/
+
+template <class Tensor, class ...Queue>
+void matm(Tensor& c, const Tensor& a, const Tensor& b, Queue& ... queue) {
+	gemm(c, a, b, 1., 0., blas::Op::NoTrans, blas::Op::NoTrans, queue...);
+}
+
+TEST(Tensor, queueforward) {
+    Tensord A = aranged({100, 100});
+    Tensord B = A;
+    Tensord C(A.shape_);
+    Tensord C2 = A * B;
+    matm(C, B, A);
+    EXPECT_NEAR(0., residual(C, C2), 1e-12);
+
+    using namespace polymorphic;
+	cuTensord cuA = transfer<double, cuMemory, hostMemory>(A);
+    cuTensord cuB = cuA;
+    cuTensord cuC(cuA.shape_);
+	int device = 0;	
+	int batch_size = 1000;
+	blas::Queue queue(device, batch_size);
+	blas::set_device(device);
+//	gemm(cuC, cuA, cuB, 1., 0., blas::Op::NoTrans, blas::Op::NoTrans, queue);
+    matm(cuC, cuB, cuA, queue);
+	C = transfer<double, hostMemory, cuMemory>(cuC);
+    EXPECT_NEAR(0., residual(C, C2), 1e-12);
 }

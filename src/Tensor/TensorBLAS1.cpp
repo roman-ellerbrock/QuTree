@@ -9,8 +9,9 @@
 
 #define swap(type, x, y) { type _tmp; _tmp = x; x = y; y = _tmp; }
 
-typedef complex<double> cd;
-typedef double d;
+using cd = complex<double>;
+using d = double;
+using f = float;
 
 /// = ||A||_2
 template<typename T>
@@ -133,6 +134,15 @@ template Tensor<d> operator/(Tensor<d> A, const d alpha);
 template Tensor<cd> operator/(Tensor<cd> A, const cd alpha);
 template Tensor<cd> operator/(Tensor<cd> A, const d alpha);
 
+template <typename T, typename U, template <typename> class Dev>
+void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R) {
+    for (size_t I = 0; I < L.shape_.totalDimension(); ++I) {
+        L(I) = (T) R(I);
+    }
+}
+template void cast(Tensor<d>& L, const Tensor<f>& R);
+template void cast(Tensor<f>& L, const Tensor<d>& R);
+
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 	assert(A.shape_.totalDimension() == B.shape_.totalDimension());
@@ -145,6 +155,71 @@ Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 
 template Tensor<cd> productElementwise(const Tensor<cd>& A, const Tensor<cd>& B);
 template Tensor<d> productElementwise(const Tensor<d>& A, const Tensor<d>& B);
+
+template <typename T, template <typename> class Dev>
+void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag) {
+    /**
+     * @brief Multiply a dense matrix with a diagonal matrix
+     * @param C output Matrix that is written on
+     * @param diag diagonal Matrix
+     * @param B dense input Matrix
+     * 
+     * C_ij = C_ij + B_ij * A_ii
+     */
+    if (B.shape_.order() != 2) {
+        cerr << "Error: expected order of B to be two but received " << B.shape_.order() << "\n";
+        exit(3);
+    }
+    if (diag.shape_.order() != 1) {
+        cerr << "Error: expected order of diag to be one but received " << diag.shape_.order() << "\n";
+        exit(3);
+    }
+    size_t n = diag.shape_[0];
+    size_t inc_a = 1;
+    size_t inc_b = 1;
+    for (size_t i = 0; i < n; ++i) {
+        T alpha = diag(i);
+        const T* Bstart = B.data() + i * n;
+        T* Cstart = C.data() + i * n;
+	    blas::axpy(n, alpha, Bstart, inc_a, Cstart, inc_b);
+    }
+}
+
+template void mdiagm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&);
+template void mdiagm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&);
+
+template <typename T, template <typename> class Dev>
+void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B) {
+    /**
+     * @brief Multiply a dense matrix with a diagonal matrix
+     * @param C output Matrix that is written on
+     * @param B dense input Matrix
+     * @param diag diagonal Matrix
+     * 
+     * C_ij = C_ij + A_ii * B_ij
+     */
+    if (B.shape_.order() != 2) {
+        cerr << "Error: expected order of B to be two but received " << B.shape_.order() << "\n";
+        exit(3);
+    }
+    if (diag.shape_.order() != 1) {
+        cerr << "Error: expected order of diag to be one but received " << diag.shape_.order() << "\n";
+        exit(3);
+    }
+
+    size_t n = diag.shape_[0];
+    size_t inc_a = n;
+    size_t inc_b = n;
+    for (size_t i = 0; i < n; ++i) {
+        T alpha = diag(i);
+        const T* Bstart = B.data() + i;
+        T* Cstart = C.data() + i;
+	    blas::axpy(n, alpha, Bstart, inc_a, Cstart, inc_b);
+    }
+}
+
+template void diagmm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&);
+template void diagmm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&);
 
 template<typename T>
 Tensor<T> conj(Tensor<T> A) {
@@ -171,6 +246,18 @@ Tensor<T> diagonal(const Tensor<T>& A) {
 
 template Tensor<cd> diagonal(const Tensor<cd>& A);
 template Tensor<d> diagonal(const Tensor<d>& A);
+
+template <typename T, typename U, template <typename> class Dev>
+void offDiagonal(Tensor<T, Dev>& off, const Tensor<U, Dev>& full) {
+    off = full;
+    for (size_t i = 0; i < off.shape_[0]; ++i) {
+        off(i, i) = 0;
+    }
+}
+
+template void offDiagonal(Tensor<d>& off, const Tensor<d>& full);
+template void offDiagonal(Tensor<f>& off, const Tensor<f>& full);
+
 
 template<typename T>
 T trace(const Tensor<T>& A) {

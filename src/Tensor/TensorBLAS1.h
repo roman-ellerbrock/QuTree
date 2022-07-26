@@ -65,14 +65,26 @@ Tensor<T>& operator/=(Tensor<T>& A, U alpha);
 template<typename T, typename U>
 Tensor<T> operator/(Tensor<T> A, U alpha);
 
+template <typename T, typename U, template <typename> class Dev>
+void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R);
+
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
+
+template <typename T, template <typename> class Dev>
+void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag);
+
+template <typename T, template <typename> class Dev>
+void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B);
 
 template<typename T>
 [[nodiscard]] Tensor<T> conj(Tensor<T> A);
 
 template<typename T>
 Tensor<T> diagonal(const Tensor<T>& A);
+
+template <typename T, typename U, template <typename> class Dev>
+void offDiagonal(Tensor<T, Dev>& off, const Tensor<U, Dev>& full);
 
 template<typename T>
 T trace(const Tensor<T>& A);
