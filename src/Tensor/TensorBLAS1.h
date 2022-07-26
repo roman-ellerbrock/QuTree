@@ -91,11 +91,11 @@ T trace(const Tensor<T>& A);
 
 /// \brief perform matrix transpose A[bef, last] --> A[last, bef] (multiply with old beta
 template<typename T>
-void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta);
+void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta = 0.);
 
 /// \brief perform matrix transpose A[bef, last] --> A[last, bef]
-template<typename T>
-void transpose(T *dest, const T *src, size_t dim1, size_t dim2);
+//template<typename T>
+//void transpose(T *dest, const T *src, size_t dim1, size_t dim2);
 
 /// \brief perform matrix transpose A[bef, last] --> A[last, bef]
 template<typename T>
