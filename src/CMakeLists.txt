@@ -42,6 +42,9 @@ set(QuTree_INCLUDE_FILES
         src/Operator/LeafFunction.h
         src/Operator/LeafOperator.h
         src/Operator/ProductOperator.h
+
+        # Utilities
+        src/Util/blaspp_device_extension.h
         )
 
 set(QuTree_SOURCE_FILES
@@ -90,6 +93,7 @@ set(QuTree_SOURCE_FILES
         src/Operator/SumOfProductsOperator.cpp
 
         # Utilities
+        src/Util/blaspp_device_extension.cpp
         src/Util/GateOperators.cpp
         src/Util/JacobiRotationFramework.cpp
         src/Util/SimultaneousDiagonalization.cpp
@@ -97,11 +101,8 @@ set(QuTree_SOURCE_FILES
 
 if (CUDA_FEATS)
 	set (QuTree_INCLUDE_FILES_CUDA 
-	src/Tensor/PolymorphicMemory.cuh
 	)
 
 	set (QuTree_SOURCE_FILES_CUDA 
-	src/Tensor/PolymorphicMemory_CUDA.cpp
-	src/Tensor/PolymorphicMemory.cu
 	)
 endif()

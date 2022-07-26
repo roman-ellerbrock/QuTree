@@ -3,6 +3,10 @@
 //
 #include "stdafx.h"
 
+float conj(float x) {
+	return x;
+}
+
 double conj(double x) {
 	return x;
 }

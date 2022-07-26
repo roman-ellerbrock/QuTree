@@ -38,8 +38,11 @@ add_library(QuTree::QuTree ALIAS QuTree)
 # Build-dependent Compiler flags
 include(cmake/CompilerFlags.cmake)
 
+# Build polymorphic memory
+include(cmake/PolymorphicMemory.cmake)
+
 # optional cuda support
-#include(cmake/cuda.cmake)
+include(cmake/cuda.cmake)
 
 # find BLAS++/LAPACK++ backends
 #include(cmake/FindBLASPP.cmake)
@@ -47,8 +50,6 @@ include(cmake/CompilerFlags.cmake)
 include(cmake/VectorizationSimple.cmake)
 
 include(cmake/OpenMP.cmake)
-
-include(cmake/PolymorphicMemory.cmake)
 
 # perform the linking
 target_link_libraries(QuTree PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})

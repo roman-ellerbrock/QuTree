@@ -2,9 +2,10 @@
 #include "TensorBLAS1.h"
 #include <lapack.hh>
 
-typedef float f;
-typedef double d;
-typedef complex<double> cd;
+using f =  float;
+using d = double;
+using cf = complex<f>;
+using cd = complex<d>;
 
 //using namespace polymorphic;
 //template class Tensor<float, cuMemory>;
@@ -54,6 +55,11 @@ Tensor<T, Mem> transfer(const Tensor<T, oMem>& src) {
 }
 
 template Tensor<d, hostMemory> transfer(const Tensor<d, cuMemory>& src);
+template Tensor<f, hostMemory> transfer(const Tensor<f, cuMemory>& src);
+template Tensor<cf, hostMemory> transfer(const Tensor<cf, cuMemory>& src);
 template Tensor<cd, hostMemory> transfer(const Tensor<cd, cuMemory>& src);
+
+template Tensor<f, cuMemory> transfer(const Tensor<f, hostMemory>& src);
 template Tensor<d, cuMemory> transfer(const Tensor<d, hostMemory>& src);
 template Tensor<cd, cuMemory> transfer(const Tensor<cd, hostMemory>& src);
+template Tensor<cf, cuMemory> transfer(const Tensor<cf, hostMemory>& src);

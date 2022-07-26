@@ -13,6 +13,7 @@
 
 using namespace std;
 
+float conj(float x);
 double conj(double x);
 int conj(const int d);
 

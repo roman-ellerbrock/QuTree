@@ -38,6 +38,8 @@ add_executable(
 
   Operators/LeafOperator_test.cpp
   Operators/ProductOperator_test.cpp
+
+  Util/blaspp_device_extension_test.cpp
 )
 
 target_include_directories(TestQuTree 

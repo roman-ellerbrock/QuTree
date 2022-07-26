@@ -90,6 +90,7 @@ TEST (mxpTensor, mxpgemmBenchmark) {
         }
         end = steady_clock::now();
     }
+
     double ms_hp = duration_cast<nanoseconds>(end - start).count() / ((double) n * 1000000);
 
     {
@@ -106,8 +107,9 @@ TEST (mxpTensor, mxpgemmBenchmark) {
     }
     getchar();
 
-}*/
-
+}
+*/
+/*
 template <class Tensor, class ...Queue>
 void matm(Tensor& c, const Tensor& a, const Tensor& b, Queue& ... queue) {
 	gemm(c, a, b, 1., 0., blas::Op::NoTrans, blas::Op::NoTrans, queue...);
@@ -134,3 +136,5 @@ TEST(Tensor, queueforward) {
 	C = transfer<double, hostMemory, cuMemory>(cuC);
     EXPECT_NEAR(0., residual(C, C2), 1e-12);
 }
+
+*/

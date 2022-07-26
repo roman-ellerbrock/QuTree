@@ -3,7 +3,6 @@
 //
 
 #include <gtest/gtest.h>
-#include "Tensor/TensorBLAS.h"
 #include "Tensor/TensorLapack.h"
 #include "Tree/PrimitiveBasis/BasisAPI.h"
 #include "Util/QMConstants.h"

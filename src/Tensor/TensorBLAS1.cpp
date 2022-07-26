@@ -9,18 +9,16 @@
 
 #define swap(type, x, y) { type _tmp; _tmp = x; x = y; y = _tmp; }
 
-using cd = complex<double>;
-using d = double;
 using f = float;
+using d = double;
+using cf = complex<f>;
+using cd = complex<d>;
 
 /// = ||A||_2
 template<typename T>
 T nrm2(const Tensor<T>& A, size_t incr) {
 	return abs(blas::nrm2(A.shape_.totalDimension() / incr, &(A[0]), incr));
 }
-
-template cd nrm2(const Tensor<cd>&, size_t);
-template d nrm2(const Tensor<d>&, size_t);
 
 /// b -> alpha * a + b
 template<typename T>
@@ -29,9 +27,6 @@ void axpy(const Tensor<T>& A, Tensor<T>& B, T alpha, size_t inc_a, size_t inc_b)
 	blas::axpy(n, alpha, A.data(), inc_a, B.data(), inc_b);
 }
 
-template void axpy(const Tensor<cd>&, Tensor<cd>&, cd, size_t, size_t);
-template void axpy(const Tensor<d>&, Tensor<d>&, d, size_t, size_t);
-
 /// A += B
 template<typename T>
 void operator+=(Tensor<T>& A, const Tensor<T>& B) {
@@ -39,8 +34,10 @@ void operator+=(Tensor<T>& A, const Tensor<T>& B) {
 	axpy(B, A, alpha);
 }
 
-template void operator+=(Tensor<cd>& A, const Tensor<cd>& B);
+template void operator+=(Tensor<f>& A, const Tensor<f>& B);
 template void operator+=(Tensor<d>& A, const Tensor<d>& B);
+template void operator+=(Tensor<cf>& A, const Tensor<cf>& B);
+template void operator+=(Tensor<cd>& A, const Tensor<cd>& B);
 
 /// A -= B
 template<typename T>
@@ -49,8 +46,10 @@ void operator-=(Tensor<T>& A, const Tensor<T>& B) {
 	axpy(B, A, alpha);
 }
 
-template void operator-=(Tensor<cd>& A, const Tensor<cd>& B);
+template void operator-=(Tensor<f>& A, const Tensor<f>& B);
 template void operator-=(Tensor<d>& A, const Tensor<d>& B);
+template void operator-=(Tensor<cf>& A, const Tensor<cf>& B);
+template void operator-=(Tensor<cd>& A, const Tensor<cd>& B);
 
 /// || A - B ||_2
 template<typename T>
@@ -59,9 +58,6 @@ double residual(Tensor<T> A, const Tensor<T>& B) {
 	return abs(nrm2(A));
 }
 
-template d residual(Tensor<d> A, const Tensor<d>& B);
-template d residual(Tensor<cd> A, const Tensor<cd>& B);
-
 /// = A + B
 template<typename T>
 Tensor<T> operator+(Tensor<T> A, const Tensor<T>& B) {
@@ -69,7 +65,9 @@ Tensor<T> operator+(Tensor<T> A, const Tensor<T>& B) {
 	return A;
 }
 
+template Tensor<f> operator+(Tensor<f> A, const Tensor<f>& B);
 template Tensor<d> operator+(Tensor<d> A, const Tensor<d>& B);
+template Tensor<cf> operator+(Tensor<cf> A, const Tensor<cf>& B);
 template Tensor<cd> operator+(Tensor<cd> A, const Tensor<cd>& B);
 
 /// = A + B
@@ -79,7 +77,9 @@ Tensor<T> operator-(Tensor<T> A, const Tensor<T>& B) {
 	return A;
 }
 
+template Tensor<f> operator-(Tensor<f> A, const Tensor<f>& B);
 template Tensor<d> operator-(Tensor<d> A, const Tensor<d>& B);
+template Tensor<cf> operator-(Tensor<cf> A, const Tensor<cf>& B);
 template Tensor<cd> operator-(Tensor<cd> A, const Tensor<cd>& B);
 
 /// A *= alpha
@@ -90,7 +90,10 @@ Tensor<T>& operator*=(Tensor<T>& A, const U alpha) {
 	return A;
 }
 
+template Tensor<f>& operator*=(Tensor<f>& A, const f alpha);
 template Tensor<d>& operator*=(Tensor<d>& A, const d alpha);
+template Tensor<cf>& operator*=(Tensor<cf>& A, const cf alpha);
+template Tensor<cf>& operator*=(Tensor<cf>& A, const f alpha);
 template Tensor<cd>& operator*=(Tensor<cd>& A, const cd alpha);
 template Tensor<cd>& operator*=(Tensor<cd>& A, const d alpha);
 
@@ -100,9 +103,13 @@ Tensor<T> operator*(const U alpha, Tensor<T> A) {
 	return A *= alpha;
 }
 
+template Tensor<f> operator*(const f alpha, Tensor<f> A);
 template Tensor<d> operator*(const d alpha, Tensor<d> A);
+template Tensor<cf> operator*(const cf alpha, Tensor<cf> A);
 template Tensor<cd> operator*(const cd alpha, Tensor<cd> A);
+template Tensor<cf> operator*(const f alpha, Tensor<cf> A);
 template Tensor<cd> operator*(const d alpha, Tensor<cd> A);
+
 
 ///  = A * alpha
 template<typename T, typename U>
@@ -110,29 +117,38 @@ Tensor<T> operator*(Tensor<T> A, const U alpha) {
 	return A *= alpha;
 }
 
+template Tensor<f> operator*(Tensor<f> A, const f alpha);
 template Tensor<d> operator*(Tensor<d> A, const d alpha);
+template Tensor<cf> operator*(Tensor<cf> A, const cf alpha);
+template Tensor<cf> operator*(Tensor<cf> A, const f alpha);
 template Tensor<cd> operator*(Tensor<cd> A, const cd alpha);
 template Tensor<cd> operator*(Tensor<cd> A, const d alpha);
 
 ///  A /= alpha
 template<typename T, typename U>
 Tensor<T>& operator/=(Tensor<T>& A, const U alpha) {
-	return A *= (1. / alpha);
+	return A *= (T) ((U)1. / alpha);
 }
 
+template Tensor<f>& operator/=(Tensor<f>& A, const f alpha);
 template Tensor<d>& operator/=(Tensor<d>& A, const d alpha);
-template Tensor<cd>& operator/=(Tensor<cd>& A, const cd alpha);
+template Tensor<cf>& operator/=(Tensor<cf>& A, const f alpha);
 template Tensor<cd>& operator/=(Tensor<cd>& A, const d alpha);
+template Tensor<cf>& operator/=(Tensor<cf>& A, const cf alpha);
+template Tensor<cd>& operator/=(Tensor<cd>& A, const cd alpha);
 
 ///  = A / alpha
 template<typename T, typename U>
 Tensor<T> operator/(Tensor<T> A, const U alpha) {
-	return A /= alpha;
+	return A /= (T) alpha;
 }
 
+template Tensor<f> operator/(Tensor<f> A, const f alpha);
 template Tensor<d> operator/(Tensor<d> A, const d alpha);
-template Tensor<cd> operator/(Tensor<cd> A, const cd alpha);
+template Tensor<cf> operator/(Tensor<cf> A, const f alpha);
+template Tensor<cf> operator/(Tensor<cf> A, const cf alpha);
 template Tensor<cd> operator/(Tensor<cd> A, const d alpha);
+template Tensor<cd> operator/(Tensor<cd> A, const cd alpha);
 
 template <typename T, typename U, template <typename> class Dev>
 void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R) {
@@ -140,8 +156,11 @@ void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R) {
         L(I) = (T) R(I);
     }
 }
+
 template void cast(Tensor<d>& L, const Tensor<f>& R);
 template void cast(Tensor<f>& L, const Tensor<d>& R);
+template void cast(Tensor<cd>& L, const Tensor<cf>& R);
+template void cast(Tensor<cf>& L, const Tensor<cd>& R);
 
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
@@ -152,9 +171,6 @@ Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 	}
 	return C;
 }
-
-template Tensor<cd> productElementwise(const Tensor<cd>& A, const Tensor<cd>& B);
-template Tensor<d> productElementwise(const Tensor<d>& A, const Tensor<d>& B);
 
 template <typename T, template <typename> class Dev>
 void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag) {
@@ -185,7 +201,9 @@ void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& di
     }
 }
 
+template void mdiagm(Tensor<f>& C, const Tensor<f>&, const Tensor<f>&);
 template void mdiagm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&);
+template void mdiagm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&);
 template void mdiagm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&);
 
 template <typename T, template <typename> class Dev>
@@ -218,7 +236,9 @@ void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>&
     }
 }
 
+template void diagmm(Tensor<f>& C, const Tensor<f>&, const Tensor<f>&);
 template void diagmm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&);
+template void diagmm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&);
 template void diagmm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&);
 
 template<typename T>
@@ -229,8 +249,19 @@ Tensor<T> conj(Tensor<T> A) {
 	return A;
 }
 
+template< >
+Tensor<double> conj<double>(Tensor<double> A) {
+	return A;
+}
+
+template< >
+Tensor<float> conj<float>(Tensor<float> A) {
+	return A;
+}
+
+
+template Tensor<cf> conj(Tensor<cf> A);
 template Tensor<cd> conj(Tensor<cd> A);
-template Tensor<d> conj(Tensor<d> A);
 
 template<typename T>
 Tensor<T> diagonal(const Tensor<T>& A) {
@@ -244,9 +275,6 @@ Tensor<T> diagonal(const Tensor<T>& A) {
 	return diag;
 }
 
-template Tensor<cd> diagonal(const Tensor<cd>& A);
-template Tensor<d> diagonal(const Tensor<d>& A);
-
 template <typename T, typename U, template <typename> class Dev>
 void offDiagonal(Tensor<T, Dev>& off, const Tensor<U, Dev>& full) {
     off = full;
@@ -255,9 +283,10 @@ void offDiagonal(Tensor<T, Dev>& off, const Tensor<U, Dev>& full) {
     }
 }
 
-template void offDiagonal(Tensor<d>& off, const Tensor<d>& full);
 template void offDiagonal(Tensor<f>& off, const Tensor<f>& full);
-
+template void offDiagonal(Tensor<d>& off, const Tensor<d>& full);
+template void offDiagonal(Tensor<cf>& off, const Tensor<cf>& full);
+template void offDiagonal(Tensor<cd>& off, const Tensor<cd>& full);
 
 template<typename T>
 T trace(const Tensor<T>& A) {
@@ -269,9 +298,6 @@ T trace(const Tensor<T>& A) {
 	return tr;
 }
 
-template cd trace(const Tensor<cd>& A);
-template d trace(const Tensor<d>& A);
-
 /// dest[dim1, dim2] = beta * dest[dim1,dim2] + A[dim2, dim1]
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {
@@ -282,7 +308,9 @@ void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {
 	}
 }
 
+template void transpose(f *dest, const f *src, size_t dim1, size_t dim2, f beta);
 template void transpose(d *dest, const d *src, size_t dim1, size_t dim2, d beta);
+template void transpose(cf *dest, const cf *src, size_t dim1, size_t dim2, cf beta);
 template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2, cd beta);
 
 /// A[dim1, dim2] --> A[dim2, dim1]
@@ -295,9 +323,10 @@ void transpose(T *dest, const T *src, size_t dim1, size_t dim2) {
 	}
 }
 
+template void transpose(f *dest, const f *src, size_t dim1, size_t dim2);
 template void transpose(d *dest, const d *src, size_t dim1, size_t dim2);
+template void transpose(cf *dest, const cf *src, size_t dim1, size_t dim2);
 template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2);
-
 
 /// \brief perform matrix transpose A[bef, last] --> A[last, bef]
 template<typename T>
@@ -308,7 +337,9 @@ void transpose(Tensor<T>& dest, const Tensor<T>& src) {
 	dest.shape_ = transposeToFront(src.shape_, src.shape_.lastIdx());
 }
 
+template void transpose(Tensor<f>& dest, const Tensor<f>& src);
 template void transpose(Tensor<d>& dest, const Tensor<d>& src);
+template void transpose(Tensor<cf>& dest, const Tensor<cf>& src);
 template void transpose(Tensor<cd>& dest, const Tensor<cd>& src);
 
 
@@ -320,7 +351,9 @@ Tensor<T> transpose(const Tensor<T>& src) {
 	return dest;
 }
 
+template Tensor<f> transpose(const Tensor<f>& src);
 template Tensor<d> transpose(const Tensor<d>& src);
+template Tensor<cf> transpose(const Tensor<cf>& src);
 template Tensor<cd> transpose(const Tensor<cd>& src);
 
 /// \brief perform matrix adjoint A[bef, last] --> A*[last, bef]
@@ -330,8 +363,9 @@ void adjoint(Tensor<T>& dest, const Tensor<T>& src) {
 	dest = conj(dest);
 }
 
+template void adjoint(Tensor<f>& dest, const Tensor<f>& src);
 template void adjoint(Tensor<d>& dest, const Tensor<d>& src);
-template void adjoint(Tensor<cd>& dest, const Tensor<cd>& src);
+template void adjoint(Tensor<cf>& dest, const Tensor<cf>& src);
 
 /// \brief perform matrix adjoint A[bef, last] --> A*[last, bef]
 template<typename T>
@@ -444,3 +478,19 @@ template void vectorTensor(Tensor<cd>& B, const Tensor<cd>& a, size_t k);
 template void vectorTensor(Tensor<cd>& B, const Tensor<d>& a, size_t k);
 template void vectorTensor(Tensor<d>& B, const Tensor<d>& a, size_t k);
 
+// https://stackoverflow.com/questions/50338955/how-can-i-concisely-write-a-lot-of-explicit-function-template-instantiations
+template<typename... Ts>
+auto instantiateTensorBLAS() {
+    static auto funcs = std::tuple_cat(std::make_tuple(
+        nrm2<Ts>,
+		axpy<Ts>,
+		residual<Ts>,
+		productElementwise<Ts>,
+		trace<Ts>,
+		diagonal<Ts>
+    )...);
+
+    return &funcs;
+}
+
+template auto instantiateTensorBLAS<f, d, cf, cd>();
