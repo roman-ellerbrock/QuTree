@@ -15,17 +15,27 @@ using cf = complex<f>;
 using cd = complex<d>;
 
 /// = ||A||_2
-template<typename T>
-T nrm2(const Tensor<T>& A, size_t incr) {
-	return abs(blas::nrm2(A.shape_.totalDimension() / incr, &(A[0]), incr));
+template<class Tensor, class ...Queue>
+double nrm2(const Tensor& A, size_t incr, Queue& ... queue) {
+	return abs(blas::nrm2(A.shape_.totalDimension() / incr, &(A[0]), incr, queue...));
 }
 
+template double nrm2<Tensorf>(const Tensorf& A, size_t incr);
+template double nrm2<Tensord>(const Tensord& A, size_t incr);
+template double nrm2<Tensorcf>(const Tensorcf& A, size_t incr);
+template double nrm2<Tensorcd>(const Tensorcd& A, size_t incr);
+
 /// b -> alpha * a + b
-template<typename T>
-void axpy(const Tensor<T>& A, Tensor<T>& B, T alpha, size_t inc_a, size_t inc_b) {
+template<typename T, class Tensor, class ...Queue>
+void axpy(const Tensor& A, Tensor& B, T alpha, size_t inc_a, size_t inc_b, Queue& ...queue) {
 	size_t n = A.shape_.totalDimension() / inc_a;
-	blas::axpy(n, alpha, A.data(), inc_a, B.data(), inc_b);
+	blas::axpy(n, alpha, A.data(), inc_a, B.data(), inc_b, queue...);
 }
+
+template void axpy<f, Tensor<f>>(const Tensor<f>& A, Tensor<f>& B, f alpha, size_t inc_a, size_t inc_b);
+template void axpy<d, Tensor<d>>(const Tensor<d>& A, Tensor<d>& B, d alpha, size_t inc_a, size_t inc_b);
+template void axpy<cf, Tensor<cf>>(const Tensor<cf>& A, Tensor<cf>& B, cf alpha, size_t inc_a, size_t inc_b);
+template void axpy<cd, Tensor<cd>>(const Tensor<cd>& A, Tensor<cd>& B, cd alpha, size_t inc_a, size_t inc_b);
 
 /// A += B
 template<typename T>
@@ -52,11 +62,16 @@ template void operator-=(Tensor<cf>& A, const Tensor<cf>& B);
 template void operator-=(Tensor<cd>& A, const Tensor<cd>& B);
 
 /// || A - B ||_2
-template<typename T>
-double residual(Tensor<T> A, const Tensor<T>& B) {
+template<class Tensor, class ...Queue>
+double residual(Tensor A, const Tensor& B, Queue& ...queue) {
 	A -= B;
-	return abs(nrm2(A));
+	return abs(nrm2<Tensor, Queue...>(A, queue...));
 }
+
+template double residual<Tensorf>(Tensorf A, const Tensorf& B);
+template double residual<Tensord>(Tensord A, const Tensord& B);
+template double residual<Tensorcf>(Tensorcf A, const Tensorcf& B);
+template double residual<Tensorcd>(Tensorcd A, const Tensorcd& B);
 
 /// = A + B
 template<typename T>
@@ -259,7 +274,6 @@ Tensor<float> conj<float>(Tensor<float> A) {
 	return A;
 }
 
-
 template Tensor<cf> conj(Tensor<cf> A);
 template Tensor<cd> conj(Tensor<cd> A);
 
@@ -316,21 +330,6 @@ template void transpose(d *dest, const d *src, size_t dim1, size_t dim2, d beta)
 template void transpose(cf *dest, const cf *src, size_t dim1, size_t dim2, cf beta);
 template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2, cd beta);
 
-/// A[dim1, dim2] --> A[dim2, dim1]
-/*template<typename T>
-void transpose(T *dest, const T *src, size_t dim1, size_t dim2) {
-	for (size_t j = 0; j < dim2; ++j) {
-		for (size_t i = 0; i < dim1; ++i) {
-			dest[j + dim2 * i] = src[i + dim1 * j];
-		}
-	}
-}
-
-template void transpose(f *dest, const f *src, size_t dim1, size_t dim2);
-template void transpose(d *dest, const d *src, size_t dim1, size_t dim2);
-template void transpose(cf *dest, const cf *src, size_t dim1, size_t dim2);
-template void transpose(cd *dest, const cd *src, size_t dim1, size_t dim2);
-*/
 /// \brief perform matrix transpose A[bef, last] --> A[last, bef]
 template<typename T>
 void transpose(Tensor<T>& dest, const Tensor<T>& src) {
@@ -481,9 +480,9 @@ template void vectorTensor(Tensor<d>& B, const Tensor<d>& a, size_t k);
 template<typename... Ts>
 auto instantiateTensorBLAS() {
     static auto funcs = std::tuple_cat(std::make_tuple(
-        nrm2<Ts>,
-		axpy<Ts>,
-		residual<Ts>,
+//        nrm2<Ts>,
+//		axpy<Ts>,
+//		residual<Ts>,
 		productElementwise<Ts>,
 		trace<Ts>,
 		diagonal<Ts>,

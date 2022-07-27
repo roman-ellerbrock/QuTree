@@ -132,9 +132,10 @@ private:
 //	T *coeffs_;
 };
 
-typedef Tensor<complex<double>> Tensorcd;
-
-typedef Tensor<double> Tensord;
+using Tensorf = Tensor<float>;
+using Tensord = Tensor<double>;
+using Tensorcf = Tensor<complex<float>>;
+using Tensorcd = Tensor<complex<double>>;
 
 //////////////////////////////////////////////////////////
 // Non-member functions

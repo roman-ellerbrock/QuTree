@@ -23,8 +23,8 @@
  * @param incr increment in loop
  * @return returns the 2-norm of a Tensor, i.e. ||A||_2
  */
-template<typename T>
-T nrm2(const Tensor<T>& A, size_t incr = 1);
+template<class Tensor, class ...Queue>
+double nrm2(const Tensor& A, size_t incr = 1, Queue& ...queue);
 
 /**
  * \brief Perform vector addition
@@ -32,8 +32,8 @@ T nrm2(const Tensor<T>& A, size_t incr = 1);
  * @param inc_b increment in loop for b
  * @return returns alpha*(a+b)
  */
-template<typename T>
-void axpy(const Tensor<T>& A, Tensor<T>& B, T alpha = 1., size_t inc_a = 1, size_t inc_b = 1);
+template<typename T, class Tensor, class ...Queue>
+void axpy(const Tensor& A, Tensor& B, T alpha = 1., size_t inc_a = 1, size_t inc_b = 1, Queue& ...queue);
 
 template<typename T>
 void operator+=(Tensor<T>& A, const Tensor<T>& B);
@@ -41,8 +41,8 @@ void operator+=(Tensor<T>& A, const Tensor<T>& B);
 template<typename T>
 void operator-=(Tensor<T>& A, const Tensor<T>& B);
 
-template<typename T>
-double residual(Tensor<T> A, const Tensor<T>& B);
+template<class Tensor, class ...Queue>
+double residual(Tensor A, const Tensor& B, Queue& ...queue);
 
 template<typename T>
 Tensor<T> operator+(Tensor<T> A, const Tensor<T>& B);
