@@ -20,6 +20,7 @@ add_executable(
   tests.cc
 
   Tensor/cuTensor_test.cpp
+  Tensor/cuTensorBLAS1_test.cpp
   Tensor/Tensor_test.cpp
   Tensor/mxpTensor_test.cpp
   Tensor/TensorBLAS1_test.cpp

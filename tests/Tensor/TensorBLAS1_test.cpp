@@ -9,35 +9,36 @@
 #include "Util/QMConstants.h"
 
 
-class TensorFactory : public ::testing::Test {
+class TensorBLAS1Factory : public ::testing::Test {
 public:
-	TensorFactory() {
-		A = randomcd({2, 3, 4, 2}, rng::gen);
-		TensorShape tdim(vector<size_t>({2, 3, 4, 2}));
+	TensorBLAS1Factory() {
+		A = arangecd({2, 3, 4, 2});
 
-		B = Tensorcd({2, 3, 4, 2});
-		for (size_t i = 0; i < tdim.totalDimension(); ++i) {
-			B(i) = i % 3;
+		B = Tensorcd(A.shape_);
+		for (size_t i = 0; i < B.shape_.totalDimension(); ++i) {
+			if (i % 3 == 0) {
+				B(i) = 1.;
+			}
 		}
+
+		C_ = aranged({5, 10});
 	}
 
 	Tensorcd A;
 	Tensorcd B;
+	Tensord C_;
 };
 
 constexpr double eps = 1e-7;
 
-TEST_F (TensorFactory, nrm2) { /// ||A||_2
-	auto norm = nrm2(B);
-	complex<double> y = 0.;
-	for (size_t i = 0; i < B.shape_.totalDimension(); ++i) {
-		y += pow(B(i), 2);
-	}
-	y = sqrt(y);
-		EXPECT_NEAR(0, abs(norm - y), eps);
+TEST_F (TensorBLAS1Factory, nrm2) { /// ||A||_2
+	double norm = pow(nrm2(B), 2);
+		EXPECT_NEAR(16., norm, eps);
+
 }
 
-TEST_F (TensorFactory, axpy) { /// vec add
+
+TEST_F (TensorBLAS1Factory, axpy) { /// vec add
 	Tensorcd D(A.shape_);
 	complex<double> alpha = -0.5;
 	for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
@@ -55,7 +56,7 @@ TEST_F (TensorFactory, axpy) { /// vec add
 		EXPECT_NEAR(0., res, eps);
 }
 
-TEST_F (TensorFactory, add) {
+TEST_F (TensorBLAS1Factory, add) {
 	Tensorcd D(A.shape_);
 	for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
 		D(i) = A(i) + B(i);
@@ -72,7 +73,7 @@ TEST_F (TensorFactory, add) {
 		EXPECT_NEAR(0., res, eps);
 }
 
-TEST_F (TensorFactory, subst) {
+TEST_F (TensorBLAS1Factory, subst) {
 	Tensorcd D(A.shape_);
 	for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
 		D(i) = A(i) - B(i);
@@ -89,7 +90,7 @@ TEST_F (TensorFactory, subst) {
 		EXPECT_NEAR(0., res, eps);
 }
 
-TEST_F (TensorFactory, residual) {
+TEST_F (TensorBLAS1Factory, residual) {
 	Tensorcd D(A);
 	D -= B;
 
@@ -103,21 +104,22 @@ TEST_F (TensorFactory, residual) {
 		EXPECT_NEAR(0., abs(res - res2), eps);
 }
 
-TEST_F (TensorFactory, plus_op) {
+TEST_F (TensorBLAS1Factory, plus_op) {
 	Tensorcd AaddB = A + B;
 	Tensorcd ApB = A;
 	ApB += B;
 		EXPECT_NEAR(0., abs(residual(AaddB, ApB)), eps);
 }
 
-TEST_F (TensorFactory, minus_op) {
+
+TEST_F (TensorBLAS1Factory, minus_op) {
 	Tensorcd AB = A - B;
 	Tensorcd AmB = A;
 	AmB -= B;
 		EXPECT_NEAR(0., abs(residual(AB, AmB)), eps);
 }
 
-TEST_F (TensorFactory, scaleeq_op) {
+TEST_F (TensorBLAS1Factory, scaleeq_op) {
 	Tensorcd aA = A;
 	aA *= 2.;
 	for (size_t i = 0; i < A.shape_.totalDimension(); ++i) {
@@ -126,19 +128,20 @@ TEST_F (TensorFactory, scaleeq_op) {
 		EXPECT_NEAR(0., abs(residual(aA, A)), eps);
 }
 
-TEST_F (TensorFactory, scaleleft_op) {
+
+TEST_F (TensorBLAS1Factory, scaleleft_op) {
 	Tensorcd aA = 2. * A;
 	A *= 2.;
 		EXPECT_NEAR(0., abs(residual(aA, A)), eps);
 }
 
-TEST_F (TensorFactory, scaleright_op) {
+TEST_F (TensorBLAS1Factory, scaleright_op) {
 	Tensorcd Aa = A * 2.;
 	A *= 2.;
 		EXPECT_NEAR(0., abs(residual(Aa, A)), eps);
 }
 
-TEST_F (TensorFactory, diveq_op) {
+TEST_F (TensorBLAS1Factory, diveq_op) {
 	Tensorcd Aa = A;
 	Aa /= 2.;
 	for (size_t i = 0; i < A.shape_.totalDimension(); ++i) {
@@ -147,13 +150,13 @@ TEST_F (TensorFactory, diveq_op) {
 		EXPECT_NEAR(0., abs(residual(Aa, A)), eps);
 }
 
-TEST_F (TensorFactory, divight_op) {
+TEST_F (TensorBLAS1Factory, divight_op) {
 	Tensorcd Aa = A / 2.;
 	A /= 2.;
 		EXPECT_NEAR(0., abs(residual(Aa, A)), eps);
 }
 
-TEST_F (TensorFactory, adjust_inc_dec) {
+TEST_F (TensorBLAS1Factory, adjust_inc_dec) {
 	size_t leaf = 1;
 	size_t dim = A.shape_[leaf];
 	size_t inc_dim = dim + 1;
@@ -163,7 +166,7 @@ TEST_F (TensorFactory, adjust_inc_dec) {
 		EXPECT_NEAR(0., residual(A, B), eps);
 }
 
-TEST_F (TensorFactory, productElementwise) {
+TEST_F (TensorBLAS1Factory, productElementwise) {
 	auto C = productElementwise(A, B);
 	Tensorcd D(A);
 	for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
@@ -172,7 +175,7 @@ TEST_F (TensorFactory, productElementwise) {
 		EXPECT_NEAR(0., residual(C, D), eps);
 }
 
-TEST_F (TensorFactory, conj) {
+TEST_F (TensorBLAS1Factory, conj) {
 	complex<double> im(0., 1.);
 	A *= im;
 	Tensorcd D(A);
@@ -183,19 +186,43 @@ TEST_F (TensorFactory, conj) {
 		EXPECT_NEAR(0., residual(A, D), eps);
 }
 
-TEST_F (TensorFactory, diag) {
-	Tensorcd diag = diagonal(B);
-		EXPECT_EQ(2, diag.shape_.totalDimension());
+TEST_F (TensorBLAS1Factory, diag) {
+	Tensord mat = aranged({3, 3});
+	Tensord diag = diagonal(mat);
+		EXPECT_EQ(3, diag.shape_[0]);
 		EXPECT_EQ(1, diag.shape_.order());
-		EXPECT_NEAR(0., abs(diag(0)), eps);
-		EXPECT_NEAR(0, abs(diag(1) - 1.), eps);
+		EXPECT_NEAR(0., diag(0), eps);
+		EXPECT_NEAR(4., diag(1), eps);
+		EXPECT_NEAR(8., diag(2), eps);
 }
 
-TEST_F (TensorFactory, trace) {
+TEST_F (TensorBLAS1Factory, diagC) {
+	auto diag = diagonal(C_);
+	EXPECT_EQ(5, diag.shape_[0]);
+	EXPECT_NEAR(0., diag(0), eps);
+	EXPECT_NEAR(6., diag(1), eps);
+	EXPECT_NEAR(12., diag(2), eps);
+	EXPECT_NEAR(18., diag(3), eps);
+	EXPECT_NEAR(24., diag(4), eps);
+}
+
+TEST_F (TensorBLAS1Factory, off_diag) {
+	Tensord mat = aranged({3, 3});
+	Tensord diag = diagonal(mat);
+	Tensord off = mat;
+	off(0,0) = 0.;
+	off(1,1) = 0.;
+	off(2,2) = 0.;
+	Tensord off2(mat.shape_);
+	offDiagonal(off2, mat);
+	EXPECT_NEAR(0., residual(off, off2), eps);
+}
+
+TEST_F (TensorBLAS1Factory, trace) {
 		EXPECT_NEAR(0., abs(trace(B) - 1.), eps);
 }
 
-TEST_F (TensorFactory, transpose_1) {
+TEST_F (TensorBLAS1Factory, transpose_1) {
 	Tensorcd B(A.shape_);
 	size_t dim1 = A.shape_.lastBefore();
 	size_t dim2 = A.shape_.lastDimension();
@@ -210,7 +237,7 @@ TEST_F (TensorFactory, transpose_1) {
 		EXPECT_NEAR(0., residual(B, C), eps);
 }
 
-TEST_F (TensorFactory, transpose_AB) {
+TEST_F (TensorBLAS1Factory, transpose_AB) {
 	Tensorcd B(A.shape_);
 	size_t k = 2;
 	size_t a = A.shape_.before(k);
@@ -230,7 +257,7 @@ TEST_F (TensorFactory, transpose_AB) {
 }
 
 
-TEST_F (TensorFactory, transpose_BC) {
+TEST_F (TensorBLAS1Factory, transpose_BC) {
 	Tensorcd B(A.shape_);
 	size_t k = 2;
 	size_t a = A.shape_.before(k);
@@ -275,7 +302,7 @@ TEST (TensorBLAS, shape_transposeToFront) {
 		EXPECT_EQ(shape_back, shape);
 }
 
-TEST_F (TensorFactory, transpose_tens) {
+TEST_F (TensorBLAS1Factory, transpose_tens) {
 	Tensorcd B(A.shape_);
 	size_t k = 2;
 	transpose(B, A, k);
@@ -288,7 +315,7 @@ TEST_F (TensorFactory, transpose_tens) {
 		EXPECT_NEAR(0., residual(B, C), eps);
 }
 
-TEST_F (TensorFactory, transpose_tens_back) {
+TEST_F (TensorBLAS1Factory, transpose_tens_back) {
 	Tensorcd B(A.shape_);
 	size_t k = 2;
 	transpose(B, A, k);
@@ -298,7 +325,7 @@ TEST_F (TensorFactory, transpose_tens_back) {
 		EXPECT_NEAR(0., residual(C, A), eps);
 }
 
-TEST_F (TensorFactory, transpose_return) {
+TEST_F (TensorBLAS1Factory, transpose_return) {
 	Tensorcd ATref(A.shape_);
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		transpose(ATref, A, k);
@@ -309,7 +336,7 @@ TEST_F (TensorFactory, transpose_return) {
 	}
 }
 
-TEST_F (TensorFactory, transpose_mat) {
+TEST_F (TensorBLAS1Factory, transpose_mat) {
 	size_t last = A.shape_.lastDimension();
 	size_t befo = A.shape_.lastBefore();
 	Tensorcd R(A.shape_);
@@ -327,7 +354,7 @@ TEST_F (TensorFactory, transpose_mat) {
 		EXPECT_EQ(D.shape_, newshape);
 }
 
-TEST_F (TensorFactory, adjoint_mat) {
+TEST_F (TensorBLAS1Factory, adjoint_mat) {
 	size_t last = A.shape_.lastDimension();
 	size_t befo = A.shape_.lastBefore();
 	A *= QM::im;
@@ -347,13 +374,13 @@ TEST_F (TensorFactory, adjoint_mat) {
 		EXPECT_EQ(D.shape_, newshape);
 }
 
-TEST_F (TensorFactory, reshape) {
+TEST_F (TensorBLAS1Factory, reshape) {
 	TensorShape xshape({4, 3, 2, 2});
 	A.reshape(xshape);
 		EXPECT_EQ(xshape, A.shape_);
 }
 
-TEST_F (TensorFactory, resize) {
+TEST_F (TensorBLAS1Factory, resize) {
 	TensorShape xshape({5, 4, 3, 3});
 	A.resize(xshape);
 		EXPECT_EQ(xshape, A.shape_);
@@ -375,6 +402,7 @@ TEST (TensorBLAS, nRowsCols) {
 		EXPECT_EQ(5, ncols(shape, blas::Op::ConjTrans));
 }
 
+
 TEST (TensorBLAS, vectorTensor) {
 	Tensord B({3, 3, 3});
 	for (size_t i = 0; i < 3; ++i) {
@@ -386,5 +414,4 @@ TEST (TensorBLAS, vectorTensor) {
 	vectorTensor(B, vec, 1);
 		EXPECT_NEAR(0, residual(B, twoB), eps);
 }
-
 

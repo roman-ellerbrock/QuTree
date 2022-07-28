@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 11/7/21.
 //
 
-#include "Tensor/TensorBLAS1.h"
+#include "Tensor/TensorBLAS1.hpp"
 #include "Tensor/Tensor.hpp"
 #include "stdafx.h"
 #include <math.h>
@@ -14,23 +14,10 @@ using d = double;
 using cf = complex<f>;
 using cd = complex<d>;
 
-/// = ||A||_2
-template<class Tensor, class ...Queue>
-double nrm2(const Tensor& A, size_t incr, Queue& ... queue) {
-	return abs(blas::nrm2(A.shape_.totalDimension() / incr, &(A[0]), incr, queue...));
-}
-
-template double nrm2<Tensorf>(const Tensorf& A, size_t incr);
-template double nrm2<Tensord>(const Tensord& A, size_t incr);
-template double nrm2<Tensorcf>(const Tensorcf& A, size_t incr);
-template double nrm2<Tensorcd>(const Tensorcd& A, size_t incr);
-
-/// b -> alpha * a + b
-template<typename T, class Tensor, class ...Queue>
-void axpy(const Tensor& A, Tensor& B, T alpha, size_t inc_a, size_t inc_b, Queue& ...queue) {
-	size_t n = A.shape_.totalDimension() / inc_a;
-	blas::axpy(n, alpha, A.data(), inc_a, B.data(), inc_b, queue...);
-}
+template double nrm2<f, Tensor>(const Tensorf& A, size_t incr);
+template double nrm2<d, Tensor>(const Tensord& A, size_t incr);
+template double nrm2<cf, Tensor>(const Tensorcf& A, size_t incr);
+template double nrm2<cd, Tensor>(const Tensorcd& A, size_t incr);
 
 template void axpy<f, Tensor<f>>(const Tensor<f>& A, Tensor<f>& B, f alpha, size_t inc_a, size_t inc_b);
 template void axpy<d, Tensor<d>>(const Tensor<d>& A, Tensor<d>& B, d alpha, size_t inc_a, size_t inc_b);
@@ -53,7 +40,7 @@ template void operator+=(Tensor<cd>& A, const Tensor<cd>& B);
 template<typename T>
 void operator-=(Tensor<T>& A, const Tensor<T>& B) {
 	T alpha = -1.;
-	axpy(B, A, alpha);
+	axpy<T>(B, A, alpha);
 }
 
 template void operator-=(Tensor<f>& A, const Tensor<f>& B);
@@ -62,16 +49,16 @@ template void operator-=(Tensor<cf>& A, const Tensor<cf>& B);
 template void operator-=(Tensor<cd>& A, const Tensor<cd>& B);
 
 /// || A - B ||_2
-template<class Tensor, class ...Queue>
-double residual(Tensor A, const Tensor& B, Queue& ...queue) {
+template<typename T, template <typename> class Tensor, class ...Queue>
+double residual(Tensor<T> A, const Tensor<T>& B, Queue& ...queue) {
 	A -= B;
-	return abs(nrm2<Tensor, Queue...>(A, queue...));
+	return abs(nrm2<T, Tensor, Queue...>(A, queue...));
 }
 
-template double residual<Tensorf>(Tensorf A, const Tensorf& B);
-template double residual<Tensord>(Tensord A, const Tensord& B);
-template double residual<Tensorcf>(Tensorcf A, const Tensorcf& B);
-template double residual<Tensorcd>(Tensorcd A, const Tensorcd& B);
+template double residual<f, Tensor>(Tensorf A, const Tensorf& B);
+template double residual<d, Tensor>(Tensord A, const Tensord& B);
+template double residual<cf, Tensor>(Tensorcf A, const Tensorcf& B);
+template double residual<cd, Tensor>(Tensorcd A, const Tensorcd& B);
 
 /// = A + B
 template<typename T>
@@ -124,7 +111,6 @@ template Tensor<cf> operator*(const cf alpha, Tensor<cf> A);
 template Tensor<cd> operator*(const cd alpha, Tensor<cd> A);
 template Tensor<cf> operator*(const f alpha, Tensor<cf> A);
 template Tensor<cd> operator*(const d alpha, Tensor<cd> A);
-
 
 ///  = A * alpha
 template<typename T, typename U>
@@ -187,8 +173,8 @@ Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
 	return C;
 }
 
-template <typename T, template <typename> class Dev>
-void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag) {
+template <typename T, template <typename> class Tensor, class ...Queue>
+void mdiagm(Tensor<T>& C, const Tensor<T>& B, const Tensor<T>& diag, T factor, Queue& ...queue) {
     /**
      * @brief Multiply a dense matrix with a diagonal matrix
      * @param C output Matrix that is written on
@@ -209,20 +195,20 @@ void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& di
     size_t inc_a = 1;
     size_t inc_b = 1;
     for (size_t i = 0; i < n; ++i) {
-        T alpha = diag(i);
-        const T* Bstart = B.data() + i * n;
-        T* Cstart = C.data() + i * n;
-	    blas::axpy(n, alpha, Bstart, inc_a, Cstart, inc_b);
+		T alpha = diag(i) * factor;
+		const T* Bstart = B.data() + i * n;
+		T* Cstart = C.data() + i * n;
+		blas::axpy(n, alpha, Bstart, inc_a, Cstart, inc_b, queue...);
     }
 }
 
-template void mdiagm(Tensor<f>& C, const Tensor<f>&, const Tensor<f>&);
-template void mdiagm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&);
-template void mdiagm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&);
-template void mdiagm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&);
+template void mdiagm(Tensor<f>& C, const Tensor<f>&, const Tensor<f>&, f);
+template void mdiagm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&, d);
+template void mdiagm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&, cf);
+template void mdiagm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&, cd);
 
-template <typename T, template <typename> class Dev>
-void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B) {
+template <typename T, template <typename> class Tensor, class ...Queue>
+void diagmm(Tensor<T>& C, const Tensor<T>& diag, const Tensor<T>& B, T factor, Queue& ...queue) {
     /**
      * @brief Multiply a dense matrix with a diagonal matrix
      * @param C output Matrix that is written on
@@ -244,17 +230,17 @@ void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>&
     size_t inc_a = n;
     size_t inc_b = n;
     for (size_t i = 0; i < n; ++i) {
-        T alpha = diag(i);
+        T alpha = diag(i) * factor;
         const T* Bstart = B.data() + i;
         T* Cstart = C.data() + i;
-	    blas::axpy(n, alpha, Bstart, inc_a, Cstart, inc_b);
+	    blas::axpy(n, alpha, Bstart, inc_a, Cstart, inc_b, queue...);
     }
 }
 
-template void diagmm(Tensor<f>& C, const Tensor<f>&, const Tensor<f>&);
-template void diagmm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&);
-template void diagmm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&);
-template void diagmm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&);
+template void diagmm(Tensor<f>& C, const Tensor<f>&, const Tensor<f>&, f);
+template void diagmm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&, d);
+template void diagmm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&, cf);
+template void diagmm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&, cd);
 
 template<typename T>
 Tensor<T> conj(Tensor<T> A) {
@@ -286,6 +272,12 @@ Tensor<T> diagonal(const Tensor<T>& A) {
 	for (size_t i = 0; i < n; ++i) {
 		diag(i) = A(i, i);
 	}
+
+/*	const T* x = A.data();
+	size_t incx = nrow + 1;
+	T* y = diag.data();
+	size_t incy = 1;
+	blas::copy(n, x, incx, y, incy);*/
 	return diag;
 }
 

@@ -20,9 +20,9 @@ using namespace std;
 
 static double eps = 1e-7;
 
-class TensorFactory : public ::testing::Test {
+class TensorFactory2 : public ::testing::Test {
 public:
-	TensorFactory() {
+	TensorFactory2() {
 		A = arangecd({2, 3, 4, 2});
 		CreateTensorB();
 	}
@@ -63,7 +63,7 @@ public:
 	}
 };
 
-TEST_F (TensorFactory, gemm) {
+TEST_F (TensorFactory2, gemm) {
 	auto op_as = {blas::Op::NoTrans, blas::Op::ConjTrans};
 	auto op_bs = {blas::Op::NoTrans, blas::Op::ConjTrans};
 	complex<double> alpha = 1.5;
@@ -91,7 +91,7 @@ TEST_F (TensorFactory, gemm) {
 	}
 }
 
-TEST_F (TensorFactory, gemm_return) {
+TEST_F (TensorFactory2, gemm_return) {
 	auto op_as = {blas::Op::NoTrans, blas::Op::ConjTrans};
 	auto op_bs = {blas::Op::NoTrans, blas::Op::ConjTrans};
 	complex<double> alpha = 1.5;
@@ -116,7 +116,7 @@ TEST_F (TensorFactory, gemm_return) {
 	}
 }
 
-TEST_F(TensorFactory, OperatorProduct) {
+TEST_F(TensorFactory2, OperatorProduct) {
 	Tensorcd a({5, 7});
 	fill(a);
 	Tensorcd b({7, 9});
@@ -138,7 +138,7 @@ TEST (TensorBLAS, unitarySimilarityTransform) {
 		EXPECT_NEAR(0., residual(res, resRef), eps);
 }
 
-TEST_F (TensorFactory, matrixTensor_plain) {
+TEST_F (TensorFactory2, matrixTensor_plain) {
 	Tensorcd hA(A.shape_);
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		auto mat = createMatrix(A, k);
@@ -149,7 +149,7 @@ TEST_F (TensorFactory, matrixTensor_plain) {
 	}
 }
 
-TEST_F (TensorFactory, matrixTensor_alpha) {
+TEST_F (TensorFactory2, matrixTensor_alpha) {
 	Tensorcd hA(A.shape_);
 	complex<double> alpha = 2.;
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
@@ -161,7 +161,7 @@ TEST_F (TensorFactory, matrixTensor_alpha) {
 	}
 }
 
-TEST_F (TensorFactory, matrixTensor_beta) {
+TEST_F (TensorFactory2, matrixTensor_beta) {
 	Tensorcd hA(A);
 	complex<double> alpha = 1.;
 	complex<double> beta = 1.;
@@ -175,7 +175,7 @@ TEST_F (TensorFactory, matrixTensor_beta) {
 	}
 }
 
-TEST_F (TensorFactory, matrixTensor_trans) {
+TEST_F (TensorFactory2, matrixTensor_trans) {
 	Tensorcd hA(A.shape_);
 	complex<double> alpha = 1.;
 	complex<double> beta = 0.;
@@ -189,7 +189,7 @@ TEST_F (TensorFactory, matrixTensor_trans) {
 	}
 }
 
-TEST_F (TensorFactory, contraction_plain) {
+TEST_F (TensorFactory2, contraction_plain) {
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		auto mat = constructMatrix(A, k);
 		contraction(mat, A, B, k);
@@ -200,7 +200,7 @@ TEST_F (TensorFactory, contraction_plain) {
 	}
 }
 
-TEST_F (TensorFactory, contraction_alpha) {
+TEST_F (TensorFactory2, contraction_alpha) {
 	complex<double> alpha = 0.5;
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		auto mat = constructMatrix(A, k);
@@ -212,7 +212,7 @@ TEST_F (TensorFactory, contraction_alpha) {
 	}
 }
 
-TEST_F (TensorFactory, contraction_beta) {
+TEST_F (TensorFactory2, contraction_beta) {
 	complex<double> alpha = 0.5;
 	complex<double> beta = 1.5;
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
@@ -225,7 +225,7 @@ TEST_F (TensorFactory, contraction_beta) {
 	}
 }
 
-TEST_F (TensorFactory, contraction_return) {
+TEST_F (TensorFactory2, contraction_return) {
 	complex<double> alpha = 0.5;
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		auto mat = contraction(A, B, k, alpha);
@@ -235,7 +235,7 @@ TEST_F (TensorFactory, contraction_return) {
 	}
 }
 
-TEST_F (TensorFactory, generalContractionHole) {
+TEST_F (TensorFactory2, generalContractionHole) {
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		auto matRef = contraction(A, B, k);
 		auto mat = constructMatrix(A, k);
@@ -245,7 +245,7 @@ TEST_F (TensorFactory, generalContractionHole) {
 	}
 }
 
-TEST_F (TensorFactory, generalContractionFull) {
+TEST_F (TensorFactory2, generalContractionFull) {
 	vector<size_t> hole{};
 	Tensorcd T({1});
 	contraction(T, B, B, hole);

@@ -100,8 +100,12 @@ set(QuTree_SOURCE_FILES
 
 if (CUDA_FEATS)
 	set (QuTree_INCLUDE_FILES_CUDA 
+        src/Tensor/cuTensorBLAS1.h
+        src/Tensor/cuTensorBLAS1.cuh
 	)
 
 	set (QuTree_SOURCE_FILES_CUDA 
+        src/Tensor/cuTensorBLAS1.cpp
+        src/Tensor/cuTensorBLAS1.cu
 	)
 endif()

@@ -23,8 +23,8 @@
  * @param incr increment in loop
  * @return returns the 2-norm of a Tensor, i.e. ||A||_2
  */
-template<class Tensor, class ...Queue>
-double nrm2(const Tensor& A, size_t incr = 1, Queue& ...queue);
+template<typename T, template <typename> class Tensor, class ...Queue>
+double nrm2(const Tensor<T>& A, size_t incr = 1, Queue& ...queue);
 
 /**
  * \brief Perform vector addition
@@ -41,8 +41,8 @@ void operator+=(Tensor<T>& A, const Tensor<T>& B);
 template<typename T>
 void operator-=(Tensor<T>& A, const Tensor<T>& B);
 
-template<class Tensor, class ...Queue>
-double residual(Tensor A, const Tensor& B, Queue& ...queue);
+template<typename T, template <typename> class Tensor, class ...Queue>
+double residual(Tensor<T> A, const Tensor<T>& B, Queue& ...queue);
 
 template<typename T>
 Tensor<T> operator+(Tensor<T> A, const Tensor<T>& B);
@@ -71,11 +71,11 @@ void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R);
 template<typename T>
 Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
 
-template <typename T, template <typename> class Dev>
-void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag);
+template <typename T, template <typename> class Tensor, class ...Queue>
+void mdiagm(Tensor<T>& C, const Tensor<T>& B, const Tensor<T>& diag, T factor = (T)1., Queue& ...queue);
 
-template <typename T, template <typename> class Dev>
-void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B);
+template <typename T, template <typename> class Tensor, class ...Queue>
+void diagmm(Tensor<T>& C, const Tensor<T>& diag, const Tensor<T>& B, T factor = (T)1., Queue& ...queue);
 
 template<typename T>
 [[nodiscard]] Tensor<T> conj(Tensor<T> A);
