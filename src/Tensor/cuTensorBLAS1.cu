@@ -42,11 +42,11 @@ template void cudaHadamardProduct(d* C, const d* A, const d* B, size_t n);
 
 template <typename T>
 __global__ void cudaDiagMatrixMatrix_kernel(T* C, const T* dA, const T* B, T factor, size_t nrow, size_t ncol) {
-//    size_t row = blockIdx.x * blockDim.x + threadIdx.x;
-//    size_t col = blockIdx.y * blockDim.y + threadIdx.y;
-    size_t id_global = blockIdx.x * blockDim.x + threadIdx.x;
-    size_t row = id_global % nrow;
-    size_t col = id_global / nrow;
+    size_t row = blockIdx.x * blockDim.x + threadIdx.x;
+    size_t col = blockIdx.y * blockDim.y + threadIdx.y;
+//    size_t id_global = blockIdx.x * blockDim.x + threadIdx.x;
+//    size_t row = id_global % nrow;
+//    size_t col = id_global / nrow;
     if (row < nrow && col < ncol) {
         size_t idx = row + nrow * col;
         C[idx] += factor * dA[row] * B[idx];
@@ -55,7 +55,7 @@ __global__ void cudaDiagMatrixMatrix_kernel(T* C, const T* dA, const T* B, T fac
 
 template <typename T>
 void cudaDiagMatrixMatrix(T* C, const T* dA, const T* B, T factor, size_t nrow, size_t ncol) {
-    constexpr size_t nthreads = 128;
+    constexpr size_t nthreads = 32;
 //    size_t nblock_row = (nrow + nthreads - 1) / nthreads;
 //    size_t nblock_col = (ncol + nthreads - 1) / nthreads;
 //    dim3 nblocks3(nblock_row, nblock_col);
@@ -64,9 +64,10 @@ void cudaDiagMatrixMatrix(T* C, const T* dA, const T* B, T factor, size_t nrow, 
 //    cout << nblocks3.x << " " << nblocks3.y << " " << nblocks3.z << endl;
 //    cout << nthreads3.x << " " << nthreads3.y << " " << nthreads3.z << endl;
 //    cudaDiagMatrixMatrix_kernel<<<nblocks3, nthreads3>>>(C, dA, B, factor, nrow, ncol);
-    size_t nblocksX = (nrow * ncol + nthreads - 1) / nthreads;
-    dim3 nblocks3(nblocksX, 1);
-    dim3 nthreads3(nthreads, 1);
+    size_t nblocksX = (nrow + nthreads - 1) / nthreads;
+    size_t nblocksY = (nrow + nthreads - 1) / nthreads;
+    dim3 nblocks3(nblocksX, nblocksY);
+    dim3 nthreads3(nthreads, nthreads);
     cudaDiagMatrixMatrix_kernel<<<nblocks3, nthreads3>>>(C, dA, B, factor, nrow, ncol);
 }
 
