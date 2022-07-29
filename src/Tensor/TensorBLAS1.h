@@ -68,14 +68,14 @@ Tensor<T> operator/(Tensor<T> A, U alpha);
 template <typename T, typename U, template <typename> class Dev>
 void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R);
 
-template<typename T>
-Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B);
+template<typename T, template <typename> class Dev = polymorphic::hostMemory>
+void hadamardProduct(Tensor<T, Dev>& C, const Tensor<T, Dev>& A, const Tensor<T, Dev>& B);
 
 template <typename T, template <typename> class Tensor, class ...Queue>
 void mdiagm(Tensor<T>& C, const Tensor<T>& B, const Tensor<T>& diag, T factor = (T)1., Queue& ...queue);
 
-template <typename T, template <typename> class Tensor, class ...Queue>
-void diagmm(Tensor<T>& C, const Tensor<T>& diag, const Tensor<T>& B, T factor = (T)1., Queue& ...queue);
+template <typename T, template <typename> class Dev, class ...Queue>
+void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B, T factor = (T)1., Queue& ...queue);
 
 template<typename T>
 [[nodiscard]] Tensor<T> conj(Tensor<T> A);

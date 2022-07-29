@@ -64,7 +64,7 @@ public:
     Tensor<U, Dev> offLP_;
 };
 
-using mxpTensord = mxpTensor<double, float, polymorphic::hostMemory>;
+using mxpTensordf = mxpTensor<double, float, polymorphic::hostMemory>;
 
 /**
  * @bTODO: for cuTensordf

@@ -163,15 +163,18 @@ template void cast(Tensor<f>& L, const Tensor<d>& R);
 template void cast(Tensor<cd>& L, const Tensor<cf>& R);
 template void cast(Tensor<cf>& L, const Tensor<cd>& R);
 
-template<typename T>
-Tensor<T> productElementwise(const Tensor<T>& A, const Tensor<T>& B) {
+template<typename T, template <typename> class Dev>
+void hadamardProduct(Tensor<T, Dev>& C, const Tensor<T, Dev>& A, const Tensor<T, Dev>& B) {
 	assert(A.shape_.totalDimension() == B.shape_.totalDimension());
-	Tensor<T> C(A.shape_);
 	for (size_t i = 0; i < A.shape_.totalDimension(); i++) {
 		C(i) = A(i) * B(i);
 	}
-	return C;
 }
+
+template void hadamardProduct<f>(Tensorf&, const Tensorf& A, const Tensorf& B);
+template void hadamardProduct<d>(Tensord&, const Tensord& A, const Tensord& B);
+template void hadamardProduct<cf>(Tensorcf&, const Tensorcf& A, const Tensorcf& B);
+template void hadamardProduct<cd>(Tensorcd&, const Tensorcd& A, const Tensorcd& B);
 
 template <typename T, template <typename> class Tensor, class ...Queue>
 void mdiagm(Tensor<T>& C, const Tensor<T>& B, const Tensor<T>& diag, T factor, Queue& ...queue) {
@@ -207,8 +210,8 @@ template void mdiagm(Tensor<d>& C, const Tensor<d>&, const Tensor<d>&, d);
 template void mdiagm(Tensor<cf>& C, const Tensor<cf>&, const Tensor<cf>&, cf);
 template void mdiagm(Tensor<cd>& C, const Tensor<cd>&, const Tensor<cd>&, cd);
 
-template <typename T, template <typename> class Tensor, class ...Queue>
-void diagmm(Tensor<T>& C, const Tensor<T>& diag, const Tensor<T>& B, T factor, Queue& ...queue) {
+template <typename T, template <typename> class Dev, class ...Queue>
+void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B, T factor, Queue& ...queue) {
     /**
      * @brief Multiply a dense matrix with a diagonal matrix
      * @param C output Matrix that is written on
@@ -475,7 +478,7 @@ auto instantiateTensorBLAS() {
 //        nrm2<Ts>,
 //		axpy<Ts>,
 //		residual<Ts>,
-		productElementwise<Ts>,
+//		hadamardProduct<Ts>,
 		trace<Ts>,
 		diagonal<Ts>,
 		transposeAB<Ts>,

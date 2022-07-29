@@ -166,13 +166,46 @@ TEST_F (TensorBLAS1Factory, adjust_inc_dec) {
 		EXPECT_NEAR(0., residual(A, B), eps);
 }
 
-TEST_F (TensorBLAS1Factory, productElementwise) {
-	auto C = productElementwise(A, B);
+TEST_F (TensorBLAS1Factory, hadamardProduct) {
+	Tensorcd C(A.shape_);
+	hadamardProduct(C, A, B);
 	Tensorcd D(A);
 	for (size_t i = 0; i < D.shape_.totalDimension(); ++i) {
 		D(i) *= B(i);
 	}
 		EXPECT_NEAR(0., residual(C, D), eps);
+}
+
+TEST (mxpTensor, mdiagm) {
+    size_t n = 10;
+    Tensord A = aranged({n, n});
+    Tensord B({n, n});
+    Tensord diag = aranged({n});
+    for (size_t i = 0; i < n; ++i) {
+        B(i, i) = diag(i);
+    }
+
+    Tensord C({n, n});
+    mdiagm(C, A, diag);
+
+    auto C2 = A * B;
+    EXPECT_NEAR(0., residual(C, C2), 1e-12);
+}
+
+TEST (mxpTensor, diagmm) {
+    size_t n = 10;
+    Tensord A = aranged({n, n});
+    Tensord B({n, n});
+    Tensord diag = aranged({n});
+    for (size_t i = 0; i < n; ++i) {
+        B(i, i) = diag(i);
+    }
+
+    Tensord C({n, n});
+    diagmm(C, diag, A);
+
+    auto C2 = B * A;
+    EXPECT_NEAR(0., residual(C, C2), 1e-12);
 }
 
 TEST_F (TensorBLAS1Factory, conj) {

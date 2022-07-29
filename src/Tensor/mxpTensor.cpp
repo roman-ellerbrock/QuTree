@@ -12,7 +12,7 @@ template <typename T, typename U, template <typename> class Dev>
 void gemm(mxpTensor<T, U, Dev>& C, const mxpTensor<T, U, Dev>& A,
 const mxpTensor<T, U, Dev>& B) {
     /// n^1 diagonal * diagonal
-    C.diag_ += productElementwise(A.diag_, B.diag_);
+    hadamardProduct(C.diag_ ,A.diag_, B.diag_);
 
     /// n^2 diagonal * off & off * diagonal
     diagmm(C.off_, A.diag_, B.off_);
