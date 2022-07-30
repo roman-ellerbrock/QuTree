@@ -16,5 +16,40 @@ void axpy(const Tensor& A, Tensor& B, T alpha, size_t inc_a, size_t inc_b, Queue
 	blas::axpy<T>(n, alpha, A.data(), inc_a, B.data(), inc_b, queue...);
 }
 
+template<typename T, template <typename> class Dev, class ...Queue>
+void diagonal(Tensor<T, Dev>& diag, const Tensor<T, Dev>& A, Queue& ...queue) {
+	size_t nrow = nrows(A.shape_);
+	size_t ncol = ncols(A.shape_);
+	size_t n = (nrow < ncol) ? nrow : ncol;
+
+	blas::copy(n, A.data(), n + 1, diag.data(), 1, queue...);
+}
+
+template<typename T, template <typename> class Dev, class ...Queue>
+Tensor<T, Dev> diagonal(const Tensor<T, Dev>& A, Queue& ...queue) {
+	size_t nrow = nrows(A.shape_);
+	size_t ncol = ncols(A.shape_);
+	size_t n = (nrow < ncol) ? nrow : ncol;
+
+	Tensor<T, Dev> diag({n});
+	diagonal(diag, A, queue...);
+	return diag;
+}
+
+template<typename T, template <typename> class Dev, class ...Queue>
+void addDiagonal(Tensor<T, Dev>& B, const Tensor<T, Dev>& diag, T alpha, Queue& ...queue) {
+	size_t incb = B.shape_.lastBefore() + 1;
+	size_t n = diag.shape_.totalDimension();
+	blas::axpy(n, alpha, diag.data(), 1, B.data(), incb, queue...);
+}
+
+template <typename T, template <typename> class Dev, class ... Queue>
+void offDiagonal(Tensor<T, Dev>& off, const Tensor<T, Dev>& full, Queue& ...queue) {
+    off = full;
+	Tensor<T, Dev> diag = diagonal(full, queue...);
+	T alpha = -1.;
+	addDiagonal(off, diag, alpha, queue...);
+}
+
 
 #endif // TENSORBLAS1_HPP

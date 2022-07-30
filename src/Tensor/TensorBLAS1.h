@@ -71,8 +71,8 @@ void cast(Tensor<T, Dev>& L, const Tensor<U, Dev>& R);
 template<typename T, template <typename> class Dev = polymorphic::hostMemory>
 void hadamardProduct(Tensor<T, Dev>& C, const Tensor<T, Dev>& A, const Tensor<T, Dev>& B);
 
-template <typename T, template <typename> class Tensor, class ...Queue>
-void mdiagm(Tensor<T>& C, const Tensor<T>& B, const Tensor<T>& diag, T factor = (T)1., Queue& ...queue);
+template <typename T, template <typename> class Dev, class ...Queue>
+void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag, T factor = (T)1., Queue& ...queue);
 
 template <typename T, template <typename> class Dev, class ...Queue>
 void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>& B, T factor = (T)1., Queue& ...queue);
@@ -80,11 +80,17 @@ void diagmm(Tensor<T, Dev>& C, const Tensor<T, Dev>& diag, const Tensor<T, Dev>&
 template<typename T>
 [[nodiscard]] Tensor<T> conj(Tensor<T> A);
 
-template<typename T>
-Tensor<T> diagonal(const Tensor<T>& A);
+template<typename T, template <typename> class Dev, class ...Queue>
+void diagonal(Tensor<T, Dev>& diag, const Tensor<T, Dev>& A, Queue& ...queue);
 
-template <typename T, typename U, template <typename> class Dev>
-void offDiagonal(Tensor<T, Dev>& off, const Tensor<U, Dev>& full);
+template<typename T, template <typename> class Dev, class ...Queue>
+Tensor<T, Dev> diagonal(const Tensor<T, Dev>& A, Queue& ...queue);
+
+template<typename T, template <typename> class Dev, class ...Queue>
+void addDiagonal(Tensor<T, Dev>& B, const Tensor<T, Dev>& diag, T alpha = 1., Queue& ...queue);
+
+template <typename T, template <typename> class Dev, class ...Queue>
+void offDiagonal(Tensor<T, Dev>& off, const Tensor<T, Dev>& full, Queue& ...queue);
 
 template<typename T>
 T trace(const Tensor<T>& A);

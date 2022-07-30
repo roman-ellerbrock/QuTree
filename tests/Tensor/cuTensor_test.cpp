@@ -36,6 +36,15 @@ TEST (cuTensor, transfer) {
 	EXPECT_NEAR(0., residual(hostA, hostA2), eps);
 }
 
+TEST (cuTensor, zero) {
+	Tensord hostA = aranged({ 100, 100 });
+	cuTensord devA = transferToGPUd(hostA);
+	devA.zero();
+	hostA.zero();
+	Tensord hostA2 = transferFromGPUd(devA);
+	EXPECT_NEAR(0., residual(hostA, hostA2), eps);
+}
+
 TEST (cuTensor, overhead) {
 	cuTensord A({100, 100});
 	cuTensord B({100, 100});

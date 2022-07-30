@@ -239,6 +239,17 @@ TEST_F (TensorBLAS1Factory, diagC) {
 	EXPECT_NEAR(24., diag(4), eps);
 }
 
+TEST_F (TensorBLAS1Factory, addDiagonal) {
+	Tensord mat = aranged({5, 5});
+	Tensord diag = aranged({5});
+	Tensord res(mat);
+	addDiagonal(res, diag, 1.);
+	for (size_t i = 0; i < diag.shape_[0]; ++i) {
+		mat(i, i) += diag(i);
+	}
+	EXPECT_NEAR(0., residual(mat, res), eps);
+}
+
 TEST_F (TensorBLAS1Factory, off_diag) {
 	Tensord mat = aranged({3, 3});
 	Tensord diag = diagonal(mat);
@@ -252,7 +263,7 @@ TEST_F (TensorBLAS1Factory, off_diag) {
 }
 
 TEST_F (TensorBLAS1Factory, trace) {
-		EXPECT_NEAR(0., abs(trace(B) - 1.), eps);
+		EXPECT_NEAR(0., abs(trace(B) - 2.), eps);
 }
 
 TEST_F (TensorBLAS1Factory, transpose_1) {

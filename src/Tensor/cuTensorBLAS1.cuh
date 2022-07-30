@@ -11,4 +11,7 @@ void cudaHadamardProduct(T* C, const T* A, const T* B, size_t n);
 template <typename T>
 void cudaDiagMatrixMatrix(T* C, const T* dA, const T* B, T factor, size_t nrow, size_t ncol);
 
+template <typename T>
+void cudaMatrixDiagMatrix(T* C, const T* A, const T* dB, T factor, size_t nrow, size_t ncol);
+
 #endif // CUTENSORBLAS1_CUH

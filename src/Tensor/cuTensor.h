@@ -7,6 +7,7 @@ using cuTensor = Tensor<T, polymorphic::cuMemory>;
 
 using cuTensorf = cuTensor<float>;
 using cuTensord = cuTensor<double>;
+using cuTensorcf = cuTensor<complex<float>>;
 using cuTensorcd = cuTensor<complex<double>>;
 
 template<typename T>

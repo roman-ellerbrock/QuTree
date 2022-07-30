@@ -176,8 +176,8 @@ template void hadamardProduct<d>(Tensord&, const Tensord& A, const Tensord& B);
 template void hadamardProduct<cf>(Tensorcf&, const Tensorcf& A, const Tensorcf& B);
 template void hadamardProduct<cd>(Tensorcd&, const Tensorcd& A, const Tensorcd& B);
 
-template <typename T, template <typename> class Tensor, class ...Queue>
-void mdiagm(Tensor<T>& C, const Tensor<T>& B, const Tensor<T>& diag, T factor, Queue& ...queue) {
+template <typename T, template <typename> class Dev, class ...Queue>
+void mdiagm(Tensor<T, Dev>& C, const Tensor<T, Dev>& B, const Tensor<T, Dev>& diag, T factor, Queue& ...queue) {
     /**
      * @brief Multiply a dense matrix with a diagonal matrix
      * @param C output Matrix that is written on
@@ -266,31 +266,20 @@ Tensor<float> conj<float>(Tensor<float> A) {
 template Tensor<cf> conj(Tensor<cf> A);
 template Tensor<cd> conj(Tensor<cd> A);
 
-template<typename T>
-Tensor<T> diagonal(const Tensor<T>& A) {
-	size_t nrow = nrows(A.shape_);
-	size_t ncol = ncols(A.shape_);
-	size_t n = (nrow < ncol) ? nrow : ncol;
-	Tensor<T> diag({n});
-	for (size_t i = 0; i < n; ++i) {
-		diag(i) = A(i, i);
-	}
+template void diagonal(Tensorf&, const Tensorf&);
+template void diagonal(Tensord&, const Tensord&);
+template void diagonal(Tensorcf&, const Tensorcf&);
+template void diagonal(Tensorcd&, const Tensorcd&);
 
-/*	const T* x = A.data();
-	size_t incx = nrow + 1;
-	T* y = diag.data();
-	size_t incy = 1;
-	blas::copy(n, x, incx, y, incy);*/
-	return diag;
-}
+template Tensorf diagonal(const Tensorf&);
+template Tensord diagonal(const Tensord&);
+template Tensorcf diagonal(const Tensorcf&);
+template Tensorcd diagonal(const Tensorcd&);
 
-template <typename T, typename U, template <typename> class Dev>
-void offDiagonal(Tensor<T, Dev>& off, const Tensor<U, Dev>& full) {
-    off = full;
-    for (size_t i = 0; i < off.shape_[0]; ++i) {
-        off(i, i) = 0;
-    }
-}
+template void addDiagonal(Tensorf& B, const Tensorf& diag, f alpha);
+template void addDiagonal(Tensord& B, const Tensord& diag, d alpha);
+template void addDiagonal(Tensorcf& B, const Tensorcf& diag, cf alpha);
+template void addDiagonal(Tensorcd& B, const Tensorcd& diag, cd alpha);
 
 template void offDiagonal(Tensor<f>& off, const Tensor<f>& full);
 template void offDiagonal(Tensor<d>& off, const Tensor<d>& full);
@@ -480,7 +469,7 @@ auto instantiateTensorBLAS() {
 //		residual<Ts>,
 //		hadamardProduct<Ts>,
 		trace<Ts>,
-		diagonal<Ts>,
+//		diagonal<Ts>,
 		transposeAB<Ts>,
 		transposeBC<Ts>
     )...);
