@@ -1,4 +1,5 @@
 #include "Tensor/cuTensorBLAS1.h"
+#include "Tensor/TensorBLAS2.h"
 #include <gtest/gtest.h>
 
 #define n 3
@@ -17,8 +18,14 @@ class cuTensorBLAS1Fix : public ::testing::Test {
     blas::Queue queue_;
 };
 
+TEST_F(cuTensorBLAS1Fix, nrm2) {
+    size_t inc = 1;
+    double res = nrm2(A_, inc, queue_);
+    double ref = nrm2(hA_, inc);
+    EXPECT_NEAR(ref, res, 1e-12);
+}
+
 TEST_F(cuTensorBLAS1Fix, axpy) {
-    //template void axpy<f, Tensor<f>>(const Tensor<f>& A, Tensor<f>& B, f alpha, size_t inc_a, size_t inc_b);
     double alpha = 1.;
     size_t inc = 1;
     axpy(A_, B_, alpha, inc, inc, queue_);
@@ -43,13 +50,30 @@ TEST_F(cuTensorBLAS1Fix, addEqual) {
     cuTensord A2 = transferToGPUd(hA2);
     A2 += A_;
     hA2 += hA_;
-    cuTensord res = transferToGPUd(hA2);
-    EXPECT_NEAR(0., residual(hRes, hRef), 1e-12);
+    Tensord res = transferFromGPUd(A2);
+    EXPECT_NEAR(0., residual(res, hA2), 1e-12);
+}
+
+TEST_F(cuTensorBLAS1Fix, substractEqual) {
+    Tensord hA2 = aranged(A_.shape_);
+    cuTensord A2 = transferToGPUd(hA2);
+    A2 -= A_;
+    hA2 -= hA_;
+    Tensord res = transferFromGPUd(A2);
+    EXPECT_NEAR(0., residual(res, hA2), 1e-12);
+}
+
+TEST_F(cuTensorBLAS1Fix, residual) {
+    Tensord hA2 = deltad(A_.shape_);
+    cuTensord A2 = transferToGPUd(hA2);
+    double res = residual(A_, A2);
+    double ref = residual(hA_, hA2);
+    
+    EXPECT_NEAR(ref, res, 1e-12);
 }
 
 TEST_F(cuTensorBLAS1Fix, diagonal) {
     cuTensord diag = diagonal(A_, queue_);
-    queue_.sync();
     Tensord ref = diagonal(hA_);
     Tensord res = transferFromGPUd(diag);
     EXPECT_NEAR(0., residual(ref, res), 1e-12);
@@ -96,3 +120,37 @@ TEST_F(cuTensorBLAS1Fix, mdiagm) {
     EXPECT_NEAR(0., residual(res, hRef_), 1e-12);
 }
 
+TEST_F(cuTensorBLAS1Fix, diagmPlusmdiag) {
+    Tensord hdiag = aranged({A_.shape_[0]});
+    cuTensord diag = transferToGPUd(hdiag);
+
+    mdiagm(hRef_, hA_, hdiag, 1.);
+    diagmm(hRef_, hdiag, hA_, 1.);
+
+    diagmPlusmdiag(B_, A_, diag, 1.);
+    Tensord res = transferFromGPUd(B_);
+    EXPECT_NEAR(0., residual(res, hRef_), 1e-12);
+}
+
+TEST (cuTensor, dgemm) {
+	cuTensord A({100, 100});
+	cuTensord B({100, 100});
+	cuTensord C({100, 100});
+
+	int device = 0;	
+	int batch_size = 1000;
+	blas::Queue queue(device, batch_size);
+	blas::set_device(device);
+	gemm(C, A, B, 1., 0., blas::Op::NoTrans, blas::Op::NoTrans, queue);
+}
+
+TEST_F (cuTensorBLAS1Fix, operatorTimes) {
+	B_ = A_;
+	Tensord hB = hA_;
+    Tensord hC = hA_ * hB;
+
+    cuTensord C = A_ * B_;
+
+    Tensord res = transferFromGPUd(C);
+    EXPECT_NEAR(0., residual(hC, res), 1e-13);
+}

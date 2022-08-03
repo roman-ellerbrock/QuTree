@@ -8,7 +8,7 @@ set(QuTree_INCLUDE_FILES
         src/Tensor/Tensor
         src/Tensor/Tensor.h
         src/Tensor/cuTensor.h
-        src/Tensor/mxpTensor.h
+        src/Tensor/Tensormxp.h
         src/Tensor/TensorAllocator.h
         src/Tensor/TensorBLAS1.h
         src/Tensor/TensorBLAS2.h
@@ -58,7 +58,8 @@ set(QuTree_SOURCE_FILES
         src/Tensor/Tensor_Instantiations.cpp
         src/Tensor/cuTensor_Instantiations.cpp
         src/Tensor/cuTensor.cpp
-        src/Tensor/mxpTensor.cpp
+        src/Tensor/Tensormxp.cpp
+        src/Tensor/cuTensormxp.cpp
         src/Tensor/stdafx.cpp
 
         # Primitve Basis

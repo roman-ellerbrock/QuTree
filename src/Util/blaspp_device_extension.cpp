@@ -42,6 +42,44 @@ namespace device {
           (const cuDoubleComplex*) x, incx, 
           (      cuDoubleComplex*) y, incy );
      }
+
+     void nrm2(int64_t n, 
+          float const *x, int64_t incx, float* res,
+          blas::Queue& queue ) {
+          cublasSnrm2( queue.handle(), 
+          n, 
+          (const float*) x, incx,
+          res);
+     }
+
+     void nrm2(int64_t n, 
+          std::complex<float> const *x, int64_t incx, float* res,
+          blas::Queue& queue ) {
+          cublasScnrm2( queue.handle(), 
+          n, 
+          (const cuComplex*) x, incx,
+          res);
+     }
+
+     void nrm2(int64_t n, 
+          double const *x, int64_t incx, double* res,
+          blas::Queue& queue ) {
+          cublasDnrm2( queue.handle(), 
+          n, 
+          (const double*) x, incx,
+          res);
+     }
+
+     void nrm2(int64_t n, 
+          std::complex<double> const *x, int64_t incx, double* res,
+          blas::Queue& queue ) {
+          cublasDznrm2( queue.handle(), 
+          n, 
+          (const cuDoubleComplex*) x, incx,
+          res);
+     }
+
+     
 }
 }
 
@@ -75,6 +113,33 @@ void axpy(
     device::axpy( n_, alpha, x, incx_, y, incy_, queue );
 }
 
+/// @ingroup nrm2
+template <typename T>
+real_type<T> nrm2(
+    int64_t n,
+    T const *x, int64_t incx,
+    Queue& queue )
+{
+    // check arguments
+    blas_error_if( n < 0 );      // standard BLAS returns, doesn't fail
+    blas_error_if( incx == 0 );  // standard BLAS doesn't detect inc[xy] == 0
+
+    // check for overflow in native BLAS integer type, if smaller than int64_t
+    if (sizeof(int64_t) > sizeof(device_blas_int)) {
+        blas_error_if( n              > std::numeric_limits<device_blas_int>::max() );
+        blas_error_if( std::abs(incx) > std::numeric_limits<device_blas_int>::max() );
+    }
+
+    device_blas_int n_    = (device_blas_int) n;
+    device_blas_int incx_ = (device_blas_int) incx;
+
+    blas::set_device( queue.device() );
+    real_type<T> res;
+    device::nrm2( n_, x, incx_, &res, queue );
+    return res;
+}
+
+
 template  void axpy(
     int64_t n,
     float alpha,
@@ -103,4 +168,23 @@ template  void axpy(
     std::complex<double>       *y, int64_t incy,
     Queue& queue );
 
+template  float nrm2(
+    int64_t n,
+    float const *x, int64_t incx,
+    Queue& queue );
+
+template  float nrm2(
+    int64_t n,
+    std::complex<float> const *x, int64_t incx,
+    Queue& queue );
+
+template  double nrm2(
+    int64_t n,
+    double const *x, int64_t incx,
+    Queue& queue );
+
+template  double nrm2(
+    int64_t n,
+    std::complex<double> const *x, int64_t incx,
+    Queue& queue );
 }

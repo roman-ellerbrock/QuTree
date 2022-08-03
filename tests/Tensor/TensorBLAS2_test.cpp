@@ -189,6 +189,35 @@ TEST_F (TensorFactory2, matrixTensor_trans) {
 	}
 }
 
+TEST_F (TensorFactory2, matrixTensor_asym) {
+	for (size_t k = 0; k < A.shape_.order(); ++k) {
+		size_t dimr = A.shape_[k];
+		size_t diml = 2 * A.shape_[k];
+		auto mat = arangecd({diml, dimr});
+		TensorShape shape = A.shape_;
+		shape.setDimension(diml, k);
+		Tensorcd Res(shape);
+		matrixTensor(Res, mat, A, k);
+		Tensorcd Ref(shape);
+		matrixTensorRef(Ref, mat, A, k);
+			EXPECT_NEAR(0., residual(Res, Ref), eps);
+	}
+}
+
+TEST_F (TensorFactory2, matrixTensor_asymReturn) {
+	for (size_t k = 0; k < A.shape_.order(); ++k) {
+		size_t dimr = A.shape_[k];
+		size_t diml = 2 * A.shape_[k];
+		auto mat = arangecd({diml, dimr});
+		Tensorcd Res = matrixTensor(mat, A, k);
+		TensorShape shape = A.shape_;
+		shape.setDimension(diml, k);
+		Tensorcd Ref(shape);
+		matrixTensorRef(Ref, mat, A, k);
+			EXPECT_NEAR(0., residual(Res, Ref), eps);
+	}
+}
+
 TEST_F (TensorFactory2, contraction_plain) {
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
 		auto mat = constructMatrix(A, k);
@@ -232,6 +261,22 @@ TEST_F (TensorFactory2, contraction_return) {
 		auto matRef = constructMatrix(A, k);
 		contraction(matRef, A, B, k, alpha);
 			EXPECT_NEAR(0., residual(mat, matRef), eps);
+	}
+}
+
+TEST_F (TensorFactory2, contraction_asym) {
+	for (size_t k = 0; k < 1; ++k) {
+	//for (size_t k = 0; k < A.shape_.order(); ++k) {
+		TensorShape shape = A.shape_;
+		size_t diml = 2 * shape[k];
+		size_t dimr = shape[k];
+		shape.setDimension(diml, k);
+		Tensorcd B = arangecd(shape);
+		Tensorcd res({diml, dimr});
+		contraction(res, B, A, k);
+		Tensorcd ref({diml, dimr});
+		contractionRef(ref, B, A, k);
+			EXPECT_NEAR(0., residual(res, ref), eps);
 	}
 }
 

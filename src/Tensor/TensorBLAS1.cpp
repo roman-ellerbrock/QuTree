@@ -14,10 +14,10 @@ using d = double;
 using cf = complex<f>;
 using cd = complex<d>;
 
-template double nrm2<f, Tensor>(const Tensorf& A, size_t incr);
-template double nrm2<d, Tensor>(const Tensord& A, size_t incr);
-template double nrm2<cf, Tensor>(const Tensorcf& A, size_t incr);
-template double nrm2<cd, Tensor>(const Tensorcd& A, size_t incr);
+template f nrm2<f>(const Tensorf& A, size_t incr);
+template d nrm2<d>(const Tensord& A, size_t incr);
+template f nrm2<cf>(const Tensorcf& A, size_t incr);
+template d nrm2<cd>(const Tensorcd& A, size_t incr);
 
 template void axpy<f, Tensor<f>>(const Tensor<f>& A, Tensor<f>& B, f alpha, size_t inc_a, size_t inc_b);
 template void axpy<d, Tensor<d>>(const Tensor<d>& A, Tensor<d>& B, d alpha, size_t inc_a, size_t inc_b);
@@ -48,17 +48,17 @@ template void operator-=(Tensor<d>& A, const Tensor<d>& B);
 template void operator-=(Tensor<cf>& A, const Tensor<cf>& B);
 template void operator-=(Tensor<cd>& A, const Tensor<cd>& B);
 
-/// || A - B ||_2
-template<typename T, template <typename> class Tensor, class ...Queue>
-double residual(Tensor<T> A, const Tensor<T>& B, Queue& ...queue) {
+template<typename T>
+double residual(Tensor<T> A, const Tensor<T>& B) {
 	A -= B;
-	return abs(nrm2<T, Tensor, Queue...>(A, queue...));
+	return (double) abs(nrm2<T>(A));
 }
 
-template double residual<f, Tensor>(Tensorf A, const Tensorf& B);
-template double residual<d, Tensor>(Tensord A, const Tensord& B);
-template double residual<cf, Tensor>(Tensorcf A, const Tensorcf& B);
-template double residual<cd, Tensor>(Tensorcd A, const Tensorcd& B);
+/// || A - B ||_2
+template double residual<f>(Tensorf A, const Tensorf& B);
+template double residual<d>(Tensord A, const Tensord& B);
+template double residual<cf>(Tensorcf A, const Tensorcf& B);
+template double residual<cd>(Tensorcd A, const Tensorcd& B);
 
 /// = A + B
 template<typename T>

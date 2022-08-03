@@ -23,8 +23,8 @@
  * @param incr increment in loop
  * @return returns the 2-norm of a Tensor, i.e. ||A||_2
  */
-template<typename T, template <typename> class Tensor, class ...Queue>
-double nrm2(const Tensor<T>& A, size_t incr = 1, Queue& ...queue);
+template<typename T>
+blas::real_type<T> nrm2(const Tensor<T>& A, size_t incr = 1);
 
 /**
  * \brief Perform vector addition
@@ -41,8 +41,8 @@ void operator+=(Tensor<T>& A, const Tensor<T>& B);
 template<typename T>
 void operator-=(Tensor<T>& A, const Tensor<T>& B);
 
-template<typename T, template <typename> class Tensor, class ...Queue>
-double residual(Tensor<T> A, const Tensor<T>& B, Queue& ...queue);
+template<typename T>
+double residual(Tensor<T> A, const Tensor<T>& B);
 
 template<typename T>
 Tensor<T> operator+(Tensor<T> A, const Tensor<T>& B);

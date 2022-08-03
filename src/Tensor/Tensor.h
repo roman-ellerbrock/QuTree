@@ -180,22 +180,28 @@ auto randomGend = [](const TensorShape& shape) {
 template<typename T, template <typename> class Mem = polymorphic::hostMemory>
 [[nodiscard]] Tensor<T, Mem> arange(const TensorShape& shape);
 
-constexpr auto arangecd = arange<complex<double>>;
+constexpr auto arangef = arange<float>;
 constexpr auto aranged = arange<double>;
+constexpr auto arangecf = arange<complex<float>>;
+constexpr auto arangecd = arange<complex<double>>;
 
 
 template<typename T, template <typename> class Mem = polymorphic::hostMemory>
 [[nodiscard]] Tensor<T,Mem> identity(const TensorShape& shape);
 
-constexpr auto identitycd = identity<complex<double>>;
+constexpr auto identityf = identity<float>;
 constexpr auto identityd = identity<double>;
+constexpr auto identitycf = identity<complex<float>>;
+constexpr auto identitycd = identity<complex<double>>;
 
 
 template<typename T, template <typename> class Mem = polymorphic::hostMemory>
 [[nodiscard]] Tensor<T,Mem> delta(const TensorShape& shape);
 
-constexpr auto deltacd = delta<complex<double>>;
+constexpr auto deltaf = delta<float>;
+constexpr auto deltacf = delta<complex<float>>;
 constexpr auto deltad = delta<double>;
+constexpr auto deltacd = delta<complex<double>>;
 
 
 template <typename T>

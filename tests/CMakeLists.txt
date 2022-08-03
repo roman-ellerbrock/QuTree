@@ -2,6 +2,7 @@
 # GoogleTest requires at least C++14
 #set(CMAKE_CXX_STANDARD 14)
 
+    message("PROJECT NAME:         ${CMAKE_PROJECT_DIR}")
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -20,9 +21,10 @@ add_executable(
   tests.cc
 
   Tensor/cuTensor_test.cpp
+  Tensor/cuTensormxp_test.cpp
   Tensor/cuTensorBLAS1_test.cpp
   Tensor/Tensor_test.cpp
-  Tensor/mxpTensor_test.cpp
+  Tensor/Tensormxp_test.cpp
   Tensor/TensorBLAS1_test.cpp
   Tensor/TensorBLAS2_test.cpp
   Tensor/TensorLapack_test.cpp

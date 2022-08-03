@@ -4,9 +4,9 @@
 #include "Util/blaspp_device_extension.h"
 
 /// = ||A||_2
-template<typename T, template <typename> class Tensor, class ...Queue>
-double nrm2(const Tensor<T>& A, size_t incr, Queue& ... queue) {
-	return abs(blas::nrm2<T>(A.shape_.totalDimension() / incr, (const T*)&(A[0]), incr, queue...));
+template<typename T>
+blas::real_type<T> nrm2(const Tensor<T>& A, size_t incr) {
+	return abs(blas::nrm2<T>(A.shape_.totalDimension() / incr, (const T*)&(A[0]), incr));
 }
 
 /// b -> alpha * a + b

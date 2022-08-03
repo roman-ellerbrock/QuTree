@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Tensor/mxpTensor.h"
+#include "Tensor/Tensormxp.h"
 #include <chrono>
 #include "Tensor/cuTensor.h"
 #include "Tensor/TensorBLAS2.h"
@@ -7,7 +7,7 @@
 
 TEST (mxpTensor, Constructor) {
     TensorShape shape({100, 100});
-    mxpTensordf A(shape);
+    Tensordf A(shape);
     EXPECT_EQ(A.diag_.shape_[0], 100);
 
     EXPECT_EQ(A.off_.shape_[0], 100);
@@ -21,7 +21,7 @@ TEST (mxpTensor, ConstructFrom) {
     /// Convert Tensor into mixed prec. Tensor and back
     Tensord A = aranged({100, 100});
 
-    mxpTensordf mA(A);
+    Tensordf mA(A);
     Tensord B = mA.convert();
 
     EXPECT_NEAR(0., residual(A, B), 1e-12);
@@ -32,8 +32,8 @@ TEST (mxpTensor, gemm) {
     Tensord A = aranged({10, 10});
     Tensord A2r = A * A;
 
-    mxpTensordf B(A);
-    mxpTensordf B2 = B * B;
+    Tensordf B(A);
+    Tensordf B2 = B * B;
 
     Tensord A2 = B2.convert();
 
@@ -62,8 +62,8 @@ TEST (mxpTensor, mxpgemmBenchmark) {
     double ms_hp = duration_cast<nanoseconds>(end - start).count() / ((double) n * 1000000);
 
     {
-        mxpTensord mA(aranged({dim, dim}));
-        mxpTensord mB(aranged({dim, dim}));
+        Tensord mA(aranged({dim, dim}));
+        Tensord mB(aranged({dim, dim}));
         start = steady_clock::now();
         for (size_t i = 0; i < n; ++i) {
             gemm(mB, mA, mA);

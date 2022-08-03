@@ -15,18 +15,6 @@ TEST (cuTensor, Constructor) {
 		EXPECT_EQ(3 * 4 * 5 * 2, A.shape_.totalDimension());
 }
 
-TEST (cuTensor, dgemm) {
-	cuTensord A({100, 100});
-	cuTensord B({100, 100});
-	cuTensord C({100, 100});
-
-	int device = 0;	
-	int batch_size = 1000;
-	blas::Queue queue(device, batch_size);
-	blas::set_device(device);
-	gemm(C, A, B, 1., 0., blas::Op::NoTrans, blas::Op::NoTrans, queue);
-}
-
 TEST (cuTensor, transfer) {
 	using namespace polymorphic;
 
@@ -43,19 +31,6 @@ TEST (cuTensor, zero) {
 	hostA.zero();
 	Tensord hostA2 = transferFromGPUd(devA);
 	EXPECT_NEAR(0., residual(hostA, hostA2), eps);
-}
-
-TEST (cuTensor, overhead) {
-	cuTensord A({100, 100});
-	cuTensord B({100, 100});
-	cuTensord C({100, 100});
-
-	int device = 0;	
-	int batch_size = 1000;
-	blas::Queue queue(device, batch_size);
-	blas::set_device(device);
-	gemm(C, A, B, 1., 0., blas::Op::NoTrans, blas::Op::NoTrans, queue);
-	
 }
 
 /*

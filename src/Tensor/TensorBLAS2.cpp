@@ -5,9 +5,10 @@
 #include "Tensor/TensorBLAS2.h"
 #include <lapack.hh>
 
-typedef complex<double> cd;
-typedef double d;
 typedef float f;
+typedef double d;
+typedef complex<float> cf;
+typedef complex<double> cd;
 
 
 template<typename T>
@@ -63,8 +64,10 @@ Tensor<T> operator*(const Tensor<T>& a, const Tensor<T>& b) {
 	return gemm(a, b);
 }
 
-template Tensor<cd> operator*(const Tensor<cd>& a, const Tensor<cd>& b);
+template Tensor<f> operator*(const Tensor<f>& a, const Tensor<f>& b);
 template Tensor<d> operator*(const Tensor<d>& a, const Tensor<d>& b);
+template Tensor<cf> operator*(const Tensor<cf>& a, const Tensor<cf>& b);
+template Tensor<cd> operator*(const Tensor<cd>& a, const Tensor<cd>& b);
 
 template<typename T>
 Tensor<T> unitarySimilarityTrafo(Tensor<T> a, const Tensor<T>& u) {
@@ -130,10 +133,9 @@ template void matrixTensor(Tensor<cd>& C, const Tensor<cd>& h, const Tensor<cd>&
 template<typename T>
 Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& B,
 	size_t k, T alpha, T beta, blas::Op op_h) {
-//	TensorShape shape = B.shape_;
-//	shape = replaceDimension(shape, k, h.shape_[0]);
-//	Tensor<T> C(shape);
-	Tensor<T> C(B.shape_);
+	TensorShape shape = B.shape_;
+	shape.setDimension(h.shape_[0], k);
+	Tensor<T> C(shape);
 	matrixTensor(C, h, B, k, alpha, beta, op_h);
 	return C;
 }
@@ -161,15 +163,20 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t B2 = bra.shape_[k];
 	size_t C = ket.shape_.after(k);
 
-	transposeBC(bra_mem.data(), bra.data(), A, B, C);
-	transposeBC(ket_mem.data(), ket.data(), A, B2, C);
+	transposeBC(bra_mem.data(), bra.data(), A, B2, C);
+	transposeBC(ket_mem.data(), ket.data(), A, B, C);
 
 	size_t AC = A * C;
 	blas::Layout layout = blas::Layout::ColMajor;
 	blas::Op ct = blas::Op::ConjTrans;
 	blas::Op notrans = blas::Op::NoTrans;
-	blas::gemm(layout, ct, notrans, B, B2, AC, alpha, bra_mem.data(), AC, ket_mem.data(), AC, beta,
-		h.data(), B);
+	blas::gemm(layout, ct, notrans, 
+	B2, B, AC, 
+	alpha, 
+	bra_mem.data(), AC, 
+	ket_mem.data(), AC, 
+	beta,
+	h.data(), B2);
 }
 
 template void contraction(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,

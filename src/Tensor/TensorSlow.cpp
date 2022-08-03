@@ -99,6 +99,12 @@ void contractionRef(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t k, T alpha, T beta) {
 	/// This is a simple implementation of the tensor-hole contraction
 	/// which is not optimized for efficiency.
+	if (bra.shape_[k] != h.shape_[0]) {
+		cerr << "Wrong dimension in contractionRef (l).\n";
+	}
+	if (ket.shape_[k] != h.shape_[1]) {
+		cerr << "Wrong dimension in contractionRef (r).\n";
+	}
 	h *= beta;
 
 	for (size_t aft = 0; aft < bra.shape_.after(k); ++aft) {
