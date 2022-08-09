@@ -4,13 +4,15 @@
 
 #ifndef BENCHMARK_TENSOR_H
 #define BENCHMARK_TENSOR_H
-#include "Core/Tensor.h"
+#include "Tensor/Tensor.h"
 #include <random>
-#include "Core/Tensor_Functions.h"
+#include "Tensor/TensorLapack.h"
 #include "benchmark_helper.h"
 
 namespace benchmark {
 	TensorShape make_TensorDim(size_t order, size_t dim);
+
+	void screen_dim(mt19937& gen, ostream& os, size_t nsample);
 
 	void run();
 

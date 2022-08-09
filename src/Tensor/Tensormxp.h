@@ -27,7 +27,7 @@ class mxpTensor {
      */
 public:
     mxpTensor(const TensorShape& shape)
-    : diag_({shape[0]}), off_(shape), offLP_(shape) {
+    : diag_({shape[0]}), off_(shape), offLP_(shape), shape_(shape) {
     }
 
     mxpTensor(const Tensor<T, Dev>& A, Queue& ...queue)
@@ -64,6 +64,7 @@ public:
     Tensor<T, Dev> diag_;
     Tensor<T, Dev> off_;
     Tensor<U, Dev> offLP_;
+    TensorShape shape_;
 };
 
 template <typename T, typename U>

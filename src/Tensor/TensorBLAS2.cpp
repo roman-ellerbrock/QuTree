@@ -145,9 +145,43 @@ template Tensor<d> matrixTensor(const Tensor<d>& h, const Tensor<d>& B,
 template Tensor<cd> matrixTensor(const Tensor<cd>& h, const Tensor<cd>& B,
 	size_t k1, cd alpha, cd beta, blas::Op op_h);
 
+
 template<typename T>
-void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+void contractionMode0(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	T alpha, T beta) {
+
+	size_t BR = ket.shape_[0];
+	size_t BL = bra.shape_[0];
+	size_t C = ket.shape_.after(0);
+	blas::Layout layout = blas::Layout::RowMajor;
+	blas::Op ct = blas::Op::ConjTrans;
+	blas::Op t = blas::Op::Trans;
+	blas::Op no = blas::Op::NoTrans;
+	Tensor<T> h_add({BR, BL});
+	blas::gemm(layout, ct, no, 
+	BL, BR, C, 
+	alpha, 
+	bra.data(), BL,
+	ket.data(), BR, 
+	beta,
+	h_add.data(), BR);
+	h *= beta;
+	h += transpose(h_add);
+}
+
+template void contractionMode0(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
+	d alpha, d beta);
+template void contractionMode0(Tensor<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,
+	cd alpha, cd beta);
+
+
+template<typename T>
+void contractionModeX(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t k, T alpha, T beta) {
+	/**
+	 * @brief Tensor hole contraction for an arbitrary index k
+	 * 
+	 */
 
 	/// Work Memory.
 	/// Allocation often dominates computation time, thus,
@@ -177,6 +211,16 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	ket_mem.data(), AC, 
 	beta,
 	h.data(), B2);
+}
+
+template<typename T>
+void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	size_t k, T alpha, T beta) {
+	if (k == 0) {
+		contractionMode0(h, bra, ket, alpha, beta);
+	} else {
+		contractionModeX(h, bra, ket, k, alpha, beta);
+	}
 }
 
 template void contraction(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,

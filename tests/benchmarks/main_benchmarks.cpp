@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 2/3/20.
 //
 #include "benchmark_tensor.h"
-#include "optimize_matrixtensor.h"
+//#include "optimize_matrixtensor.h"
 
 namespace benchmark {
 	void run() {
@@ -11,7 +11,7 @@ namespace benchmark {
 		ostream& os = cout;
 
 //		screen_order(gen, os, nsample);
-//		screen_dim(gen, os, nsample);
+		screen_dim(gen, os, nsample);
 //		screen_nleaves(gen, os, nsample);
 //		cout << "Transpose:\n";
 //		screenTranspose(gen, os, nsample);
@@ -21,8 +21,8 @@ namespace benchmark {
 //		screenDimensionMatrixTensor(gen, os, nsample);
 //		cout << "TensorContraction:\n";
 //		screenDimensionTensorHoleProduct(gen, os, nsample);
-		cout << "DGEEM:\n";
-		screenDGEEM(gen, os, nsample);
+//		cout << "DGEEM:\n";
+//		screenDGEEM(gen, os, nsample);
 	}
 }
 

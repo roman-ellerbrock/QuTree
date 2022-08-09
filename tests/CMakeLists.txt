@@ -28,6 +28,8 @@ add_executable(
   Tensor/TensorBLAS1_test.cpp
   Tensor/TensorBLAS2_test.cpp
   Tensor/TensorLapack_test.cpp
+  Tensor/ManybodyTensor_test.cpp
+#  Tensor/TensorTemplating_test.cpp
 
   Tree/PrimitiveBasis_test.cpp
   Tree/Node_test.cpp
@@ -78,3 +80,20 @@ target_link_libraries(
 
 include(GoogleTest)
 gtest_discover_tests(TestQuTree)
+
+
+add_executable(benchmark_qutree
+  benchmarks/benchmark_helper.cpp
+  benchmarks/benchmark_tensor.cpp
+  benchmarks/main_benchmarks.cpp
+)
+
+target_compile_features(benchmark_qutree PRIVATE cxx_std_17)
+target_link_libraries(
+        benchmark_qutree 
+	PUBLIC 
+	QuTree 
+	${BLAS_LIBRARIES} -lblaspp
+	${LAPACK_LIBRARIES} -llapackpp
+	polymorphicMemory
+)

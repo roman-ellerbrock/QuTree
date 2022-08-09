@@ -111,7 +111,7 @@ void contractionRef(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 		for (size_t actL = 0; actL < bra.shape_[k]; ++actL) {
 			for (size_t actR = 0; actR < ket.shape_[k]; ++actR) {
 				for (size_t bef = 0; bef < bra.shape_.before(k); ++bef) {
-					h(actL, actR) += alpha * bra(bef, actL, aft, k) * ket(bef, actR, aft, k);
+					h(actL, actR) += alpha * conj(bra(bef, actL, aft, k)) * ket(bef, actR, aft, k);
 				}
 			}
 		}

@@ -72,13 +72,44 @@ Tensor<T> matrixTensor(const Tensor<T>& h, const Tensor<T>& B,
 	size_t k, T alpha = 1., T beta = 0., blas::Op op_h = blas::Op::NoTrans);
 
 /**
+ * \brief Perform tensor-hole contraction leaving out index 0. Optimized for perfomance
+ *
+ * Performs the operations h = alpha * tr(bra, ket)_(0) + beta * h
+ *
+ * @param h resulting matrix
+ * @param bra input tensor <Bra|
+ * @param ket input tensor |Ket>
+ * @param alpha multiply contracted result by alpha
+ * @param beta multiply previous h by beta
+ */
+template<typename T>
+void contractionMode0(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	T alpha = 1., T beta = 0.);
+
+/**
+ * \brief Perform tensor-hole contraction leaving out an arbitrary index k.
+ *
+ * Performs the operations h = alpha * tr(bra, ket)_(k) + beta * h
+ *
+ * @param h resulting matrix
+ * @param bra input tensor <Bra|
+ * @param ket input tensor |Ket>
+ * @param hole index left out in contraction
+ * @param alpha multiply contracted result by alpha
+ * @param beta multiply previous h by beta
+ */
+template<typename T>
+void contractionModeX(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	size_t k, T alpha = 1., T beta = 0.);
+
+/**
  * \brief Perform tensor-hole contraction leaving out k-th index.
  *
  * Performs the operations h = alpha * tr(bra, ket)_(k) + beta * h
  *
  * @param h resulting matrix
  * @param bra input tensor <Bra|
- * @param ket output tensor |Ket>
+ * @param ket input tensor |Ket>
  * @param hole index left out in contraction
  * @param alpha multiply contracted result by alpha
  * @param beta multiply previous h by beta
@@ -94,7 +125,7 @@ void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
  *
  * @param h resulting matrix
  * @param bra input tensor <Bra|
- * @param ket output tensor |Ket>
+ * @param ket input tensor |Ket>
  * @param hole index left out in contraction
  * @param alpha multiply contracted result by alpha
  * @param beta multiply previous h by beta
@@ -110,7 +141,7 @@ Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket,
  *
  * @param h resulting matrix
  * @param bra input tensor <Bra|
- * @param ket output tensor |Ket>
+ * @param ket input tensor |Ket>
  * @param holes indices left out in contraction (can be empty)
  * @param alpha multiply contracted result by alpha
  * @param beta multiply previous h by beta
