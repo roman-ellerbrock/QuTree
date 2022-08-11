@@ -308,7 +308,6 @@ TEST_F (TensorFactory2, contractionMode0) {
 	Tensorcd matRes({dimA, dimB});
 	contractionMode0(matRes, A, B);
 		EXPECT_NEAR(0., residual(matRef, matRes), eps);
-
 }
 
 TEST_F (TensorFactory2, contractionMode0Complex) {
@@ -346,17 +345,85 @@ TEST_F (TensorFactory2, contractionMode0Complex3) {
 		EXPECT_NEAR(0., residual(matRef, matRes), eps);
 }
 
-TEST_F (TensorFactory2, contractionMode0Asym) {
+TEST (TensorBLAS2_T, contractionMode0Asym) {
 	Tensorcd L = arangecd({7, 5, 8});
 	Tensorcd R = arangecd({6, 5, 8});
 	Tensorcd matRef({7, 6});
 	contractionModeX(matRef, L, R, 0);
 	Tensorcd matRes({7, 6});
 	contractionMode0(matRes, L, R);
-	matRef.print();
-	matRes.print();
 		EXPECT_NEAR(0., residual(matRef, matRes), eps);
 }
+
+TEST_F (TensorFactory2, contractionModeD) {
+	size_t dimA = A.shape_.lastDimension();
+	size_t dimB = B.shape_.lastDimension();
+	size_t k = A.shape_.lastIdx();
+	Tensorcd matRef({dimA, dimB});
+	contractionModeX(matRef, A, B, k);
+	Tensorcd matRes({dimA, dimB});
+	contractionModeD(matRes, A, B);
+		EXPECT_NEAR(0., residual(matRef, matRes), eps);
+}
+
+
+TEST_F (TensorFactory2, contractionModeDComplex0) {
+	size_t dimA = A.shape_.lastDimension();
+	size_t dimB = B.shape_.lastDimension();
+	size_t k = A.shape_.lastIdx();
+	A *= QM::im;
+	Tensorcd matRef({dimA, dimB});
+	contractionModeX(matRef, A, B, k);
+	Tensorcd matRes({dimA, dimB});
+	contractionModeD(matRes, A, B);
+		EXPECT_NEAR(0., residual(matRef, matRes), eps);
+}
+
+TEST_F (TensorFactory2, contractionModeDComplex1) {
+	size_t dimA = A.shape_.lastDimension();
+	size_t dimB = B.shape_.lastDimension();
+	size_t k = A.shape_.lastIdx();
+	B *= QM::im;
+	Tensorcd matRef({dimA, dimB});
+	contractionModeX(matRef, A, B, k);
+	Tensorcd matRes({dimA, dimB});
+	contractionModeD(matRes, A, B);
+		EXPECT_NEAR(0., residual(matRef, matRes), eps);
+}
+
+TEST_F (TensorFactory2, contractionModeDComplex2) {
+	size_t dimA = A.shape_.lastDimension();
+	size_t dimB = B.shape_.lastDimension();
+	size_t k = A.shape_.lastIdx();
+	A *= QM::im;
+	B *= QM::im;
+	Tensorcd matRef({dimA, dimB});
+	contractionModeX(matRef, A, B, k);
+	Tensorcd matRes({dimA, dimB});
+	contractionModeD(matRes, A, B);
+		EXPECT_NEAR(0., residual(matRef, matRes), eps);
+}
+
+TEST (TensorBLAS2_T, contractionModeDAsym) {
+	Tensorcd L = arangecd({6, 5, 7});
+	Tensorcd R = arangecd({6, 5, 8});
+	size_t dimL = L.shape_.lastDimension();
+	size_t dimR = R.shape_.lastDimension();
+	size_t k = L.shape_.lastIdx();
+	Tensorcd matRef({dimL, dimR});
+	contractionModeX(matRef, L, R, k);
+	Tensorcd matRes({dimL, dimR});
+	contractionModeD(matRes, L, R);
+		EXPECT_NEAR(0., residual(matRef, matRes), eps);
+}
+
+
+
+
+
+
+
+
 
 
 

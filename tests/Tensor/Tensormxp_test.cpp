@@ -30,14 +30,15 @@ TEST (mxpTensor, ConstructFrom) {
 TEST (mxpTensor, gemm) {
     /// perform A^2 in hp and mxp
     Tensord A = aranged({10, 10});
-    Tensord A2r = A * A;
+    Tensord Reference = A * A;
 
+    /// Mixed precision Tensor (float: A_off^2, double: rest)
     Tensordf B(A);
     Tensordf B2 = B * B;
 
-    Tensord A2 = B2.convert();
+    Tensord Result = B2.convert();
 
-    EXPECT_NEAR(0., residual(A2, A2r), 1e-12);
+    EXPECT_NEAR(0., residual(Reference, Result), 1e-7);
 }
 
 /*

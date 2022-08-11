@@ -299,13 +299,17 @@ T trace(const Tensor<T>& A) {
 /// dest[dim1, dim2] = beta * dest[dim1,dim2] + A[dim2, dim1]
 template<typename T>
 void transpose(T *dest, const T *src, size_t dim1, size_t dim2, T beta) {
-	blas::scal(dim1 * dim2, beta, dest, 1);
+	if (beta != (T)1) {blas::scal(dim1 * dim2, beta, dest, 1);}
 	for (size_t j = 0; j < dim2; ++j) {
-		const T* x = src + dim1 * j;
+		for (size_t i = 0; i < dim1; ++i) {
+			dest[i * dim2 + j] += src[j * dim1 + i];
+		}
+/*		const T* x = src + dim1 * j;
 		size_t incx = 1;
 		T* y = dest + j;
 		size_t incy = dim2;
 		blas::axpy(dim1, 1., x, incx, y, incy);
+		*/
 	}
 }
 
@@ -377,9 +381,10 @@ template<typename T>
 void transposeBC(T *dest, const T *src, size_t A, size_t B, size_t C) {
 	for (size_t c = 0; c < C; ++c) {
 		for (size_t b = 0; b < B; ++b) {
-			const T* x = src + b * A + c * A * B;
-			      T* y = dest + c * A + b * A * C;
-			blas::copy(A, x, 1, y, 1);
+			memcpy(&dest[c * A + b * A * C], &src[b * A + c * A * B], A * sizeof(T));
+//			const T* x = src + b * A + c * A * B;
+//			      T* y = dest + c * A + b * A * C;
+//			blas::copy(A, x, 1, y, 1);
 		}
 	}
 }

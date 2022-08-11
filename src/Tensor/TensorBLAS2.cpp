@@ -150,12 +150,12 @@ template<typename T>
 void contractionMode0(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	T alpha, T beta) {
 
+	// conj(bra) * ket
 	size_t BR = ket.shape_[0];
 	size_t BL = bra.shape_[0];
 	size_t C = ket.shape_.after(0);
 	blas::Layout layout = blas::Layout::RowMajor;
 	blas::Op ct = blas::Op::ConjTrans;
-	blas::Op t = blas::Op::Trans;
 	blas::Op no = blas::Op::NoTrans;
 	Tensor<T> h_add({BR, BL});
 	blas::gemm(layout, ct, no, 
@@ -164,14 +164,45 @@ void contractionMode0(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	bra.data(), BL,
 	ket.data(), BR, 
 	beta,
-	h_add.data(), BR);
-	h *= beta;
-	h += transpose(h_add);
+	h.data(), BR);
+/*	if (beta == (T) 0.) {
+//		transpose(h, h_add);
+	} else if (beta != (T) 1.) {
+		h *= beta;
+//		h += transpose(h_add);
+	} else {
+//		h += transpose(h_add);
+	}*/
 }
 
 template void contractionMode0(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
 	d alpha, d beta);
 template void contractionMode0(Tensor<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,
+	cd alpha, cd beta);
+
+template<typename T>
+void contractionModeD(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	T alpha, T beta) {
+
+	size_t d = ket.shape_.lastIdx();
+	size_t BR = ket.shape_[d];
+	size_t BL = bra.shape_[d];
+	size_t A = ket.shape_.before(d); // C = 1
+	blas::Layout layout = blas::Layout::ColMajor;
+	blas::Op ct = blas::Op::ConjTrans;
+	blas::Op notrans = blas::Op::NoTrans;
+	blas::gemm(layout, ct, notrans, 
+	BL, BR, A, 
+	alpha, 
+	bra.data(), A, 
+	ket.data(), A, 
+	beta,
+	h.data(), BL);
+}
+
+template void contractionModeD(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
+	d alpha, d beta);
+template void contractionModeD(Tensor<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,
 	cd alpha, cd beta);
 
 
@@ -215,9 +246,13 @@ void contractionModeX(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 
 template<typename T>
 void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
-	size_t k, T alpha, T beta) {
+	size_t k, T alpha, T beta) { 
+	/// h = beta * h + alpha * contraction(bra, ket, k)
+	/// C = beta * C + alpha * A * C
 	if (k == 0) {
 		contractionMode0(h, bra, ket, alpha, beta);
+	} else if (k == bra.shape_.lastIdx()) {
+		contractionModeD(h, bra, ket, alpha, beta);
 	} else {
 		contractionModeX(h, bra, ket, k, alpha, beta);
 	}

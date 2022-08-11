@@ -49,7 +49,7 @@ set(QuTree_INCLUDE_FILES
 
 set(QuTree_SOURCE_FILES
         # Tensor/
-        src/Tensor/SVD.cpp
+        src/Tensor/ManybodyTensor.cpp
         src/Tensor/TensorShape.cpp
         src/Tensor/TensorBLAS1.cpp
         src/Tensor/TensorBLAS2.cpp
@@ -58,8 +58,9 @@ set(QuTree_SOURCE_FILES
         src/Tensor/Tensor_Instantiations.cpp
         src/Tensor/cuTensor_Instantiations.cpp
         src/Tensor/cuTensor.cpp
-        src/Tensor/Tensormxp.cpp
         src/Tensor/cuTensormxp.cpp
+        src/Tensor/Tensormxp.cpp
+        src/Tensor/SVD.cpp
         src/Tensor/stdafx.cpp
 
         # Primitve Basis

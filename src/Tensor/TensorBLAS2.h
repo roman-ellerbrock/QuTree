@@ -103,6 +103,21 @@ void contractionModeX(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	size_t k, T alpha = 1., T beta = 0.);
 
 /**
+ * \brief Perform tensor-hole contraction leaving out the last index. Optimized for performance.
+ *
+ * Performs the operations h = alpha * tr(bra, ket)_(lastIdx) + beta * h
+ *
+ * @param h resulting matrix
+ * @param bra input tensor <Bra|
+ * @param ket input tensor |Ket>
+ * @param alpha multiply contracted result by alpha
+ * @param beta multiply previous h by beta
+ */
+template<typename T>
+void contractionModeD(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
+	T alpha = 1., T beta = 0.);
+
+/**
  * \brief Perform tensor-hole contraction leaving out k-th index.
  *
  * Performs the operations h = alpha * tr(bra, ket)_(k) + beta * h
