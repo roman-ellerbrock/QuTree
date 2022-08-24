@@ -7,6 +7,7 @@
 #include "TensorNetwork/contractions.h"
 #include "Tree/TreeFactory.h"
 #include "Util/GateOperators.h"
+#include "TensorNetwork/ExpectationValue.h"
 
 class Trees : public ::testing::Test
 {

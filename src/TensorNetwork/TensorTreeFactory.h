@@ -19,6 +19,9 @@ vector<TensorTree<T>> matrixTree(const Tree& tree, const SumOfProductsOperator<T
 template <typename T>
 TensorTree<T> matrixTree(const TensorTree<T>& Psi, const ProductOperator<T>& P = {});
 
+template <typename T>
+vector<TensorTree<T>> matrixTree(const TensorTree<T>& Psi, const SumOfProductsOperator<T>& H);
+
 /**
  * Initialize TensorTree
  */

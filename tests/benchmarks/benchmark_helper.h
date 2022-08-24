@@ -9,6 +9,7 @@
 
 namespace benchmark {
 	pair<double, double> statistic_helper(const vector<chrono::microseconds>& dur);
+	pair<double, double> statistic_helper(const vector<double>& dur);
 }
 
 #endif //BENCHMARK_HELPER_H

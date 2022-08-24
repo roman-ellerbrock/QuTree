@@ -68,3 +68,15 @@ template TensorTree<cd> tensorTree(TensorTree<cd> Psi, const TensorTree<cd>& mat
 	function<Tensor<cd>(const TensorShape&)> f);
 template TensorTree<d> tensorTree(TensorTree<d> Psi, const TensorTree<d>& mat,
 	function<Tensor<d>(const TensorShape&)> f);
+
+template <typename T>
+vector<TensorTree<T>> matrixTree(const TensorTree<T>& Psi, const SumOfProductsOperator<T>& H) {
+	vector<TensorTree<T>> h;
+	for (const ProductOperator<T>& P : H) {
+		h.push_back(matrixTree<T>(Psi, P));
+	}
+	return h;
+}
+
+template vector<TensorTree<cd>> matrixTree(const TensorTree<cd>& Psi, const SumOfProductsOperator<cd>& H);
+template vector<TensorTree<d>> matrixTree(const TensorTree<d>& Psi, const SumOfProductsOperator<d>& H);

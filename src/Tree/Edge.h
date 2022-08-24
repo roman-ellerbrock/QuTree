@@ -27,6 +27,9 @@ public:
 	Edge(const Node& from, const Node& to)
 		: from_(&from), to_(&to) {}
 
+	Edge(const Node* from, const Node* to)
+		: from_(from), to_(to) {}
+
 	[[nodiscard]] const Node& from() const {
 		if (!from_) {
 			cerr << "Edge error: cannot convert nullptr (from_) to Node&.\n";

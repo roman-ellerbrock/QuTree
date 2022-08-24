@@ -87,6 +87,8 @@ template Tensor<cd> operator-(Tensor<cd> A, const Tensor<cd>& B);
 /// A *= alpha
 template<typename T, typename U>
 Tensor<T>& operator*=(Tensor<T>& A, const U alpha) {
+	if (alpha == (U) 1.) { return A; }
+	if (alpha == (U) 0.) { A.zero(); return A; }
 	size_t n = A.shape_.totalDimension();
 	blas::scal(n, (T) alpha, A.data(), 1);
 	return A;

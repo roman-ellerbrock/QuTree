@@ -95,5 +95,6 @@ target_link_libraries(
 	QuTree 
 	${BLAS_LIBRARIES} -lblaspp
 	${LAPACK_LIBRARIES} -llapackpp
+  OpenMP::OpenMP_CXX 
 	polymorphicMemory
 )

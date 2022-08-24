@@ -8,6 +8,9 @@ docs/doxygen/xml
 
 qc/
 .DS_Store
+.vscode
+build.sh
+run.sh
 
 # User-specific files
 *.suo

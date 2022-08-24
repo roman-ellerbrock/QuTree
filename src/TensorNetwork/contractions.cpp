@@ -3,6 +3,7 @@
 //
 
 #include "TensorNetwork/contractions.h"
+#include "TensorNetwork/TensorTreeFactory.h"
 
 typedef complex<double> cd;
 typedef double d;
@@ -191,6 +192,18 @@ template void contraction(vector<TensorTree<cd>>& Svec, const TensorTree<cd>& Br
 template void contraction(vector<TensorTree<d>>& Svec, const TensorTree<d>& Bra, TensorTree<d> Ket,
 	const SumOfProductsOperator<d>& H);
 
+template<typename T>
+vector<TensorTree<T>> contraction(const TensorTree<T>& Bra,
+	TensorTree<T> Ket, const SumOfProductsOperator<T>& H) {
+	vector<TensorTree<T>> Svec = matrixTree<T>(Bra, H);
+	contraction(Svec, Bra, Ket, H);
+	return Svec;
+} /// untested, generates dense tree
+
+template vector<TensorTree<cd>> contraction(const TensorTree<cd>& Bra,
+	TensorTree<cd> Ket, const SumOfProductsOperator<cd>& H);
+template vector<TensorTree<d>> contraction(const TensorTree<d>& Bra,
+	TensorTree<d> Ket, const SumOfProductsOperator<d>& H);
 
 /*
 template<typename T>

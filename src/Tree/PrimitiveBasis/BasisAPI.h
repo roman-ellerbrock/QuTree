@@ -61,6 +61,38 @@ public:
 		ptr_->write(os);
 	}
 
+	void applyX(Tensorcd& xA, const Tensorcd& A) const {
+		if (!ptr_) {
+			cerr << "Primitive Basis not initialized in BasisAPI.\n";
+			exit(1);
+		}
+		ptr_->applyX(xA, A);
+	}
+
+	void applyX2(Tensorcd& xA, const Tensorcd& A) const {
+		if (!ptr_) {
+			cerr << "Primitive Basis not initialized in BasisAPI.\n";
+			exit(1);
+		}
+		ptr_->applyX2(xA, A);
+	}
+
+	void applyP(Tensorcd& xA, const Tensorcd& A) const {
+		if (!ptr_) {
+			cerr << "Primitive Basis not initialized in BasisAPI.\n";
+			exit(1);
+		}
+		ptr_->applyP(xA, A);
+	}
+
+	void applyKin(Tensorcd& xA, const Tensorcd& A) const {
+		if (!ptr_) {
+			cerr << "Primitive Basis not initialized in BasisAPI.\n";
+			exit(1);
+		}
+		ptr_->applyKin(xA, A);
+	}
+
 	[[nodiscard]] const PrimitiveBasis* ptr() const { return ptr_; };
 	[[nodiscard]] PrimitiveBasis* ptr() { return ptr_; };
 

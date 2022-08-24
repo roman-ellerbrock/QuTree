@@ -79,49 +79,132 @@ template Tensor<cd> unitarySimilarityTrafo(Tensor<cd> a, const Tensor<cd>& u);
 template Tensor<d> unitarySimilarityTrafo(Tensor<d> a, const Tensor<d>& u);
 
 template<typename T>
-void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
-	size_t k1, T alpha, T beta, blas::Op op_h) {
-	/// D is work tensor with shape of C.
-	const TensorShape& shape = B.shape_;
-	size_t before = shape.before(k1);
-	size_t active = shape[k1];
-	size_t activeC = C.shape_[k1];
-	size_t after = shape.after(k1);
+void matrixTensorMode0(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
+	T alpha, T beta, blas::Op op_h) {
+
+	size_t active = B.shape_[0];
+	size_t activeC = C.shape_[0];
+	size_t after = B.shape_.after(0);
+	size_t m = activeC;
+	size_t k = active; //activeB
+	size_t n = after;
 
 	blas::Layout layout = blas::Layout::ColMajor;
+	blas::Op op_B = blas::Op::NoTrans;
+	blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.data(), m, B.data(), k,
+		beta, C.data(), m);
+}
 
-	if (before == 1) {
-		size_t m = activeC;
-		size_t k = active; //activeB
-		size_t n = after;
+template void matrixTensorMode0(Tensor<d>& C, const Tensor<d>& h, const Tensor<d>& B,
+	d alpha, d beta, blas::Op op_h);
+template void matrixTensorMode0(Tensor<cd>& C, const Tensor<cd>& h, const Tensor<cd>& B,
+	cd alpha, cd beta, blas::Op op_h);
 
-		blas::Op op_B = blas::Op::NoTrans;
-		blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.data(), m, B.data(), k,
-			beta, C.data(), m);
+template<typename T>
+void matrixTensorModeD(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
+	T alpha, T beta, blas::Op op_h) {
 
+	if (op_h == blas::Op::NoTrans) {
+		op_h = blas::Op::Trans;
+	} else if (op_h == blas::Op::Trans) {
+		op_h = blas::Op::NoTrans;
+	} else if (op_h == blas::Op::ConjTrans) {
+		Matrix<T> h2 = adjoint(h);
+		matrixTensorModeD(C, h2, B, alpha, beta, blas::Op::NoTrans);
 		return;
 	}
 
-	size_t m = activeC;
-	size_t k = active; // activeB
-	size_t n = before;
+	size_t d = B.shape_.lastIdx();
+	size_t m = C.shape_.before(d);
+	size_t n = C.shape_[d];
+	size_t k = B.shape_[d];
 
-	size_t pref = before * active;
-	size_t prefC = before * activeC;
-	blas::Op op_B = blas::Op::Trans;
-	T zero = 0.;
+	blas::Layout layout = blas::Layout::ColMajor;
+	blas::Op op_B = blas::Op::NoTrans;
+	blas::gemm(layout, op_B, op_h, 
+		m, n, k, 
+		alpha, 
+		B.data(), m, 
+		h.data(), n,
+		beta, 
+		C.data(), m);
+}
 
-	/// Work Memory.
-	/// Allocation often dominates computation time, thus,
-	/// the memory is static and resize is called to assert
-	/// sufficient memory.
-	static Tensor<T> mem;
-	mem.resize(C.shape_);
+template void matrixTensorModeD(Tensor<d>& C, const Tensor<d>& h, const Tensor<d>& B,
+	d alpha, d beta, blas::Op op_h);
+template void matrixTensorModeD(Tensor<cd>& C, const Tensor<cd>& h, const Tensor<cd>& B,
+	cd alpha, cd beta, blas::Op op_h);
 
+template<typename T>
+void matrixTensorModeX(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
+	size_t k1, T alpha, T beta, blas::Op op_h) {
+
+	/// C = alpha * h *(k) B + beta * C
+	T beta2 = 0.;
+	if (beta == (T) 1.) {
+		beta2 = (T) 1.;
+	} else if (beta != (T) 0.) {
+		cerr << "Cannot call matrixTensorX with beta != {0, 1}\n";
+		exit(1);
+	}
+
+	blas::Op op_B = blas::Op::NoTrans;
+	if (op_h == blas::Op::NoTrans) {
+		op_h = blas::Op::Trans;
+	} else if (op_h == blas::Op::Trans) {
+		op_h = blas::Op::NoTrans;
+	} else if (op_h == blas::Op::ConjTrans) {
+		Matrix<T> h2 = adjoint(h);
+		matrixTensorModeX(C, h2, B, k1, alpha, beta, blas::Op::NoTrans);
+		return;
+	}
+
+	size_t before = B.shape_.before(k1);
+	size_t activeB = B.shape_[k1];
+	size_t activeC = C.shape_[k1];
+	size_t after = B.shape_.after(k1);
+
+	size_t preB = before * activeB;
+	size_t preC = before * activeC;
+
+	size_t m = before;
+	size_t n = activeC;
+	size_t k = activeB;
+
+	blas::Layout layout = blas::Layout::ColMajor;
+	#pragma omp parallel for
 	for (size_t aft = 0; aft < after; ++aft) {
-		blas::gemm(layout, op_h, op_B, m, n, k, alpha, h.data(), m, &B[aft * pref], n,
-			zero, &mem[aft * prefC], m);
-		transpose(&C[aft * prefC], &mem[aft * prefC], activeC, before, beta);
+		blas::gemm(layout, op_B, op_h, m, n, k, 
+			alpha, 
+			&B[aft * preB], m, 
+			h.data(), n,
+			beta2,
+			&C[aft * preC], m);
+	}
+}
+
+template void matrixTensorModeX(Tensor<d>& C, const Tensor<d>& h, const Tensor<d>& B,
+	size_t k1, d alpha, d beta, blas::Op op_h);
+template void matrixTensorModeX(Tensor<cd>& C, const Tensor<cd>& h, const Tensor<cd>& B,
+	size_t k1, cd alpha, cd beta, blas::Op op_h);
+
+template<typename T>
+void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
+	size_t k1, T alpha, T beta, blas::Op op_h) {
+	if (k1 == 0) {
+		matrixTensorMode0(C, h, B, alpha, beta, op_h);
+	} else if (k1 == B.shape_.lastIdx()) {
+		matrixTensorModeD(C, h, B, alpha, beta, op_h);
+	} else {
+		if (beta == (T) 1. || beta == (T) 0.) {
+			matrixTensorModeX(C, h, B, k1, alpha, beta, op_h);
+		} else {
+			cout << "Warning!\n";
+			Tensor<T> mem(C.shape_);
+			matrixTensorModeX(mem, h, B, k1, alpha, (T) 0., op_h);
+			C *= beta;
+			C += mem;
+		}
 	}
 }
 
@@ -151,9 +234,10 @@ void contractionMode0(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	T alpha, T beta) {
 
 	// conj(bra) * ket
-	size_t BR = ket.shape_[0];
 	size_t BL = bra.shape_[0];
+	size_t BR = ket.shape_[0];
 	size_t C = ket.shape_.after(0);
+
 	blas::Layout layout = blas::Layout::RowMajor;
 	blas::Op ct = blas::Op::ConjTrans;
 	blas::Op no = blas::Op::NoTrans;
@@ -164,15 +248,15 @@ void contractionMode0(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	bra.data(), BL,
 	ket.data(), BR, 
 	beta,
-	h.data(), BR);
-/*	if (beta == (T) 0.) {
-//		transpose(h, h_add);
+	h_add.data(), BR);
+	if (beta == (T) 0.) {
+		transpose(h, h_add);
 	} else if (beta != (T) 1.) {
 		h *= beta;
-//		h += transpose(h_add);
+		h += transpose(h_add);
 	} else {
-//		h += transpose(h_add);
-	}*/
+		h += transpose(h_add);
+	}
 }
 
 template void contractionMode0(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
@@ -214,35 +298,31 @@ void contractionModeX(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 	 * 
 	 */
 
-	/// Work Memory.
-	/// Allocation often dominates computation time, thus,
-	/// the memory is static and resize is called to assert
-	/// sufficient memory.
-	static Tensor<T> bra_mem;
-	bra_mem.resize(bra.shape_);
-	static Tensor<T> ket_mem;
-	ket_mem.resize(ket.shape_);
-
 	size_t A = ket.shape_.before(k);
-	size_t B = ket.shape_[k];
-	size_t B2 = bra.shape_[k];
+	size_t BL = bra.shape_[k];
+	size_t BR = ket.shape_[k];
 	size_t C = ket.shape_.after(k);
 
-	transposeBC(bra_mem.data(), bra.data(), A, B2, C);
-	transposeBC(ket_mem.data(), ket.data(), A, B, C);
-
-	size_t AC = A * C;
-	blas::Layout layout = blas::Layout::ColMajor;
-	blas::Op ct = blas::Op::ConjTrans;
-	blas::Op notrans = blas::Op::NoTrans;
-	blas::gemm(layout, ct, notrans, 
-	B2, B, AC, 
-	alpha, 
-	bra_mem.data(), AC, 
-	ket_mem.data(), AC, 
-	beta,
-	h.data(), B2);
+	h *= beta;
+	for (size_t c = 0; c < C; ++c) {
+		blas::Layout layout = blas::Layout::ColMajor;
+		blas::Op ct = blas::Op::ConjTrans;
+		blas::Op notrans = blas::Op::NoTrans;
+		blas::gemm(layout, ct, notrans, 
+		BL, BR, A, 
+		alpha, 
+		&bra.data()[A * BL * c], A, 
+		&ket.data()[A * BR * c], A, 
+		1.,
+		h.data(), BL);
+	}
 }
+
+template void contractionModeX(Tensor<d>& h, const Tensor<d>& bra, const Tensor<d>& ket,
+	size_t k, d alpha, d beta);
+template void contractionModeX(Tensor<cd>& h, const Tensor<cd>& bra, const Tensor<cd>& ket,
+	size_t k, cd alpha, cd beta);
+
 
 template<typename T>
 void contraction(Tensor<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,

@@ -138,6 +138,16 @@ TEST (TensorBLAS, unitarySimilarityTransform) {
 		EXPECT_NEAR(0., residual(res, resRef), eps);
 }
 
+TEST_F (TensorFactory2, matrixTensorD_plain) {
+	Tensorcd hA(A.shape_);
+	size_t k = A.shape_.lastIdx();
+	auto mat = createMatrix(A, k);
+	matrixTensor(hA, mat, A, k);
+	Tensorcd hA2(A.shape_);
+	matrixTensorRef(hA2, mat, A, k);
+		EXPECT_NEAR(0., residual(hA, hA2), eps);
+}
+
 TEST_F (TensorFactory2, matrixTensor_plain) {
 	Tensorcd hA(A.shape_);
 	for (size_t k = 0; k < A.shape_.order(); ++k) {
@@ -304,7 +314,7 @@ TEST_F (TensorFactory2, contractionMode0) {
 	size_t dimA = A.shape_[0];
 	size_t dimB = B.shape_[0];
 	Tensorcd matRef({dimA, dimB});
-	contractionModeX(matRef, A, B, 0);
+	contractionRef(matRef, A, B, 0);
 	Tensorcd matRes({dimA, dimB});
 	contractionMode0(matRes, A, B);
 		EXPECT_NEAR(0., residual(matRef, matRes), eps);

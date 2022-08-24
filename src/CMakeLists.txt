@@ -36,6 +36,7 @@ set(QuTree_INCLUDE_FILES
         # TreeNetwork
         src/TensorNetwork/TensorTree.h
         src/TensorNetwork/MatrixTree.h
+        src/TensorNetwork/ExpectationValue.h
 
         # Operators
         src/Operator/LeafMatrix.h
@@ -45,6 +46,11 @@ set(QuTree_INCLUDE_FILES
 
         # Utilities
         src/Util/blaspp_device_extension.h
+        src/Util/statistics.h
+        src/Util/GateOperators.h
+        src/Util/HamiltonianSuite.h
+        src/Util/JacobiRotationFramework.h
+        src/Util/SimultaneousDiagonalization.h
         )
 
 set(QuTree_SOURCE_FILES
@@ -86,6 +92,7 @@ set(QuTree_SOURCE_FILES
 #        src/TensorNetwork/cuTensorTree.cpp
         src/TensorNetwork/TensorTree.cpp
         src/TensorNetwork/TensorTreeFactory.cpp
+        src/TensorNetwork/ExpectationValue.cpp
 
         # Operators
         src/Operator/LeafFunction.cpp
@@ -95,7 +102,9 @@ set(QuTree_SOURCE_FILES
 
         # Utilities
         src/Util/blaspp_device_extension.cpp
+        src/Util/statistics.cpp
         src/Util/GateOperators.cpp
+        src/Util/HamiltonianSuite.cpp
         src/Util/JacobiRotationFramework.cpp
         src/Util/SimultaneousDiagonalization.cpp
         )

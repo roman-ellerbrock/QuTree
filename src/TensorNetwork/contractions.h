@@ -59,6 +59,10 @@ template <typename T>
 void contraction(vector<TensorTree<T>>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
 	const SumOfProductsOperator<T>& H = SumOfProductsOperator<T>());
 
+template <typename T>
+vector<TensorTree<T>> contraction(const TensorTree<T>& Bra, TensorTree<T> Ket,
+	const SumOfProductsOperator<T>& H = SumOfProductsOperator<T>());
+
 template<typename T>
 void apply(TensorTree<T>& Ket, const TensorTree<T>& pmat,
 	const ProductOperator<T>& P);
