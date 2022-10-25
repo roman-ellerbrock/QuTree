@@ -44,7 +44,6 @@ protected:
 			LeafMatrixcd x(X);
 			M_.push_back(x, i);
 		}
-
 	}
 
 	~TTFactory() = default;
