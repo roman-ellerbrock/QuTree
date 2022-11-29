@@ -142,6 +142,38 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
+	void contractionLayer(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra,
+		const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
+		const SparseTree& stree, const Node& node, WorkMemory<T>* mem) {
+
+		if (!node.isToplayer()) {
+			assert(holes.isActive(node));
+			const Node& parent = node.parent();
+
+			/// assign work memory
+			Tensor<T> hKet(parent.shape(), mem->work1_, false, false);
+			Tensor<T> workKet(parent.shape(), mem->work2_, false, false);
+			Tensor<T> workBra(parent.shape(), mem->work3_, false, false);
+//				Tensor<T> hKet(parent.shape(), &mem->work1_[0], false, false);
+//				Tensor<T> workKet(parent.shape(), &mem->work2_[0], false, false);
+//				Tensor<T> workBra(parent.shape(), &mem->work3_[0], false, false);
+
+			/// mats * |Ket>
+			apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);
+//				hKet = Ket[parent];
+			if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
+				cerr << "Holematrices not allocated correctly.\n";
+				exit(1);
+			}
+			/// <Bra|mats|Ket>_(p)
+			contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
+		} else {
+			holes[node] = identityMatrix<T>(node.shape().lastDimension());
+		}
+	}
+
+	template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
 		const SparseTree& stree, const Tree& tree, WorkMemory<T>* mem) {
@@ -156,30 +188,7 @@ namespace TreeFunctions {
 		int sub_topnode = stree.size() - 1;
 		for (int n = sub_topnode; n >= 0; --n) {
 			const Node& node = stree.node(n);
-			if (!node.isToplayer()) {
-				assert(holes.isActive(node));
-				const Node& parent = node.parent();
-
-				/// assign work memory
-				Tensor<T> hKet(parent.shape(), mem->work1_, false, false);
-				Tensor<T> workKet(parent.shape(), mem->work2_, false, false);
-				Tensor<T> workBra(parent.shape(), mem->work3_, false, false);
-//				Tensor<T> hKet(parent.shape(), &mem->work1_[0], false, false);
-//				Tensor<T> workKet(parent.shape(), &mem->work2_[0], false, false);
-//				Tensor<T> workBra(parent.shape(), &mem->work3_[0], false, false);
-
-				/// mats * |Ket>
-				apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);
-//				hKet = Ket[parent];
-				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
-					cerr << "Holematrices not allocated correctly.\n";
-					exit(1);
-				}
-				/// <Bra|mats|Ket>_(p)
-				contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
-			} else {
-				holes[node] = identityMatrix<T>(node.shape().lastDimension());
-			}
+			contractionLayer(holes, Bra, Ket, mats, rho, stree, node, mem);
 		}
 		if (internal_mem) { delete mem; }
 	}
@@ -289,11 +298,13 @@ namespace TreeFunctions {
 			work = tmp;
 		}
 //		Tensor<T> work = Phi;
-		for (size_t k = 0; k < node.nChildren(); ++k) {
-			const Node& child = node.child(k);
-			if ((k == skip) || !mat.isActive(child)) { continue; }
-			matrixTensorBLAS(*out, *work, mat[child], *in, child.childIdx(), true);
-			swap(in, out);
+		if (!node.isBottomlayer()) {
+			for (size_t k = 0; k < node.nChildren(); ++k) {
+				const Node& child = node.child(k);
+				if ((k == skip) || !mat.isActive(child)) { continue; }
+				matrixTensorBLAS(*out, *work, mat[child], *in, child.childIdx(), true);
+				swap(in, out);
+			}
 		}
 		if (!node.isToplayer() && (skip != node.parentIdx()) && (holes != nullptr)) {
 			if (holes == nullptr) {

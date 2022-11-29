@@ -72,6 +72,11 @@ namespace TreeFunctions {
 ////////////////////////////////////////////////////////////////////////
 	/// \brief Low-level routine for calculating mean field matrices
 	template<typename T>
+	void contractionLayer(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
+		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
+		const SparseTree& stree, const Node& node, WorkMemory<T>* mem);
+
+		template<typename T>
 	void contraction(SparseMatrixTree<T>& holes, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 		const SparseMatrixTree<T>& mats, const MatrixTree<T> *rho,
 		const SparseTree& stree, const Tree& tree, WorkMemory<T>* mem = nullptr);

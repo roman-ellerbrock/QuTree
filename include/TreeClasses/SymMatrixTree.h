@@ -16,15 +16,12 @@ public:
 
 	SymMatrixTree(const SparseMatrixTreecd& A, const SparseMatrixTreecd& B)
 		: pair<SparseMatrixTreecd, SparseMatrixTreecd>(A, B) {
-
 	}
 
 	const SparseMatrixTreecd& up() const { return first; }
 	SparseMatrixTreecd& up() { return first; }
 	const SparseMatrixTreecd& down() const { return second; }
 	SparseMatrixTreecd& down() { return second; }
-
-
 };
 
 using SymMatrixTrees = vector<SymMatrixTree>;

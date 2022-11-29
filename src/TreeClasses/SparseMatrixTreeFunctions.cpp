@@ -5,6 +5,7 @@
 
 namespace TreeFunctions {
 	typedef complex<double> cd;
+	typedef double d;
 
 	template void represent(SparseMatrixTree<cd>& hmat,
 		const MLO<cd>& M, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
@@ -31,6 +32,14 @@ namespace TreeFunctions {
 	template SparseMatrixTrees<cd> represent(const SOP<cd>& sop,
 		const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
 		shared_ptr<SparseTree>& stree, const Tree& tree, WorkMemorycd* mem);
+
+	template void contractionLayer(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
+		const SparseMatrixTree<cd>& mats, const MatrixTree<cd> *rho,
+		const SparseTree& stree, const Node& node, WorkMemory<cd>* mem);
+
+	template void contractionLayer(SparseMatrixTree<d>& holes, const TensorTree<d>& Bra, const TensorTree<d>& Ket,
+		const SparseMatrixTree<d>& mats, const MatrixTree<d> *rho,
+		const SparseTree& stree, const Node& node, WorkMemory<d>* mem);
 
 	template void contraction(SparseMatrixTree<cd>& holes, const TensorTree<cd>& Bra, const TensorTree<cd>& Ket,
 		const SparseMatrixTree<cd>& mats, const MatrixTree<cd> *rho,
