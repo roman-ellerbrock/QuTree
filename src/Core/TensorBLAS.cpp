@@ -3,7 +3,8 @@
 //
 
 #include "Core/TensorBLAS.h"
-#include <cblas.h>
+//#include <cblas.h>
+#include <mkl.h> // version for AMD CPUs
 #include <numeric>
 #include "Core/MatrixBLAS.h"
 

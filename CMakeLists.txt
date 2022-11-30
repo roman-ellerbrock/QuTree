@@ -81,8 +81,8 @@ elseif(UNIX)
     message(STATUS "USING UNIX!")
 
 #   empirically found blas locations
-    target_include_directories(QuTree PUBLIC "/usr/include/x86_64-linux-gnu")
-    include_directories("/usr/include/x86_64-linux-gnu")
+#    target_include_directories(QuTree PUBLIC "/usr/include/x86_64-linux-gnu") # this causes issues for AMD nodes
+#    include_directories("/usr/include/x86_64-linux-gnu") # this causes issues for AMD nodes
 endif()
 
 if(GITHUB_ACTIONS)
@@ -151,7 +151,8 @@ target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIB
 #####################################################################
 
 # Ensure C++14 standard (force downstream as well)
-target_compile_features(QuTree PUBLIC cxx_std_17)
+#target_compile_features(QuTree PUBLIC cxx_std_17)
+set (CMAKE_CXX_STANDARD 17) # version for AMD compile
 
 set(FLAGS_VECTORIZE "-fopenmp-simd -march=native")
 set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
@@ -186,5 +187,5 @@ endif ()
 # Recurse into subdirectories
 #####################################################################
 # Excluded from default builds
-add_subdirectory(tests EXCLUDE_FROM_ALL)
-add_subdirectory(examples EXCLUDE_FROM_ALL)
+#add_subdirectory(tests EXCLUDE_FROM_ALL)    # comment out for AMD compile
+#add_subdirectory(examples EXCLUDE_FROM_ALL) # comment out for AMD compile

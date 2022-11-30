@@ -3,8 +3,9 @@
 //
 
 #include "Core/MatrixBLAS.h"
-#include <cblas.h>
-#include <lapacke.h>
+//#include <cblas.h>
+//#include <lapacke.h>
+#include <mkl.h> // intel on Fire
 
 void qrBLAS(Matrixcd& Q, const Matrixcd& A) {
 	Matrixcd work(Q.dim1(), 1);
@@ -12,8 +13,10 @@ void qrBLAS(Matrixcd& Q, const Matrixcd& A) {
 	Q = A;
 	size_t m = A.dim1();
 	size_t n = A.dim2();
-	lapack_complex_double *a = reinterpret_cast<double _Complex *>(&Q[0]);
-	lapack_complex_double *ta = reinterpret_cast<double _Complex *>(&tau[0]);
+	//lapack_complex_double *a = reinterpret_cast<double _Complex *>(&Q[0]);
+	//lapack_complex_double *ta = reinterpret_cast<double _Complex *>(&tau[0]);
+        lapack_complex_double *a = reinterpret_cast<MKL_Complex16*>(&Q[0]);
+        lapack_complex_double *ta = reinterpret_cast<MKL_Complex16*>(&tau[0]);
 	lapack_int lda = m;
 	lapack_int k = n;
 	LAPACKE_zgeqrfp(LAPACK_COL_MAJOR, m, n, a, lda, ta);
