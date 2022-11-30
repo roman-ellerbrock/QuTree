@@ -54,7 +54,7 @@ Tensorcd A(tdim);
 for (size_t i = 0; i < A.shape().totalDimension(); i++) {
     A(i) = i;
 }
-Matrixcd w = A.DotProduct(A);
+Matrixcd w = A.dotProduct(A);
 w.print();
 }
 ```
