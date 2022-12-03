@@ -84,7 +84,9 @@ gtest_discover_tests(TestQuTree)
 
 add_executable(benchmark_qutree
   benchmarks/benchmark_helper.cpp
-  benchmarks/benchmark_tensor.cpp
+  benchmarks/benchmark_tensor_matrixTensor.cpp
+  benchmarks/benchmark_tensor_holeContraction.cpp
+  benchmarks/benchmark_tree.cpp
   benchmarks/main_benchmarks.cpp
 )
 

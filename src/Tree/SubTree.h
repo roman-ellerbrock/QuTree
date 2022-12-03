@@ -57,13 +57,19 @@ public:
 
 		/// gather nodes in wrong order
 		auto tmp = gatherNodes(tree, par.leaves_);
+		for (const Node* node : tmp) {
+			size_t address = node->address_;
+			const Node& n = tree.nodeArray()[address];
+			nodes_.push_back(address, &n);
+		}
 
-		/// create bottom-up
+/*		/// create bottom-up
+		auto tmp = gatherNodes(tree, par.leaves_);
 		for (const Node& node : tree) {
 			if (contains(tmp, &node)) {
 				nodes_.push_back(node.address_, &node);
 			}
-		}
+		}*/
 
 		///
 		for (auto i : par.leaves_) {
@@ -87,14 +93,7 @@ public:
 		}
 	}
 
-	void fillEdges(const Tree& tree) {
-		edges_.clear();
-		for (const Edge& edge : tree.edges()) {
-			if (nodes_.contains(edge.from().address_) && nodes_.contains(edge.to().address_)) {
-				edges_.push_back(edge.address(), &edge);
-			}
-		}
-	}
+	void fillEdges(const Tree& tree);
 
 	[[nodiscard]] vector<Edge> preEdges(const Edge *edge) const {
 		/// Get all pre-Edges and filter for the ones in the SubTree
@@ -124,5 +123,6 @@ public:
 	map<size_t, const Leaf *> leaves_;
 };
 
+ostream& operator<<(ostream& os, const SubTree& stree);
 
 #endif //SUBTREE_H

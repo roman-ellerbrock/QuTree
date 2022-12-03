@@ -32,7 +32,7 @@ template <typename T>
 Tensor<T> contraction(const Tensor<T>& bra, const Tensor<T>& ket, const Edge& edge);
 
 template<typename T>
-void contraction(TensorTree<T>& S, const Tensor<T>& Bra, Tensor<T> Ket,
+void contraction(TensorTree<T>& S, const Tensor<T>& Bra, const Tensor<T>& Ket,
 	const ProductOperator<T>& P, const Edge* edge);
 
 template<typename T>
@@ -52,7 +52,7 @@ void apply(Tensor<T>& Ket, const vector<TensorTree<T>>& S,
  */
 
 template <typename T>
-void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, TensorTree<T> Ket,
+void contraction(TensorTree<T>& S, const TensorTree<T>& Bra, const TensorTree<T>& Ket,
 	const ProductOperator<T>& P = ProductOperator<T>());
 
 template <typename T>

@@ -104,6 +104,7 @@ template<typename T>
 void matrixTensorModeD(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
 	T alpha, T beta, blas::Op op_h) {
 
+
 	if (op_h == blas::Op::NoTrans) {
 		op_h = blas::Op::Trans;
 	} else if (op_h == blas::Op::Trans) {
@@ -128,6 +129,7 @@ void matrixTensorModeD(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
 		h.data(), n,
 		beta, 
 		C.data(), m);
+
 }
 
 template void matrixTensorModeD(Tensor<d>& C, const Tensor<d>& h, const Tensor<d>& B,
@@ -199,7 +201,6 @@ void matrixTensor(Tensor<T>& C, const Tensor<T>& h, const Tensor<T>& B,
 		if (beta == (T) 1. || beta == (T) 0.) {
 			matrixTensorModeX(C, h, B, k1, alpha, beta, op_h);
 		} else {
-			cout << "Warning!\n";
 			Tensor<T> mem(C.shape_);
 			matrixTensorModeX(mem, h, B, k1, alpha, (T) 0., op_h);
 			C *= beta;

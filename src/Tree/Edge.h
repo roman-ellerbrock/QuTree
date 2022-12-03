@@ -9,6 +9,9 @@
 
 class Edge {
 	/**
+	 * \class Edge
+	 * \brief This class describes the edge between two nodes.
+	 * 
 	 * Example 1:
 	 * Node x [from] (child, Childidx: 2, parentIdx: 3) ---> Node y [to] (parent)
 	 *
@@ -98,8 +101,19 @@ public:
 		return !(*this == b);
 	}
 
+	/*
+	 * Note: the address of edges does not reflect it's position in a sweep or
+	 *       in a vector of edge-attributes! We will change this in the future.
+	 *       The address is built in a way that it doesn't require of the knowledge
+	 *       of how many nodes there are in the graph.
+	 */
 	[[nodiscard]] size_t address() const {
 		return 2 * down().address_ - (!isUpEdge()) - 1;
+	}
+
+	// This is a uid for the vector of down edges OR up_edges
+	[[nodiscard]] size_t local_address() const {
+		return down().address_ - 1;
 	}
 
 	[[nodiscard]] TensorShape shape() const {

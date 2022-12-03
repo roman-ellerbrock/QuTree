@@ -91,6 +91,7 @@ TEST_F(SomeTree, testEdges)
 	SubTree stree(tree_, idx);
 
 	vector<size_t> edgeidx = {0, 2, 3, 5, 6, 8, 9, 11};
+	EXPECT_EQ(edgeidx.size(), stree.edges_.size());
 	for (auto i : edgeidx)
 	{
 		const Edge &edge = tree_.edges()[i];
@@ -107,8 +108,7 @@ TEST_F(SomeTree, testPreEdges)
 	{
 		EXPECT_EQ(true, stree.edges_.contains(edge->address()));
 		const vector<Edge> preEdges = stree.preEdges(edge);
-		for (const Edge &e : preEdges)
-		{
+		for (const Edge &e : preEdges) {
 			EXPECT_EQ(true, stree.edges_.contains(e.address()));
 		}
 	}

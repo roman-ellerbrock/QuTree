@@ -41,6 +41,12 @@ public:
 	auto begin() const { return objects_.begin(); }
 	auto end() const { return objects_.end(); }
 
+	auto rbegin() { return objects_.rbegin(); }
+	auto rend() { return objects_.rend(); }
+
+	auto rbegin() const { return objects_.rbegin(); }
+	auto rend() const { return objects_.rend(); }
+
 	void clear() {
 		map_.clear();
 		objects_.clear();
