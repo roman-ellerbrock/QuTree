@@ -150,24 +150,39 @@ namespace TreeFunctions {
 		if (!node.isToplayer()) {
 			assert(holes.isActive(node));
 			const Node& parent = node.parent();
+/*			size_t n_active = 0; // count how many summands were applied
+			for (size_t k = 0; k < parent.nChildren(); ++k) {
+				const Node& child = parent.child(k);
+				if ((k == node.childIdx()) || !mats.isActive(child)) { continue; }
+				++n_active;
+			}*/
 
-			/// assign work memory
-			Tensor<T> hKet(parent.shape(), mem->work1_, false, false);
-			Tensor<T> workKet(parent.shape(), mem->work2_, false, false);
-			Tensor<T> workBra(parent.shape(), mem->work3_, false, false);
+			/// if n_ac
+/*			if (n_active == 0) {
+				if (rho == nullptr) {
+					holes[node] = identityMatrix<T>(node.shape().lastDimension());
+				} else {
+					holes[node] = (*rho)[node];
+				}*/
+//			} else {
+				/// assign work memory
+				Tensor<T> hKet(parent.shape(), mem->work1_, false, false);
+				Tensor<T> workKet(parent.shape(), mem->work2_, false, false);
+				Tensor<T> workBra(parent.shape(), mem->work3_, false, false);
 //				Tensor<T> hKet(parent.shape(), &mem->work1_[0], false, false);
 //				Tensor<T> workKet(parent.shape(), &mem->work2_[0], false, false);
 //				Tensor<T> workBra(parent.shape(), &mem->work3_[0], false, false);
 
-			/// mats * |Ket>
-			apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);
+				/// mats * |Ket>
+				apply(hKet, mats, &holes, rho, Ket[parent], stree, parent, node.childIdx(), &workKet);
 //				hKet = Ket[parent];
-			if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
-				cerr << "Holematrices not allocated correctly.\n";
-				exit(1);
-			}
-			/// <Bra|mats|Ket>_(p)
-			contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
+				if (holes[node].dim1() == 0 || holes[node].dim2() == 0) {
+					cerr << "Holematrices not allocated correctly.\n";
+					exit(1);
+				}
+				/// <Bra|mats|Ket>_(p)
+				contractionBLAS(holes[node], workBra, workKet, Bra[parent], hKet, node.childIdx());
+//			}
 		} else {
 			holes[node] = identityMatrix<T>(node.shape().lastDimension());
 		}
@@ -283,10 +298,11 @@ namespace TreeFunctions {
 	template<typename T>
 	void apply(Tensor<T>& hPhi, const SparseMatrixTree<T>& mat,
 		const SparseMatrixTree<T> *holes, const MatrixTree<T> *rho,
-		Tensor<T> Phi, const SparseTree& stree, const Node& node, int skip, Tensor<T>* work) {
+		Tensor<T> Phi, const SparseTree& stree, const Node& node, int skip,
+		Tensor<T>* work) {
 		/**
 		 * Rationale:
-		 * - *the* routine for applying adjacent matrices (except 'skip') to a Tensor
+		 * - *The* routine for applying adjacent matrices (except 'skip') to a Tensor
 		 * - hPhi has to have correct dimensions and be initialized correctly
 		 */
 
@@ -297,28 +313,38 @@ namespace TreeFunctions {
 			tmp = new Tensor<T>(Phi.shape());
 			work = tmp;
 		}
-//		Tensor<T> work = Phi;
+
+		size_t n_active = 0; // count how many summands were applied
 		if (!node.isBottomlayer()) {
 			for (size_t k = 0; k < node.nChildren(); ++k) {
 				const Node& child = node.child(k);
 				if ((k == skip) || !mat.isActive(child)) { continue; }
 				matrixTensorBLAS(*out, *work, mat[child], *in, child.childIdx(), true);
+				n_active++;
+				swap(in, out);
+			}
+			/// make sure it still works if no part is active
+			if (n_active == 0) {
+				*out = *in;
 				swap(in, out);
 			}
 		}
+
 		if (!node.isToplayer() && (skip != node.parentIdx()) && (holes != nullptr)) {
 			if (holes == nullptr) {
 				cerr << "Holefunction accessed but null.\n";
 				exit(1);
 			}
-			if (!stree.isActive(node) && (rho != nullptr)) {
+			if (stree.isActive(node) && holes->isActive(node)) {
+				matrixTensorBLAS(*out, *work, (*holes)[node], *in, node.parentIdx(), true);
+			} else if (rho != nullptr) {
 				matrixTensorBLAS(*out, *work, (*rho)[node], *in, node.parentIdx(), true);
 			} else {
-				matrixTensorBLAS(*out, *work, (*holes)[node], *in, node.parentIdx(), true);
 			}
 		} else {
 			swap(in, out);
 		}
+
 		/// out holds output: copy *out to hPhi (if not already the case)
 		if (out != &hPhi) { hPhi = *out; }
 		if (tmp != nullptr) { delete tmp; }
@@ -334,7 +360,9 @@ namespace TreeFunctions {
 	}
 
 	template<typename T>
-	Tensor<T> applyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi, const Node& hole_node) {
+	Tensor<T> applyHole(const SparseMatrixTree<T>& mats, Tensor<T> Phi,
+		const Node& hole_node) {
+
 		assert(!hole_node.isToplayer());
 		const Node& parent = hole_node.parent();
 		size_t drop = hole_node.childIdx();
@@ -373,6 +401,7 @@ namespace TreeFunctions {
 			return applyUpper(mats, Phi, node);
 		}
 	}
+
 }
 
 #endif //SPARSEMATRIXTREEFUNCTIONS_IMPLEMENTATION_H

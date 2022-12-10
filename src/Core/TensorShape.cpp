@@ -33,8 +33,11 @@ vector<size_t> ContractDimensionsAfter(const vector<size_t>& dim) {
 }
 
 TensorShape::TensorShape(const vector<size_t>& dim)
-	: TensorShape() {
-	initialize(dim);
+	: vector<size_t>(dim) {
+//	initialize(dim);
+	after_ = ContractDimensionsAfter(dim);
+	before_ = ContractDimensionsBefore(dim);
+	totalDimension_ = after_.front() * front();
 }
 
 TensorShape::TensorShape(const initializer_list<size_t>& dims)

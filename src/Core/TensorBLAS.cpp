@@ -232,8 +232,8 @@ void contraction2(Matrix<T>& h, const Tensor<T>& bra, const Tensor<T>& ket,
 template<typename T, typename U>
 void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const Tensor<T>& B, size_t mode, bool zero) {
 
-	TensorShape tdim(B.shape());
-	TensorShape tdimC(C.shape());
+	const TensorShape& tdim(B.shape());
+	const TensorShape& tdimC(C.shape());
 
 	if (mode >= tdim.order()) {
 		cerr << "matrixTensor error: mode too large.\n";
@@ -261,7 +261,8 @@ void matrixTensorBLAS(Tensor<T>& C, Tensor<T>& workC, const Matrix<U>& A, const 
 		cerr << "matrix Tensor error: after dimension wrong.\n";
 		exit(1);
 	}
-	if (tdimC.totalDimension() != workC.shape().totalDimension()) {
+//	if (tdimC.totalDimension() != workC.shape().totalDimension()) {
+	if (tdimC.totalDimension() > workC.shape().totalDimension()) {
 		cerr << "matrix Tensor error: work array has wrong dimension.\n";
 		exit(1);
 	}
@@ -279,8 +280,8 @@ template<typename T>
 void contractionBLAS(Matrix<T>& h, Tensor<T>& workA, Tensor<T>& workB, const Tensor<T>& A, const Tensor<T>& B,
 	size_t mode, bool zero) {
 
-	TensorShape tdimA(A.shape());
-	TensorShape tdimB(B.shape());
+	const TensorShape& tdimA(A.shape());
+	const TensorShape& tdimB(B.shape());
 	if (mode >= tdimA.order()) {
 		cerr << "contraction error: mode too large for Bra.\n";
 		exit(1);

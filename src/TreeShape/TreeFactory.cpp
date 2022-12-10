@@ -137,7 +137,7 @@ namespace TreeFactory {
 	}
 
 	Tree balancedTree(size_t num_leaves,
-		size_t dim_leaves, size_t dim_nodes) {
+		size_t dim_leaves, size_t dim_nodes, size_t dim_inc) {
 		/**
 		 * \brief This functions creates a close-to-balanced Tree
 		 * \@param num_leaves number of leaves in the tree
@@ -165,6 +165,31 @@ namespace TreeFactory {
 		Tree tree;
 		tree.setRoot(nodes.front());
 		tree.resetLeafModes();
+
+		/// increment dimension by layer
+		/// 1.) get number of layers
+		size_t nlayer;
+		for (Node& node : tree) {
+			if (node.position().layer() > nlayer) { nlayer = node.position().layer(); }
+		}
+		/// 2.) set dimension to dim = dim_bottom + dim_increment * layer(bottom-up)
+		size_t dim;
+		for (Node& node : tree) {
+			if (node.isBottomlayer()) {
+				dim = dim_nodes;
+				node.shape().setDimension(dim, 0);
+				Node& parent = node.parent();
+				parent.shape().setDimension(dim, node.childIdx());
+			} else if (!node.isToplayer()){
+				size_t layer = nlayer - node.position().layer();
+				dim = dim_nodes + layer * dim_inc;
+
+				auto& tdim = node.shape();
+				tdim.setDimension(dim, tdim.lastIdx());
+				Node& parent = node.parent();
+				parent.shape().setDimension(dim, node.childIdx());
+			}
+		}
 
 		/// Expand nodes that perform no contraction
 		tree = expandNodes(tree);
