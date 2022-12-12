@@ -101,9 +101,9 @@ namespace TreeFactory {
 		return groups;
 	}
 
-	vector<Node> bottomlayerNodes(size_t num_leaves, size_t dim_leaves, size_t dim_nodes) {
+	vector<Node> bottomlayerNodes(size_t num_leaves, size_t dim_leaves, size_t dim_nodes,
+		size_t leaf_type) {
 		/// Hardcoded leaf-parameters
-		size_t leaf_type = 6;
 		size_t mode = 0;
 		size_t leaf_subtype = 0;
 		PhysPar par;
@@ -137,7 +137,8 @@ namespace TreeFactory {
 	}
 
 	Tree balancedTree(size_t num_leaves,
-		size_t dim_leaves, size_t dim_nodes, size_t dim_inc) {
+		size_t dim_leaves, size_t dim_nodes, size_t dim_inc,
+		size_t leaf_type) {
 		/**
 		 * \brief This functions creates a close-to-balanced Tree
 		 * \@param num_leaves number of leaves in the tree
@@ -147,14 +148,14 @@ namespace TreeFactory {
 		 */
 
 		/// Cover leaves in bottomlayer nodes
-		auto nodes = bottomlayerNodes(num_leaves, dim_leaves, dim_nodes);
+		auto nodes = bottomlayerNodes(num_leaves, dim_leaves, dim_nodes, leaf_type);
 
 		/// Add layer after layer until only one node is left
 		size_t count = 0;
 		while (nodes.size() > 1) {
 			nodes = partition(nodes, 2, dim_nodes);
 			count++;
-			if (count > 100) {
+			if (count > 100) { /// more than 2^100 leaves is unreasonable
 				cerr << "Error while partitioning TensorTreeBasis in constructor.\n";
 				exit(1);
 			}
@@ -168,26 +169,24 @@ namespace TreeFactory {
 
 		/// increment dimension by layer
 		/// 1.) get number of layers
-		size_t nlayer;
+		size_t nlayer = 0;
 		for (Node& node : tree) {
-			if (node.position().layer() > nlayer) { nlayer = node.position().layer(); }
+			size_t layer = node.position().layer();
+			if (layer > nlayer) { nlayer = layer; }
 		}
 		/// 2.) set dimension to dim = dim_bottom + dim_increment * layer(bottom-up)
 		size_t dim;
 		for (Node& node : tree) {
-			if (node.isBottomlayer()) {
-				dim = dim_nodes;
-				node.shape().setDimension(dim, 0);
-				Node& parent = node.parent();
-				parent.shape().setDimension(dim, node.childIdx());
-			} else if (!node.isToplayer()){
-				size_t layer = nlayer - node.position().layer();
-				dim = dim_nodes + layer * dim_inc;
-
-				auto& tdim = node.shape();
-				tdim.setDimension(dim, tdim.lastIdx());
-				Node& parent = node.parent();
-				parent.shape().setDimension(dim, node.childIdx());
+			auto& tdim = node.shape();
+			if (!node.isToplayer()) {
+				if (!node.isBottomlayer()) {
+					size_t layer = nlayer - node.position().layer();
+					dim = dim_nodes + layer * dim_inc;
+					if (dim > tdim.lastBefore()) { dim = tdim.lastBefore(); }
+					tdim.setDimension(dim, tdim.lastIdx());
+					Node& parent = node.parent();
+					parent.shape().setDimension(dim, node.childIdx());
+				}
 			}
 		}
 

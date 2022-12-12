@@ -32,9 +32,8 @@ vector<size_t> ContractDimensionsAfter(const vector<size_t>& dim) {
 	return afters;
 }
 
-TensorShape::TensorShape(const vector<size_t>& dim)
-	: vector<size_t>(dim) {
-//	initialize(dim);
+TensorShape::TensorShape(const vector<size_t>& dim) {
+	initialize(dim);
 	after_ = ContractDimensionsAfter(dim);
 	before_ = ContractDimensionsBefore(dim);
 	totalDimension_ = after_.front() * front();
@@ -112,11 +111,12 @@ void TensorShape::readDim(istream& is) {
 }
 
 vector<size_t> TensorShape::dimensions() const {
-	vector<size_t> dimlist;
+	return (vector<size_t>) *this;
+/*	vector<size_t> dimlist;
 	for (size_t i = 0; i < order(); i++) {
 		dimlist.push_back(this->operator[](i));
 	}
-	return dimlist;
+	return dimlist;*/
 }
 
 size_t TensorShape::before(size_t k) const {

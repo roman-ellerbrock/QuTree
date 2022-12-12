@@ -14,7 +14,7 @@ class PhysPar
 {
 public:
 	PhysPar()
-		: par0(0), par1(0), par2(0), par3(0) {}
+		: par0(1.), par1(0), par2(0), par3(1.) {}
 
 	explicit PhysPar(istream& file)
 		: par0(0), par1(0), par2(0), par3(0) {
