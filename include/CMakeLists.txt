@@ -15,6 +15,16 @@ set(QuTree_INCLUDE_FILES
     include/Core/stdafx.h
     include/QuTree.h
 
+    include/CDVR/CDVR.h
+    include/CDVR/cdvr_functions.h
+    include/CDVR/DeltaVTree.h
+    include/CDVR/MatrixTensorTree.h
+    include/CDVR/MatrixTensorTreeFunctions.h
+    include/CDVR/SymXMatrixTrees.h
+    include/CDVR/TDDVR.h
+    include/CDVR/TreeGrids.h
+    include/CDVR/XMatrixTrees.h
+
     include/TreeClasses/EdgeAttribute.h
     include/TreeClasses/MatrixTensorTree.h
     include/TreeClasses/MatrixTensorTreeFunctions.h

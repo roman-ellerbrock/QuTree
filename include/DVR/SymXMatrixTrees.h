@@ -4,9 +4,9 @@
 
 #ifndef SYMXMATRIXTREES_H
 #define SYMXMATRIXTREES_H
-#include "MatrixTensorTree.h"
+#include "DVR/MatrixTensorTree.h"
 #include "TreeClasses/SparseMatrixTreeFunctions.h"
-#include "MatrixTensorTreeFunctions.h"
+#include "DVR/MatrixTensorTreeFunctions.h"
 #include "XMatrixTrees.h"
 #include "TreeClasses/SymTensorTree.h"
 #include "TreeClasses/SymMatrixTreeFunctions.h"

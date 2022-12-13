@@ -6,10 +6,8 @@
 #define CDVR_FUNCTIONS_H
 #include "TreeClasses/MatrixTree.h"
 #include "DVR/DeltaVTree.h"
-#include "MatrixTensorTree.h"
-#include "TreeGrids.h"
-
-using Wavefunction = TensorTreecd;
+#include "DVR/MatrixTensorTree.h"
+#include "DVR/TreeGrids.h"
 
 namespace cdvr_functions {
 

@@ -10,7 +10,7 @@
 #include "TreeClasses/SpectralDecompositionTree.h"
 #include "Core/Tensor_Extension.h"
 
-using Wavefunction = TensorTreecd;
+typedef TensorTreecd Wavefunction;
 
 SOPcd Xsop(const Tree& tree);
 

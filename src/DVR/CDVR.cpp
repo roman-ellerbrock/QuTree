@@ -157,7 +157,6 @@ void CDVR::Update(const Wavefunction& Psi, const PotentialOperator& V,
 
 	/// Transform to grid
 	tddvr_.GridTransformation(Chi, tree);
-//	Chi.nodes().print(tree);
 
 	/// evaluate potential at Nodes and edges
 	UpdateNodeDVR(Vnode_, tddvr_.grids_, tddvr_.hole_grids_, V, tree, part, out, os);
@@ -179,6 +178,9 @@ void CDVR::update(SymTensorTree& Psi, const PotentialOperator& V,
 
 	/// Transform to grid
 	tddvr_.GridTransformation(Psi, tree);
+	cout << "new up:\n";
+	Psi.up_.print(tree);
+	getchar();
 
 	SymTensorTree chi;
 	chi.initialize(tree);

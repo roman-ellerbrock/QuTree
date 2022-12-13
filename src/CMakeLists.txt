@@ -12,15 +12,17 @@ set(QuTree_SOURCE_FILES
 
     src/Core/LA_lib.f
 
-    src/DVR/CDVR.cpp
-    src/DVR/cdvr_functions.cpp
-    src/DVR/DeltaVTree.cpp
-    src/DVR/SymXMatrixTrees.cpp
-    src/DVR/TDDVR.cpp
-    src/DVR/XMatrixTrees.cpp
+     src/DVR/CDVR.cpp
+     src/DVR/cdvr_functions.cpp
+     src/DVR/DeltaVTree.cpp
+     src/DVR/MatrixTensorTree.cpp
+     src/DVR/MatrixTensorTreeFunctions.cpp
+     src/DVR/SymXMatrixTrees.cpp
+     src/DVR/TDDVR.cpp
+     src/DVR/XMatrixTrees.cpp
 
-    src/TreeClasses/MatrixTensorTree.cpp
-    src/TreeClasses/MatrixTensorTreeFunctions.cpp
+#    src/TreeClasses/MatrixTensorTree.cpp
+#    src/TreeClasses/MatrixTensorTreeFunctions.cpp
     src/TreeClasses/MatrixTree.cpp
     src/TreeClasses/MatrixTreeFunctions.cpp
     src/TreeClasses/TreeTransformations.cpp
