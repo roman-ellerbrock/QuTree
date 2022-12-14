@@ -1,5 +1,10 @@
 # Easily regenerate with find src -name '*.cpp' | sort
 set(QuTree_SOURCE_FILES
+
+        src/Applications/CMFIntegrator.cpp
+        src/Applications/Eigenstates.cpp
+        src/Applications/SCF.cpp
+
     src/Core/JacobiRotationFramework.cpp
     src/Core/Matrix_Instantiations.cpp
     src/Core/MatrixBLAS.cpp
@@ -23,6 +28,7 @@ set(QuTree_SOURCE_FILES
 
      src/TreeClasses/HamiltonianRepresentation.cpp
      src/TreeClasses/MatrixTree.cpp
+     src/TreeClasses/LayerInterface.cpp
      src/TreeClasses/MatrixTreeFunctions.cpp
      src/TreeClasses/TreeTransformations.cpp
      src/TreeClasses/SparseMatrixTree.cpp
@@ -33,6 +39,11 @@ set(QuTree_SOURCE_FILES
      src/TreeClasses/SymTensorTree.cpp
      src/TreeClasses/TensorTree_Instantiation.cpp
      src/TreeClasses/TreeIO.cpp
+
+    # can make Fortran support independent target if needed
+    src/TreeOperators/FortranOperator.cpp
+    src/TreeOperators/FortranSOP.cpp
+    src/TreeOperators/CWrapper.f
 
     src/TreeOperators/LeafFunction.cpp
     src/TreeOperators/LeafMatrix.cpp

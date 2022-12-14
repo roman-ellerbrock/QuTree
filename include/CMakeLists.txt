@@ -2,6 +2,10 @@
 set(QuTree_INCLUDE_FILES
     QuTree.h
 
+        include/Applications/CMFIntegrator.h
+        include/Applications/Eigenstates.h
+        include/Applications/SCF.h
+
     include/Core/Matrix.h
     include/Core/Matrix_Implementation.h
     include/Core/Tensor.h
@@ -26,6 +30,8 @@ set(QuTree_INCLUDE_FILES
     include/CDVR/XMatrixTrees.h
 
     include/TreeClasses/EdgeAttribute.h
+    include/TreeClasses/IntegratorVariables.h
+    include/TreeClasses/LayerInterface.h
     include/TreeClasses/MatrixTensorTree.h
     include/TreeClasses/MatrixTensorTreeFunctions.h
     include/TreeClasses/MatrixTree.h
@@ -47,6 +53,10 @@ set(QuTree_INCLUDE_FILES
     include/TreeClasses/TensorTree.h
     include/TreeClasses/TensorTree_Implementation.h
     include/TreeClasses/TreeIO.h
+
+        # could move Fortran support to separate target
+        include/TreeOperators/FortranOperator.h
+        include/TreeOperators/FortranSOP.h
 
     include/TreeOperators/LeafFunction.h
     include/TreeOperators/LeafMatrix.h
