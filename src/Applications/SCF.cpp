@@ -7,6 +7,7 @@
 #include "TreeClasses/HamiltonianRepresentation.h"
 #include "TreeClasses/TreeIO.h"
 #include "Core/TensorBLAS.h"
+#include <iomanip> // for setprecision
 
 void addNodes(vector<const Node *>& sweep, const Node *p) {
 	sweep.push_back(p);
