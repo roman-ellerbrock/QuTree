@@ -4,6 +4,7 @@
 
 #include "Util/Overlaps.h"
 #include "TreeClasses/MatrixTreeFunctions.h"
+#include <iomanip> // for setprecision
 
 vector<TensorTreecd> readTensorTrees(const string& file1) {
 	ifstream is(file1);
