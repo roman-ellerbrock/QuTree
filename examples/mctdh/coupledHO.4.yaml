@@ -8,11 +8,24 @@
 
 run:
   - job: tree
-    type: balanced
-    number_leaves: 32
-    dimension_leaves: 10
-    dimension_nodes: 4
-    dimension_increment: 3
+    type: compact
+    tree: |
+      1 -2
+        10 -2
+          4 -1
+            10  0 0
+          4 -1
+            10  0 1
+        10 -2
+          4 -1
+            10  0 2
+          4 -1
+            10  0 3
+      0.01822  0.0 0.0 0.0122
+      0.01822  0.0 0.0 0.0122
+      0.01822  0.0 0.0 0.0122
+      0.01822  0.0 0.0 0.0122
+
 
   - job: hamiltonian
     name: coupled_ho

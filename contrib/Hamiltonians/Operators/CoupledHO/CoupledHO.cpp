@@ -45,7 +45,7 @@ SOPcd CoupledHO(const Tree& tree) {
 	}
 
 // normalize ground state to zero
-    {
+/*    {
         MLOcd M;
         M.push_back(id,0);
         // determine ground state energy
@@ -55,7 +55,7 @@ SOPcd CoupledHO(const Tree& tree) {
         }
         gse /= (-2.);
         H.push_back(M,gse);
-    }
+    }*/
 
 
 	return H;

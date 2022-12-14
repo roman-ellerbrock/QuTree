@@ -234,7 +234,7 @@ void addReturns(SOPcd& H, const Tensord& mu, double alpha, size_t Nt, size_t Na,
 			size_t muidx = indexMapping({t, i}, mu.shape_);
 			for (size_t k = 0; k < Nq; ++k) {
 				/// total weight including negative returns
-				double c = - alpha * mu(muidx) * weight(k, Nq);
+				double c = -alpha * mu(muidx) * weight(k, Nq);
 //				cout << i << "\t" << c << endl;
 
 				size_t qidx = indexMapping({k, i, t}, shape_q);
@@ -250,13 +250,34 @@ void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t
 	TensorShape shape_q({Nq, Na, Nt});
 	Matrixcd mat(Na, Na);
 	for (size_t t = 0; t < Nt; ++t) { /// time
+		/// diagonals
 		for (size_t i = 0; i < Na; ++i) { /// asset i
-			for (size_t j = 0; j < Na; ++j) { /// asset j
+			size_t sigidx = indexMapping({t, i, i}, cov.shape_);
+			for (size_t k = 0; k < Nq; ++k) {
+				for (size_t l = 0; l < Nq; ++l) {
+					double c = 0.5 * gamma * cov(sigidx) * weight(k, Nq) * weight(l, Nq);
+
+					size_t kidx = indexMapping({k, i, t}, shape_q);
+
+					assert(kidx < shape_q.totalDimension());
+
+					MLOcd M(set1(), kidx);
+
+					H.push_back(M, c);
+					mat(i, i) = c;
+				}
+			}
+		}
+
+		/// offdiagonals
+		for (size_t i = 0; i < Na; ++i) { /// asset i
+			for (size_t j = i + 1; j < Na; ++j) { /// asset j
 				/// qubit indices
 				size_t sigidx = indexMapping({t, i, j}, cov.shape_);
 				for (size_t k = 0; k < Nq; ++k) {
 					for (size_t l = 0; l < Nq; ++l) {
 						double c = 0.5 * gamma * cov(sigidx) * weight(k, Nq) * weight(l, Nq);
+						c *= 2.; // only upper triangle of cov used
 
 						size_t kidx = indexMapping({k, i, t}, shape_q);
 						size_t lidx = indexMapping({l, j, t}, shape_q);
@@ -268,6 +289,7 @@ void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t
 						M.push_back(set1(), lidx);
 
 						H.push_back(M, c);
+//						cout << i << " " << j << " | " << kidx << " " << lidx << " | " << c << endl;
 						mat(i, j) = c;
 					}
 				}
@@ -279,17 +301,33 @@ void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t
 void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, double K) {
 	TensorShape shape_q({Nq, Na, Nt});
 
-	///
 	for (size_t t = 0; t < Nt; ++t) {
+		/// diagonals
 		for (size_t i = 0; i < Na; ++i) {
-			for (size_t j = 0; j < Na; ++j) {
+			for (size_t k = 0; k < Nq; ++k) {
+				size_t kidx = indexMapping({k, i, t}, shape_q);
+				for (size_t l = 0; l < Nq; ++l) {
+					size_t lidx = indexMapping({l, i, t}, shape_q);
+					MLOcd M(set1(), kidx);
+					M.push_back(set1(), lidx);
+					double c = rho * weight(k, Nq) * weight(l, Nq);
+					H.push_back(M, c);
+				}
+			}
+		}
+
+		/// off-diagonals
+		for (size_t i = 0; i < Na; ++i) {
+			for (size_t j = i + 1; j < Na; ++j) {
 				for (size_t k = 0; k < Nq; ++k) {
 					size_t kidx = indexMapping({k, i, t}, shape_q);
 					for (size_t l = 0; l < Nq; ++l) {
 						size_t lidx = indexMapping({l, j, t}, shape_q);
 						MLOcd M(set1(), kidx);
 						M.push_back(set1(), lidx);
-						H.push_back(M, rho * weight(k, Nq) * weight(l, Nq));
+						double c = rho * weight(k, Nq) * weight(l, Nq);
+						c *= 2.; // only upper triangle of cov used
+						H.push_back(M, c);
 					}
 				}
 			}
@@ -322,7 +360,7 @@ void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, 
 vector<string> read_tickers(const string& filename) {
 	ifstream is(filename);
 	vector<string> names;
-	for(std::string line; std::getline(is, line);) {
+	for (std::string line; std::getline(is, line);) {
 		names.push_back(line + ".csv");
 		cout << line << endl;
 	}
