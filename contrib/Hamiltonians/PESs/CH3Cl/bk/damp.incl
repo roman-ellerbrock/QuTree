@@ -1,0 +1,7 @@
+!  parameters for dynamic weights and split reference and correction scheme:
+! wtref:     reference energy (mid point) for damping weights
+! wtrho:     width parameter for damping weights
+! e0ref:     reference energy for damping correction matrix
+! e0rho:     width parameter for damping weights
+      double precision wtref, wtrho, e0ref, e0rho
+      common /damp/ wtref, wtrho, e0ref, e0rho

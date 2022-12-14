@@ -1,0 +1,30 @@
+# ==================================================================
+# Coupled Harmonic Oscillator with 32 degrees of freedom (dof)
+# H = \sum_i T_i + 0.5 * (omega * x_i)^2 + lambda * x_i * x_(i+1 % 32)
+# omega  = 4000 cm^-1
+# lambda = 2000 cm^-1
+# Was used by Manthe's 2008 layered DVR paper with 4 dof
+# ==================================================================
+
+run:
+  - job: tree
+    type: balanced
+    number_leaves: 32
+    dimension_leaves: 10
+    dimension_nodes: 4
+    dimension_increment: 3
+
+  - job: hamiltonian
+    name: coupled_ho
+
+#  - job: potential
+#    name: coupled_ho
+
+  - job: wavefunction
+    name: Psi
+    type: create
+
+  - job: scf
+    nIter: 5
+    nKrylov: 10
+    nITP: 0

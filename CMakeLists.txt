@@ -34,36 +34,38 @@ include(include/CMakeLists.txt)
 add_library(QuTree SHARED ${QuTree_SOURCE_FILES})
 add_library(QuTree::QuTree ALIAS QuTree)
 
+add_subdirectory("contrib")
+
 #####################################################################
 # Find Required packages
 #####################################################################
 option(USE_INTERNAL_EIGEN "Use internal Eigen module" OFF)
 if (NOT USE_INTERNAL_EIGEN)
     find_package(Eigen3 NO_MODULE)
-endif()
+endif ()
 if (USE_INTERNAL_EIGEN OR NOT TARGET Eigen3::Eigen)
-    message ( STATUS "Eigen not found, switching to internal submodule" )
+    message(STATUS "Eigen not found, switching to internal submodule")
     set(USE_INTERNAL_EIGEN ON)
 
     execute_process(COMMAND git submodule update --init -- external/eigen
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
     # Set env and install headers as subdir of QuTree to avoid clashes
     set(EIGEN3_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/eigen
-        CACHE PATH "Eigen include directory")
+            CACHE PATH "Eigen include directory")
     install(DIRECTORY ${EIGEN3_INCLUDE_DIR}/Eigen
-        DESTINATION ${QuTree_INSTALL_INC_DIR})
+            DESTINATION ${QuTree_INSTALL_INC_DIR})
 
     # Convenience target for exports
     add_library(Eigen INTERFACE)
     add_library(Eigen3::Eigen ALIAS Eigen)
     target_include_directories(Eigen INTERFACE
-        $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
-        $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>)
+            $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
+            $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>)
     install(TARGETS Eigen
-        EXPORT QuTree-export
-        DESTINATION ${QuTree_INSTALL_INC_DIR})
-endif()
+            EXPORT QuTree-export
+            DESTINATION ${QuTree_INSTALL_INC_DIR})
+endif ()
 
 #####################################################################
 # Target Installation setup
@@ -76,73 +78,73 @@ if (APPLE)
     set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
     target_include_directories(QuTree PUBLIC "/usr/local/opt/openblas/include")
     include_directories("/usr/local/opt/openblas/include")
-elseif(UNIX)
-#    set(BLA_VENDOR OpenBLAS)
+elseif (UNIX)
+    #    set(BLA_VENDOR OpenBLAS)
     message(STATUS "USING UNIX!")
 
-#   empirically found blas locations
+    #   empirically found blas locations
     target_include_directories(QuTree PUBLIC "/usr/include/x86_64-linux-gnu")
     include_directories("/usr/include/x86_64-linux-gnu")
-endif()
+endif ()
 
-if(GITHUB_ACTIONS)
+if (GITHUB_ACTIONS)
     message(STATUS "Compiling for Github Actions!")
     set(LAPACKE_PATH "/usr/lib/x86_64-linux-gnu")
     target_link_libraries(QuTree PUBLIC -L${LAPACKE_PATH} lapacke blas lapack)
-endif()
+endif ()
 
 # Set up headers in include/ for install & build and src/ for just building
 target_include_directories(QuTree
-    PUBLIC
+        PUBLIC
         $<INSTALL_INTERFACE:${QuTree_INSTALL_INC_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE
+        PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-    )
+        )
 
 # Install rules
 install(TARGETS QuTree
-    EXPORT QuTree-export
-    LIBRARY DESTINATION ${QuTree_INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${QuTree_INSTALL_LIB_DIR}
-    )
+        EXPORT QuTree-export
+        LIBRARY DESTINATION ${QuTree_INSTALL_LIB_DIR}
+        ARCHIVE DESTINATION ${QuTree_INSTALL_LIB_DIR}
+        )
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-    DESTINATION ${QuTree_INSTALL_INC_DIR}
-    FILES_MATCHING PATTERN "*.h*")
+        DESTINATION ${QuTree_INSTALL_INC_DIR}
+        FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT QuTree-export
-    FILE QuTreeTargets.cmake
-    NAMESPACE QuTree::
-    DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
+        FILE QuTreeTargets.cmake
+        NAMESPACE QuTree::
+        DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
 
 # Exports for external find_package
 include(CMakePackageConfigHelpers)
 configure_file(QuTreeConfig.cmake.in QuTreeConfig.cmake @ONLY)
 write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-    )
+        ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+)
 
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
-    DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
+        ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/QuTreeConfigVersion.cmake
+        DESTINATION ${QuTree_INSTALL_CMAKE_DIR})
 
 if (NOT openmp)
     set(openmp OFF)
     message("Setting openMP off (${openmp})")
 else ()
     message("openmp=${openmp}")
-endif()
+endif ()
 
 if (openmp)
     find_package(OpenMP REQUIRED)
     target_link_libraries(QuTree PRIVATE OpenMP::OpenMP_CXX OpenMP::OpenMP_Fortran)
     set(QuTree_RELEASE_FLAGS "${OpenMP_CXX_FLAGS} ${QuTree_RELEASE_FLAGS}")
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
-endif()
+endif ()
 
 target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 

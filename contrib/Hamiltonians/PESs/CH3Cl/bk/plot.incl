@@ -1,0 +1,5 @@
+      integer nplt
+      parameter (nplt=4000)
+      integer coord(nplt), npoints(nplt), symm(nplt), ndata(nplt)
+      integer sets
+      common /plot/ coord, npoints, sets, symm, ndata

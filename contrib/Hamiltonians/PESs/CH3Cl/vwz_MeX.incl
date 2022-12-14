@@ -1,0 +1,31 @@
+c     monomials of a-mode
+      double precision pa(8,mx),pb(8,mx),pc(8,mx)
+      common /acoord/ pa,pb,pc
+      save /acoord/
+
+c     monomials of e-modes
+      double precision va(6,mx),vb(6,mx),vc(6,mx)
+      double precision wa(9,mx),wb(9,mx),wc(9,mx)
+      double precision za(9,mx),zb(9,mx),zc(9,mx)
+      common /vjt/ va,vb,vc,wa,wb,wc,za,zb,zc
+      save /vjt/
+
+c     Monomials for ee-coupling
+      double precision veeab(28,mx),veeac(28,mx),veebc(28,mx)
+      double precision weeab(49,mx),weeac(49,mx),weebc(49,mx)
+      double precision zeeab(49,mx),zeeac(49,mx),zeebc(49,mx)
+      common /vee/ veeab,weeab,zeeab,veeac,weeac,zeeac,veebc,
+     &     weebc,zeebc
+      save /vee/
+
+c     Monomials for eee-coupling
+      double precision veee(7,mx)
+      double precision weee(15,mx)
+      double precision zeee(15,mx)
+      common /veee/ veee,weee,zeee
+      save /veee/
+
+c     koordinate vector for so model
+      double precision sokoord(9,mx)
+      common /sok/ sokoord
+      save /sok/

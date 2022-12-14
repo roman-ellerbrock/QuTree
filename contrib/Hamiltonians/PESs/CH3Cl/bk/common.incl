@@ -1,0 +1,21 @@
+
+
+!..   parn:    number of parameters
+!..   pst:     starting addresses and lengths of parameter blocks
+      integer parn, pst(2,400)
+
+      common /parnum/ parn, pst
+
+!---------------------------------------------------------------
+!..   key:       keywords for different parameter blocks
+!         1:     number of entries of this block
+!         2:     parameters for this block
+!         3:     active card for block
+!         4:     spreads of parameters for this block
+!..   nkey:      number of characters for each keyword
+!..   npblocks:  number of blocks:
+      character*12 key(4,400)
+      integer nkey(4,400), npblocks
+
+c     Missaligned xxxxxxxxx bad
+      common /keys/ key, nkey, npblocks 

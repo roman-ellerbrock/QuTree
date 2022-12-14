@@ -1,0 +1,16 @@
+      integer nstat !number of electronic states
+      integer nghost!number of electronic states + ghost states
+      integer qn    !number of coordinates
+      integer nn    !number of additional ci-coeff.
+      integer ntot  !nn+nstat
+      parameter (nstat=3, nghost=3,qn=9, nn=9, ntot=12) !3 state model
+c      parameter (nstat=6, nghost=6,qn=9, nn=36, ntot=42)
+
+      !qn2 was deleted
+ 
+c     Number of Parameter Blocks for the routins
+      integer nv,nwz,np,praepar
+      parameter(praepar=10)
+      parameter(nv=71)   !v element
+      parameter(nwz=65)  !w and z element
+      parameter(np=304)  !total number

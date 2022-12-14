@@ -1,0 +1,5 @@
+
+add_library(LinearVibronicCoupling LinearVibronicCoupling.cpp)
+target_include_directories(LinearVibronicCoupling PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(LinearVibronicCoupling MCTDHlib)
+

@@ -1,0 +1,6 @@
+!..   common include 'morse.incl' for Morse parameters
+      integer nmorse, mxmrse
+      parameter (mxmrse=10)
+      double precision alpha(mxmrse), re(mxmrse)
+      common /morse/ alpha, re, nmorse
+

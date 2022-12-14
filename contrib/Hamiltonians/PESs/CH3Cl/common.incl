@@ -1,0 +1,7 @@
+
+
+!..   parn:    number of parameters
+!..   pst:     starting addresses and lengths of parameter blocks
+      integer parn, pst(2,400)
+
+      common /parnum/ parn, pst
