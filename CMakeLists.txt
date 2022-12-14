@@ -34,8 +34,6 @@ include(include/CMakeLists.txt)
 add_library(QuTree SHARED ${QuTree_SOURCE_FILES})
 add_library(QuTree::QuTree ALIAS QuTree)
 
-add_subdirectory("contrib")
-
 #####################################################################
 # Find Required packages
 #####################################################################
@@ -190,3 +188,4 @@ endif ()
 # Excluded from default builds
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
+add_subdirectory(contrib EXCLUDE_FROM_ALL)

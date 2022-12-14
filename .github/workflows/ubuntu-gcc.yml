@@ -40,7 +40,7 @@ jobs:
       - name: Build QuTree
         run: |
           cd ${{github.workspace}}/build
-          make QuTree
+          make QuTree Hamiltonian mctdh
 
       - name: Build Unit Tests
         run: |
