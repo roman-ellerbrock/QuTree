@@ -339,6 +339,7 @@ namespace parser {
 		SCF_parameters par;
 		par.nIter = evaluate<size_t>(node, "nIter", 20);
 		par.nKrylov = evaluate<size_t>(node, "nKrylov", 20);
+		par.nITP = evaluate<size_t>(node, "nITP", 0);
 		par.beta = evaluate<double>(node, "beta", 1);
 		par.psi = &state.wavefunctions_["Psi"];
 		par.h = state.hamiltonian_.get();

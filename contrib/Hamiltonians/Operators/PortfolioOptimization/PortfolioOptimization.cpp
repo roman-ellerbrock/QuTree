@@ -215,30 +215,25 @@ void diagonalizeCovariance(const Tensord& cov) {
 	y.second.print();*/
 }
 
-Matrixcd set1() {
-	Matrixcd s(2, 2);
-	s(1, 1) = 1.;
-	return s;
-}
-
 double weight(size_t k, size_t Nq) {
 	return (double) pow(2, k) / (double) (pow(2, Nq) - 1);
 }
 
-void addReturns(SOPcd& H, const Tensord& mu, double alpha, size_t Nt, size_t Na, size_t Nq) {
+void addReturns(SOPcd& H, const Tensord& mu,
+	double alpha, size_t Nt, size_t Na, size_t Nq) {
+
+	LeafFuncd x = &LeafInterface::applyX;
+
 	TensorShape shape_q({Nq, Na, Nt});
-//	cout << "Nt = " << Nt << endl;
+
 	for (size_t t = 0; t < Nt; ++t) {
-//		cout << "t = " << t << endl;
 		for (size_t i = 0; i < Na; ++i) {
 			size_t muidx = indexMapping({t, i}, mu.shape_);
 			for (size_t k = 0; k < Nq; ++k) {
-				/// total weight including negative returns
 				double c = -alpha * mu(muidx) * weight(k, Nq);
-//				cout << i << "\t" << c << endl;
 
 				size_t qidx = indexMapping({k, i, t}, shape_q);
-				MLOcd M(set1(), qidx);
+				MLOcd M(x, qidx);
 
 				H.push_back(M, c);
 			}
@@ -247,6 +242,8 @@ void addReturns(SOPcd& H, const Tensord& mu, double alpha, size_t Nt, size_t Na,
 }
 
 void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t Na, size_t Nq) {
+	LeafFuncd x = &LeafInterface::applyX;
+
 	TensorShape shape_q({Nq, Na, Nt});
 	Matrixcd mat(Na, Na);
 	for (size_t t = 0; t < Nt; ++t) { /// time
@@ -261,7 +258,7 @@ void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t
 
 					assert(kidx < shape_q.totalDimension());
 
-					MLOcd M(set1(), kidx);
+					MLOcd M(x, kidx);
 
 					H.push_back(M, c);
 					mat(i, i) = c;
@@ -285,8 +282,8 @@ void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t
 						assert(kidx < shape_q.totalDimension());
 						assert(lidx < shape_q.totalDimension());
 
-						MLOcd M(set1(), kidx);
-						M.push_back(set1(), lidx);
+						MLOcd M(x, kidx);
+						M.push_back(x, lidx);
 
 						H.push_back(M, c);
 //						cout << i << " " << j << " | " << kidx << " " << lidx << " | " << c << endl;
@@ -299,6 +296,8 @@ void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t
 }
 
 void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, double K) {
+	LeafFuncd x = &LeafInterface::applyX;
+	size_t dim = pow(2, Nq);
 	TensorShape shape_q({Nq, Na, Nt});
 
 	for (size_t t = 0; t < Nt; ++t) {
@@ -308,8 +307,8 @@ void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, 
 				size_t kidx = indexMapping({k, i, t}, shape_q);
 				for (size_t l = 0; l < Nq; ++l) {
 					size_t lidx = indexMapping({l, i, t}, shape_q);
-					MLOcd M(set1(), kidx);
-					M.push_back(set1(), lidx);
+					MLOcd M(x, kidx);
+					M.push_back(x, lidx);
 					double c = rho * weight(k, Nq) * weight(l, Nq);
 					H.push_back(M, c);
 				}
@@ -323,8 +322,8 @@ void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, 
 					size_t kidx = indexMapping({k, i, t}, shape_q);
 					for (size_t l = 0; l < Nq; ++l) {
 						size_t lidx = indexMapping({l, j, t}, shape_q);
-						MLOcd M(set1(), kidx);
-						M.push_back(set1(), lidx);
+						MLOcd M(x, kidx);
+						M.push_back(x, lidx);
 						double c = rho * weight(k, Nq) * weight(l, Nq);
 						c *= 2.; // only upper triangle of cov used
 						H.push_back(M, c);
@@ -339,7 +338,7 @@ void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, 
 		for (size_t i = 0; i < Na; ++i) {
 			for (size_t k = 0; k < Nq; ++k) {
 				size_t qkidx = indexMapping({k, i, t}, shape_q);
-				MLOcd M(set1(), qkidx);
+				MLOcd M(x, qkidx);
 				H.push_back(M, -2. * K * rho * weight(k, Nq));
 			}
 		}
@@ -350,7 +349,7 @@ void addConstraint(SOPcd& H, const double rho, size_t Nt, size_t Na, size_t Nq, 
 		for (size_t i = 0; i < Na; ++i) {
 			for (size_t k = 0; k < Nq; ++k) {
 				size_t kidx = indexMapping({k, i, t}, shape_q);
-				MLOcd M(identityMatrixcd(2), kidx);
+				MLOcd M(identityMatrixcd(dim), kidx);
 				H.push_back(M, K * K / ((double) (Na * Nt * Nq)));
 			}
 		}

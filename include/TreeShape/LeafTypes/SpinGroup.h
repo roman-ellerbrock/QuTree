@@ -16,8 +16,7 @@ namespace JordanWigner {
 	Matrixd sigmaMinus();
 }
 
-
-	class SpinGroup:
+class SpinGroup:
 	public LeafInterface {
 public:
 	explicit SpinGroup(size_t dim)
@@ -27,9 +26,19 @@ public:
 
 	void initialize(double par0, double par1, double par2, double par3) override;
 
-	void applyX(Tensorcd& uA, const Tensorcd& A) const override { uA = A; }
+	void applyX(Tensorcd& uA, const Tensorcd& A) const override {
+		uA(0, 0) = 0.;
+		uA(1, 0) = A(1, 0);
+		uA(0, 1) = 0.;
+		uA(1, 1) = A(1, 1);
+	}
 
-	void applyX2(Tensorcd& uA, const Tensorcd& A) const override { uA = A; }
+	void applyX2(Tensorcd& uA, const Tensorcd& A) const override {
+		uA(0, 0) = 0.;
+		uA(1, 0) = A(1, 0);
+		uA(0, 1) = 0.;
+		uA(1, 1) = A(1, 1);
+	}
 
 	void applyP(Tensorcd& uA, const Tensorcd& A) const override { uA = A; }
 
