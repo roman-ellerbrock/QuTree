@@ -3,6 +3,7 @@
 //
 #include "Applications/Eigenstates.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
+#include <iomanip> // for setprecision
 
 Vectord propagatorEnergies(const Wavefunction& Psi, const Tree& tree, double out) {
 	auto S = TreeFunctions::dotProduct(Psi, Psi, tree);

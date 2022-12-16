@@ -28,7 +28,7 @@ jobs:
         # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
         buildWithCMake: True # optional, default is true
         # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
-        buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is
+        buildWithCMakeArgs: --target QuTree Hamiltonians mctdh TestQuTree benchmarks TestExamples # optional, default is
     - name: run-cmake-release
       uses: lukka/run-cmake@v1.4
       with:
@@ -41,7 +41,7 @@ jobs:
         # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
         buildWithCMake: True # optional, default is true
         # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
-        buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is
+        buildWithCMakeArgs: --target QuTree Hamiltonians mctdh TestQuTree benchmarks TestExamples # optional, default is
 
   build-centos:
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
           # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
           buildWithCMake: True # optional, default is true
           # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
-          buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is
+          buildWithCMakeArgs: --target QuTree Hamiltonians mctdh TestQuTree benchmarks TestExamples # optional, default is
       - name: run-cmake-release
         uses: lukka/run-cmake@v1.4
         with:
@@ -71,4 +71,4 @@ jobs:
           # Indicates whether to run 'cmake --build' after CMake project files have been generated successfully. Used by any mode.
           buildWithCMake: True # optional, default is true
           # Additional parameters for both CMake and the make program (e.g. ninja or make).  Separate CMake arguments to the native make program arguments with '--', such as: '--clean-first --config Debug -- -j0'. Used by both CMakeListsTxtBasic and CMakeListsTxtAdvanced modes
-          buildWithCMakeArgs: --target QuTree TestQuTree benchmarks TestExamples # optional, default is
+          buildWithCMakeArgs: --target QuTree Hamiltonians mctdh TestQuTree benchmarks TestExamples # optional, default is
