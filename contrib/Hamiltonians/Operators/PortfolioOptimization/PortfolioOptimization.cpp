@@ -241,7 +241,8 @@ void addReturns(SOPcd& H, const Tensord& mu,
 	}
 }
 
-void addCovariance(SOPcd& H, const Tensord& cov, double gamma, size_t Nt, size_t Na, size_t Nq) {
+void addCovariance(SOPcd& H, const Tensord& cov, double gamma,
+	size_t Nt, size_t Na, size_t Nq) {
 	LeafFuncd x = &LeafInterface::applyX;
 
 	TensorShape shape_q({Nq, Na, Nt});

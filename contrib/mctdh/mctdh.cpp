@@ -98,7 +98,23 @@ namespace parser {
 			auto dim_inc = evaluate<size_t>(node, "dimension_increment", 0);
 			auto leaf_type = evaluate<size_t>(node, "leaf_type", 0);
 			auto shuffle = evaluate<size_t>(node, "shuffle_indices", 0);
-			Tree tree = TreeFactory::balancedTree(num_leaves, dim_leaves, dim_nodes, dim_inc, leaf_type);
+			///
+			auto omega = evaluate<double>(node, "omega", 1.);
+			auto r0 = evaluate<double>(node, "r0", 0.);
+			auto wfr0 = evaluate<double>(node, "wfr0", 0.);
+			auto wfomega = evaluate<double>(node, "wfomoega", 1.);
+			Tree tree = TreeFactory::balancedTree(num_leaves, dim_leaves,
+				dim_nodes, dim_inc, leaf_type,
+				omega, r0, wfr0, wfomega);
+			auto checkGrid = evaluate<double>(node, "checkGrid", 1.);
+			if (checkGrid) {
+				for (const Node& node: tree) {
+					if (node.isBottomlayer()) {
+						const Leaf& leaf = node.getLeaf();
+						leaf.interface().getX().print();
+					}
+				}
+			}
 			if (shuffle) {
 				/// shuffle leaf modes
 				std::vector<size_t> v(tree.nLeaves());
@@ -341,6 +357,7 @@ namespace parser {
 		par.nKrylov = evaluate<size_t>(node, "nKrylov", 20);
 		par.nITP = evaluate<size_t>(node, "nITP", 0);
 		par.beta = evaluate<double>(node, "beta", 1);
+		par.output = evaluate<bool>(node, "output", 1);
 		par.psi = &state.wavefunctions_["Psi"];
 		par.h = state.hamiltonian_.get();
 		par.tree = &state.tree_;

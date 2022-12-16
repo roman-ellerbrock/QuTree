@@ -102,11 +102,15 @@ namespace TreeFactory {
 	}
 
 	vector<Node> bottomlayerNodes(size_t num_leaves, size_t dim_leaves, size_t dim_nodes,
-		size_t leaf_type) {
+		size_t leaf_type, double omega, double r0, double wfr0, double wfomega) {
 		/// Hardcoded leaf-parameters
 		size_t mode = 0;
 		size_t leaf_subtype = 0;
 		PhysPar par;
+		par.setOmega(omega);
+		par.setR0(r0);
+		par.setWFOmega(wfomega);
+		par.setWFR0(wfr0);
 		Leaf leaf(dim_leaves, mode, leaf_type, leaf_subtype, par);
 
 		/// Creat bottomlayer nodes manually
@@ -136,9 +140,9 @@ namespace TreeFactory {
 		return tree;
 	}
 
-	Tree balancedTree(size_t num_leaves,
-		size_t dim_leaves, size_t dim_nodes, size_t dim_inc,
-		size_t leaf_type) {
+	Tree balancedTree(size_t num_leaves, size_t dim_leaves,
+		size_t dim_nodes, size_t dim_inc, size_t leaf_type,
+		double omega, double r0, double wfr0, double wfomega) {
 		/**
 		 * \brief This functions creates a close-to-balanced Tree
 		 * \@param num_leaves number of leaves in the tree
@@ -148,7 +152,8 @@ namespace TreeFactory {
 		 */
 
 		/// Cover leaves in bottomlayer nodes
-		auto nodes = bottomlayerNodes(num_leaves, dim_leaves, dim_nodes, leaf_type);
+		auto nodes = bottomlayerNodes(num_leaves, dim_leaves, dim_nodes, leaf_type,
+			omega, r0, wfr0, wfomega);
 
 		/// Add layer after layer until only one node is left
 		size_t count = 0;
