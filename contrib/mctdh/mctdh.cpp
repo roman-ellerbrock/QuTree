@@ -212,11 +212,19 @@ namespace parser {
 			auto Nq = evaluate<size_t>(node, "nQubitsPerAsset", 1);
 			auto alpha = evaluate<double>(node, "alpha", 1.);
 			auto gamma = evaluate<double>(node, "gamma", 1.);
-			auto rho  = evaluate<double>(node, "rho", 1.);
-			auto K  = evaluate<double>(node, "investment", 1.);
+			auto rho = evaluate<double>(node, "rho", 1.);
+			auto K = evaluate<double>(node, "investment", 1.);
 			auto tickers = evaluate<string>(node, "tickers", "merged.csv");
 			H = meanVarianceAnalysis(tickers, Na, Nt, NaTot, NtTot, Nq,
 				alpha, gamma, rho, K);
+		} else if (name == "ising2D") {
+			auto Lx = evaluate<size_t>(node, "Lx", 32);
+			auto Ly = evaluate<size_t>(node, "Ly", 5);
+			auto h = evaluate<double>(node, "h", 2.9);
+			cout << Lx << " x " << Ly << endl;
+			cout << "h = " << h << endl;
+			H = ising2D(Lx, Ly, h);
+
 		} else {
 			cout << "No valid Hamiltonian name." << endl;
 			cout << "Chosen name: " << name << endl;
@@ -358,6 +366,7 @@ namespace parser {
 		par.nITP = evaluate<size_t>(node, "nITP", 0);
 		par.beta = evaluate<double>(node, "beta", 1);
 		par.output = evaluate<bool>(node, "output", 1);
+		par.conversion = evaluate<double>(node, "conversion", 219474.6313705e0);
 		par.psi = &state.wavefunctions_["Psi"];
 		par.h = state.hamiltonian_.get();
 		par.tree = &state.tree_;

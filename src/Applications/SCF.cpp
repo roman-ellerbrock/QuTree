@@ -131,7 +131,7 @@ void testKrylovSpace(const KrylovSpace& space,
 }
 
 void solveKrylovSpace(KrylovSpace& krylov, Tensorcd Psi, const HamiltonianRepresentation& hrep,
-	const Hamiltonian& H, const Node& node, size_t krylov_size) {
+	const Hamiltonian& H, const Node& node, size_t krylov_size, double conversion) {
 
 	vector<Tensorcd>& krylovSpace = krylov.space_;
 
@@ -189,7 +189,7 @@ void solveKrylovSpace(KrylovSpace& krylov, Tensorcd Psi, const HamiltonianRepres
 	krylov.spectrum_ = diagonalize(Hrep);
 
 	/// output
-	auto x = krylov.spectrum_.second * QM::cm;
+	auto x = krylov.spectrum_.second * conversion;
 	cout << x(0) << endl;
 }
 
@@ -263,6 +263,7 @@ void scf(SCF_parameters& par) {
 	double time = 0;
 	size_t krylov_size = par.nKrylov;
 	double beta = par.beta;
+	double conversion = par.conversion;
 	const Tree& tree = *par.tree;
 	const Hamiltonian& H = *par.h;
 	TensorTreecd& Psi = *par.psi;
@@ -296,7 +297,7 @@ void scf(SCF_parameters& par) {
 			cout << it + l * eps << " ";
 
 			KrylovSpace& krylov = spaces[node.address()];
-			solveKrylovSpace(krylov, Psi[node], hrep, H, node, ksize);
+			solveKrylovSpace(krylov, Psi[node], hrep, H, node, ksize, conversion);
 			if (it < par.nITP) {
 				imaginaryTimePropagation(Psi[node], krylov, beta);
 			} else {

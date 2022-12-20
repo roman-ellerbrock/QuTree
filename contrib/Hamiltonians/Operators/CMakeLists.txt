@@ -27,6 +27,10 @@ add_library(Operators Operators.h
         ElectronicStructure/JordanWigner.cpp
         ElectronicStructure/JordanWigner.h
 
+        Ising/Pauli.cpp
+        Ising/Ising.cpp
+        Ising/Ising.h
+
         NDI/NDIHamiltonian.cpp
         NDI/NDIHamiltonian.h
 

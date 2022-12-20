@@ -3,195 +3,81 @@
 #include "Pauli.h"
 
 
-Ising::Ising(const mctdhBasis& basis, size_t N, size_t method) {
-//	HamiltonianPaths(basis, N, method);
+size_t idx(size_t lx, size_t ly, size_t Lx, size_t Ly) {
+	lx = lx % Lx;
+	cout << "(" << lx << ", " << ly << ")";
+	if (ly >= Ly) {
+		cerr << "wrong ly index.\n";
+		exit(1);
+	}
+	return ly * Lx + lx;
 }
 
-void Ising::SpinChain(const mctdhBasis& basis, double J, double H) {
-    using namespace PauliMatrices;
-    size_t N = basis.nLeaves();
-
-    for (size_t i = 0; i < N; ++i) {
-        MPO M;
-		M.push_back(sigma_z, i);
-        push_back(M, -H);
-    }
-
-    for (size_t i = 0; i < N; ++i) {
-        MPO M;
-        size_t j = (i + 1) % N;
-		M.push_back(sigma_x, i);
-		M.push_back(sigma_x, j);
-        push_back(M, -J);
-    }
+void sigma_x_1024(Tensorcd& hPhi, const Tensorcd& phi, size_t mode) {
+	/// mode \in [0, 9]
+	const TensorShape shape({2, 2, 2, 2, 2, 2, 2, 2, 2, 2});
+	size_t before = shape.before(mode);
+	size_t after = shape.after(mode);
+	size_t beaft = before * after;
+	for (size_t n = 0; n < shape.after(mode); n++) {
+		for (size_t bef = 0; bef < shape.before(mode); ++bef) {
+			hPhi[bef + n * beaft] = phi[bef + before + n * beaft];
+		}
+		for (size_t bef = 0; bef < shape.before(mode); ++bef) {
+			hPhi[bef + before + n * beaft] = phi[bef + n * beaft];
+		}
+	}
 }
 
-Graph make_random_graph(size_t N, size_t seed) {
-	// Initialize randomizer
-//	using namespace std::chrono;
-//	auto seed = system_clock::now().time_since_epoch().count();
-	cout << "Seed used for graph generation: " << seed << endl;
-	mt19937 gen(seed);
 
-	// Build a (random) Graph
-	Graph graph;
-	for (size_t i = 0; i < N; ++i) {
-		graph.push_back(Vertex(gen));
+
+void subH(const LeafInterface& grid, Tensorcd& hA, const Tensorcd& A) {
+	size_t Ly = 4;
+	hA.zero();
+	for (size_t l = 0; l < Ly; ++l) {
+
 	}
-	graph.all_distance_edges();
-
-	return graph;
 }
 
-void Ising::HamiltonianPaths(const mctdhBasis& basis, size_t N, size_t seed) {
-	using namespace PauliMatrices;
+SOPcd ising2D(size_t Lx, size_t Ly, double h) {
+	SOPcd S;
+	for (size_t lx = 0; lx < Lx; ++lx) {
+		/// - X_mn * X_(m+1)n
 
-	size_t Nnod = N + 1;
-	Graph graph = make_random_graph(Nnod, seed);
-	cout << "randomly generated graph:\n";
-	graph.print();
-	size_t count_a = 0;
-	size_t count_b = 0;
-	size_t count_c = 0;
-	double A = 1.;
-
-	// Penalty term H_B
-	for (size_t i = 0; i < Nnod; ++i) {
-		shared_ptr<qbit_x> x_i(new qbit_x(i));
-		for (size_t nu = 0; nu < Nnod; ++nu) {
-			for (size_t mu = 0; mu < Nnod; ++mu) {
-
-				MultiParticleOperator M;
-//				if (nu < N) {
-					M.push_back(x_i, nu);
-//				}
-//				if (mu < N) {
-					M.push_back(x_i, mu);
-//				}
-//				mpos.push_back(M);
-//				coeff.push_back(A);
-				push_back(M, A);
-				count_b++;
+		for (size_t ly = 0; ly < Ly; ++ly) {
+			{
+				MLOcd N;
+				cout << "-X";
+				N.push_back(PauliMatrices::sigma_x, idx(lx, ly, Lx, Ly));
+				cout << " * X";
+				N.push_back(PauliMatrices::sigma_x, idx((lx + 1) % Lx, ly, Lx, Ly));
+				cout << endl;
+				S.push_back(N, -1.);
 			}
+
+			/// - X_mn * X_m(n+1)
+			if (ly < Ly - 1) {
+				MLOcd M;
+				cout << "-X";
+				M.push_back(PauliMatrices::sigma_x, idx(lx, ly, Lx, Ly));
+				cout << " * X";
+				M.push_back(PauliMatrices::sigma_x, idx(lx, ly + 1, Lx, Ly));
+				cout << endl;
+				S.push_back(M, -1.);
+			}
+
+			///
+			{
+				MLOcd Z;
+				cout << "+hZ";
+				Z.push_back(PauliMatrices::sigma_z, idx(lx, ly, Lx, Ly));
+				S.push_back(Z, h);
+				cout << endl;
+			}
+			cout << endl;
 		}
 	}
-
-	// -N part of H_B
-//	{
-//		MultiParticleOperator M;
-//		mpos.push_back(M);
-//		coeff.push_back(-Nnod);
-//		count_b++;
-//		
-//	}
-	{
-		MultiParticleOperator M;
-		shared_ptr<qbit_x> x_i(new qbit_x(N));
-		M.push_back(x_i, N);
-//		mpos.push_back(M);
-//		coeff.push_back(-A);
-		push_back(M, -A);
-	}
-
-	// Weight term
-	for (size_t i = 0; i < graph.nEdges(); ++i) {
-		Edge e = graph.edge(i);
-		size_t u = e.src;
-		size_t v = e.dest;
-		double W = e.weight;
-		for (size_t j = 0; j < N; ++j) {
-			size_t jp = (j + 1) % Nnod;
-			shared_ptr<qbit_x> x_j(new qbit_x(j));
-			shared_ptr<qbit_x> x_jp(new qbit_x(jp));
-
-			MultiParticleOperator M;
-//			if ((u < N ) && (j < N)) {
-				M.push_back(x_j, u);
-//			}
-//			if ((v < N) && (jp < N)) {
-				M.push_back(x_jp, v);
-//			}
-//			mpos.push_back(M);
-//			coeff.push_back(W);
-			push_back(M, W);
-			count_c++;
-		}
-	}
-
-	size_t count = count_a + count_b + count_c;
-	cout << "Fed " << count << " parts into the hamiltonian.\n";
-	cout << "count in H_A = " << count_a << "\n";
-	cout << "count in H_B = " << count_b << "\n";
-	cout << "count in H_C = " << count_c << "\n";
+	getchar();
+	return S;
 }
-
-/*void Ising::HamiltonianPaths(const mctdhBasis& basis, size_t N, size_t method) {
-	using namespace PauliMatrices;
-
-	Graph graph = make_random_graph(N + 1);
-	cout << "randomly generated graph:\n";
-	graph.print();
-	size_t count_a = 0;
-	size_t count_b = 0;
-	size_t count_c = 0;
-
-	// Penalty term H_A
-	double A = 1.0;
-	for (size_t nu = 0; nu < graph.nVertices() - 1; ++nu) {
-		for (size_t i = 0; i < graph.nVertices() - 1; ++i) {
-			for (size_t j = 0; j < graph.nVertices() - 1; ++j) {
-				MultiParticleOperator M;
-				M.push_back(bit_x, idx(nu, i, N));
-				M.push_back(bit_x, idx(nu, j, N));
-				mpos.push_back(M);
-				coeff.push_back(A);
-				count_a++;
-			}
-		}
-	}
-
-	// Penalty term H_B
-	for (size_t i = 0; i < graph.nVertices() - 1; ++i) {
-		for (size_t nu = 0; nu < graph.nVertices() - 1; ++nu) {
-			for (size_t mu = 0; mu < graph.nVertices() - 1; ++mu) {
-				MultiParticleOperator M;
-				M.push_back(bit_x, idx(nu, i, N));
-				M.push_back(bit_x, idx(mu, i, N));
-				mpos.push_back(M);
-				coeff.push_back(A);
-				count_b++;
-			}
-		}
-	}
-
-	// Weight term
-	for (size_t i = 0; i < graph.nEdges(); ++i) {
-		Edge e = graph.edge(i);
-		size_t u = e.src;
-		size_t v = e.dest;
-		double W = e.weight;
-		for (size_t j = 0; j < N - 1; ++j) {
-			size_t jp = (j + 1) % N;
-			MultiParticleOperator M;
-			if ((u < (N - 1)) && (j < (N - 1))) {
-				M.push_back(bit_x, idx(u, j, N));
-			}
-			if ((v < (N - 1)) && (jp < (N - 1))) {
-				M.push_back(bit_x, idx(v, jp, N));
-			}
-			mpos.push_back(M);
-			coeff.push_back(W);
-			count_c++;
-		}
-	}
-
-	size_t count = count_a + count_b + count_c;
-	cout << "Fed " << count << " parts into the hamiltonian.\n";
-	cout << "count in H_A = " << count_a << "\n";
-	cout << "count in H_B = " << count_b << "\n";
-	cout << "count in H_C = " << count_c << "\n";
-
-}
-*/
-
 

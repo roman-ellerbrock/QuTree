@@ -1,67 +1,67 @@
 #include "Pauli.h"
 
-void qbit_x::Apply(Tensorcd& xPhi, const PrimitiveBasis& grid, const Tensorcd& Phi) const {
-	const TensorDim& tdim = Phi.Dim();
-	size_t ntensor = tdim.getntensor();
-	size_t dimpart = tdim.getdimpart();
-	xPhi.Zero();
+void qbit_x::apply(const LeafInterface& grid, Tensorcd& xPhi, const Tensorcd& Phi) const {
+	const TensorShape& tdim = Phi.shape();
+	size_t ntensor = tdim.lastDimension();
+	size_t dimpart = tdim.lastBefore();
+	xPhi.zero();
 	for (size_t n = 0; n < ntensor; ++n) {
 		xPhi(nu, n) = Phi(nu, n);
 	}
 }
 
 namespace PauliMatrices {
-	void Identity(const PrimitiveBasis& grid, Tensorcd& psi, const Tensorcd& phi) {
-		const TensorDim& tdim = phi.Dim();
-		for (int n = 0; n < tdim.getntensor(); n++) {
+	void Identity(const LeafInterface& grid, Tensorcd& psi, const Tensorcd& phi) {
+		const TensorShape& tdim = phi.shape();
+		for (int n = 0; n < tdim.lastDimension(); n++) {
 			psi(0, n) = phi(0, n);
 			psi(1, n) = phi(1, n);
 		}
 	}
 
-	void sigma_x(const PrimitiveBasis& grid, Tensorcd& psi, const Tensorcd& phi) {
-		const TensorDim& tdim = phi.Dim();
-		for (int n = 0; n < tdim.getntensor(); n++) {
+	void sigma_x(const LeafInterface& grid, Tensorcd& psi, const Tensorcd& phi) {
+		const TensorShape& tdim = phi.shape();
+		for (int n = 0; n < tdim.lastDimension(); n++) {
 			psi(1, n) = phi(0, n);
 			psi(0, n) = phi(1, n);
 		}
 	}
 
-	void sigma_y(const PrimitiveBasis& grid, Tensorcd& psi, const Tensorcd& phi) {
-		const TensorDim& tdim = phi.Dim();
+	void sigma_y(const LeafInterface& grid, Tensorcd& psi, const Tensorcd& phi) {
+		const TensorShape& tdim = phi.shape();
 		complex<double> im(0.0, 1.0);
-		for (int n = 0; n < tdim.getntensor(); n++) {
+		for (int n = 0; n < tdim.lastDimension(); n++) {
 			psi(1, n) = im * phi(0, n);
 			psi(0, n) = -im * phi(1, n);
 		}
 	}
 
-	void sigma_z(const PrimitiveBasis& grid, Tensorcd& psi, const Tensorcd& phi) {
-		const TensorDim& tdim = phi.Dim();
-		for (int n = 0; n < tdim.getntensor(); n++) {
+	void sigma_z(const LeafInterface& grid, Tensorcd& psi, const Tensorcd& phi) {
+		const TensorShape& tdim = phi.shape();
+		for (int n = 0; n < tdim.lastDimension(); n++) {
 			psi(1, n) = phi(1, n);
 			psi(0, n) = -phi(0, n);
 		}
 	}
 
-	void bit_x(const PrimitiveBasis& grid, Tensorcd& psi, const Tensorcd& phi) {
-		const TensorDim& tdim = phi.Dim();
-		for (int n = 0; n < tdim.getntensor(); n++) {
+	void bit_x(const LeafInterface& grid, Tensorcd& psi, const Tensorcd& phi) {
+		const TensorShape& tdim = phi.shape();
+		for (int n = 0; n < tdim.lastDimension(); n++) {
 			psi(1, n) = phi(1, n);
 			psi(0, n) = 0;
 		}
 	}
 
-	void bit_x_shift(const PrimitiveBasis& grid, Tensorcd& psi, const Tensorcd& phi) {
-		const TensorDim& tdim = phi.Dim();
+	void bit_x_shift(const LeafInterface& grid, Tensorcd& psi, const Tensorcd& phi) {
+		const TensorShape& tdim = phi.shape();
 		constexpr size_t N = 5;
-		for (int n = 0; n < tdim.getntensor(); n++) {
+		for (int n = 0; n < tdim.lastDimension(); n++) {
 			psi(1, n) = -phi(1, n) + 1. / ((double) N);
 			psi(0, n) = 1. / ((double) N);
 		}
 	}
 
-	void bit_xs(Tensorcd& xPhi, const PrimitiveBasis& grid, const Tensorcd& phi) {
+	void bit_xs(Tensorcd& xPhi, const LeafInterface& grid, const Tensorcd& phi) {
 	}
 
 	size_t idx(size_t i, size_t j, size_t f) {

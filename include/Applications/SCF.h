@@ -16,6 +16,7 @@ struct SCF_parameters {
 	size_t nITP{0};    /// how many steps of imaginary time propagation
 	double beta{1.};   /// how large should beta be?
 	size_t output{0};/// output wavefunction every iteration
+	double conversion{219474.6313705e0};
 
 	TensorTreecd* psi{nullptr};
 	const Hamiltonian* h{nullptr};
