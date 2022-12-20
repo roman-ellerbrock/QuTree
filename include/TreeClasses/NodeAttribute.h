@@ -74,6 +74,8 @@ public:
 
 	size_t size() const { return attributes_.size(); }
 
+	void clear() { attributes_.clear(); }
+
 	/**
 	 * \brief Erase the data assigned to x_.
 	 * \param x Object which's attributes_ get deleted

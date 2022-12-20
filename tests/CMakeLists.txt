@@ -19,7 +19,8 @@ set(QuTree_tests
         test_TensorBLAS.cpp
         test_Operators.cpp
         test_SparseTree.cpp
-        test_SymTensorTree.cpp
+        test_SymmetricSCF.cpp
+#        test_SymTensorTree.cpp
         test_TensorTreeBasis.cpp
 #        test_TensorTreeOperator.cpp
         test_MatrixTree.cpp
