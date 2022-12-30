@@ -76,6 +76,10 @@ public:
 
 	void clear() { attributes_.clear(); }
 
+	void emplace_back(A&& a) {
+		attributes_.template emplace_back(a);
+	}
+
 	/**
 	 * \brief Erase the data assigned to x_.
 	 * \param x Object which's attributes_ get deleted

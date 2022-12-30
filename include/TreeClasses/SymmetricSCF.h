@@ -6,6 +6,7 @@
 #define SYMMETRICSCF_H
 #include "NodeAttribute.h"
 #include <iostream>
+#include <random>
 
 template <typename T = size_t>
 class Configuration : public vector<T> {
@@ -14,6 +15,8 @@ public:
 
 	Configuration() = default;
 	~Configuration() = default;
+
+	Configuration(const vector<T>& a) : Base(a) {}
 
 	Configuration(const initializer_list<T>& list)
 	: Base(list) {}
@@ -81,6 +84,12 @@ public:
 				a[idx++] = x * r[i];
 			}
 		}
+		if (this->empty()) {
+			a = r;
+		}
+		if (r.empty()) {
+			a = *this;
+		}
 		return a;
 	}
 
@@ -105,19 +114,74 @@ public:
 		for (const Node& node : tree) {
 			up_.emplace_back(ConfigurationTensor<T>());
 			down_.emplace_back(ConfigurationTensor<T>());
+			idx_up_.emplace_back(Configuration<T>());
+			idx_down_.emplace_back(Configuration<T>());
+		}
+
+		/// build index up
+		for (const Node& node : tree) {
+			if (node.isToplayer()) { continue; }
+			Configuration<>& A = idx_up_[node];
+			if (node.isBottomlayer()) {
+				size_t mode = node.getLeaf().mode();
+				A = Configuration<>({mode});
+			} else {
+				for (size_t k = 0; k < node.nChildren(); ++k) {
+					const Node& child = node.child(k);
+					A = A * idx_up_[child];
+				}
+			}
+		}
+
+		/// build index down
+		for (int n = tree.nNodes() - 1; n >= 0; --n) {
+			const Node& hole = tree.getNode(n);
+			if (hole.isToplayer()) { continue; }
+			Configuration<>& A = idx_down_[hole];
+			const Node& node = hole.parent();
+
+			for (size_t k = 0; k < node.nChildren(); ++k) {
+				const Node& child = node.child(k);
+				if (child.address() == hole.address()) { continue; }
+				A = A * idx_up_[child];
+			}
+
+			A = A * idx_down_[node];
+		}
+	}
+
+	void print(const Tree& tree) const {
+		cout << "up:\n";
+		for (const Node& node : tree) {
+			node.info();
+			cout << "idx = " << idx_up_[node] << endl;
+			cout << up_[node] << endl;
+		}
+		cout << "down:\n";
+		for (const Node& node : tree) {
+			node.info();
+			cout << "idx = " << idx_down_[node] << endl;
+			cout << down_[node] << endl;
 		}
 	}
 
 	NodeAttribute<ConfigurationTensor<T>> up_;
 	NodeAttribute<ConfigurationTensor<T>> down_;
+	NodeAttribute<Configuration<T>> idx_up_;
+	NodeAttribute<Configuration<T>> idx_down_;
 };
 
 template <typename T = size_t>
-ostream& operator<<(ostream& os, ConfigurationTree<T>& a);
+ostream& operator<<(ostream& os, const ConfigurationTree<T>& a);
 
-class SymmetricSCF {
-public:
-};
+ConfigurationTensor<> randomConfigurationTensor(const TensorShape& shape, mt19937& gen);
+ConfigurationTree<> randomConfigurationTree(const Tree& tree, mt19937& gen);
+
+ConfigurationTensor<> bottomTensor(const TensorShape& shape);
+
+void optimize(ConfigurationTree<>& Psi,
+	function<double(const Configuration<>& c)> f,
+	const Tree& tree, size_t n_sweep = 3);
 
 
 #endif //SYMMETRICSCF_H
