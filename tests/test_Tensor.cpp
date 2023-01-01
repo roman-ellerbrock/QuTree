@@ -250,3 +250,13 @@ TEST(Tensor, QRTensor) {
         ASSERT_NEAR(0., residual(S1, identityMatrixcd(S1.dim1())), eps);
     }
 }
+
+TEST(Tensor, ones) {
+	TensorShape shape({3});
+	Tensord a = ones<double>(shape);
+	ASSERT_NEAR(1., a(0), 1e-12);
+	ASSERT_NEAR(1., a(1), 1e-12);
+	ASSERT_NEAR(1., a(2), 1e-12);
+}
+
+

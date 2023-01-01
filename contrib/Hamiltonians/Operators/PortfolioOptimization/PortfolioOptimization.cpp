@@ -4,6 +4,9 @@
 
 #include "PortfolioOptimization.h"
 #include "TreeOperators/SumOfProductsOperator.h"
+#include "TreeClasses/SymmetricSCF.h"
+#include "Util/qutree_rng.h"
+#include "TreeShape/TreeFactory.h"
 
 Tensord readAssets(const string& name, size_t n_assets, size_t n_time) {
 	TensorShape shape({n_time, n_assets});
@@ -416,3 +419,64 @@ SOPcd meanVarianceAnalysis(string tickers,
 
 	return meanVarianceAnalysis(mu, cov, Na, Nt, Nq, alpha, gamma, rho, K);
 }
+
+Tensord to_Tensord(const vector<double>& a) {
+	TensorShape shape({a.size()});
+	Tensord A(shape);
+	for (size_t i = 0; i < a.size(); ++i) {
+		A(i) = a[i];
+	}
+	return A;
+}
+
+void meanVarianceAnalysisOptimization(string tickers,
+	size_t Na, size_t Nt, size_t NaTot, size_t NtTot, size_t Nq,
+	double alpha, double gamma, double rho, double K) {
+
+	tickers.erase(0, tickers.find_first_not_of("\n/ "));
+	cout << "# Assets: " << Na << " / " << NaTot << endl;
+	cout << "# Time steps: " << Nt << " / " << NtTot << endl;
+	cout << "# Qubits per asset: " << Nq << endl;
+	cout << "# H = -" << alpha << " mu * omega + ";
+	cout << gamma << " / 2 * omega^T* sigma * omega + ";
+	cout << rho << " * (u^T omega - " << K << ")^2" << endl;
+
+	/// read & select assets
+	auto A = readAssets(tickers, NaTot, NtTot);
+	A = selectAssets(A, Na);
+
+	/// returns
+	auto mu = log_returns(A);
+
+	/// average returns
+	Tensord mu_avg = avg(mu);
+
+	Tensord cov_t = covariance(mu, mu_avg);
+	Matrixd cov = toMatrix(cov_t);
+
+	auto f = [mu, cov](const Configuration<>& c) {
+		double K = 10.;
+
+		size_t Na = mu.shape_[0];
+		auto xs = split_doubles(c, Na);
+		auto x = to_Tensord(xs);
+
+		double returns = -1. * mu.dotProduct(x)[0];
+
+		double risk = -0.5 * x.dotProduct(matrixTensor(cov, x, 0))[0];
+
+		Tensord u = ones<double>({Na});
+		double inv = (u.dotProduct(u))(0, 0);
+		double investment = 0.5 * pow((inv - K), 2);
+
+		auto H = returns + risk + investment;
+		return (double) H;
+	};
+
+
+	Tree tree = TreeFactory::balancedTree(Na, 2, 8, 2);
+	auto Psi = randomConfigurationTree(tree, qutree::rng);
+
+	auto c = optimize(Psi, f, tree, 10, 1);
+}
+

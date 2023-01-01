@@ -85,4 +85,8 @@ template void multAdd<cd, double>(Tensor<cd>& A, const Tensor<cd>& B, double coe
 template Tensor<cd> matrixTensor<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
 template Tensor<cd> tMatrixTensor<cd, doub>(const Matrix<doub>& A, const Tensor<cd>& B, size_t mode);
 
+template Tensord ones<double>(const TensorShape& shape);
+template Tensorcd ones<complex<double>>(const TensorShape& shape);
 
+template Tensord rand<double>(const TensorShape& shape);
+template Tensorcd rand<complex<double>>(const TensorShape& shape);

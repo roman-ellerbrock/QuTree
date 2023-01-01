@@ -2,7 +2,7 @@
 #include "Tensor.h"
 #include "TensorShape.h"
 #include "stdafx.h"
-//#include <omp.h> //TODO: have this here by default?
+#include "Util/qutree_rng.h"
 
 template<typename T>
 Tensor<T>::Tensor(const initializer_list<size_t>& dims, bool InitZero)
@@ -1053,4 +1053,24 @@ Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f) {
 	Tensor<T> res(A.Dim1(), A.Dim2(), false);
 	elementwise(res, A, f);
 	return res;
+}
+
+template<typename T>
+Tensor<T> ones(const TensorShape& shape) {
+	Tensor<T> A(shape);
+	for (size_t i = 0; i < shape.totalDimension(); ++i) {
+		A(i) = 1.;
+	}
+	return A;
+}
+
+template<typename T>
+Tensor<T> rand(const TensorShape& shape) {
+	uniform_real_distribution<double> dist(0., 1.);
+	Tensor<T> A(shape);
+	mt19937& gen = qutree::rng;
+	for (size_t i = 0; i < shape.totalDimension(); ++i) {
+		A(i) = (T) dist(gen);
+	}
+	return A;
 }

@@ -179,9 +179,13 @@ ConfigurationTree<> randomConfigurationTree(const Tree& tree, mt19937& gen);
 
 ConfigurationTensor<> bottomTensor(const TensorShape& shape);
 
-void optimize(ConfigurationTree<>& Psi,
+Configuration<> optimize(ConfigurationTree<>& Psi,
 	function<double(const Configuration<>& c)> f,
-	const Tree& tree, size_t n_sweep = 3);
+	const Tree& tree, size_t n_sweep = 3, size_t verboseness = 1);
 
+size_t to_integer(const Configuration<>& c);
+vector<size_t> split_integers(const Configuration<>& c, size_t n);
+double to_double(size_t i, size_t max_val);
+vector<double> split_doubles(const Configuration<>& c, size_t n);
 
 #endif //SYMMETRICSCF_H

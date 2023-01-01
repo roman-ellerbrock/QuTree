@@ -325,6 +325,9 @@ Tensor<T> elementwise(const Tensor<T>& A, const function<T(T)>& f);
 template<typename T>
 void elementwise(Tensor<T>& res, const Tensor<T>& A, const function<T(T)>& f);
 
+template<typename T>
+Tensor<T> ones(const TensorShape& shape);
+
 /**
  * @TODOs:
  * - remove unnecessary functions

@@ -246,7 +246,8 @@ vector<double> evaluateGrid(const ConfigurationTensor<>& A,
 	const Configuration<>& idx,
 	function<double(const Configuration<>& c)> f,
 	pair<Configuration<>, double>& optimal,
-	map<Configuration<>, double>& results) {
+	map<Configuration<>, double>& results,
+	size_t verboseness) {
 
 	vector<double> E(A.size());
 	for (size_t i = 0; i < A.size(); ++i) {
@@ -256,7 +257,7 @@ vector<double> evaluateGrid(const ConfigurationTensor<>& A,
 			if (E[i] < optimal.second) {
 				optimal.first = c;
 				optimal.second = E[i];
-				cout << "New record: " << c << " | " << E[i] << " | f_evals: " << results.size() << endl;
+				if (verboseness > 1) { cout << "New record: " << c << " | " << E[i] << " | f_evals: " << results.size() << endl; }
 //				cout << "New record: " << E[i] << " | f_evals: " << results.size() << endl;
 			}
 			results[c] = E[i];
@@ -269,9 +270,9 @@ vector<double> evaluateGrid(const ConfigurationTensor<>& A,
 	return E;
 }
 
-void optimize(ConfigurationTree<>& Psi,
+Configuration<> optimize(ConfigurationTree<>& Psi,
 	function<double(const Configuration<>& c)> f,
-	const Tree& tree, size_t n_sweep) {
+	const Tree& tree, size_t n_sweep, size_t verboseness) {
 
 	map<Configuration<>, double> results;
 	pair<Configuration<>, double> optimal;
@@ -279,7 +280,7 @@ void optimize(ConfigurationTree<>& Psi,
 
 	for (size_t sweep = 0; sweep < n_sweep; ++sweep) {
 		/// bottom-up
-		cout << "Sweep: " << sweep << endl;
+		if (verboseness > 1) { cout << "Sweep: " << sweep << endl; }
 		for (const Node& node: tree) {
 			if (node.isToplayer()) { continue; }
 			if (node.isBottomlayer()) { continue; }
@@ -288,7 +289,7 @@ void optimize(ConfigurationTree<>& Psi,
 			ConfigurationTensor<> A = cartesianProduct(idx, Psi, node);
 
 			/// calculate energies for everything
-			auto E = evaluateGrid(A, idx, f, optimal, results);
+			auto E = evaluateGrid(A, idx, f, optimal, results, verboseness);
 
 			/// Sort for energy, cut off relevant part, select n best
 			size_t start = 0;
@@ -314,7 +315,7 @@ void optimize(ConfigurationTree<>& Psi,
 			ConfigurationTensor<> A = cartesianProduct(idx, Psi, node);
 
 			/// calculate energies for everything
-			auto E = evaluateGrid(A, idx, f, optimal, results);
+			auto E = evaluateGrid(A, idx, f, optimal, results, verboseness);
 
 			/// Sort for energy, cut off relevant part, select n best
 			auto idx_map = findIndices(Psi.idx_down_[hole], idx);
@@ -328,6 +329,47 @@ void optimize(ConfigurationTree<>& Psi,
 		}
 	}
 
-	cout << "Final result: " << optimal.first << " | " << optimal.second << endl;
-	cout << "Number of unique function evaluations: " << results.size() << endl;
+	if (verboseness > 0) { cout << "Final result: " << optimal.first << " | " << optimal.second << endl; }
+	if (verboseness > 0) { cout << "Number of unique function evaluations: " << results.size() << endl; }
+	return optimal.first;
+}
+
+size_t to_integer(const Configuration<>& c) {
+	size_t r{0};
+	size_t factor = 1;
+	for (const auto& x: c) {
+		r += factor * x;
+		factor *= 2;
+	}
+	return r;
+}
+
+vector<size_t> split_integers(const Configuration<>& c, size_t n) {
+	/**
+	 * n: number of integers in c
+	 */
+	vector<size_t> vec;
+	size_t N = c.size() / n; /// bits / integer
+	for (size_t l = 0; l < n; ++l) {
+		vector<size_t> x(c.begin() + l * N, c.begin() + (l + 1) * N);
+		vec.emplace_back(to_integer(x));
+	}
+	return vec;
+}
+
+double to_double(size_t i, size_t max_val) {
+	return (double) i / (double) max_val;
+}
+
+vector<double> split_doubles(const Configuration<>& c, size_t n) {
+	/**
+	 * n: number of integers in c
+	 */
+	auto x_int = split_integers(c, n);
+	size_t N = c.size() / n; /// bits / integer
+	vector<double> xs;
+	for (auto x : x_int) {
+		xs.emplace_back(to_double(x, pow(2, N)));
+	}
+	return xs;
 }
