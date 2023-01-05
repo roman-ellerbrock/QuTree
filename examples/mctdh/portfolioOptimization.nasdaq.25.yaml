@@ -16,8 +16,8 @@ run:
     nAssetsTotal: 99
     nTime: 1
     nTimetotal: 180
-    alpha: 25.
-    gamma: 0.04
+    alpha: 1.
+    gamma: 1.
     rho: 1.
     investment: 1.
 

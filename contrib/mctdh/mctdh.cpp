@@ -66,8 +66,7 @@ namespace parser {
 		tree.setRoot(root);
 		tree.update();
 		read_leaf_parameters(tree, node);
-		return tree;
-	}
+		return tree;}
 
 	Tree read_tree(const YAML::Node& node) {
 		auto type = evaluate<string>(node, "type");
@@ -78,6 +77,8 @@ namespace parser {
 			auto dim_inc = evaluate<size_t>(node, "dimension_increment", 0);
 			auto leaf_type = evaluate<size_t>(node, "leaf_type", 0);
 			auto shuffle = evaluate<size_t>(node, "shuffle_indices", 0);
+			auto integers = evaluate<size_t>(node, "integers", 0);
+			auto bits = evaluate<size_t>(node, "bits", 0);
 			///
 			auto omega = evaluate<double>(node, "omega", 1.);
 			auto r0 = evaluate<double>(node, "r0", 0.);
@@ -86,8 +87,9 @@ namespace parser {
 			Tree tree = TreeFactory::balancedTree(num_leaves, dim_leaves,
 				dim_nodes, dim_inc, leaf_type,
 				omega, r0, wfr0, wfomega);
-			auto checkGrid = evaluate<double>(node, "checkGrid", 1.);
+			auto checkGrid = evaluate<double>(node, "checkGrid", 0);
 			if (checkGrid) {
+				cout << "checking grid:\n";
 				for (const Node& node: tree) {
 					if (node.isBottomlayer()) {
 						const Leaf& leaf = node.getLeaf();
@@ -107,6 +109,18 @@ namespace parser {
 					i++;
 				}
 				tree.reindexLeafModes(m);
+			}
+			if (integers && bits) {
+				std::map<size_t, size_t> idxs = TreeFactory::leaves_staggered_integers(integers, bits);
+				tree.reindexLeafModes(idxs);
+/*				for (const Node& node : tree) {
+					if (node.isBottomlayer()) {
+						const Leaf& leaf = node.getLeaf();
+						node.info();
+						cout << "mode = " << leaf.mode() << endl;
+					}
+				}
+				getchar();*/
 			}
 			return tree;
 		} else if (type == "manual") {

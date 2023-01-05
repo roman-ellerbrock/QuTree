@@ -252,7 +252,7 @@ vector<double> evaluateGrid(const ConfigurationTensor<>& A,
 	vector<double> E(A.size());
 	for (size_t i = 0; i < A.size(); ++i) {
 		Configuration<> c = resort(A[i], idx);
-		if (results.find(c) == results.end()) {
+//		if (results.find(c) == results.end()) {
 			E[i] = f(c);
 			if (E[i] < optimal.second) {
 				optimal.first = c;
@@ -261,9 +261,9 @@ vector<double> evaluateGrid(const ConfigurationTensor<>& A,
 //				cout << "New record: " << E[i] << " | f_evals: " << results.size() << endl;
 			}
 			results[c] = E[i];
-		} else {
+/*		} else {
 			E[i] = results[c];
-		}
+		}*/
 //		cout << c << " | " << E[i] << "\n";
 	}
 //	cout << endl;
@@ -280,10 +280,10 @@ Configuration<> optimize(ConfigurationTree<>& Psi,
 
 	for (size_t sweep = 0; sweep < n_sweep; ++sweep) {
 		/// bottom-up
-		if (verboseness > 1) { cout << "Sweep: " << sweep << endl; }
+		if (verboseness >= 1) { cout << "Sweep: " << sweep << endl; }
 		for (const Node& node: tree) {
 			if (node.isToplayer()) { continue; }
-			if (node.isBottomlayer()) { continue; }
+			if (node.shape().lastDimension() == node.shape().lastBefore()) { continue; } /// nothing to optimize here
 			/// build tensor of all possible configurations
 			Configuration<> idx;
 			ConfigurationTensor<> A = cartesianProduct(idx, Psi, node);
@@ -344,32 +344,51 @@ size_t to_integer(const Configuration<>& c) {
 	return r;
 }
 
+void split_integers(vector<size_t>& vec, vector<size_t>& tmp, const Configuration<>& c, size_t n) {
+	size_t N = c.size() / n; /// bits / integer
+	for (size_t l = 0; l < n; ++l) {
+		copy(c.begin() + l * N, c.begin() + (l + 1) * N, tmp.begin());
+		vec[l] = to_integer(tmp);
+	}
+}
+
 vector<size_t> split_integers(const Configuration<>& c, size_t n) {
 	/**
 	 * n: number of integers in c
 	 */
-	vector<size_t> vec;
+	vector<size_t> vec(n);
 	size_t N = c.size() / n; /// bits / integer
-	for (size_t l = 0; l < n; ++l) {
-		vector<size_t> x(c.begin() + l * N, c.begin() + (l + 1) * N);
-		vec.emplace_back(to_integer(x));
-	}
+	vector<size_t> x(N);
+	split_integers(vec, x, c, n);
 	return vec;
 }
 
 double to_double(size_t i, size_t max_val) {
-	return (double) i / (double) max_val;
+	return ((double) i / (double) max_val);
+}
+
+void split_doubles(vector<double>& xs, vector<size_t>& x_int,
+	vector<size_t>& tmp, const Configuration<>& c,
+	size_t n) {
+	/**
+	 * n: number of integers in c
+	 */
+	size_t N = c.size() / n; /// bits / integer
+	split_integers(x_int, tmp, c, n);
+	size_t max_val = pow(2, N) - 1;
+	for (size_t l = 0; l < xs.size(); ++l) {
+		xs[l] = to_double(x_int[l], max_val);
+	}
 }
 
 vector<double> split_doubles(const Configuration<>& c, size_t n) {
 	/**
 	 * n: number of integers in c
 	 */
-	auto x_int = split_integers(c, n);
-	size_t N = c.size() / n; /// bits / integer
-	vector<double> xs;
-	for (auto x : x_int) {
-		xs.emplace_back(to_double(x, pow(2, N)));
-	}
+	size_t N = c.size() / n; /// bits per integer
+	vector<double> xs(n);
+	vector<size_t> x_int(n);
+	vector<size_t> single_int(N);
+	split_doubles(xs, x_int, single_int, c, n);
 	return xs;
 }

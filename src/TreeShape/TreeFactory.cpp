@@ -220,6 +220,22 @@ namespace TreeFactory {
 		}
 		return otree;
 	}
+
+	map<size_t, size_t> leaves_staggered_integers(size_t num_integer, size_t num_bits) {
+		/**
+		 * @brief maps indices from (bit, int) to (int, bit) order. idx[old] -> new
+		 */
+		size_t N = num_integer * num_bits;
+		map<size_t, size_t> idx;
+		for (size_t i = 0; i < num_integer; ++i) {
+			for (size_t bit = 0; bit < num_bits; ++bit) {
+				size_t old_idx = i * num_bits + bit;
+				size_t new_idx = bit * num_integer + i;
+				idx[old_idx] = new_idx;
+			}
+		}
+		return idx;
+	}
 }
 
 

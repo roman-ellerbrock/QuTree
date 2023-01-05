@@ -14,6 +14,7 @@ namespace TreeFactory {
 		double omega = 1., double r0 = 0., double wfr0 = 1., double wfomega = 0.);
 	Tree unbalancedTree(size_t nLeaves, size_t dimLeaves, size_t dimNodes, size_t leafType);
 	Tree operatorTree(const Tree& tree, size_t bottom = 0);
+	map<size_t, size_t> leaves_staggered_integers(size_t num_integer, size_t num_bits);
 
 }
 

@@ -84,7 +84,7 @@ shared_ptr<Hamiltonian> read_hamiltonian(const YAML::Node& node,
 		auto K = evaluate<double>(node, "investment", 1.);
 		auto tickers = evaluate<string>(node, "tickers", "merged.csv");
 		meanVarianceAnalysisOptimization(tickers, Na, Nt, NaTot, NtTot, Nq,
-			alpha, gamma, rho, K);
+			alpha, gamma, rho, K, tree);
 	} else if (name == "ising2D") {
 		auto Lx = evaluate<size_t>(node, "Lx", 32);
 		auto Ly = evaluate<size_t>(node, "Ly", 5);

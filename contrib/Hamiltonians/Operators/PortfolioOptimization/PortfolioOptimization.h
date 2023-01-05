@@ -16,6 +16,6 @@ SOPcd meanVarianceAnalysis(const Tensord& mu, const Tensord& cov,
 
 void meanVarianceAnalysisOptimization(string tickers,
 	size_t Na, size_t Nt, size_t NaTot, size_t NtTot, size_t Nq,
-	double alpha, double gamma, double rho, double K);
+	double alpha, double gamma, double rho, double K, const Tree& tree);
 #endif //PORTFOLIOOPTIMIZATION_H
 

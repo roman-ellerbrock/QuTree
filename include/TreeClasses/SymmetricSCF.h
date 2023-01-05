@@ -186,6 +186,9 @@ Configuration<> optimize(ConfigurationTree<>& Psi,
 size_t to_integer(const Configuration<>& c);
 vector<size_t> split_integers(const Configuration<>& c, size_t n);
 double to_double(size_t i, size_t max_val);
+void split_doubles(vector<double>& xs, vector<size_t>& x_int,
+	vector<size_t>& tmp, const Configuration<>& c,
+	size_t n);
 vector<double> split_doubles(const Configuration<>& c, size_t n);
 
 #endif //SYMMETRICSCF_H
