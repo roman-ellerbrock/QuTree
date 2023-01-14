@@ -37,9 +37,11 @@ set(QuTree_SOURCE_FILES
         src/TreeClasses/SparseTensorTree.cpp
         src/TreeClasses/SpectralDecompositionTree.cpp
         src/TreeClasses/SymTensorTree.cpp
-        src/TreeClasses/SymmetricSCF.cpp
         src/TreeClasses/TensorTree_Instantiation.cpp
         src/TreeClasses/TreeIO.cpp
+
+        src/TreeClasses/Discrete/SymmetricSCF.cpp
+        src/TreeClasses/Discrete/BlockTree.cpp
 
         # can make Fortran support independent target if needed
         src/TreeOperators/FortranOperator.cpp

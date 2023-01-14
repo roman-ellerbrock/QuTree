@@ -2,12 +2,13 @@
 // Created by Roman Ellerbrock on 12/20/22.
 //
 
-#include "TreeClasses/SymmetricSCF.h"
+#include "TreeClasses/Discrete/SymmetricSCF.h"
 #include <gtest/gtest.h>
 #include "TreeShape/TreeFactory.h"
 #include "Core/Tensor_Extension.h"
 #include "TreeClasses/TreeIO.h"
 #include "Util/QMConstants.h"
+#include "TreeClasses/Discrete/BlockTree.h"
 
 TEST (Configuration, Create) {
 	Configuration<> c({0, 1});
@@ -98,7 +99,7 @@ TEST (ConfigurationTree, OptimizePolynomial) {
 
 TEST (ConfigurationTree, OptimizeSin) {
 	mt19937 gen(1); /// create predictable series
-	size_t n = 5; /// qubits/integer
+	size_t n = 8; /// qubits/integer
 	size_t N = 2 * n;
 
 	Tree tree = TreeFactory::balancedTree(N, 2, 8, 2);
@@ -110,7 +111,7 @@ TEST (ConfigurationTree, OptimizeSin) {
 		return fx;
 	};
 
-	auto c = optimize(Psi, f, tree, 10, 1);
+	auto c = optimize(Psi, f, tree, 10, 0);
 	ASSERT_NEAR(0., f(c), 1e-4);
 }
 
@@ -175,4 +176,29 @@ TEST (ConfigurationTree, Optimize) {
 
 //	optimize(Psi, f, tree, 10);
 //	getchar();
+}
+
+TEST(BlockTree, CombineLabels) {
+	Labels L = {0, 1};
+	Labels R = {0, 3, 4};
+	Range r(0, 4);
+	Labels LR = combine(L, R, r);
+	cout << LR << endl;
+	Labels res = {0, 1, 3, 4};
+	ASSERT_EQ(LR, res);
+}
+
+TEST(BlockTree, Construct) {
+	Tree tree = TreeFactory::balancedTree(4, 2, 2);
+	BlockTree block(tree);
+	Range range(0, 12);
+	vector<Labels> leaf_lables({{0, 1}, {0, 2}, {0, 4}, {0, 8}});
+
+	block.initLabels(tree, leaf_lables, range);
+	const Node& top = tree.topNode();
+	const Node& node = top.child(0);
+	Labels result_up({0, 1, 2, 3});
+	Labels result_down({0, 4, 8, 12});
+	ASSERT_EQ(block.labels_up_[node], result_up);
+	ASSERT_EQ(block.labels_down_[node], result_down);
 }

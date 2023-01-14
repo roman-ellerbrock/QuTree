@@ -50,10 +50,12 @@ set(QuTree_INCLUDE_FILES
         include/TreeClasses/SOPMatrixTrees.h
         include/TreeClasses/SpectralDecompositionTree.h
         include/TreeClasses/SymTensorTree.h
-        include/TreeClasses/SymmetricSCF.h
         include/TreeClasses/TensorTree.h
         include/TreeClasses/TensorTree_Implementation.h
         include/TreeClasses/TreeIO.h
+
+        include/TreeClasses/Discrete/SymmetricSCF.h
+        include/TreeClasses/Discrete/BlockTree.h
 
         # could move Fortran support to separate target
         include/TreeOperators/FortranOperator.h

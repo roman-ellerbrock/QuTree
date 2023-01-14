@@ -4,7 +4,7 @@
 
 #include "PortfolioOptimization.h"
 #include "TreeOperators/SumOfProductsOperator.h"
-#include "TreeClasses/SymmetricSCF.h"
+#include "TreeClasses/Discrete/SymmetricSCF.h"
 #include "Util/qutree_rng.h"
 #include "TreeShape/TreeFactory.h"
 

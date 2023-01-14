@@ -2,7 +2,7 @@
 // Created by Roman Ellerbrock on 12/20/22.
 //
 
-#include "TreeClasses/SymmetricSCF.h"
+#include "TreeClasses/Discrete/SymmetricSCF.h"
 
 template
 class Configuration<size_t>;

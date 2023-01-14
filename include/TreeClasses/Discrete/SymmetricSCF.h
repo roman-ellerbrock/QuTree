@@ -4,7 +4,7 @@
 
 #ifndef SYMMETRICSCF_H
 #define SYMMETRICSCF_H
-#include "NodeAttribute.h"
+#include "TreeClasses/NodeAttribute.h"
 #include <iostream>
 #include <random>
 
