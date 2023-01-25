@@ -105,6 +105,7 @@ TEST (ConfigurationTree, OptimizeSin) {
 	Tree tree = TreeFactory::balancedTree(N, 2, 8, 2);
 	auto Psi = randomConfigurationTree(tree, gen);
 
+	/// {00001101001100}
 	auto f = [n](const Configuration<>& c) {
 		auto x = split_doubles(c, 2);
 		double fx = sin(x[0] * QM::two_pi) + cos(x[1] * QM::two_pi) + 2.;
@@ -188,17 +189,31 @@ TEST(BlockTree, CombineLabels) {
 	ASSERT_EQ(LR, res);
 }
 
-TEST(BlockTree, Construct) {
+TEST(BlockTree, LabelTree) {
 	Tree tree = TreeFactory::balancedTree(4, 2, 2);
-	BlockTree block(tree);
+	LabelTree labeltree;
 	Range range(0, 12);
 	vector<Labels> leaf_lables({{0, 1}, {0, 2}, {0, 4}, {0, 8}});
 
-	block.initLabels(tree, leaf_lables, range);
+	labeltree.initialize(tree, leaf_lables, range);
 	const Node& top = tree.topNode();
 	const Node& node = top.child(0);
 	Labels result_up({0, 1, 2, 3});
 	Labels result_down({0, 4, 8, 12});
-	ASSERT_EQ(block.labels_up_[node], result_up);
-	ASSERT_EQ(block.labels_down_[node], result_down);
+	ASSERT_EQ(labeltree.up_[node], result_up);
+	ASSERT_EQ(labeltree.down_[node], result_down);
 }
+
+TEST(BlockTree, LabelDimensionTree) {
+	Tree tree = TreeFactory::balancedTree(4, 2, 2);
+	Range range(0, 3);
+	vector<Labels> leaf_lables({{0, 1}, {0, 1}, {0, 1}, {0, 1}});
+	LabelTree label_tree(tree, leaf_lables, range);
+	size_t max_dim = 10;
+	LabelDimensionTree dims(label_tree, max_dim, tree);
+}
+
+TEST(BlockTree, BlockTensorConstruct) {
+
+}
+

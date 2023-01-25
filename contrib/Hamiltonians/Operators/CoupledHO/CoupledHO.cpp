@@ -16,6 +16,9 @@ SOPcd CoupledHO(const Tree& tree) {
 	constexpr double lambda = 2000. / cm;
 	constexpr double omega = 4000. / cm;
 
+	/// 1/2 * w^2 * x^2
+	// H_ii = w^2
+	// H_ij = l^2 or 0
 	constexpr double c = 0.5 * omega * omega;
 
 	size_t f = tree.nLeaves();

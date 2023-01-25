@@ -91,7 +91,6 @@ public:
 		attributes_.erase(attributes_.begin() + x.address());
 	}
 
-protected:
 	// Ordered list (vector) of Attributes a_i
 	vector<A> attributes_;
 };

@@ -227,6 +227,7 @@ namespace parser {
 	mctdh_state run(const string& yaml_filename) {
 		YAML::Node config = YAML::LoadFile(yaml_filename);
 		mctdh_state state;
+		state.rng_ = mt19937(time(NULL));
 
 		for (const auto& node : config["run"]) {
 			const auto& job = node["job"].as<string>();
@@ -267,6 +268,9 @@ namespace parser {
 				const auto H = state.hamiltonian_;
 				const Tree& tree = state.tree_;
 				find_minimum(*H, tree);
+			} else if (job == "seed") {
+				auto seed = evaluate<size_t>(node, "seed");
+				state.rng_ = mt19937(seed);
 			}
 		}
 		return state;
