@@ -2,6 +2,7 @@
 // Created by Roman Ellerbrock on 1/11/23.
 //
 #include "TreeClasses/Discrete/BlockTree.h"
+#include <numeric>
 
 size_t min(size_t a, size_t b) {
 	return (a < b) ? a : b;
@@ -52,18 +53,6 @@ Labels label_combinations(const NodeAttribute<Labels>& up, const NodeAttribute<L
 		}
 	}
 	return labels;
-}
-
-size_t factorial(size_t n) {
-	size_t res{1};
-	for (size_t k = 1; k <= n; ++k) {
-		res *= k;
-	}
-	return res;
-}
-
-size_t binomial(size_t k, size_t n) {
-	return factorial(n) / (factorial(n - k) * factorial(k));
 }
 
 size_t labelDimension(const Label& label, size_t dimension, size_t n_hole) {

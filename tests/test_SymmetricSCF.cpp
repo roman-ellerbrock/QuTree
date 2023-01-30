@@ -179,16 +179,6 @@ TEST (ConfigurationTree, Optimize) {
 //	getchar();
 }
 
-TEST(BlockTree, CombineLabels) {
-	Labels L = {0, 1};
-	Labels R = {0, 3, 4};
-	Range r(0, 4);
-	Labels LR = combine(L, R, r);
-	cout << LR << endl;
-	Labels res = {0, 1, 3, 4};
-	ASSERT_EQ(LR, res);
-}
-
 TEST(BlockTree, LabelTree) {
 	Tree tree = TreeFactory::balancedTree(4, 2, 2);
 	LabelTree labeltree;
@@ -213,7 +203,12 @@ TEST(BlockTree, LabelDimensionTree) {
 	LabelDimensionTree dims(label_tree, max_dim, tree);
 }
 
-TEST(BlockTree, BlockTensorConstruct) {
-
+TEST(BlockTree, SymmetryBlockInit) {
+	mt19937 gen(0);
+	LabelDimension dim;
+	dim[1] = 4;
+	TensorShape shape({dim[1], dim[1]});
+	size_t N = shape.totalDimension();
+	size_t k = dim[1];
 }
 

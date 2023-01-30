@@ -7,27 +7,7 @@
 #include "TreeShape/Tree.h"
 #include "TreeClasses/NodeAttribute.h"
 #include "TreeClasses/Discrete/SymmetricSCF.h"
-
-/// Symmetry label, e.g. particle number
-using Label = size_t;
-using Labels = Configuration<Label>;
-
-/// range of allowed labels, e.g. particle number <= 5 and >= 0
-class Range {
-public:
-	Range(Label min, Label max)
-		: min_(min), max_(max) {}
-
-	Label min_{0};
-	Label max_{1};
-
-	bool isAllowed(size_t x) const {
-		return ((x >= min_) && (x <= max_));
-	}
-};
-
-Labels label_combinations(const NodeAttribute<Labels>& up, const NodeAttribute<Labels>& down,
-	const Range& range, const Node& node, const Node& hole);
+#include "TreeClasses/Discrete/U1Symmetry.h"
 
 class LabelTree {
 public:
@@ -144,12 +124,6 @@ public:
 	NodeAttribute<LabelDimension> down_;
 };
 
-Labels combine(const Labels& L, const Labels& R, const Range& range);
-
 TensorShape LabelShape(const TensorShape& shape, const Label& label);
-
-size_t factorial(size_t n);
-size_t binomial(size_t k, size_t n);
-
 
 #endif //LABELTREE_H

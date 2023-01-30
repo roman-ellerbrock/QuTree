@@ -26,6 +26,7 @@ set(QuTree_tests
         test_MatrixTree.cpp
         test_SparseMatrixTree.cpp
         test_RandomMatrices.cpp
+        test_U1Symmetry.cpp
 #        test_Node.cpp
         )
 add_executable(TestQuTree ${QuTree_tests})

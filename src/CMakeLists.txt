@@ -42,6 +42,7 @@ set(QuTree_SOURCE_FILES
 
         src/TreeClasses/Discrete/SymmetricSCF.cpp
         src/TreeClasses/Discrete/BlockTree.cpp
+        src/TreeClasses/Discrete/U1Symmetry.cpp
 
         # can make Fortran support independent target if needed
         src/TreeOperators/FortranOperator.cpp
