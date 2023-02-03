@@ -12,6 +12,22 @@ using BlockTreeShape = NodeAttribute<BlockTensorShape>;
 using Partition = vector<size_t>;
 using Partitions = vector<Partition>;
 
+vector<const ConfigurationTensor<>*> mask(const vector<const BlockTensor*>& As, const Partition& partition) {
+	vector<const ConfigurationTensor<>*> S;
+	for (size_t l = 0; l < As.size(); ++l) {
+		const BlockTensor& A = *As[l];
+		size_t p = partition[l];
+		/// if p doesn't exist, return an empty vector
+		if (A.find(p) == A.end()) {
+			S.clear();
+			return S;
+		}
+ 		S.push_back(&A.at(p));
+	}
+	return S;
+}
+
+
 class BlockTree {
 public:
 	BlockTree() = default;
@@ -64,10 +80,22 @@ public:
 		return nNeigh;
 	}
 
-	BlockTensor upperBlockTensorUp(const Labels& labels, const Node& node) {
+	BlockTensor randomBlockTensor(const Node& node, int hole,
+		const Range& range, const Tree& tree) {
+		const auto& neighbors = tree.neighbors(node, hole);
+		auto numbers = labels_.up_.mask(neighbors);
+		const Labels& target_labels = labels_.up_[node];
+		const vector<const BlockTensor*> tensors = up_.mask(neighbors);
 		BlockTensor A;
-		for (const Label& label: labels) {
-
+		for (const Label& label : target_labels) {
+			/// decompose symmetry label into realizations
+			const auto ps = partitions(numbers, label);
+			/// for each partition
+			for (const Partition p : ps) {
+				/// get Configurationtensor for each Label
+				auto blocks = mask(tensors, p);
+//				cartesianProduct(A, tensors);
+			}
 		}
 		/**
 		 * for label in Labels:

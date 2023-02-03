@@ -27,6 +27,14 @@ size_t sumList(const ilist& l) {
 	return s;
 }
 
+size_t sumVec(const Labels& l) {
+	size_t s = 0;
+	for (auto x: l) {
+		s += x;
+	}
+	return s;
+}
+
 void helper(list<ilist>& res, ilist numbers, ilist slate, size_t size, size_t sum) {
 	if (slate.size() > size) { return; }
 	if (sumList(slate) == sum && (slate.size() == size)) {
@@ -46,6 +54,39 @@ list<ilist> partitions(ilist numbers, size_t size, size_t sum) {
 	ilist slate;
 	helper(res, numbers, slate, size, sum);
 	return res;
+}
+
+void helper(vector<Labels>& res, const vector<Labels>& numbers, size_t depth, Labels slate, size_t size, size_t sum) {
+	if (slate.size() > size) { return; }
+	if (sumVec(slate) == sum && (slate.size() == size)) {
+		res.push_back(slate);
+		return;
+	}
+
+	if (depth >= numbers.size()) { return; }
+	for (auto x: numbers[depth]) {
+		slate.push_back(x);
+		size_t ndepth = depth + 1;
+		helper(res, numbers, ndepth, slate, size, sum);
+		slate.pop_back();
+	}
+}
+
+vector<Labels> partitions(const vector<Labels> numbers, size_t sum) {
+		vector<Labels> res;
+		Labels slate;
+		size_t depth = 0;
+		size_t size = numbers.size();
+		helper(res, numbers, depth, slate, size, sum);
+		return res;
+}
+
+vector<Labels> partitions(const vector<const Labels*> numbers, size_t sum) {
+	vector<Labels> nums;
+	for (auto x : numbers) {
+		nums.push_back(*x);
+	}
+	return partitions(nums, sum);
 }
 
 ostream& operator<<(ostream& os, const ivec& X) {

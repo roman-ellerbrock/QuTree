@@ -32,8 +32,16 @@ public:
 	Label min_{0};
 	Label max_{1};
 
-	bool isAllowed(size_t x) const {
+	[[nodiscard]] bool isAllowed(size_t x) const {
 		return ((x >= min_) && (x <= max_));
+	}
+
+	[[nodiscard]] Labels numbers() const {
+		Labels l;
+		for (size_t m = min_; m < max_; ++m) {
+			l.push_back(m);
+		}
+		return l;
 	}
 };
 
@@ -44,6 +52,8 @@ Labels combine(const Labels& L, const Labels& R, const Range& range);
 
 using ilist = list<size_t>;
 list<ilist> partitions(ilist numbers, size_t size, size_t sum);
+vector<Labels> partitions(const vector<Labels> numbers, size_t sum);
+vector<Labels> partitions(const vector<const Labels*> numbers, size_t sum);
 
 using ivec = vector<size_t>;
 
@@ -61,7 +71,5 @@ void partitionMap(ivec& p, size_t& I, size_t sum, size_t nSummands);
 
 /// Helper-function that does: 0111011 -> 032 (interfaced for unit test)
 void combinationToPartition(ivec& p);
-
-
 
 #endif //U1SYMMETRY_H

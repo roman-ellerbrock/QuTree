@@ -107,3 +107,15 @@ TEST(U1, partitionMap) {
 	vector<ivec> res({{3, 0}, {2, 1}, {1, 2}, {0, 3}});
 	ASSERT_EQ(partitions, res);
 }
+
+TEST(U1, partitionsVec) {
+	vector<Labels> numbers({{0, 1, 3}, {0, 2, 3}});
+	auto p = partitions(numbers, 3);
+	vector<Labels> res({{0, 3}, {1, 2}, {3, 0}});
+	ASSERT_EQ(p, res);
+
+	numbers = vector<Labels>({{0, 1, 3}, {0, 2, 3}, {1, 2}});
+	p = partitions(numbers, 4);
+	res = vector<Labels>({{0, 2, 2}, {0, 3, 1}, {1, 2, 1}, {3, 0, 1}});
+	ASSERT_EQ(p, res);
+}

@@ -170,6 +170,8 @@ public:
 		return vec;
 	}
 
+	[[nodiscard]] vector<const Node*> neighbors(const Node& from, int hole = -1) const;
+
 protected:
 	void linearizeNodes();
 

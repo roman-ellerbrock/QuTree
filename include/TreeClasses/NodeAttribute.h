@@ -91,6 +91,19 @@ public:
 		attributes_.erase(attributes_.begin() + x.address());
 	}
 
+	/**
+	 * \brief Masks the current object to a subset of nodes
+	 * @param nodes The selected nodes
+	 * @return vector with the attributes to the input nodes
+	 */
+	vector<const A*> mask(const vector<const Node*>& nodes) {
+		vector<const A*> targets;
+		for (const Node* node : nodes) {
+			targets.push_back(&(attributes_[node->address()]));
+		}
+		return targets;
+	}
+
 	// Ordered list (vector) of Attributes a_i
 	vector<A> attributes_;
 };

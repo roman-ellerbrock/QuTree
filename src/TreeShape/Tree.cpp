@@ -298,3 +298,17 @@ istream& operator>>(istream& is, Tree& basis) {
 	return is;
 }
 
+vector<const Node*> Tree::neighbors(const Node& from, int hole) const {
+	vector<const Node*> neigh;
+	for (size_t k = 0; k < from.nChildren(); ++k) {
+		if (k == hole) { continue; }
+		neigh.push_back(&from.child(k));
+	}
+
+	if (!from.isToplayer()) {
+		if (from.parentIdx() != hole) {
+			neigh.push_back(&from.parent());
+		}
+	}
+	return neigh;
+}
