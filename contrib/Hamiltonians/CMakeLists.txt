@@ -11,11 +11,9 @@ include_directories(${YAML_CPP_INCLUDE_DIR})
 # Link the libraries "Operators" and "PESs" into a single library "Hamiltonians"
 add_library(Hamiltonians SHARED
         Hamiltonians.cpp
-        Hamiltonian_parser.cpp
         Hamiltonians.h
-        yaml_extension.cpp
-        yaml_extension.h
         )
+
 target_compile_features(Hamiltonians PRIVATE cxx_std_14)
 target_link_libraries(Hamiltonians LINK_PUBLIC Operators PESs)
 target_link_libraries(Hamiltonians LINK_PUBLIC QuTree::QuTree)

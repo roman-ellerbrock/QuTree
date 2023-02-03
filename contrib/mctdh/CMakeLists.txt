@@ -9,6 +9,11 @@ add_executable(mctdh
         mctdh.cpp
         mctdh.h
         mctdh_state.h
+
+        yaml_extension.cpp
+        yaml_extension.h
+        Hamiltonian_parser.cpp
+        Hamiltonian_parser.h
         )
 
 target_compile_features(mctdh PRIVATE cxx_std_14)
