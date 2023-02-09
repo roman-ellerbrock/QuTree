@@ -202,8 +202,8 @@ protected:
 
 };
 
-typedef Tensor<complex<double>> Tensorcd;
 typedef Tensor<double> Tensord;
+typedef Tensor<complex<double>> Tensorcd;
 
 //////////////////////////////////////////////////////////
 // Non-member functions

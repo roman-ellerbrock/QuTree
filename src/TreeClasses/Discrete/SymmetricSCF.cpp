@@ -279,10 +279,11 @@ Configuration<> optimize(ConfigurationTree<>& Psi,
 	optimal.second = 1e99;
 
 	for (size_t sweep = 0; sweep < n_sweep; ++sweep) {
+
 		/// bottom-up
 		if (verboseness >= 1) { cout << "Sweep: " << sweep << endl; }
 		for (const Node& node: tree) {
-			if (node.isToplayer()) { continue; }
+			if (node.isToplayer() && (sweep > 0)) { continue; }
 			if (node.shape().lastDimension() == node.shape().lastBefore()) { continue; } /// nothing to optimize here
 			/// build tensor of all possible configurations
 			Configuration<> idx;
