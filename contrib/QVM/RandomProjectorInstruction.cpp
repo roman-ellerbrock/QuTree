@@ -4,7 +4,7 @@
 
 #include "RandomProjectorInstruction.h"
 #include "TreeClasses/SpectralDecompositionTree.h"
-#include "GateOperators.h"
+#include "Circuits/GateOperators.h"
 
 void RandomProjectorInstruction::apply(Wavefunction& Psi, MatrixTreecd& rho,
 	QVMState& state, ostream& os) {
