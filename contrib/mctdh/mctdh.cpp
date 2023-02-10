@@ -27,7 +27,7 @@ namespace parser {
 		Node node;
 		auto dim = yaml_node["dim"].as<size_t>();
 		vector<size_t> dims;
-		for (const auto& child : yaml_node["children"]) {
+		for (const auto& child: yaml_node["children"]) {
 			auto type = child["type"].as<string>();
 			dims.push_back(child["dim"].as<size_t>());
 			if (type == "leaf") {
@@ -48,7 +48,7 @@ namespace parser {
 	}
 
 	void read_leaf_parameters(Tree& tree, const YAML::Node& node) {
-		for (const auto& child : node["leaves"]) {
+		for (const auto& child: node["leaves"]) {
 			auto mode = evaluate<size_t>(child, "mode");
 			auto& leaf = tree.getLeaf(mode);
 			auto r0 = evaluate<double>(child, "r0");
@@ -66,7 +66,8 @@ namespace parser {
 		tree.setRoot(root);
 		tree.update();
 		read_leaf_parameters(tree, node);
-		return tree;}
+		return tree;
+	}
 
 	Tree read_tree(const YAML::Node& node) {
 		auto type = evaluate<string>(node, "type");
@@ -101,10 +102,10 @@ namespace parser {
 				/// shuffle leaf modes
 				std::vector<size_t> v(tree.nLeaves());
 				std::generate(v.begin(), v.end(), [n = 0]() mutable { return n++; });
-				std::shuffle(v.begin(), v.end(), mt19937(time(nullptr)+23498));
+				std::shuffle(v.begin(), v.end(), mt19937(time(nullptr) + 23498));
 				map<size_t, size_t> m;
 				size_t i = 0;
-				for (auto x : v) {
+				for (auto x: v) {
 					m[i] = x;
 					i++;
 				}
@@ -148,14 +149,14 @@ namespace parser {
 		auto name = evaluate<string>(node, "name");
 		auto type = evaluate<string>(node, "type");
 		if (type == "read") {
-            if(evaluate<string>(node, "filename").empty()){
-                cerr << "supply filename to save and read directive" << endl;
-                exit(1);
-            }
-            auto filename = evaluate<string>(node, "filename");
+			if (evaluate<string>(node, "filename").empty()) {
+				cerr << "supply filename to save and read directive" << endl;
+				exit(1);
+			}
+			auto filename = evaluate<string>(node, "filename");
 			Wavefunction Psi(state.tree_);
 			ifstream is(filename);
-			while(is.peek() != EOF) { /// read last wavefunction
+			while (is.peek() != EOF) { /// read last wavefunction
 				Psi.read(is);
 			}
 			state.wavefunctions_[name] = Psi;
@@ -166,16 +167,16 @@ namespace parser {
 //			occupyCIS(Psi, state.tree_);
 			state.wavefunctions_[name] = Psi;
 		} else if (type == "save") {
-		    if(evaluate<string>(node, "filename").empty()){
-		        cerr << "supply filename to save and read directive" << endl;
-		        exit(1);
-		    }
-		    auto filename = evaluate<string>(node, "filename");
-		    Wavefunction Psi(state.tree_);
-		    Psi = state.wavefunctions_[name];
-		    ofstream of(filename);
-		    Psi.write(of);
-		    of.close();
+			if (evaluate<string>(node, "filename").empty()) {
+				cerr << "supply filename to save and read directive" << endl;
+				exit(1);
+			}
+			auto filename = evaluate<string>(node, "filename");
+			Wavefunction Psi(state.tree_);
+			Psi = state.wavefunctions_[name];
+			ofstream of(filename);
+			Psi.write(of);
+			of.close();
 		} else {
 			cerr << "No valid Wavefunction initialization type." << endl;
 			cerr << "Choices: (read, create, save)" << endl;
@@ -184,9 +185,9 @@ namespace parser {
 	}
 
 	IntegratorVariables new_ivar(const YAML::Node& node, mctdh_state& state) {
-	    // TODO: this routine does not use the 'save'-directive
-	    // TODO: also, it does not save the wavefunction and only works with a wavefunction called "Psi"
-		auto t_end = evaluate<double>(node, "t_end", 100*41.362);
+		// TODO: this routine does not use the 'save'-directive
+		// TODO: also, it does not save the wavefunction and only works with a wavefunction called "Psi"
+		auto t_end = evaluate<double>(node, "t_end", 100 * 41.362);
 		auto t = evaluate<double>(node, "t", 0.);
 		auto out = evaluate<double>(node, "out", 41.362);
 		auto dt = evaluate<double>(node, "dt", 1.);
@@ -229,7 +230,7 @@ namespace parser {
 		mctdh_state state;
 		state.rng_ = mt19937(time(NULL));
 
-		for (const auto& node : config["run"]) {
+		for (const auto& node: config["run"]) {
 			const auto& job = node["job"].as<string>();
 			if (job == "tree") {
 				state.tree_ = read_tree(node);
