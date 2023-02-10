@@ -1,9 +1,12 @@
 # Easily regenerate with find src -name '*.cpp' | sort
 set(QuTree_SOURCE_FILES
 
+        src/Applications/ApplyFirstOrder.cpp
         src/Applications/CMFIntegrator.cpp
         src/Applications/Eigenstates.cpp
         src/Applications/SCF.cpp
+        src/Applications/TreeApplyOperator.cpp
+        src/Applications/TreeApplyOperatorDynamic.cpp
 
         src/Core/JacobiRotationFramework.cpp
         src/Core/Matrix_Instantiations.cpp
@@ -26,6 +29,7 @@ set(QuTree_SOURCE_FILES
         src/DVR/TDDVR.cpp
         src/DVR/XMatrixTrees.cpp
 
+        src/TreeClasses/EntropyTree.cpp
         src/TreeClasses/HamiltonianRepresentation.cpp
         src/TreeClasses/MatrixTree.cpp
         src/TreeClasses/LayerInterface.cpp
