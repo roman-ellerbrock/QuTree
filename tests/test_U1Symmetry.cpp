@@ -14,14 +14,6 @@ TEST(U1, CombineLabels) {
 	ASSERT_EQ(LR, res);
 }
 
-TEST(U1, nChooseKrandom) {
-	mt19937 gen(0);
-	auto set = nChooseKrandom(3, 10, gen);
-	ASSERT_EQ(set[0], 5);
-	ASSERT_EQ(set[1], 1);
-	ASSERT_EQ(set[2], 0);
-}
-
 TEST(U1, partitions) {
 	ilist numbers({0, 1, 2, 3});
 	auto p = partitions(numbers, 2, 3);

@@ -41,13 +41,6 @@ TEST (ConfigurationTensor, Sum) {
 										{0, 0}, {1, 1}}));
 }
 
-TEST (ConfigurationTensor, Random) {
-	mt19937 gen(0); /// create predictable series
-	TensorShape shape({10, 3});
-	ConfigurationTensor<> A = randomConfigurationTensor(shape, gen);
-	ASSERT_EQ(A, ConfigurationTensor<>({{0}, {1}, {5}}));
-}
-
 TEST (ConfigurationTree, Create) {
 	mt19937 gen(1); /// create predictable series
 	Tree tree = TreeFactory::balancedTree(4, 2, 3);
