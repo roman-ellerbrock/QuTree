@@ -3,6 +3,7 @@ find_package(yaml-cpp REQUIRED)
 
 include_directories(${YAML_CPP_INCLUDE_DIR})
 add_library(Yaml INTERFACE IMPORTED)
+
 find_package(Boost REQUIRED)
 
 add_executable(qvm
