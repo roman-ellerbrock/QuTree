@@ -31,7 +31,7 @@ jobs:
 
       - name: Install yaml-cpp
         run: |
-          sudo apt-get install -y yaml-cpp
+          sudo apt-get install -y libyaml-cpp-dev
 
       - name: Configure CMAKE
         run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
