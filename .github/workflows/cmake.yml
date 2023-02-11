@@ -16,6 +16,7 @@ jobs:
     - run: sudo apt install libopenblas-dev
     - run: sudo apt install liblapacke-dev
     - run: sudo apt install liblapack-dev
+    - run: sudo apt install yaml-cpp
     - name: run-cmake-debug
       uses: lukka/run-cmake@v1.4
       with:

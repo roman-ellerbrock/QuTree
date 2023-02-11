@@ -27,8 +27,11 @@ jobs:
 
       - name: Install LLVM-DEV
         run: |
-          sudo apt-get update
           sudo apt-get install -y llvm-dev
+
+      - name: Install yaml-cpp
+        run: |
+          sudo apt-get install -y yaml-cpp
 
       - name: Configure CMAKE
         run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
