@@ -1,0 +1,27 @@
+# examplary input to run 128D coupled harmonic oscillator
+run:
+  # automatic balanced tree generator
+  - job: tree
+    type: balanced
+    number_leaves: 128
+    dimension_leaves: 10
+    dimension_nodes:     4
+    dimension_increment: 4
+    shuffle_indices: 0
+    leaf_type: 0
+    omega: 0.01822
+    wfomega: 0.01822
+
+  - job: hamiltonian
+    name: coupled_ho
+
+  - job: wavefunction
+    name: Psi
+    type: create
+
+  # 10 iterations of SCF with krylov space dimension of 10
+  - job: scf
+    nIter: 10
+    nKrylov: 10
+    nITP: 0
+    output: false
