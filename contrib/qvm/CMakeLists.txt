@@ -5,6 +5,7 @@ include_directories(${YAML_CPP_INCLUDE_DIR})
 add_library(Yaml INTERFACE IMPORTED)
 
 find_package(Boost QUIET)
+include_directories(${Boost_INCLUDE_DIR})
 
 add_executable(qvm
         qvm_main.cpp

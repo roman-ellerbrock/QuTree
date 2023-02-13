@@ -1,8 +1,6 @@
 #include "TreeOperators/FortranSOP.h"
 #include "Core/Matrix.h"
 
-template class Matrix<int>;
-
 extern "C"
 {
 	void DDXCPP(int* mode, double hPsi[], double Psi[], int* dim, double matrix[], double trafo[])

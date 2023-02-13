@@ -19,7 +19,7 @@ enable_language(CXX)
 enable_language(Fortran)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 cmake_policy(SET "CMP0042" NEW)
-# set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
+set(CMAKE_VERBOSE_MAKEFILE ON) # For debugging
 
 #####################################################################
 # Target setup
@@ -72,10 +72,17 @@ endif ()
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 if (APPLE)
-    message(STATUS "USING MAC OS!")
-    set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
-    target_include_directories(QuTree PUBLIC "/usr/local/opt/openblas/include")
-    include_directories("/usr/local/opt/openblas/include")
+   if (APPLE_SILICON_PROCESSOR)
+      message(STATUS "USING MAC OS with M1!")
+      set(BLAS_LIBRARIES "/opt/homebrew/Cellar/openblas/0.3.21/lib/libblas.dylib")
+      target_include_directories(QuTree PUBLIC "/opt/homebrew/Cellar/openblas/0.3.21/include")
+      include_directories("/opt/homebrew/Cellar/openblas/0.3.21/include")
+   else
+      message(STATUS "USING MAC OS!")
+      set(BLAS_LIBRARIES "/usr/local/opt/openblas/lib/libblas.dylib")
+      target_include_directories(QuTree PUBLIC "/usr/local/opt/openblas/include")
+      include_directories("/usr/local/opt/openblas/include")
+   endif	
 elseif (UNIX)
     #    set(BLA_VENDOR OpenBLAS)
     message(STATUS "USING UNIX!")
@@ -153,7 +160,7 @@ target_link_libraries(QuTree PUBLIC Eigen3::Eigen ${BLAS_LIBRARIES} ${LAPACK_LIB
 # Ensure C++14 standard (force downstream as well)
 target_compile_features(QuTree PUBLIC cxx_std_17)
 
-set(FLAGS_VECTORIZE "-fopenmp-simd -march=native")
+set(FLAGS_VECTORIZE "-fopenmp-simd")
 set(QuTree_RELEASE_FLAGS "${FLAGS_VECTORIZE} -O3 -ffast-math")
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Ofast -ffast-math")
 
