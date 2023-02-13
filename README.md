@@ -28,6 +28,15 @@ For instructions on how to install from source, check out our [documentation](ht
 
 ## Using QuTree
 
+QuTree can be used as a library or via it's standalone applications like the multiconfigurational timedependent 
+Hartree (mctdh) application or the quantum virtual machine (qvm).
+
+Applications like mctdh & qvm can be found in ${project}/contrib. Examplary inputs are located in 
+${project}/examples/${application_name}. Applications are run via
+```
+./mctdh {input.yaml} > {output.txt}
+```
+
 After installation, QuTree can be easily used in downstream CMake projects.
 If installed to non-standard locations, make sure to set `QuTree_DIR` to the location of `QuTreeConfig.cmake`.
 
@@ -38,11 +47,11 @@ project(example CXX)
 
 find_package(QuTree REQUIRED)
 
-add_executable(test test.cpp)
-target_link_libraries(test QuTree::QuTree)
+add_executable(qutree_app app.cpp)
+target_link_libraries(qutree_app QuTree::QuTree)
 ```
 
-Example `test.cpp`:
+Example `app.cpp`:
 ```
 #include <Core/Tensor.h>
 #include <Core/Matrix.h>
@@ -66,4 +75,5 @@ For detailed examples on how to use the library, please see the `examples` folde
 
 If QuTree is useful to your work, please cite the following paper:
 
-TODO
+R. Ellerbrock, K. G. Johnson, S. Seritan, H. Hoppe, H. J. Zhang, T. Lenzen, T. Weike, U. Manthe, T. J. Martínez,
+"QuTree - a Tree Tensor Network package", 2023 (in preparation)
