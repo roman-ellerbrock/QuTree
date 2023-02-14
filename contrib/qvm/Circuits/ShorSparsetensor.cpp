@@ -192,11 +192,11 @@ void ShorSparsetensor::sample() {
 }
 
 cpp_int findA(const cpp_int& N, mt19937& gen) {
-	uniform_int_distribution<cpp_int> dist((cpp_int) 2, N - 1);
+     uniform_int_distribution<long long> dist(2, (long long) N - 1);
 	cpp_int r = 0;
 	cpp_int a = 0;
 	while (r != 1) {
-		a = dist(gen);
+	  a = (cpp_int) dist(gen);
 		r = gcd(a, N);
 	}
 	return a;
