@@ -5,7 +5,12 @@ include_directories(${YAML_CPP_INCLUDE_DIR})
 add_library(Yaml INTERFACE IMPORTED)
 
 find_package(Boost QUIET)
-include_directories(${Boost_INCLUDE_DIR})
+if (Boost_FOUND)
+    message(STATUS "Found Boost.")
+    include_directories(${Boost_INCLUDE_DIR})
+else()
+    message(WARNING "Cannot find Boost. Boost is only required to build QuTreeVM (qvm). You can still build QuTree & mctdh.")
+endif()
 
 add_executable(qvm
         qvm_main.cpp
