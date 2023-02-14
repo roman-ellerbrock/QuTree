@@ -23,3 +23,6 @@ target_include_directories(mctdh PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(mctdh PUBLIC "-ffast-math" "-O3")
 target_link_libraries(mctdh QuTree::QuTree yaml-cpp Hamiltonians)
 
+install(TARGETS mctdh
+        RUNTIME DESTINATION bin
+)
