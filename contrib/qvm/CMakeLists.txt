@@ -50,3 +50,6 @@ target_include_directories(qvm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(qvm PUBLIC "-ffast-math" "-O3")
 target_link_libraries(qvm QuTree::QuTree yaml-cpp Hamiltonians)
 
+install(TARGETS qvm
+        RUNTIME DESTINATION bin
+)

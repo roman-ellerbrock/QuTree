@@ -21,3 +21,8 @@ target_link_libraries(Hamiltonians LINK_PUBLIC yaml-cpp)
 target_compile_options(Hamiltonians PUBLIC "-ffast-math" "-O3")
 target_include_directories(Hamiltonians PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+install(TARGETS Hamiltonians
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        INCLUDES DESTINATION include
+)

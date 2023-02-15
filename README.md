@@ -8,6 +8,37 @@ A tensor tree linear algebra package in C++ designed for quantum dynamics and ma
 
 ## Getting Started
 
+### Docker container of the executables
+
+If you have Docker installed, it would be the easiest way for you to try out the executables.
+
+```bash
+docker pull mtzgroup/qutree:latest
+```
+
+To run the executables in Docker:
+
+```bash
+# Example 1: running an mctdh example
+docker run \
+	-it \
+	--rm \
+	-v $(pwd)/examples/mctdh:/app \
+	mtzgroup/qutree:latest \
+	mctdh portfolioOptimization.nasdaq.25.yaml
+
+# Example 2: mount your own input dir, then run mctdh interactively
+mkdir my-inputs
+docker run \
+	-it \
+	--rm \
+	-v $(pwd)/my-inputs:/app \
+	mtzgroup/qutree:latest
+# You can run `mctdh {input.yaml} > {output.txt}` inside the container.
+```
+
+### Homebrew
+
 Installation is easy using HomeBrew (on OS X) or LinuxBrew (on Linux):
 ```
 brew tap sseritan/qu-tree
@@ -37,7 +68,7 @@ ${project}/examples/${application_name}. Applications are run via
 ./mctdh {input.yaml} > {output.txt}
 ```
 
-After installation, QuTree can be easily used in downstream CMake projects.
+After installation, the QuTree library can be easily used in downstream CMake projects.
 If installed to non-standard locations, make sure to set `QuTree_DIR` to the location of `QuTreeConfig.cmake`.
 
 Example CMakeLists.txt:
@@ -75,5 +106,5 @@ For detailed examples on how to use the library, please see the `examples` folde
 
 If QuTree is useful to your work, please cite the following paper:
 
-R. Ellerbrock, K. G. Johnson, S. Seritan, H. Hoppe, H. J. Zhang, T. Lenzen, T. Weike, U. Manthe, T. J. Martínez,
+R. Ellerbrock, K. G. Johnson, S. Seritan, H. Hoppe, J. H. Zhang, T. Lenzen, T. Weike, U. Manthe, T. J. Martínez,
 "QuTree - a Tree Tensor Network package", 2023 (in preparation)
