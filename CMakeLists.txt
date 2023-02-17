@@ -7,7 +7,8 @@
 # The library was originally designed for quantum dynamics simulations.
 #
 # Main author: Roman Ellerbrock
-# Contributing authors: Stefan Seritan, K. Grace Johnson,
+# Contributing authors: K. Grace Johnson, Stefan Seritan,
+#                       H. J. Zhang, H. Hoppe
 #                       Thomas Weike, Tim Lenzen
 ###########################################################################
 
