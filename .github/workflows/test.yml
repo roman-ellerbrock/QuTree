@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { cc: gnu,  os: ubuntu-latest }
+          - { cc: llvm, os: ubuntu-latest }
+          - { cc: llvm, os: macos-latest }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libopenblas-dev \
+            liblapack-dev \
+            liblapacke-dev \
+            libyaml-cpp-dev
+      - name: Install dependencies
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install \
+            openblas \
+            lapack \
+            yaml-cpp
+
+      - name: Install toolchain
+        if: matrix.os == 'ubuntu-latest' && matrix.cc == 'gnu'
+        run: |
+          sudo apt-get install -y g++-10 gcc-10
+          echo "CC=gcc-10" >> $GITHUB_ENV
+          echo "CXX=g++-10" >> $GITHUB_ENV
+      - name: Install toolchain
+        if: matrix.os == 'ubuntu-latest' && matrix.cc == 'llvm'
+        run: |
+          sudo apt-get install -y llvm-dev
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+      - name: Install toolchain
+        if: matrix.os == 'macos-latest' && matrix.cc == 'llvm'
+        run: |
+          brew install llvm gcc
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+          echo "FC=gfortran-12" >> $GITHUB_ENV
+
+      - name: Configure CMAKE
+        run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        shell: bash
+
+      - name: Build QuTree
+        working-directory: ${{github.workspace}}/build
+        run: make -j$(nproc) QuTree Hamiltonians mctdh
+
+      - name: Build Unit Tests
+        working-directory: ${{github.workspace}}/build
+        run: make -j$(nproc) TestQuTree
+
+      - name: Run Unit Tests
+        working-directory: ${{github.workspace}}/build
+        run: ./tests/TestQuTree
+
+

@@ -1,6 +1,6 @@
-[![Ubuntu Clang Deployment](https://github.com/roman-ellerbrock/QuTree/actions/workflows/ubuntu-clang.yml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/ubuntu-clang.yml)
+[![CI](https://github.com/roman-ellerbrock/QuTree/actions/workflows/test.yml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/test.yml)
+[![Docker build](https://github.com/roman-ellerbrock/QuTree/actions/workflows/docker.yml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/docker.yml)
 
-[![Ubuntu GCC Deployment](https://github.com/roman-ellerbrock/QuTree/actions/workflows/ubuntu-gcc.yml/badge.svg)](https://github.com/roman-ellerbrock/QuTree/actions/workflows/ubuntu-gcc.yml)
 
 # QuTree
 
