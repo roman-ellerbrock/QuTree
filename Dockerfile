@@ -9,7 +9,8 @@ RUN apt-get install -y --no-install-recommends \
 WORKDIR /app-build
 COPY . ./
 
-RUN cmake -S . -B build -DCMAKE_PREFIX_PATH=/opt/qutree -DCMAKE_INSTALL_PREFIX=/opt/qutree -DGITHUB_ACTIONS=true
+ENV LDFLAGS=-L/usr/lib/x86_64-linux-gnu
+RUN cmake -S . -B build -DCMAKE_PREFIX_PATH=/opt/qutree -DCMAKE_INSTALL_PREFIX=/opt/qutree
 RUN cmake --build build -j$(nproc) --target QuTree Hamiltonians mctdh
 RUN cmake --install build
 RUN cmake --install build/contrib

@@ -93,11 +93,7 @@ elseif (UNIX)
     include_directories("/usr/include/x86_64-linux-gnu")
 endif ()
 
-if (GITHUB_ACTIONS)
-    message(STATUS "Compiling for Github Actions!")
-    set(LAPACKE_PATH "/usr/lib/x86_64-linux-gnu")
-    target_link_libraries(QuTree PUBLIC -L${LAPACKE_PATH} lapacke blas lapack)
-endif ()
+target_link_libraries(QuTree PUBLIC lapacke blas lapack)
 
 # Set up headers in include/ for install & build and src/ for just building
 target_include_directories(QuTree

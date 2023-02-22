@@ -35,6 +35,7 @@ jobs:
             liblapack-dev \
             liblapacke-dev \
             libyaml-cpp-dev
+          echo "LDFLAGS=-L/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
       - name: Install dependencies
         if: matrix.os == 'macos-latest'
         run: |
@@ -42,6 +43,8 @@ jobs:
             openblas \
             lapack \
             yaml-cpp
+          echo "LDFLAGS=-L/usr/local/opt/lapack/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/usr/local/opt/lapack/include" >> $GITHUB_ENV
 
       - name: Install toolchain
         if: matrix.os == 'ubuntu-latest' && matrix.cc == 'gnu'
@@ -64,7 +67,7 @@ jobs:
           echo "FC=gfortran-12" >> $GITHUB_ENV
 
       - name: Configure CMAKE
-        run: cmake -DGITHUB_ACTIONS=on -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         shell: bash
 
       - name: Build QuTree
