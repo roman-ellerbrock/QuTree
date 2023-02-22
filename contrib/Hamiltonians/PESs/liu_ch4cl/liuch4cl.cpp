@@ -3,6 +3,7 @@
 //
 
 #include "liuch4cl.h"
+#include <array>
 
 extern "C" {
 void ch4clpot_(double* v, double* q, double* m);
