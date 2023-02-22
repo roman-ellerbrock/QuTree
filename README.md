@@ -8,9 +8,14 @@ A tensor tree linear algebra package in C++ designed for quantum dynamics and ma
 
 ## Getting Started
 
+There are different ways to install QuTree library and corresponding executables.
+The easiest way to try out the executables would be to use a Docker container.
+You can always install QuTree from source.
+
+
 ### Docker container of the executables
 
-If you have Docker installed, it would be the easiest way for you to try out the executables.
+To obtain a Docker container with precompiled executables, type:
 
 ```bash
 docker pull mtzgroup/qutree:latest
@@ -39,7 +44,7 @@ docker run \
 
 ### Homebrew
 
-Installation is easy using HomeBrew (on OS X) or LinuxBrew (on Linux):
+To install QuTree using HomeBrew (on OS X) or LinuxBrew (on Linux), run:
 ```
 brew tap sseritan/qu-tree
 brew install qu-tree

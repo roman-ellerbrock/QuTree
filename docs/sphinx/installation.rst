@@ -2,14 +2,55 @@
 Installation
 ============
 
-Prerequisites include:
+Requirements
+============
 
 * CMake >= 3.0
-* Eigen3
-* UnitTest++ (only for testing)
+* a C++17 compiler
+* yaml-cpp (only for mctdh & qvm)
+* Boost (only for qvm)
 
-If installing via HomeBrew, these are automatically handled for you.
-Otherwise, QuTree will attempt to use `git` submodules to build them locally.
+You can install yaml-cpp from source via::
+
+    git clone https://github.com/jbeder/yaml-cpp.git
+    cd yaml-cpp
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/home/[username]/usr/
+
+Compiling from Source
+=====================
+
+Compilation follows the standard CMake procedure::
+
+    mkdir build
+    cd build
+    cmake ../
+    make
+    make install
+
+For testing, run :code:`make TestQuTree` instead.
+Applications are compiled as targets on request. They will NOT be compiled on a standard make call since they
+have additional requirements. Run :code:`make mctdh` or :code:`make qvm` to create the targets but note that they require
+yaml-cpp (for mctdh & qvm) and Boost (for qvm).
+
+If you work on a system with specialized installation pathways, you can tell cmake to choose the correct
+implementations::
+
+    cmake .. -DQuTree_DIR=[path]
+    make
+    make mctdh
+    make qvm
+
+Switch out the :code:`[path]` with the path to your preferred cmake installation directory.
+If cmake cannot find required packages, you can select them by adding :code:`-Dyaml-cpp_DIR=[path]/yaml-cpp/`
+for yaml-cpp, :code:`-DBOOST_ROOT=[path]/usr/` for boost. If blas/lapack includes files are not found, please check
+the system's environment variables.
+If the problems occur at the linking step, then the paths set to libraries might not be set correctly.
+The library paths for Lapack & Blas can be set by adding :code:`-DLAPACKE_PATH=[path]`, :code:`-DBLAS_LIBRARIES=[path]`
+to the cmake call. The paths should be set to directories
+that contain the libraries of Blas & Lapack. Make sure that the libraries were compiled using the same compiler, otherwise there
+might be missing functions due to differing name decorations.
 
 HomeBrew/LinuxBrew
 ==================
@@ -26,7 +67,6 @@ Then install the QuTree package is distributed via a HomeBrew tap::
     brew tap sseritan/qu-tree
     brew install qu-tree
 
-
 On Debian/Ubuntu, you may need the following packages for LinuxBrew::
 
     apt install build-essential curl file git locales
@@ -42,21 +82,6 @@ Tested operating systems:
 * Ubuntu 18.04 LTS
 * CentOS 7
 
-Compiling from Source
-=====================
-
-If Eigen or UnitTest++ are not detected on your system, QuTree will use `git` submodules to build them locally.
-
-Compilation follows standard CMake procedure::
-
-    mkdir build
-    cd build
-    cmake ../
-    make
-    make install
-
-For testing, run :code:`make TestQuTree` instead.
-
 OpenMP Support
 --------------
 If you want to enable OpenMP for multi-threading on OS X, do the following:
@@ -66,3 +91,4 @@ If you want to enable OpenMP for multi-threading on OS X, do the following:
 
 2) In CMakeLists.txt, :code:`set(openmp ON)`
 3) When you run, :code:`export OMP_NUM_THREADS=<desired no. threads>`
+
