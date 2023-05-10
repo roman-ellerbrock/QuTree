@@ -3,10 +3,11 @@
 
 namespace qutree {
 
-    template <class Attribute>
-    Graph<Attribute> subgraph(const Graph<Attribute> &graph, const std::vector<Leaf> &leaves);
+template <class Attribute>
+Graph<Attribute> subgraph(const Graph<Attribute> &graph,
+                          const std::vector<Leaf> &leaves);
 
-    template <class Attribute>
-    Graph<Attribute> binary(index_t nLeaves);
+template <class Attribute = std::any>
+Graph<Attribute> balancedBinaryTree(index_t nLeaves);
 
-}
+} // namespace qutree
