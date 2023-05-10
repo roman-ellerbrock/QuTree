@@ -1,48 +1,40 @@
 include(FetchContent)
+
 FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/heads/main.zip
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        release-1.11.0
 )
+
 FetchContent_MakeAvailable(googletest)
+add_library(GTest::GTest INTERFACE IMPORTED)
+target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
-enable_testing()
+add_executable(
+    tests
+    tests.cpp
+    test_Graph.cpp
+    test_GraphFactory.cpp
+    test_TensorNetwork.cpp
+    graph_util.cpp
+)
 
-set(QuTree_tests
-        test_GradientDescent.cpp
-        test_Integrator.cpp
-        test_Matrix.cpp
-        test_MatrixBLAS.cpp
-        test_MatrixTensorTree.cpp
-        test_Tensor.cpp
-        tests.cpp
-        test_TensorTree.cpp
-        test_TensorBLAS.cpp
-        test_Operators.cpp
-        test_SparseTree.cpp
-        test_SymmetricSCF.cpp
-#        test_SymTensorTree.cpp
-        test_TensorTreeBasis.cpp
-#        test_TensorTreeOperator.cpp
-        test_MatrixTree.cpp
-        test_SparseMatrixTree.cpp
-        test_RandomMatrices.cpp
-        test_U1Symmetry.cpp
-#        test_Node.cpp
-        )
-add_executable(TestQuTree ${QuTree_tests})
-target_link_libraries(TestQuTree QuTree)
-target_link_libraries(TestQuTree gtest_main)
-target_compile_features(TestQuTree PRIVATE cxx_std_14)
+target_include_directories(tests PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/tests
+)
 
-set(QuTree_benchmarks
-        benchmarks/benchmark_tensor.cpp
-        benchmarks/benchmark_tensor.h
-        benchmarks/benchmark_tree.cpp benchmarks/benchmark_tree.h
-        benchmarks/benchmark_helper.cpp benchmarks/benchmark_helper.h
-        benchmarks/optimize_matrixtensor.cpp benchmarks/optimize_matrixtensor.h
-        )
+target_link_libraries(tests PRIVATE
+    qutreelib
+    GTest::GTest
+)
 
-add_executable(benchmarks benchmarks/main_benchmarks.cpp ${QuTree_benchmarks})
-target_link_libraries(benchmarks QuTree /usr/local/opt/openblas/lib/libblas.dylib)
-target_compile_features(benchmarks PRIVATE cxx_std_14)
+set_target_properties(tests PROPERTIES 
+    CXX_STANDARD 17
+)
 
+gtest_discover_tests(tests)
+
+add_test(NAME AllTests
+    COMMAND tests
+)

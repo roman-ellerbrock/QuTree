@@ -1,3 +1,5 @@
+.gitignore
+
 docs/_build
 docs/doxygen/html
 docs/doxygen/latex
