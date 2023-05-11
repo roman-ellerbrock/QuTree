@@ -60,4 +60,3 @@ TEST(GraphFactory, balancedBinaryTree) {
   ASSERT_TRUE(graph.containsEdge(flip({2, 4})));
   ASSERT_TRUE(graph.containsEdge(flip({3, 4})));
 }
-

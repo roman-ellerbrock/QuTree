@@ -90,6 +90,7 @@ Graph<Attribute> balancedBinaryTree(index_t nLeaves) {
   // add leaves
   for (auto i : buffer) {
     graph.leaves_[Leaf({i, i})] = "";
+    graph.nodes_[Node(i)] = "";
   }
 
   while (buffer.size() > 1) {

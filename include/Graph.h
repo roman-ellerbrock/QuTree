@@ -8,12 +8,12 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-#include <any>
 #include "backend/Tensor.h"
+#include <any>
 
 namespace qutree {
 
-using Node = index_t;              // uid
+using Node = index_t;               // uid
 using Leaf = std::pair<Node, Node>; // uid
 using Edge = std::pair<Node, Node>; // {from, to}
 
@@ -23,8 +23,6 @@ Edge flip(Edge e);
 bool isUpEdge(Edge e);
 bool isDownEdge(Edge e);
 
-std::ostream &operator<<(std::ostream &os, const Edge &e);
-
 template <class Attribute>
 std::vector<Edge> mapToVector(const std::map<Edge, Attribute> &m);
 void eraseValue(std::vector<Edge> &edges, Edge e);
@@ -32,6 +30,8 @@ void eraseValue(std::vector<Edge> &edges, Edge e);
 /**
  * \class Graph
  * \brief This class represents a graph consisting of nodes, edges, and leaves.
+ *
+ * @param Attribute Defines what is associates with nodes, edges, and leaves.
  *
  * The graph class encodes the topology of a tensor network. Nodes, edges and
  * leaves are stored in maps. They can be given names which are stored in the
@@ -53,6 +53,9 @@ public:
       : nodes_(nodes), edges_(edges), leaves_(leaves) {}
 
   /// cross-initialization
+  Graph(const Graph<Attribute> &graph)
+      : nodes_(graph.nodes_), edges_(graph.edges_), leaves_(graph.leaves_) {}
+
   template <class B> Graph(const Graph<B> &graph) {
     /// Leaves
     for (const auto &p : graph.leaves_) {
@@ -188,6 +191,9 @@ public:
   std::map<Edge, Attribute> edges_;
   std::map<Leaf, Attribute> leaves_;
 };
+
+index_t layer(Node node, const Graph<> &graph);
+
 } // namespace qutree
 
 std::ostream &operator<<(std::ostream &os, const qutree::Edge &edge);

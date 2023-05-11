@@ -5,6 +5,7 @@ include_directories(${YAML_INCLUDE_DIRS})
 add_library(qutreelib)
 
 target_sources(qutreelib PUBLIC
+    ${PROJECT_SOURCE_DIR}/src/backend/torch_util.cpp
     ${PROJECT_SOURCE_DIR}/src/Graph.cpp
     ${PROJECT_SOURCE_DIR}/src/GraphFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/TensorNetwork.cpp

@@ -2,38 +2,71 @@
 
 namespace qutree {
 
-NetworkShape createNetworkShape(const Graph<> &graph,
-    int64_t bondDimension,
-    int64_t leafDimension) 
-{
-    NetworkShape network_shape(graph);
+GraphSelector TN = {true, false, false};
+GraphSelector MT = {false, true, true};
 
-    for (auto& leafpair : network_shape.leaves_)
-    {
-        torch::IntArrayRef& ref = leafpair.second;
-        ref = std::vector<int64_t>({leafDimension});
+NetworkShape standardShape(const Graph<> &graph, index_t bondDimension,
+                           index_t leafDimension) {
+  NetworkShape shape(graph);
+
+  for (auto &nodepair : shape.nodes_) {
+    auto &ref = nodepair.second;
+    Node node = nodepair.first;
+    auto nNeighbors = graph.outEdges(node).size();
+    ref = std::vector<index_t>(nNeighbors, bondDimension);
+  }
+
+  for (auto &edgepair : shape.edges_) {
+    auto &ref = edgepair.second;
+    ref = {bondDimension, bondDimension};
+  }
+
+  for (auto &leafpair : shape.leaves_) {
+    auto &ref = leafpair.second;
+    ref = {leafDimension, leafDimension};
+  }
+
+  return shape;
+}
+
+TensorNetwork randomTTNS(const NetworkShape &shape, GraphSelector s) {
+  TensorNetwork psi(shape);
+  using namespace std;
+  bool nodes = get<0>(s);
+  bool edges = get<1>(s);
+  bool leaves = get<2>(s);
+
+  if (nodes) {
+    for (auto &nodepair : psi.nodes_) {
+      Node node = nodepair.first;
+      auto &ref = nodepair.second;
+      ref = tensorlib::rand(shape.nodes_.at(node), tensorlib::options());
     }
+  }
 
-    for (auto& edgepair : network_shape.edges_)
-    {
-        torch::IntArrayRef& ref = edgepair.second;
-        ref = std::vector<int64_t>({bondDimension, bondDimension});
+  if (edges) {
+    for (auto &edgepair : psi.edges_) {
+      Edge edge = edgepair.first;
+      auto &ref = edgepair.second;
+      ref = tensorlib::rand(shape.edges_.at(edge), tensorlib::options());
     }
+  }
 
-    for (auto& nodepair : network_shape.nodes_)
-    {
-        torch::IntArrayRef& ref = nodepair.second;
-        Node node = nodepair.first;
-        auto nNeighbors = graph.outEdges(node).size();
-        ref = std::vector<int64_t>(nNeighbors, bondDimension);
+  if (leaves) {
+    for (auto &leafpair : psi.leaves_) {
+      Leaf leaf = leafpair.first;
+      auto &ref = leafpair.second;
+      ref = tensorlib::rand(shape.leaves_.at(leaf), tensorlib::options());
     }
+  }
 
-    return network_shape;
+  return psi;
 }
 
 TensorNetwork createTensorNetwork(const Graph<> &graph) {
 
-  TensorNetwork psi(graph);
+  //  TensorNetwork psi(graph);
+  TensorNetwork psi;
 
   return psi;
 }

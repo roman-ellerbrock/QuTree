@@ -158,3 +158,18 @@ TEST(Graph, iterateEdges)
         EXPECT_EQ(es[idx++], edge);
     }
 }
+
+TEST(Graph, layer)
+{
+    Graph graph = binary_4_graph();
+    std::vector<Node> nodes = {0, 1, 2, 3, 4, 5, 6};
+    ASSERT_EQ(2, qutree::layer(0, graph));
+    ASSERT_EQ(2, qutree::layer(1, graph));
+    ASSERT_EQ(2, qutree::layer(3, graph));
+    ASSERT_EQ(2, qutree::layer(4, graph));
+
+    ASSERT_EQ(1, qutree::layer(2, graph));
+    ASSERT_EQ(1, qutree::layer(5, graph));
+
+    ASSERT_EQ(0, qutree::layer(6, graph));
+}
