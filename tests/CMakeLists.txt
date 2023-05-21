@@ -13,9 +13,11 @@ target_link_libraries(GTest::GTest INTERFACE gtest_main)
 add_executable(
     tests
     tests.cpp
+    test_arithmetics.cpp
     test_Graph.cpp
     test_GraphFactory.cpp
     test_TensorNetwork.cpp
+    test_torch_util.cpp
     graph_util.cpp
 )
 

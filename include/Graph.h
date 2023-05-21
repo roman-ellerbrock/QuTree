@@ -4,10 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "yaml-cpp/yaml.h"
 #include <iostream>
-#include <nlohmann/json.hpp>
-
 #include "backend/Tensor.h"
 #include <any>
 
@@ -22,6 +19,9 @@ Node to(Edge e);
 Edge flip(Edge e);
 bool isUpEdge(Edge e);
 bool isDownEdge(Edge e);
+bool isInLeaf(Edge e);
+bool isOutLeaf(Edge e);
+bool isLeaf(Edge e);
 
 template <class Attribute>
 std::vector<Edge> mapToVector(const std::map<Edge, Attribute> &m);
@@ -36,6 +36,7 @@ void eraseValue(std::vector<Edge> &edges, Edge e);
  * The graph class encodes the topology of a tensor network. Nodes, edges and
  * leaves are stored in maps. They can be given names which are stored in the
  * maps as well.
+ * Leaves are just edges that point from negative (logic) Nodes
  */
 template <class Attribute = std::any> class Graph {
 public:
@@ -43,26 +44,18 @@ public:
   ~Graph() = default;
 
   Graph(const std::map<Node, Attribute> &&nodes,
-        const std::map<Edge, Attribute> &&edges,
-        const std::map<Leaf, Attribute> &&leaves)
-      : nodes_(nodes), edges_(edges), leaves_(leaves) {}
+        const std::map<Edge, Attribute> &&edges)
+      : nodes_(nodes), edges_(edges) {}
 
   Graph(const std::map<Node, Attribute> &nodes,
-        const std::map<Edge, Attribute> &edges,
-        const std::map<Leaf, Attribute> &leaves)
-      : nodes_(nodes), edges_(edges), leaves_(leaves) {}
+        const std::map<Edge, Attribute> &edges)
+      : nodes_(nodes), edges_(edges) {}
 
   /// cross-initialization
   Graph(const Graph<Attribute> &graph)
-      : nodes_(graph.nodes_), edges_(graph.edges_), leaves_(graph.leaves_) {}
+      : nodes_(graph.nodes_), edges_(graph.edges_) {}
 
   template <class B> Graph(const Graph<B> &graph) {
-    /// Leaves
-    for (const auto &p : graph.leaves_) {
-      Leaf l = p.first;
-      leaves_[l] = Attribute();
-    }
-
     /// Edges
     for (const auto &p : graph.edges_) {
       Edge e = p.first;
@@ -79,99 +72,45 @@ public:
   void clear() {
     nodes_.clear();
     edges_.clear();
-    leaves_.clear();
   }
 
   bool empty() const {
-    return (nodes_.empty() && edges_.empty() && leaves_.empty());
+    return (nodes_.empty() && edges_.empty());
   }
 
-  std::vector<Edge> inEdges(Node node) const {
-    std::map<Edge, Attribute> filtered_edges;
-    std::copy_if(edges_.begin(), edges_.end(),
-                 std::inserter(filtered_edges, filtered_edges.end()),
-                 [node](const std::pair<Edge, Attribute> &p) {
-                   return to(p.first) == node;
-                 });
+  std::vector<Edge> inEdges(Node node) const;
 
-    return mapToVector(filtered_edges);
-  }
+  std::vector<Edge> outEdges(Node node) const;
 
-  std::vector<Edge> outEdges(Node node) const {
-    std::map<Edge, Attribute> filtered_edges;
-    std::copy_if(edges_.begin(), edges_.end(),
-                 std::inserter(filtered_edges, filtered_edges.end()),
-                 [node](const std::pair<Edge, Attribute> &p) {
-                   return (from(p.first) == node);
-                 });
+  std::vector<Edge> inEdges(Edge edge) const;
 
-    return mapToVector(filtered_edges);
-  }
+  std::vector<Edge> outEdges(Edge edge) const;
 
-  std::vector<Edge> inEdges(Edge edge) const {
-    std::vector<Edge> prev = inEdges(from(edge));
-    eraseValue(prev, flip(edge));
-    return prev;
-  }
+  std::vector<Edge> upEdges(Node node) const;
 
-  std::vector<Edge> outEdges(Edge edge) const {
-    std::vector<Edge> post = outEdges(to(edge));
-    eraseValue(post, flip(edge));
-    return post;
-  }
+  std::vector<Edge> upEdges(Edge edge) const;
 
-  std::vector<Edge> upEdges(Node node) const {
-    std::map<Edge, Attribute> filtered_edges;
-    std::copy_if(edges_.begin(), edges_.end(),
-                 std::inserter(filtered_edges, filtered_edges.end()),
-                 [node](const std::pair<Edge, Attribute> &p) {
-                   return (from(p.first) == node) && isUpEdge(p.first);
-                 });
+  std::vector<Edge> downEdges(Node node) const;
 
-    return mapToVector(filtered_edges);
-  }
+  std::vector<Edge> downEdges(Edge edge) const;
 
-  std::vector<Edge> upEdges(Edge edge) const { return upEdges(to(edge)); }
+  /// @brief returns 'out-index'
+  /// @param node node that edge goes out from
+  /// @param edge outgoing edge
+  /// @return attachment index [0, nneighbors[
+  index_t outIndex(Node node, Edge edge) const;
 
-  std::vector<Edge> downEdges(Node node) const {
-    std::map<Edge, Attribute> filtered_edges;
-    std::copy_if(edges_.begin(), edges_.end(),
-                 std::inserter(filtered_edges, filtered_edges.end()),
-                 [node](const std::pair<Edge, Attribute> &p) {
-                   return (from(p.first) == node) && isDownEdge(p.first);
-                 });
-
-    return mapToVector(filtered_edges);
-  }
-
-  std::vector<Edge> downEdges(Edge edge) const { return downEdges(to(edge)); }
+  /// @brief returns 'in-index'
+  /// @param node node that edge comes in to
+  /// @param edge incoming edge
+  /// @return attachment index [0, nneighbors[
+  index_t inIndex(Edge edge, Node node) const;
 
   /**
    * \brief Generate vector of edges sorted so that it can be sweeped over in
    *TNS simulations
    **/
-  std::vector<Edge> sortedEdges() const {
-    std::map<Edge, Attribute> filtered_edges;
-    /// copy up-edges, i.e. where from(edge) < to(edge)
-    std::copy_if(edges_.begin(), edges_.end(),
-                 std::inserter(filtered_edges, filtered_edges.end()),
-                 [](const std::pair<Edge, Attribute> &p) {
-                   return (isUpEdge(p.first));
-                 });
-    std::vector<Edge> sorted_edges = mapToVector(filtered_edges);
-
-    /// copy down-edges, i.e. where from(edge) > to(edge)
-    filtered_edges.clear();
-    std::copy_if(edges_.begin(), edges_.end(),
-                 std::inserter(filtered_edges, filtered_edges.end()),
-                 [](const std::pair<Edge, Attribute> &p) {
-                   return (isDownEdge(p.first));
-                 });
-    std::vector<Edge> down = mapToVector(filtered_edges);
-    std::reverse(down.begin(), down.end());
-    sorted_edges.insert(sorted_edges.end(), down.begin(), down.end());
-    return sorted_edges;
-  }
+  std::vector<Edge> sortedEdges() const;
 
   bool containsNode(Node node) const {
     return (nodes_.find(node) != nodes_.end());
@@ -181,15 +120,10 @@ public:
     return (edges_.find(edge) != edges_.end());
   }
 
-  bool containsLeaf(Leaf leaf) const {
-    return (leaves_.find(leaf) != leaves_.end());
-  }
-
   Node root() const { return nodes_.rbegin()->first; }
 
   std::map<Node, Attribute> nodes_;
   std::map<Edge, Attribute> edges_;
-  std::map<Leaf, Attribute> leaves_;
 };
 
 index_t layer(Node node, const Graph<> &graph);

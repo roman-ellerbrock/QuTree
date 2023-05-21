@@ -2,8 +2,9 @@
 
 namespace qutree {
 
-GraphSelector TN = {true, false, false};
-GraphSelector MT = {false, true, true};
+GraphSelector TN = {true, false};
+GraphSelector MN = {false, true};
+GraphSelector CTN = {true, true};
 
 NetworkShape standardShape(const Graph<> &graph, index_t bondDimension,
                            index_t leafDimension) {
@@ -12,35 +13,59 @@ NetworkShape standardShape(const Graph<> &graph, index_t bondDimension,
   for (auto &nodepair : shape.nodes_) {
     auto &ref = nodepair.second;
     Node node = nodepair.first;
-    auto nNeighbors = graph.outEdges(node).size();
-    ref = std::vector<index_t>(nNeighbors, bondDimension);
+    auto edges = graph.inEdges(node);
+    ref.resize(edges.size());
+    index_t i = 0;
+    for (auto e : edges) {
+      if (isInLeaf(e)) {
+        ref[i] = leafDimension;
+      } else if (isOutLeaf(e)) {
+        ref[i] = 1;
+      } else {
+        ref[i] = bondDimension;
+      }
+      i++;
+    }
   }
 
   for (auto &edgepair : shape.edges_) {
+    Edge e = edgepair.first;
     auto &ref = edgepair.second;
-    ref = {bondDimension, bondDimension};
-  }
-
-  for (auto &leafpair : shape.leaves_) {
-    auto &ref = leafpair.second;
-    ref = {leafDimension, leafDimension};
+    if (isInLeaf(e)) {
+      ref = {leafDimension, leafDimension};
+    } else if (isOutLeaf(e)) {
+      ref = {1, 1};
+    } else {
+      ref = {bondDimension, bondDimension};
+    }
   }
 
   return shape;
 }
 
-TensorNetwork randomTTNS(const NetworkShape &shape, GraphSelector s) {
+const tensorlib::IntArrayRef sizes(const tensorlib::IntArrayRef &A) {
+  return A;
+}
+
+const tensorlib::IntArrayRef sizes(const tensorlib::Tensor &A) {
+  return A.sizes();
+}
+
+template <class tn>
+TensorNetwork
+createTN(const Graph<tn> &shape, GraphSelector s,
+         tensorlib::Tensor (*function)(tensorlib::IntArrayRef,
+                                       tensorlib::TensorOptions)) {
   TensorNetwork psi(shape);
   using namespace std;
   bool nodes = get<0>(s);
   bool edges = get<1>(s);
-  bool leaves = get<2>(s);
 
   if (nodes) {
     for (auto &nodepair : psi.nodes_) {
       Node node = nodepair.first;
       auto &ref = nodepair.second;
-      ref = tensorlib::rand(shape.nodes_.at(node), tensorlib::options());
+      ref = function(sizes(shape.nodes_.at(node)), tensorlib::options());
     }
   }
 
@@ -48,27 +73,57 @@ TensorNetwork randomTTNS(const NetworkShape &shape, GraphSelector s) {
     for (auto &edgepair : psi.edges_) {
       Edge edge = edgepair.first;
       auto &ref = edgepair.second;
-      ref = tensorlib::rand(shape.edges_.at(edge), tensorlib::options());
-    }
-  }
-
-  if (leaves) {
-    for (auto &leafpair : psi.leaves_) {
-      Leaf leaf = leafpair.first;
-      auto &ref = leafpair.second;
-      ref = tensorlib::rand(shape.leaves_.at(leaf), tensorlib::options());
+      ref = function(sizes(shape.edges_.at(edge)), tensorlib::options());
     }
   }
 
   return psi;
 }
 
-TensorNetwork createTensorNetwork(const Graph<> &graph) {
+template TensorNetwork
+createTN(const NetworkShape &shape, GraphSelector s,
+         tensorlib::Tensor (*function)(tensorlib::IntArrayRef,
+                                       tensorlib::TensorOptions));
 
-  //  TensorNetwork psi(graph);
-  TensorNetwork psi;
-
-  return psi;
-}
+template TensorNetwork
+createTN(const TensorNetwork &A, GraphSelector s,
+         tensorlib::Tensor (*function)(tensorlib::IntArrayRef,
+                                       tensorlib::TensorOptions));
 
 } // namespace qutree
+
+std::ostream& operator<<(std::ostream& os, const qutree::NetworkShape& graph) {
+  using namespace qutree;
+  os << "Nodes:\n";
+  for (auto p : graph.nodes_) {
+    Node node = p.first;
+    auto A = p.second;
+    os << node << "\n" << A << std::endl;
+  }
+
+  os << "Edges:\n";
+  for (Edge e : graph.sortedEdges()) {
+    auto A = graph.edges_.at(e);
+    os << e << "\n" << A << std::endl;
+  }
+
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const qutree::TensorNetwork& tn) {
+  using namespace qutree;
+  os << "Nodes:\n";
+  for (auto p : tn.nodes_) {
+    Node node = p.first;
+    Tensor A = p.second;
+    os << node << "\n" << A << std::endl;
+  }
+
+  os << "Edges:\n";
+  for (Edge e : tn.sortedEdges()) {
+    Tensor A = tn.edges_.at(e);
+    os << e << "\n" << A << std::endl;
+  }
+
+  return os;
+}

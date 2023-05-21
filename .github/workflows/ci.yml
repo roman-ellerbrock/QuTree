@@ -1,0 +1,31 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main  # Replace with your branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can change the operating system if needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and run
+        run: |
+          docker build -t qutree .
+          docker run -d --name qutree_container qutree tail -f /dev/null
+
+      - name: Test
+        run: docker exec qutree_container /qutree/build/tests/tests
+
+      - name: Copy Binary from Docker Container
+        run: docker cp qutree_container:/qutree/build/qutree ./qutree
+
+      - name: Upload Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: qutree
+          path: ./qutree

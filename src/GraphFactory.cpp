@@ -30,7 +30,7 @@ Graph<Attribute> subgraph(const Graph<Attribute> &graph,
                           const std::vector<Leaf> &leaves) {
   Graph<Attribute> subgraph;
   for (Leaf leaf : leaves) {
-    subgraph.leaves_[leaf] = graph.leaves_.at(leaf);
+    subgraph.edges_[leaf] = graph.edges_.at(leaf);
     subgraph.nodes_[to(leaf)] = graph.nodes_.at(to(leaf));
     addToGraph(subgraph, graph, leaf);
   }
@@ -89,7 +89,8 @@ Graph<Attribute> balancedBinaryTree(index_t nLeaves) {
 
   // add leaves
   for (auto i : buffer) {
-    graph.leaves_[Leaf({i, i})] = "";
+    /// check!
+    graph.edges_[Leaf({-(i+1), i})] = "";
     graph.nodes_[Node(i)] = "";
   }
 
