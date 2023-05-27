@@ -9,6 +9,7 @@ target_sources(qutreelib PUBLIC
     ${PROJECT_SOURCE_DIR}/src/backend/torch_util.cpp
     ${PROJECT_SOURCE_DIR}/src/Graph.cpp
     ${PROJECT_SOURCE_DIR}/src/GraphFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/OperatorFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/TensorNetwork.cpp
 )
 

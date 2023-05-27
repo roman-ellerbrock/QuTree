@@ -15,16 +15,15 @@ NetworkShape standardShape(const Graph<> &graph, index_t bondDimension,
     Node node = nodepair.first;
     auto edges = graph.inEdges(node);
     ref.resize(edges.size());
-    index_t i = 0;
     for (auto e : edges) {
+      index_t idx = shape.inIndex(e, node);
       if (isInLeaf(e)) {
-        ref[i] = leafDimension;
+        ref[idx] = leafDimension;
       } else if (isOutLeaf(e)) {
-        ref[i] = 1;
+        ref[idx] = 1;
       } else {
-        ref[i] = bondDimension;
+        ref[idx] = bondDimension;
       }
-      i++;
     }
   }
 
@@ -116,13 +115,13 @@ std::ostream& operator<<(std::ostream& os, const qutree::TensorNetwork& tn) {
   for (auto p : tn.nodes_) {
     Node node = p.first;
     Tensor A = p.second;
-    os << node << "\n" << A << std::endl;
+    os << "address: " << node << " | " << A.sizes() << "\n" << A << std::endl;
   }
 
   os << "Edges:\n";
   for (Edge e : tn.sortedEdges()) {
     Tensor A = tn.edges_.at(e);
-    os << e << "\n" << A << std::endl;
+    os << "address: " << e << " | " << A.sizes() << "\n" << A << std::endl;
   }
 
   return os;

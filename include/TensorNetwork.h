@@ -23,9 +23,12 @@ extern GraphSelector CTN;
 
 using TensorNetwork = Graph<Tensor>;
 
+/// signature of functions that generate tensors like 
+using Generator = tensorlib::Tensor (*)(tensorlib::IntArrayRef, tensorlib::TensorOptions);
+
 template <class tn>
 TensorNetwork createTN(const Graph<tn> &shape, GraphSelector s,
-    tensorlib::Tensor (*function)(tensorlib::IntArrayRef, tensorlib::TensorOptions) = tensorlib::rand);
+    Generator g = tensorlib::rand);
 
 } // namespace qutree
 

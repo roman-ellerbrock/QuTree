@@ -94,13 +94,13 @@ public:
 
   std::vector<Edge> downEdges(Edge edge) const;
 
-  /// @brief returns 'out-index'
+  /// @brief returns the index that an outgoing edge is attached to from(edge)
   /// @param node node that edge goes out from
   /// @param edge outgoing edge
   /// @return attachment index [0, nneighbors[
   index_t outIndex(Node node, Edge edge) const;
 
-  /// @brief returns 'in-index'
+  /// @brief returns the index that an incoming edge is attachde to to(edge)
   /// @param node node that edge comes in to
   /// @param edge incoming edge
   /// @return attachment index [0, nneighbors[

@@ -17,6 +17,8 @@ add_executable(
     test_Graph.cpp
     test_GraphFactory.cpp
     test_TensorNetwork.cpp
+    test_Operator.cpp
+    test_OperatorFactory.cpp
     test_torch_util.cpp
     graph_util.cpp
 )

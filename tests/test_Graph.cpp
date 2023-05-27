@@ -188,6 +188,13 @@ TEST(Graph, inindex) {
     ASSERT_EQ(2, graph.inIndex({6, 4}, 4));
 }
 
+TEST(Graph, inindexLeaf) {
+    Graph graph = binary_4_graph();
+    ASSERT_EQ(0, graph.inIndex({0, 4}, 4));
+    ASSERT_EQ(1, graph.inIndex({1, 4}, 4));
+    ASSERT_EQ(2, graph.inIndex({6, 4}, 4));
+}
+
 TEST(Graph, outindex) {
     Graph graph = binary_4_graph();
     ASSERT_EQ(0, graph.outIndex(4, {4, 0}));

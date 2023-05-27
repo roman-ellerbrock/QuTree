@@ -1,6 +1,8 @@
 #include "arithmetics.h"
 #include <exception>
 
+using namespace std;
+
 namespace qutree {
 
 TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket) {
@@ -11,6 +13,16 @@ TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket) {
     if (isLeaf(edge)) {
       continue;
     }
+    /**
+     * ! The problem is that outIdx gives 0 although inIdx is 0 for a different
+     * ! edge. We have to only use in- or out-index or fix the issue that in-/out-
+     * ! index are compatible.
+     * ? For now, I will use in-index on flipped edge
+     * 
+     * ? I think it makes sense to change how outIdx works: it should actually use
+     * ? the in-edges and use their index.
+     * todo(Roman): change that.
+     */
     Node node = from(edge);
     Tensor &mat = mt.edges_[edge];
     Tensor bra = Bra.nodes_.at(node);
@@ -26,7 +38,7 @@ TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket) {
       ket = tensorlib::contractMatrixTensor(mt.edges_[e], ket, idx);
     }
     // contract the tensors into the new edge-matrix
-    index_t idx = mt.outIndex(node, edge);
+    index_t idx = mt.inIndex(flip(edge), node); // dadum
     mat = tensorlib::contractTensorTensor(bra, ket, idx);
   }
 

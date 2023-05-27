@@ -6,6 +6,14 @@ at::TensorOptions options() {
   return at::TensorOptions().dtype(torch::kDouble);
 }
 
+at::TensorOptions real_options() {
+  return at::TensorOptions().dtype(torch::kDouble);
+}
+
+at::TensorOptions complex_options() {
+  return at::TensorOptions().dtype(torch::kComplexDouble);
+}
+
 // Wrapper lambda function for torch::eye
 Tensor eyeWrapper(IntArrayRef size, TensorOptions options) {
   auto n = size[0]; // Assuming a square matrix, so size[0] = size[1]
