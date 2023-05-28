@@ -120,6 +120,11 @@ public:
     return (edges_.find(edge) != edges_.end());
   }
 
+  Edge leafEdge(Node leaf) const {
+    auto vec = outEdges(leaf);
+    return vec.front();
+  }
+
   Node root() const { return nodes_.rbegin()->first; }
 
   std::map<Node, Attribute> nodes_;

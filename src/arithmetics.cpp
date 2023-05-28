@@ -5,9 +5,8 @@ using namespace std;
 
 namespace qutree {
 
-TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket) {
-  //    TensorNetwork mt = createTN(Bra, MN, tensorlib::eyeWrapper);
-  TensorNetwork mt = createTN(Bra, MN, tensorlib::eyeWrapper);
+void dotProduct(TensorNetwork &mt, const TensorNetwork &Bra,
+                const TensorNetwork &Ket) {
 
   for (Edge edge : mt.sortedEdges()) {
     if (isLeaf(edge)) {
@@ -15,13 +14,12 @@ TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket) {
     }
     /**
      * ! The problem is that outIdx gives 0 although inIdx is 0 for a different
-     * ! edge. We have to only use in- or out-index or fix the issue that in-/out-
-     * ! index are compatible.
-     * ? For now, I will use in-index on flipped edge
-     * 
-     * ? I think it makes sense to change how outIdx works: it should actually use
-     * ? the in-edges and use their index.
-     * todo(Roman): change that.
+     * ! edge. We have to only use in- or out-index or fix the issue that
+     * in-/out- ! index are compatible. ? For now, I will use in-index on
+     * flipped edge
+     *
+     * ? I think it makes sense to change how outIdx works: it should actually
+     * use ? the in-edges and use their index. todo(Roman): change that.
      */
     Node node = from(edge);
     Tensor &mat = mt.edges_[edge];
@@ -41,7 +39,5 @@ TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket) {
     index_t idx = mt.inIndex(flip(edge), node); // dadum
     mat = tensorlib::contractTensorTensor(bra, ket, idx);
   }
-
-  return mt;
 }
 } // namespace qutree

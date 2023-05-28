@@ -201,3 +201,9 @@ TEST(Graph, outindex) {
     ASSERT_EQ(1, graph.outIndex(4, {4, 1}));
     ASSERT_EQ(2, graph.outIndex(4, {4, 6}));
 }
+
+TEST(Graph, leafEdge) {
+    Graph graph = binary_4_graph();
+    Edge leaf = graph.leafEdge(-3);
+    ASSERT_EQ(Edge({-3, 2}), leaf);
+}

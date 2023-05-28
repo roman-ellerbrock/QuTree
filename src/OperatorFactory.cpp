@@ -5,7 +5,7 @@ namespace qutree {
 
 namespace pauli {
 Tensor X() {
-  return tensorlib::tensor({{0., 1.}, {1., 0.}}).to(tensorlib::kFloat64);
+  return tensorlib::tensor({{0., 1.}, {1., 0.}}, tensorlib::kFloat64);
 }
 
 Tensor Y() {
@@ -15,7 +15,7 @@ Tensor Y() {
 }
 
 Tensor Z() {
-  return tensorlib::tensor({{1., 0.}, {0., -1.}}).to(tensorlib::kFloat64);
+  return tensorlib::tensor({{1., 0.}, {0., -1.}}, tensorlib::kFloat64);
 }
 }
 

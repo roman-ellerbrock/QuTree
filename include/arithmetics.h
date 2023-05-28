@@ -2,6 +2,6 @@
 #include "TensorNetwork.h"
 
 namespace qutree {
-TensorNetwork dotProduct(const TensorNetwork &Bra, const TensorNetwork &Ket);
+void dotProduct(TensorNetwork &mt, const TensorNetwork &Bra,
+                const TensorNetwork &Ket);
 } // namespace qutree
-

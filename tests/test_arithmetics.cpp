@@ -12,6 +12,7 @@ TEST(Arithmetics, dot)
   Graph graph = balancedBinaryTree(4);
   NetworkShape shape = standardShape(graph, 3, 5);
   TensorNetwork tn = createTN(shape, CTN);
-  TensorNetwork mt = dotProduct(tn, tn);
+  TensorNetwork mt = createTN(shape, MN);
+  dotProduct(mt, tn, tn);
   cout << mt << endl;
 }
