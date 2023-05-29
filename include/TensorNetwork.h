@@ -30,8 +30,14 @@ template <class tn>
 TensorNetwork createTN(const Graph<tn> &shape, GraphSelector s,
     Generator g = tensorlib::rand);
 
+NetworkShape testTree();
+
 } // namespace qutree
 
 
 std::ostream& operator<<(std::ostream& os, const qutree::NetworkShape& shape);
 std::ostream& operator<<(std::ostream& os, const qutree::TensorNetwork& tn);
+
+
+
+

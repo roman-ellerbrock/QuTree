@@ -155,7 +155,9 @@ std::vector<Edge> Graph<Attribute>::sortedEdges() const {
 }
 
 template <class Attribute>
-index_t Graph<Attribute>::outIndex(Node node, Edge edge) const {
+index_t Graph<Attribute>::outIndex(Edge edge) const {
+  return inIndex(flip(edge));
+/*  Node node = from(edge);
   auto vec = outEdges(node);
   auto it = std::find(vec.begin(), vec.end(), edge);
   if (it != vec.end()) {
@@ -164,11 +166,12 @@ index_t Graph<Attribute>::outIndex(Node node, Edge edge) const {
   } else {
     throw std::runtime_error("outindex: cannot find edge.");
     return 0;
-  }
+  }*/
 }
 
 template <class Attribute>
-index_t Graph<Attribute>::inIndex(Edge edge, Node node) const {
+index_t Graph<Attribute>::inIndex(Edge edge) const {
+  Node node = to(edge);
   auto vec = inEdges(node);
   auto it = std::find(vec.begin(), vec.end(), edge);
   if (it != vec.end()) {
@@ -178,6 +181,15 @@ index_t Graph<Attribute>::inIndex(Edge edge, Node node) const {
     throw std::runtime_error("inindex: cannot find edge.");
     return 0;
   }
+}
+
+template <class Attribute> std::vector<Node> Graph<Attribute>::leaves() const {
+  std::vector<Node> ls;
+  for (const auto& edge : sortedEdges()) {
+    const Node node = from(edge);
+    if (node < 0) { ls.push_back(node);}
+  }
+  return ls;
 }
 
 template class Graph<tensorlib::Tensor>;

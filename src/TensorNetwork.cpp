@@ -16,7 +16,7 @@ NetworkShape standardShape(const Graph<> &graph, index_t bondDimension,
     auto edges = graph.inEdges(node);
     ref.resize(edges.size());
     for (auto e : edges) {
-      index_t idx = shape.inIndex(e, node);
+      index_t idx = shape.inIndex(e);
       if (isInLeaf(e)) {
         ref[idx] = leafDimension;
       } else if (isOutLeaf(e)) {
@@ -88,6 +88,24 @@ template TensorNetwork
 createTN(const TensorNetwork &A, GraphSelector s,
          tensorlib::Tensor (*function)(tensorlib::IntArrayRef,
                                        tensorlib::TensorOptions));
+
+NetworkShape testTree() {
+  NetworkShape graph;
+  graph.nodes_[0] = {4, 5, 3};
+  graph.nodes_[1] = {6, 2};
+  graph.nodes_[2] = {3, 2};
+
+  graph.edges_[{0, 2}] = {3, 3};
+  graph.edges_[{1, 2}] = {2, 2};
+  graph.edges_[flip({0, 2})] = {3, 3};
+  graph.edges_[flip({1, 2})] = {2, 2};
+
+  graph.edges_[{-1, 0}] = {4, 4};
+  graph.edges_[{-2, 0}] = {5, 5};
+  graph.edges_[{-3, 1}] = {6, 6};
+
+  return graph;
+}
 
 } // namespace qutree
 

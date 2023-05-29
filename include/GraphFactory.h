@@ -9,7 +9,7 @@ namespace qutree {
 // create a subgraph connecting different leaves
 template <class Attribute>
 Graph<Attribute> subgraph(const Graph<Attribute> &graph,
-                          const std::vector<Leaf> &leaves);
+                          const std::vector<Node> &leaves);
 
 // create a (close-to) balanced binary tree
 template <class Attribute = std::any>

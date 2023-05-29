@@ -17,7 +17,7 @@ TEST(GraphFactory, subgraph) {
    *     X   X
    **/
   Graph graph = binary_4_graph();
-  std::vector<Leaf> leaves({{-2, 1}, {-3, 2}});
+  std::vector<Node> leaves({-2, -3});
   Graph sub = subgraph(graph, leaves);
 
   /// Nodes
@@ -45,6 +45,15 @@ TEST(GraphFactory, subgraph) {
 
   ASSERT_FALSE(sub.containsEdge({0, 4}));
   ASSERT_FALSE(sub.containsEdge({3, 5}));
+
+  /// down-edges
+  ASSERT_TRUE(sub.containsEdge(flip({1, 4})));
+  ASSERT_TRUE(sub.containsEdge(flip({4, 6})));
+  ASSERT_TRUE(sub.containsEdge(flip({2, 5})));
+  ASSERT_TRUE(sub.containsEdge(flip({5, 6})));
+
+  ASSERT_FALSE(sub.containsEdge(flip({0, 4})));
+  ASSERT_FALSE(sub.containsEdge(flip({3, 5})));
 }
 
 TEST(GraphFactory, balancedBinaryTree) {

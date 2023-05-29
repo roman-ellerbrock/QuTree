@@ -23,4 +23,10 @@ Tensor contractMatrixTensor(Tensor mat, Tensor A, long long idx);
 // contract tensor with tensor
 Tensor contractTensorTensor(Tensor A, Tensor B, long long idx);
 
+// qr decomposition for tensor
+/**
+ * \brief perform qr decomposition matrixTensor(R.T, Q, idx) = A
+*/
+std::tuple<Tensor, Tensor> qr(Tensor A, long long idx);
+
 } // namespace torch

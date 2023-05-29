@@ -183,27 +183,33 @@ TEST(Graph, layer)
 
 TEST(Graph, inindex) {
     Graph graph = binary_4_graph();
-    ASSERT_EQ(0, graph.inIndex({0, 4}, 4));
-    ASSERT_EQ(1, graph.inIndex({1, 4}, 4));
-    ASSERT_EQ(2, graph.inIndex({6, 4}, 4));
+    ASSERT_EQ(0, graph.inIndex({0, 4}));
+    ASSERT_EQ(1, graph.inIndex({1, 4}));
+    ASSERT_EQ(2, graph.inIndex({6, 4}));
 }
 
 TEST(Graph, inindexLeaf) {
     Graph graph = binary_4_graph();
-    ASSERT_EQ(0, graph.inIndex({0, 4}, 4));
-    ASSERT_EQ(1, graph.inIndex({1, 4}, 4));
-    ASSERT_EQ(2, graph.inIndex({6, 4}, 4));
+    ASSERT_EQ(0, graph.inIndex({0, 4}));
+    ASSERT_EQ(1, graph.inIndex({1, 4}));
+    ASSERT_EQ(2, graph.inIndex({6, 4}));
 }
 
 TEST(Graph, outindex) {
     Graph graph = binary_4_graph();
-    ASSERT_EQ(0, graph.outIndex(4, {4, 0}));
-    ASSERT_EQ(1, graph.outIndex(4, {4, 1}));
-    ASSERT_EQ(2, graph.outIndex(4, {4, 6}));
+    ASSERT_EQ(0, graph.outIndex({4, 0}));
+    ASSERT_EQ(1, graph.outIndex({4, 1}));
+    ASSERT_EQ(2, graph.outIndex({4, 6}));
 }
 
 TEST(Graph, leafEdge) {
     Graph graph = binary_4_graph();
     Edge leaf = graph.leafEdge(-3);
     ASSERT_EQ(Edge({-3, 2}), leaf);
+}
+
+TEST(Graph, leaves) {
+    Graph graph = binary_4_graph();
+    std::vector<Node> leaves = {-4, -3, -2, -1};
+    ASSERT_EQ(leaves, graph.leaves());
 }

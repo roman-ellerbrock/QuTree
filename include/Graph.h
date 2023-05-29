@@ -98,13 +98,13 @@ public:
   /// @param node node that edge goes out from
   /// @param edge outgoing edge
   /// @return attachment index [0, nneighbors[
-  index_t outIndex(Node node, Edge edge) const;
+  index_t outIndex(Edge edge) const;
 
   /// @brief returns the index that an incoming edge is attachde to to(edge)
   /// @param node node that edge comes in to
   /// @param edge incoming edge
   /// @return attachment index [0, nneighbors[
-  index_t inIndex(Edge edge, Node node) const;
+  index_t inIndex(Edge edge) const;
 
   /**
    * \brief Generate vector of edges sorted so that it can be sweeped over in
@@ -124,6 +124,8 @@ public:
     auto vec = outEdges(leaf);
     return vec.front();
   }
+  
+  std::vector<Node> leaves() const;
 
   Node root() const { return nodes_.rbegin()->first; }
 

@@ -67,7 +67,7 @@ Tensor contract3_3(Tensor A, Tensor B) {
   B = B.transpose(1, 2);
   B = B.reshape({a * c, b});
 
-  return torch::matmul(A, B);
+  return torch::mm(A.conj(), B);
 }
 
 Tensor contractMatrixTensor(Tensor mat, Tensor A, long long idx) {
@@ -104,6 +104,33 @@ Tensor contractTensorTensor(Tensor A, Tensor B, long long idx) {
     std::cerr << "Unknown exception in tensor-tensor contraction." << std::endl;
     return torch::Tensor();
   }
+}
+
+std::tuple<Tensor, Tensor> qr(Tensor A, long long idx) {
+  // Q: tensor -> matrix
+  auto shape = A.sizes();
+  // -> {a, c, b}
+  A = torch::reshape3(A, idx);
+  A = A.transpose(1, 2);
+  std::vector<long long> shape3(A.sizes().begin(), A.sizes().end());
+  // -> {a * c, b}
+  A = A.reshape({shape3[0] * shape3[1], shape3[2]});
+  if (shape3[0] * shape3[1] < shape3[2]) {
+    throw std::runtime_error("QR dimension violation: wrong rectangular shape.");
+  }
+
+  // do qr
+  auto qr = at::linalg_qr(A, "reduced");
+
+  // Q: matrix -> Tensor
+  // -> {a, c, b}
+  auto& Q = get<0>(qr);
+  Q = Q.reshape(shape3);
+  // -> {a, b, c}
+  Q = Q.transpose(1, 2);
+  // -> tensor
+  Q = Q.reshape(shape);
+  return qr;
 }
 
 } // namespace torch

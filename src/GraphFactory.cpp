@@ -1,4 +1,5 @@
 #include "GraphFactory.h"
+#include "TensorNetwork.h"
 #include <numeric>
 
 namespace qutree {
@@ -17,6 +18,7 @@ void addToGraph(Graph<Attribute> &subGraph, const Graph<Attribute> &graph,
   std::vector<Edge> edges = graph.upEdges(edge);
   for (Edge e : edges) {
     subGraph.edges_[e] = graph.edges_.at(e);
+    subGraph.edges_[flip(e)] = graph.edges_.at(flip(e));
     subGraph.nodes_[to(e)] = graph.edges_.at(e);
     addToGraph(subGraph, graph, e);
   }
@@ -27,9 +29,10 @@ void addToGraph(Graph<Attribute> &subGraph, const Graph<Attribute> &graph,
  **/
 template <class Attribute>
 Graph<Attribute> subgraph(const Graph<Attribute> &graph,
-                          const std::vector<Leaf> &leaves) {
+                          const std::vector<Node> &leaves) {
   Graph<Attribute> subgraph;
-  for (Leaf leaf : leaves) {
+  for (Node leaf_id : leaves) {
+    Edge leaf = graph.leafEdge(leaf_id);
     subgraph.edges_[leaf] = graph.edges_.at(leaf);
     subgraph.nodes_[to(leaf)] = graph.nodes_.at(to(leaf));
     addToGraph(subgraph, graph, leaf);
@@ -38,7 +41,9 @@ Graph<Attribute> subgraph(const Graph<Attribute> &graph,
 }
 
 template Graph<std::any> subgraph(const Graph<std::any> &graph,
-                                  const std::vector<Leaf> &leaves);
+                                  const std::vector<Node> &leaves);
+template NetworkShape subgraph(const NetworkShape &graph,
+                               const std::vector<Node> &leaves);
 
 /**
  *        4
@@ -90,7 +95,7 @@ Graph<Attribute> balancedBinaryTree(index_t nLeaves) {
   // add leaves
   for (auto i : buffer) {
     /// check!
-    graph.edges_[Leaf({-(i+1), i})] = "";
+    graph.edges_[Leaf({-(i + 1), i})] = "";
     graph.nodes_[Node(i)] = "";
   }
 

@@ -19,6 +19,22 @@ Tensor Z() {
 }
 }
 
+Tensor identity(index_t n) {
+  return tensorlib::eye(n, tensorlib::options());
+}
+
+ProductOperator identity(const NetworkShape& shapes) {
+  ProductOperator P;
+  std::vector<Node> leaves = shapes.leaves();
+  for (Node leaf : leaves) {
+    Edge leafEdge = shapes.leafEdge(leaf);
+    auto shape = shapes.edges_.at(leafEdge);
+    index_t dim = shape.front();
+    P[leaf] = identity(dim);
+  }
+  return P;
+}
+
 SumOfProducts transversalFieldIsing(double J, double g, index_t N) {
   SumOfProducts H;
 
