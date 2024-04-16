@@ -225,7 +225,7 @@ void QVM::setTree(Tree& tree, const YAML::Node& node, const Register& reg) {
 
 	if (treetype == "binary") {
 		cout << "- Generate binary tree with " << n_qubit << " qubits.\n";
-		tree = TreeFactory::balancedTree(n_qubit, 2, dim);
+		tree = TreeFactory::balancedTree(n_qubit, 2, dim, 0, 6);
 	} else if (treetype == "train") {
 		tree = TreeFactory::unbalancedTree(n_qubit, 2, dim, 6);
 	} else if (treetype == "compact") {
